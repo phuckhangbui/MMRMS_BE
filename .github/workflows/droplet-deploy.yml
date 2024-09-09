@@ -19,8 +19,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t phuckhangbui/demo .
-          docker push phuckhangbui/demo
+          docker build -t phuckhangbui/smrms .
+          docker push phuckhangbui/smrms
 
   deploy-to-droplet:
     needs: build-and-push
@@ -33,10 +33,10 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            docker pull phuckhangbui/demo
+            docker pull phuckhangbui/smrms
             docker stop server || true
             docker rm server || true
-            docker run -d --name server --network host -p 5000:5000 phuckhangbui/demo
+            docker run -d --name server --network host -p 5000:5000 phuckhangbui/smrms
           host: ${{ secrets.DROPLET_SSH_HOST }}
           user: ${{ secrets.DROPLET_SSH_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}

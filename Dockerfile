@@ -10,7 +10,7 @@ ENV ASPNETCORE_ENVIRONMENT docker
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["API/API.csproj", "API/"]
+COPY ["./API/API.csproj", "API/"]
 COPY ["./BusinessObject/BusinessObject.csproj", "BusinessObject/"]
 COPY ["./DAO/DAO.csproj", "DAO/"]
 COPY ["./DTOs/DTOs.csproj", "DTOs/"]
