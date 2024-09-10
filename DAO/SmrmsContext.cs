@@ -23,7 +23,7 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<Address> Addresses { get; set; }
 
-    public virtual DbSet<BusinessObject.Attribute> Attributes { get; set; }
+    public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
 
@@ -79,7 +79,7 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<SerialMechanicalMachinery> SerialMechanicalMachineries { get; set; }
 
-    public virtual DbSet<BusinessObject.Task> Tasks { get; set; }
+    public virtual DbSet<EmployeeTask> EmployeeTasks { get; set; }
 
     public virtual DbSet<TaskLog> TaskLogs { get; set; }
 
@@ -106,27 +106,13 @@ public partial class SmrmsContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__349DA586CC701C2D");
+            entity.HasKey(e => e.AccountId);
 
             entity.ToTable("Account");
 
             entity.Property(e => e.AccountId)
-                .ValueGeneratedNever()
-                .HasColumnName("AccountID");
-            entity.Property(e => e.CitizenCard).HasMaxLength(50);
-            entity.Property(e => e.DateBirth).HasColumnType("datetime");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.DateExpire).HasColumnType("datetime");
-            entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Otpnumber)
-                .HasMaxLength(20)
-                .HasColumnName("OTPNumber");
-            entity.Property(e => e.Phone).HasMaxLength(20);
-            entity.Property(e => e.PromotionId).HasColumnName("PromotionID");
-            entity.Property(e => e.RoleId).HasColumnName("RoleID");
-            entity.Property(e => e.TokenDateExpire).HasColumnType("datetime");
-            entity.Property(e => e.Username).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Promotion).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.PromotionId)
@@ -135,15 +121,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<AccountBusiness>(entity =>
         {
-            entity.HasKey(e => e.AccountBusinessId).HasName("PK__AccountB__293C04D827DBAFDD");
+            entity.HasKey(e => e.AccountBusinessId);
 
             entity.ToTable("AccountBusiness");
 
             entity.Property(e => e.AccountBusinessId)
-                .ValueGeneratedNever()
-                .HasColumnName("AccountBusinessID");
-            entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.Position).HasMaxLength(100);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Account).WithMany(p => p.AccountBusinesses)
                 .HasForeignKey(d => d.AccountId)
@@ -152,16 +136,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<AccountPromotion>(entity =>
         {
-            entity.HasKey(e => e.PromotionAccountId).HasName("PK__AccountP__1828094A4D794EBF");
+            entity.HasKey(e => e.PromotionAccountId);
 
             entity.ToTable("AccountPromotion");
 
             entity.Property(e => e.PromotionAccountId)
-                .ValueGeneratedNever()
-                .HasColumnName("PromotionAccountID");
-            entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.DateReceive).HasColumnType("datetime");
-            entity.Property(e => e.PromotionId).HasColumnName("PromotionID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Account).WithMany(p => p.AccountPromotions)
                 .HasForeignKey(d => d.AccountId)
@@ -174,65 +155,54 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.AddressId).HasName("PK__Address__091C2A1B0D8C61F2");
+            entity.HasKey(e => e.AddressId);
 
             entity.ToTable("Address");
 
             entity.Property(e => e.AddressId)
-                .ValueGeneratedNever()
-                .HasColumnName("AddressID");
-            entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.Address1).HasColumnName("Address");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Account).WithMany(p => p.Addresses)
                 .HasForeignKey(d => d.AccountId)
                 .HasConstraintName("FK_Address_Account");
         });
 
-        modelBuilder.Entity<Attribute>(entity =>
+        modelBuilder.Entity<ProductAttribute>(entity =>
         {
-            entity.HasKey(e => e.AttributeId).HasName("PK__Attribut__C189298AD73AE2A1");
+            entity.HasKey(e => e.ProductAttributeId);
 
             entity.ToTable("Attribute");
 
-            entity.Property(e => e.AttributeId)
-                .ValueGeneratedNever()
-                .HasColumnName("AttributeID");
-            entity.Property(e => e.AttributeName).HasMaxLength(100);
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            entity.Property(e => e.ProductAttributeId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Attributes)
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductAttributes)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_Attribute_Product");
         });
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A2BA1876522");
+            entity.HasKey(e => e.CategoryId);
 
             entity.ToTable("Category");
 
             entity.Property(e => e.CategoryId)
-                .ValueGeneratedNever()
-                .HasColumnName("CategoryID");
-            entity.Property(e => e.CategoryName).HasMaxLength(100);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
         });
 
         modelBuilder.Entity<Component>(entity =>
         {
-            entity.HasKey(e => e.ComponentId).HasName("PK__Componen__D79CF02ECAE98BCF");
+            entity.HasKey(e => e.ComponentId);
 
             entity.ToTable("Component");
 
             entity.Property(e => e.ComponentId)
-                .ValueGeneratedNever()
-                .HasColumnName("ComponentID");
-            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-            entity.Property(e => e.ComponentName).HasMaxLength(100);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Category).WithMany(p => p.Components)
                 .HasForeignKey(d => d.CategoryId)
@@ -241,31 +211,24 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ComponentProduct>(entity =>
         {
-            entity.HasKey(e => e.ComponentId).HasName("PK__Componen__D79CF02EA8404F11");
+            entity.HasKey(e => e.ComponentId);
 
             entity.ToTable("ComponentProduct");
 
             entity.Property(e => e.ComponentId)
                 .ValueGeneratedNever()
                 .HasColumnName("ComponentID");
-            entity.Property(e => e.ComponentName).HasMaxLength(100);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Content>(entity =>
         {
-            entity.HasKey(e => e.ContentId).HasName("PK__Content__2907A87ECB0F8C31");
+            entity.HasKey(e => e.ContentId);
 
             entity.ToTable("Content");
 
             entity.Property(e => e.ContentId)
-                .ValueGeneratedNever()
-                .HasColumnName("ContentID");
-            entity.Property(e => e.AccountCreateId).HasColumnName("AccountCreateID");
-            entity.Property(e => e.Content1).HasColumnName("Content");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountCreate).WithMany(p => p.Contents)
                 .HasForeignKey(d => d.AccountCreateId)
@@ -274,21 +237,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Contract>(entity =>
         {
-            entity.HasKey(e => e.ContractId).HasName("PK__Contract__C90D340958851950");
+            entity.HasKey(e => e.ContractId);
 
             entity.ToTable("Contract");
 
             entity.Property(e => e.ContractId)
-                .ValueGeneratedNever()
-                .HasColumnName("ContractID");
-            entity.Property(e => e.AccountSignId).HasColumnName("AccountSignID");
-            entity.Property(e => e.AddressId).HasColumnName("AddressID");
-            entity.Property(e => e.ContractName).HasMaxLength(100);
-            entity.Property(e => e.DateEnd).HasColumnType("datetime");
-            entity.Property(e => e.DateSign).HasColumnType("datetime");
-            entity.Property(e => e.DateStart).HasColumnType("datetime");
-            entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountSign).WithMany(p => p.Contracts)
                 .HasForeignKey(d => d.AccountSignId)
@@ -301,19 +256,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ContractPayment>(entity =>
         {
-            entity.HasKey(e => e.ContractPaymentId).HasName("PK__Contract__DAE23998B7192799");
+            entity.HasKey(e => e.ContractPaymentId);
 
             entity.ToTable("ContractPayment");
 
             entity.Property(e => e.ContractPaymentId)
-                .ValueGeneratedNever()
-                .HasColumnName("ContractPaymentID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.CustomerPaidDate).HasColumnType("datetime");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.SystemPaidDate).HasColumnType("datetime");
-            entity.Property(e => e.Title).HasMaxLength(100);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.ContractPayments)
                 .HasForeignKey(d => d.ContractId)
@@ -322,16 +271,9 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ContractTerm>(entity =>
         {
-            entity.HasKey(e => e.ContractTermId).HasName("PK__Contract__0DE4188D4B9C085F");
+            entity.HasKey(e => e.ContractTermId);
 
             entity.ToTable("ContractTerm");
-
-            entity.Property(e => e.ContractTermId)
-                .ValueGeneratedNever()
-                .HasColumnName("ContractTermID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Title).HasMaxLength(100);
 
             entity.HasOne(d => d.Contract).WithMany(p => p.ContractTerms)
                 .HasForeignKey(d => d.ContractId)
@@ -340,18 +282,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Delivery>(entity =>
         {
-            entity.HasKey(e => e.DeliveryId).HasName("PK__Delivery__626D8FEE9C6A20D2");
+            entity.HasKey(e => e.DeliveryId);
 
             entity.ToTable("Delivery");
 
             entity.Property(e => e.DeliveryId)
-                .ValueGeneratedNever()
-                .HasColumnName("DeliveryID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.DateShip).HasColumnType("datetime");
-            entity.Property(e => e.StaffId).HasColumnName("StaffID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.ContractId)
@@ -364,28 +301,24 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<DiscountType>(entity =>
         {
-            entity.HasKey(e => e.DiscountTypeId).HasName("PK__Discount__6CCE1DD67A3D868B");
+            entity.HasKey(e => e.DiscountTypeId);
 
             entity.ToTable("DiscountType");
 
             entity.Property(e => e.DiscountTypeId)
-                .ValueGeneratedNever()
-                .HasColumnName("DiscountTypeID");
-            entity.Property(e => e.DiscountTypeName).HasMaxLength(100);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
         });
 
         modelBuilder.Entity<Feedback>(entity =>
         {
-            entity.HasKey(e => e.FeedbackId).HasName("PK__Feedback__6A4BEDF65BE7DFDC");
+            entity.HasKey(e => e.FeedbackId);
 
             entity.ToTable("Feedback");
 
             entity.Property(e => e.FeedbackId)
-                .ValueGeneratedNever()
-                .HasColumnName("FeedbackID");
-            entity.Property(e => e.AccountFeedbackId).HasColumnName("AccountFeedbackID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountFeedback).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.AccountFeedbackId)
@@ -398,17 +331,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<HiringRequest>(entity =>
         {
-            entity.HasKey(e => e.HiringRequestId).HasName("PK__HiringRe__6D744848F51C473B");
+            entity.HasKey(e => e.HiringRequestId);
 
             entity.ToTable("HiringRequest");
 
             entity.Property(e => e.HiringRequestId)
-                .ValueGeneratedNever()
-                .HasColumnName("HiringRequestID");
-            entity.Property(e => e.AccountOrderId).HasColumnName("AccountOrderID");
-            entity.Property(e => e.AddressId).HasColumnName("AddressID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountOrder).WithMany(p => p.HiringRequests)
                 .HasForeignKey(d => d.AccountOrderId)
@@ -421,15 +350,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<HiringRequestProductDetail>(entity =>
         {
-            entity.HasKey(e => e.HiringRequestProductDetailId).HasName("PK__HiringRe__9AE9E39584A15500");
+            entity.HasKey(e => e.HiringRequestProductDetailId);
 
             entity.ToTable("HiringRequestProductDetail");
 
             entity.Property(e => e.HiringRequestProductDetailId)
-                .ValueGeneratedNever()
-                .HasColumnName("HiringRequestProductDetailID");
-            entity.Property(e => e.HiringRequestId).HasColumnName("HiringRequestID");
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.HiringRequest).WithMany(p => p.HiringRequestProductDetails)
                 .HasForeignKey(d => d.HiringRequestId)
@@ -442,14 +369,11 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAD5010636E8");
+            entity.HasKey(e => e.InvoiceId);
 
             entity.Property(e => e.InvoiceId)
-                .ValueGeneratedNever()
-                .HasColumnName("InvoiceID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.InvoiceCode).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.ContractId)
@@ -458,16 +382,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.LogId).HasName("PK__Log__5E5499A8AB7E12BB");
+            entity.HasKey(e => e.LogId);
 
             entity.ToTable("Log");
 
             entity.Property(e => e.LogId)
-                .ValueGeneratedNever()
-                .HasColumnName("LogID");
-            entity.Property(e => e.AccountLogId).HasColumnName("AccountLogID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.DateUpdate).HasColumnType("datetime");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountLog).WithMany(p => p.Logs)
                 .HasForeignKey(d => d.AccountLogId)
@@ -476,16 +397,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<LogDetail>(entity =>
         {
-            entity.HasKey(e => e.LogDetailId).HasName("PK__LogDetai__D7AFD39630BDA15F");
+            entity.HasKey(e => e.LogDetailId);
 
             entity.ToTable("LogDetail");
 
             entity.Property(e => e.LogDetailId)
-                .ValueGeneratedNever()
-                .HasColumnName("LogDetailID");
-            entity.Property(e => e.Action).HasMaxLength(100);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.LogId).HasColumnName("LogID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Log).WithMany(p => p.LogDetails)
                 .HasForeignKey(d => d.LogId)
@@ -499,35 +417,27 @@ public partial class SmrmsContext : DbContext
             entity.ToTable("MaintainingTicket");
 
             entity.Property(e => e.MaintainingTicketId)
-                .ValueGeneratedNever()
-                .HasColumnName("MaintainingTicketID");
-            entity.Property(e => e.ComponentId).HasColumnName("ComponentID");
-            entity.Property(e => e.DateRepair).HasColumnType("datetime");
-            entity.Property(e => e.SerialNumber).HasMaxLength(50);
-            entity.Property(e => e.TaskId).HasColumnName("TaskID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Component).WithMany(p => p.MaintainingTickets)
                 .HasForeignKey(d => d.ComponentId)
                 .HasConstraintName("FK_MaintainingTicket_ComponentID");
 
-            entity.HasOne(d => d.Task).WithMany(p => p.MaintainingTickets)
-                .HasForeignKey(d => d.TaskId)
+            entity.HasOne(d => d.EmployeeTask).WithMany(p => p.MaintainingTickets)
+                .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_MaintainingTicket_TaskID");
         });
 
         modelBuilder.Entity<MaintenanceRequest>(entity =>
         {
-            entity.HasKey(e => e.RequestId).HasName("PK__Maintena__33A8519AC913D9FF");
+            entity.HasKey(e => e.RequestId);
 
             entity.ToTable("MaintenanceRequest");
 
             entity.Property(e => e.RequestId)
-                .ValueGeneratedNever()
-                .HasColumnName("RequestID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.SerialNumber).HasMaxLength(50);
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceRequests)
                 .HasForeignKey(d => d.ContractId)
@@ -540,15 +450,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E32D5957DE2");
+            entity.HasKey(e => e.NotificationId);
 
             entity.ToTable("Notification");
 
             entity.Property(e => e.NotificationId)
-                .ValueGeneratedNever()
-                .HasColumnName("NotificationID");
-            entity.Property(e => e.AccountReceiveId).HasColumnName("AccountReceiveID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.AccountReceive).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.AccountReceiveId)
@@ -557,19 +465,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6EDC6EF03F3");
+            entity.HasKey(e => e.ProductId);
 
             entity.ToTable("Product");
 
             entity.Property(e => e.ProductId)
-                .ValueGeneratedNever()
-                .HasColumnName("ProductID");
-            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Model).HasMaxLength(50);
-            entity.Property(e => e.Origin).HasMaxLength(50);
-            entity.Property(e => e.ProductName).HasMaxLength(100);
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
@@ -578,15 +480,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ProductComponentStatus>(entity =>
         {
-            entity.HasKey(e => e.ProductComponentStatusId).HasName("PK__ProductC__D0CF1C0B55B7B53C");
+            entity.HasKey(e => e.ProductComponentStatusId);
 
             entity.ToTable("ProductComponentStatus");
 
             entity.Property(e => e.ProductComponentStatusId)
-                .ValueGeneratedNever()
-                .HasColumnName("ProductComponentStatusID");
-            entity.Property(e => e.ComponentId).HasColumnName("ComponentID");
-            entity.Property(e => e.SerialNumber).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Component).WithMany(p => p.ProductComponentStatuses)
                 .HasForeignKey(d => d.ComponentId)
@@ -599,16 +499,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ProductDetail>(entity =>
         {
-            entity.HasKey(e => e.ProductDetailId).HasName("PK__ProductD__3C8DD6943FF3401F");
+            entity.HasKey(e => e.ProductDetailId);
 
             entity.ToTable("ProductDetail");
 
             entity.Property(e => e.ProductDetailId)
-                .ValueGeneratedNever()
-                .HasColumnName("ProductDetailID");
-            entity.Property(e => e.ComponentId).HasColumnName("ComponentID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Component).WithMany(p => p.ProductDetails)
                 .HasForeignKey(d => d.ComponentId)
@@ -621,14 +518,9 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ProductNumber>(entity =>
         {
-            entity.HasKey(e => e.SerialNumber).HasName("PK__ProductN__048A00094C0B4787");
+            entity.HasKey(e => e.SerialNumber);
 
             entity.ToTable("ProductNumber");
-
-            entity.Property(e => e.SerialNumber).HasMaxLength(50);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductNumbers)
                 .HasForeignKey(d => d.ProductId)
@@ -637,19 +529,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<Promotion>(entity =>
         {
-            entity.HasKey(e => e.PromotionId).HasName("PK__Promotio__52C42F2F20B9C661");
+            entity.HasKey(e => e.PromotionId);
 
             entity.ToTable("Promotion");
 
             entity.Property(e => e.PromotionId)
-                .ValueGeneratedNever()
-                .HasColumnName("PromotionID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.DateEnd).HasColumnType("datetime");
-            entity.Property(e => e.DateStart).HasColumnType("datetime");
-            entity.Property(e => e.DiscountTypeId).HasColumnName("DiscountTypeID");
-            entity.Property(e => e.PromotionTypeId).HasColumnName("PromotionTypeID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.DiscountType).WithMany(p => p.Promotions)
                 .HasForeignKey(d => d.DiscountTypeId)
@@ -662,46 +548,40 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<PromotionType>(entity =>
         {
-            entity.HasKey(e => e.PromotionTypeId).HasName("PK__Promotio__01055C88A6EC5679");
+            entity.HasKey(e => e.PromotionTypeId);
 
             entity.ToTable("PromotionType");
 
             entity.Property(e => e.PromotionTypeId)
-                .ValueGeneratedNever()
-                .HasColumnName("PromotionTypeID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
             entity.Property(e => e.PromotionTypeName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Report>(entity =>
         {
-            entity.HasKey(e => e.ReportId).HasName("PK__Report__D5BD48E5695291A2");
+            entity.HasKey(e => e.ReportId);
 
             entity.ToTable("Report");
 
             entity.Property(e => e.ReportId)
-                .ValueGeneratedNever()
-                .HasColumnName("ReportID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.TaskId).HasColumnName("TaskID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
-            entity.HasOne(d => d.Task).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.TaskId)
+            entity.HasOne(d => d.EmployeeTask).WithMany(p => p.Reports)
+                .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_Report_TaskID");
         });
 
         modelBuilder.Entity<RequestDateResponse>(entity =>
         {
-            entity.HasKey(e => e.ResponseDateId).HasName("PK__RequestD__48F98BA5F14FBF58");
+            entity.HasKey(e => e.ResponseDateId);
 
             entity.ToTable("RequestDateResponse");
 
             entity.Property(e => e.ResponseDateId)
-                .ValueGeneratedNever()
-                .HasColumnName("ResponseDateID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.DateResponse).HasColumnType("datetime");
-            entity.Property(e => e.RequestId).HasColumnName("RequestID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Request).WithMany(p => p.RequestDateResponses)
                 .HasForeignKey(d => d.RequestId)
@@ -710,15 +590,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<SerialMechanicalMachinery>(entity =>
         {
-            entity.HasKey(e => e.ContractOrderId).HasName("PK__SerialMe__392293D3B4D0CDA7");
+            entity.HasKey(e => e.ContractOrderId);
 
             entity.ToTable("SerialMechanicalMachinery");
 
             entity.Property(e => e.ContractOrderId)
-                .ValueGeneratedNever()
-                .HasColumnName("ContractOrderID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.SerialNumber).HasMaxLength(50);
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.SerialMechanicalMachineries)
                 .HasForeignKey(d => d.ContractId)
@@ -729,28 +607,21 @@ public partial class SmrmsContext : DbContext
                 .HasConstraintName("FK_SerialMechanicalMachinery_SerialNumber");
         });
 
-        modelBuilder.Entity<Task>(entity =>
+        modelBuilder.Entity<EmployeeTask>(entity =>
         {
-            entity.HasKey(e => e.TaskId).HasName("PK__Task__7C6949D10BD82AF2");
+            entity.HasKey(e => e.EmployeeTaskId);
 
             entity.ToTable("Task");
 
-            entity.Property(e => e.TaskId)
-                .ValueGeneratedNever()
-                .HasColumnName("TaskID");
-            entity.Property(e => e.AssigneeId).HasColumnName("AssigneeID");
-            entity.Property(e => e.ContractId).HasColumnName("ContractID");
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.Deadline).HasColumnType("datetime");
-            entity.Property(e => e.ReporterId).HasColumnName("ReporterID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.TaskTitle).HasMaxLength(100);
+            entity.Property(e => e.EmployeeTaskId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
             entity.HasOne(d => d.Assignee).WithMany(p => p.TaskAssignees)
                 .HasForeignKey(d => d.AssigneeId)
                 .HasConstraintName("FK_Task_Assignee");
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.Tasks)
+            entity.HasOne(d => d.Contract).WithMany(p => p.EmployeeTasks)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_Task_Contract");
 
@@ -761,19 +632,16 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<TaskLog>(entity =>
         {
-            entity.HasKey(e => e.TaskLogId).HasName("PK__TaskLog__36DB6FA9464E938C");
+            entity.HasKey(e => e.TaskLogId);
 
             entity.ToTable("TaskLog");
 
             entity.Property(e => e.TaskLogId)
-                .ValueGeneratedNever()
-                .HasColumnName("TaskLogID");
-            entity.Property(e => e.Action).HasMaxLength(100);
-            entity.Property(e => e.DateCreate).HasColumnType("datetime");
-            entity.Property(e => e.TaskId).HasColumnName("TaskID");
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
 
-            entity.HasOne(d => d.Task).WithMany(p => p.TaskLogs)
-                .HasForeignKey(d => d.TaskId)
+            entity.HasOne(d => d.EmployeeTask).WithMany(p => p.TaskLogs)
+                .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_TaskLog_TaskID");
         });
 

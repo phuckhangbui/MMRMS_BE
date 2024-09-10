@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class MaintainingTicket
 {
@@ -9,7 +6,7 @@ public partial class MaintainingTicket
 
     public string? SerialNumber { get; set; }
 
-    public int? TaskId { get; set; }
+    public int? EmployeeTaskId { get; set; }
 
     public int? ComponentId { get; set; }
 
@@ -23,5 +20,5 @@ public partial class MaintainingTicket
 
     public virtual Component? Component { get; set; }
 
-    public virtual Task? Task { get; set; }
+    public virtual EmployeeTask? EmployeeTask { get; set; }
 }

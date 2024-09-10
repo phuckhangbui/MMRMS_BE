@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Contract
 {
@@ -51,5 +48,5 @@ public partial class Contract
 
     public virtual ICollection<SerialMechanicalMachinery> SerialMechanicalMachineries { get; set; } = new List<SerialMechanicalMachinery>();
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 }

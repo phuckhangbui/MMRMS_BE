@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace BusinessObject;
 
-namespace BusinessObject;
-
-public partial class Attribute
+public partial class ProductAttribute
 {
-    public int AttributeId { get; set; }
+    public int ProductAttributeId { get; set; }
 
     public int? ProductId { get; set; }
 

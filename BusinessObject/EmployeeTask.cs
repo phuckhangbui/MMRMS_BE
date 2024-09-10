@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace BusinessObject;
 
-namespace BusinessObject;
-
-public partial class Task
+public partial class EmployeeTask
 {
-    public int TaskId { get; set; }
+    public int EmployeeTaskId { get; set; }
 
     public string? TaskTitle { get; set; }
 

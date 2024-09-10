@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Product
 {
@@ -27,7 +24,7 @@ public partial class Product
 
     public bool? IsDelete { get; set; }
 
-    public virtual ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
 
     public virtual Category? Category { get; set; }
 

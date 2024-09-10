@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Account
 {
@@ -29,7 +26,7 @@ public partial class Account
 
     public byte[]? PasswordSalt { get; set; }
 
-    public string? Otpnumber { get; set; }
+    public string? OtpNumber { get; set; }
 
     public string? TokenRefresh { get; set; }
 
@@ -73,7 +70,7 @@ public partial class Account
 
     public virtual Promotion? Promotion { get; set; }
 
-    public virtual ICollection<Task> TaskAssignees { get; set; } = new List<Task>();
+    public virtual ICollection<EmployeeTask> TaskAssignees { get; set; } = new List<EmployeeTask>();
 
-    public virtual ICollection<Task> TaskReporters { get; set; } = new List<Task>();
+    public virtual ICollection<EmployeeTask> TaskReporters { get; set; } = new List<EmployeeTask>();
 }
