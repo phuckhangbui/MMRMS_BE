@@ -9,7 +9,11 @@ namespace DTOs.Account
         public string Email { get; set; }
         public string Phone { get; set; }
         public string DateCreate { get; set; }
+        public string Address { get; set; }
+        public string CitizenCard { get; set; }
         public string Status { get; set; }
+        public string DateBirth { get; set; }
+        public int RoleID { get; set; }
     }
 
     public class StaffAndManagerAccountDto : AccountBaseDto
@@ -21,7 +25,7 @@ namespace DTOs.Account
 
     public class CustomerAccountDto : AccountBaseDto
     {
-        public string CitizenCard { get; set; }
+        
     }
 
     public class NewBaseAccountDto

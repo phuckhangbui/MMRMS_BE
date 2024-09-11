@@ -63,13 +63,13 @@ namespace DAO
             {
                 return await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
             }
-        } 
+        }
 
-        public async Task ChangeAccountStatusAsync(int accountId, int status)
+        public async Task<bool> IsAccountExistWithUsernameAsync(string username)
         {
             using (var context = new SmrmsContext())
             {
-                
+                return await context.Accounts.AnyAsync(a => a.Username.Equals(username));
             }
         }
     }

@@ -8,5 +8,7 @@ namespace Service.Interface
         Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole();
         Task CreateAccount(NewCustomerAccountDto? newCustomerAccountDto, NewStaffAndManagerAccountDto? newStaffAndManagerAccountDto);
         Task ChangeAccountStatus(int accountId, int status);
+        Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
+        Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId);
     }
 }

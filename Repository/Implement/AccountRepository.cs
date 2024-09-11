@@ -77,15 +77,32 @@ namespace Repository.Implement
             }
         }
 
+        public async Task<CustomerAccountDto> GetCustomerAccountById(int accountId)
+        {
+            var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
+            return _mapper.Map<CustomerAccountDto>(account);
+        }
+
         public async Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole()
         {
             var accounts = await AccountDao.Instance.GetManagerAndStaffAccountsAsync();
             return _mapper.Map<IEnumerable<StaffAndManagerAccountDto>>(accounts);
         }
 
+        public async Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId)
+        {
+            var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
+            return _mapper.Map<StaffAndManagerAccountDto>(account);
+        }
+
         public async Task<bool> IsAccountExistWithEmail(string email)
         {
             return await AccountDao.Instance.IsAccountExistWithEmailAsync(email);
+        }
+
+        public async Task<bool> IsAccountExistWithUsername(string username)
+        {
+            return await AccountDao.Instance.IsAccountExistWithUsernameAsync(username);
         }
     }
 }

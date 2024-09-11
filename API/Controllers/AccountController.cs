@@ -101,5 +101,42 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("customers/{accountId}")]
+        public async Task<ActionResult<CustomerAccountDto>> GetCustomerAccountById(int accountId)
+        {
+            try
+            {
+                var customerAccount = await _accountService.GetCustomerAccountById(accountId);
+                return Ok(customerAccount);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("staff-manager/{accountId}")]
+        public async Task<ActionResult<StaffAndManagerAccountDto>> GetStaffOrManagerAccountById(int accountId)
+        {
+            try
+            {
+                var staffOrManagerAccount = await _accountService.GetStaffAndManagerAccountById(accountId);
+                return Ok(staffOrManagerAccount);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
