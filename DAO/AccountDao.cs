@@ -61,7 +61,9 @@ namespace DAO
         {
             using (var context = new SmrmsContext())
             {
-                return await context.Accounts.FirstOrDefaultAsync(a => a.AccountId == accountId);
+                return await context.Accounts
+                    .Include(a => a.AccountBusinesses)
+                    .FirstOrDefaultAsync(a => a.AccountId == accountId);
             }
         }
 

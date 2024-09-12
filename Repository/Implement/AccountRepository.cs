@@ -28,19 +28,37 @@ namespace Repository.Implement
             }
         }
 
-        public async Task CreateAccount(NewCustomerAccountDto? newCustomerAccountDto, NewStaffAndManagerAccountDto? newStaffAndManagerAccountDto)
+
+        public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);
+            var account = _mapper.Map<Account>(newCustomerAccountDto);
 
-            var account = new Account();
-            if (newCustomerAccountDto != null)
+            account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
+            account.DateCreate = DateTime.Now;
+            account.Status = (int)AccountStatusEnum.Inactive;
+            account.IsDelete = false;
+            account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
+
+            account.RoleId = (int)AccountRoleEnum.Customer;
+            account.BusinessType = newCustomerAccountDto.BusinessType;
+            var accountBusiness = new AccountBusiness
             {
-                account = _mapper.Map<Account>(newCustomerAccountDto);
-            }
-            else if (newStaffAndManagerAccountDto != null)
-            {
-                account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
-            }
+                Company = newCustomerAccountDto.Company,
+                Position = newCustomerAccountDto.Position,
+                TaxNumber = newCustomerAccountDto.TaxNumber,
+                Address = newCustomerAccountDto.Address,
+            };
+
+            account.AccountBusinesses.Add(accountBusiness);
+
+            await AccountDao.Instance.CreateAsync(account);
+        }
+
+        public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        {
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);
+            var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
@@ -49,11 +67,6 @@ namespace Repository.Implement
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
             await AccountDao.Instance.CreateAsync(account);
-        }
-
-        public Task CreateAccount(NewBaseAccountDto newAccountDto)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<AccountBaseDto> GetAccountById(int accountId)
@@ -81,6 +94,13 @@ namespace Repository.Implement
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
             return _mapper.Map<CustomerAccountDto>(account);
+        }
+
+        public async Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts()
+        {
+            var accounts = await AccountDao.Instance.GetAccountsByRoleAsync((int)AccountRoleEnum.Customer);
+
+            return _mapper.Map<IEnumerable<CustomerAccountDto>>(accounts);
         }
 
         public async Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole()
