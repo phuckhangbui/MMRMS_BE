@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DTOs.Account;
+using DTOs.Product;
 
 namespace Repository.Mapper
 {
@@ -13,6 +14,9 @@ namespace Repository.Mapper
             CreateMap<Account, CustomerAccountDto>();
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
             CreateMap<Account, NewStaffAndManagerAccountDto>().ReverseMap();
+
+
+            CreateMap<Product, ProductDto>();
         }
     }
 }

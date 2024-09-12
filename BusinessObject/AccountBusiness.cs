@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class AccountBusiness
 {
@@ -14,6 +11,8 @@ public partial class AccountBusiness
     public string? Address { get; set; }
 
     public string? Position { get; set; }
+
+    public string? TaxNumber { get; set; }
 
     public virtual Account? Account { get; set; }
 }

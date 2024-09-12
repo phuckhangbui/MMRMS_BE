@@ -63,6 +63,8 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
+    public virtual DbSet<ProductImage> ProductImages { get; set; }
+
     public virtual DbSet<ProductComponentStatus> ProductComponentStatuses { get; set; }
 
     public virtual DbSet<ProductDetail> ProductDetails { get; set; }
@@ -476,6 +478,21 @@ public partial class SmrmsContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK_Product_Category");
+        });
+
+        modelBuilder.Entity<ProductImage>(entity =>
+        {
+            entity.HasKey(e => e.ProductImageId);
+
+            entity.ToTable("ProductImage");
+
+            entity.Property(e => e.ProductImageId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_ProductImage_Product");
         });
 
         modelBuilder.Entity<ProductComponentStatus>(entity =>
