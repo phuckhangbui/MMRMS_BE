@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DTOs.Account;
+using DTOs.Category;
 using DTOs.Product;
 
 namespace Repository.Mapper
@@ -15,6 +16,8 @@ namespace Repository.Mapper
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
             CreateMap<Account, NewStaffAndManagerAccountDto>().ReverseMap();
 
+            CreateMap<Category, CategoryDto>();
+            CreateMap<Category, CategoryRequestDto>().ReverseMap();
 
             CreateMap<Product, ProductDto>();
         }

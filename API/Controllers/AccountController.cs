@@ -51,6 +51,12 @@ namespace API.Controllers
         [HttpPost("customers")]
         public async Task<ActionResult> CreateCustomerAccount([FromBody] NewCustomerAccountDto newCustomerAccountDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 await _accountService.CreateAccount(newCustomerAccountDto, null);
@@ -69,6 +75,12 @@ namespace API.Controllers
         [HttpPost("staff-manager")]
         public async Task<ActionResult> CreateStaffOrManagerAccount([FromBody] NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 await _accountService.CreateAccount(null, newStaffAndManagerAccountDto);
