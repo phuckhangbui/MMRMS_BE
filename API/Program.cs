@@ -1,6 +1,5 @@
 using API.Extension;
 using Hangfire;
-using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +51,7 @@ using (var scope = app.Services.CreateScope())
     var cronHour = utcTime.Hour;
 
     //var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-    RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at " + 
+    RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at " +
         timeZone.DisplayName + TimeZoneInfo.ConvertTime(DateTime.Now, timeZone), timeZone), $"{cronMinute} {cronHour} * * *");
 
     //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at TimeZone" + TimeZoneInfo.GetSystemTimeZones(), TimeZoneInfo.Local), "* * * * *");
