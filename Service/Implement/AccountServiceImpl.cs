@@ -1,5 +1,4 @@
-﻿using BusinessObject;
-using DAO.Enum;
+﻿using DAO.Enum;
 using DTOs.Account;
 using Repository.Interface;
 using Service.Exceptions;
@@ -26,37 +25,6 @@ namespace Service.Implement
             }
 
             await _accountRepository.ChangeAccountStatus(accountId, status);
-        }
-
-        public async Task CreateAccount(NewCustomerAccountDto? newCustomerAccountDto, NewStaffAndManagerAccountDto? newStaffAndManagerAccountDto)
-        {
-            var email = newCustomerAccountDto?.Email ?? newStaffAndManagerAccountDto?.Email;
-
-            bool isExist = await _accountRepository.IsAccountExistWithEmail(email!);
-
-            if (isExist)
-            {
-                throw new ServiceException("An account with this email already exists.");
-            }
-
-            if (newCustomerAccountDto != null)
-            {
-                await _accountRepository.CreateAccount(newCustomerAccountDto, null);
-            }
-            else if (newStaffAndManagerAccountDto != null)
-            {
-                bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newStaffAndManagerAccountDto.Username);
-                if (isUsernameExist)
-                {
-                    throw new ServiceException("An account with this username already exists.");
-                }
-
-                await _accountRepository.CreateAccount(null, newStaffAndManagerAccountDto);
-            }
-            else
-            {
-                throw new ServiceException("No valid account data provided.");
-            }
         }
 
         public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
@@ -96,7 +64,6 @@ namespace Service.Implement
             return await _accountRepository.GetStaffAndManagerAccountById(accountId);
         }
 
-
         private async Task<AccountBaseDto> CheckAccountExist(int accountId)
         {
             var account = await _accountRepository.GetAccountById(accountId);
@@ -106,6 +73,41 @@ namespace Service.Implement
             }
 
             return account;
+        }
+
+        public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        {
+            bool isExist = await _accountRepository.IsAccountExistWithEmail(newStaffAndManagerAccountDto.Email);
+
+            if (isExist)
+            {
+                throw new ServiceException("An account with this email already exists.");
+            }
+
+            bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newStaffAndManagerAccountDto.Username);
+            if (isUsernameExist)
+            {
+                throw new ServiceException("An account with this username already exists.");
+            }
+
+            await _accountRepository.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
+        }
+
+        public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
+        {
+            bool isExist = await _accountRepository.IsAccountExistWithEmail(newCustomerAccountDto.Email);
+
+            if (isExist)
+            {
+                throw new ServiceException("An account with this email already exists.");
+            }
+
+            await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
+        }
+
+        public async Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts()
+        {
+            return await _accountRepository.GetCustomerAccounts();
         }
     }
 }

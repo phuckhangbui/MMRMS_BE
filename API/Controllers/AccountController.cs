@@ -34,6 +34,24 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("customers")]
+        public async Task<ActionResult> GetCustomerAccounts()
+        {
+            try
+            {
+                var accounts = await _accountService.GetCustomerAccounts();
+                return Ok(accounts);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("managers-staff")]
         public async Task<ActionResult> GetManagerAndStaffAccounts()
         {
@@ -59,7 +77,7 @@ namespace API.Controllers
 
             try
             {
-                await _accountService.CreateAccount(newCustomerAccountDto, null);
+                await _accountService.CreateCustomerAccount(newCustomerAccountDto);
                 return Created("", newCustomerAccountDto);
             }
             catch (ServiceException ex)
@@ -83,7 +101,7 @@ namespace API.Controllers
 
             try
             {
-                await _accountService.CreateAccount(null, newStaffAndManagerAccountDto);
+                await _accountService.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
                 return Created("", newStaffAndManagerAccountDto);
             }
             catch (ServiceException ex)
