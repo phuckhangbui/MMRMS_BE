@@ -6,8 +6,6 @@ public partial class Product
 
     public string? ProductName { get; set; }
 
-    public string? ProductImg { get; set; }
-
     public double? Price { get; set; }
 
     public int? Quantity { get; set; }
@@ -33,4 +31,7 @@ public partial class Product
     public virtual ICollection<ProductDetail> ProductDetails { get; set; } = new List<ProductDetail>();
 
     public virtual ICollection<ProductNumber> ProductNumbers { get; set; } = new List<ProductNumber>();
+    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+
+
 }
