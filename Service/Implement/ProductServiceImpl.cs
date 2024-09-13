@@ -38,5 +38,24 @@ namespace Service.Implement
 
             return productDetail;
         }
+
+        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductList(int productId)
+        {
+            var isProductExisted = await _productRepository.IsProductExisted(productId);
+
+            if (isProductExisted)
+            {
+                var list = await _productRepository.GetProductNumberList(productId);
+                if (list.IsNullOrEmpty())
+                {
+                    throw new ServiceException("There is no available serial product number with the id: " + productId);
+                }
+
+                return list;
+            }
+
+            throw new ServiceException("There is no product with the id: " + productId);
+
+        }
     }
 }
