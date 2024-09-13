@@ -243,9 +243,11 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.Property<int>("ComponentId")
-                        .HasColumnType("int")
-                        .HasColumnName("ComponentID");
+                    b.Property<int>("ComponentProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentProductId"));
 
                     b.Property<string>("ComponentName")
                         .HasColumnType("nvarchar(max)");
@@ -259,7 +261,7 @@ namespace DAO.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ComponentId");
+                    b.HasKey("ComponentProductId");
 
                     b.ToTable("ComponentProduct", (string)null);
                 });
@@ -857,6 +859,35 @@ namespace DAO.Migrations
                     b.ToTable("Attribute", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
+                {
+                    b.Property<int>("ProductDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
+
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductDetailId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductDetail", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.Property<int>("ProductComponentStatusId")
@@ -884,35 +915,6 @@ namespace DAO.Migrations
                     b.HasIndex("SerialNumber");
 
                     b.ToTable("ProductComponentStatus", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductDetail", b =>
-                {
-                    b.Property<int>("ProductDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductDetailId");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductDetail", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ProductImage", b =>
@@ -1415,6 +1417,23 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
+                {
+                    b.HasOne("BusinessObject.ComponentProduct", "ComponentProduct")
+                        .WithMany("ProductComponentDetails")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_ProductDetail_Component");
+
+                    b.HasOne("BusinessObject.Product", "Product")
+                        .WithMany("ProductComponentDetails")
+                        .HasForeignKey("ProductId")
+                        .HasConstraintName("FK_ProductDetail_Product");
+
+                    b.Navigation("ComponentProduct");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.HasOne("BusinessObject.ComponentProduct", "Component")
@@ -1430,23 +1449,6 @@ namespace DAO.Migrations
                     b.Navigation("Component");
 
                     b.Navigation("SerialNumberNavigation");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductDetail", b =>
-                {
-                    b.HasOne("BusinessObject.ComponentProduct", "Component")
-                        .WithMany("ProductDetails")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_ProductDetail_Component");
-
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductDetails")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ProductDetail_Product");
-
-                    b.Navigation("Component");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BusinessObject.ProductImage", b =>
@@ -1581,9 +1583,9 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.Navigation("ProductComponentStatuses");
+                    b.Navigation("ProductComponentDetails");
 
-                    b.Navigation("ProductDetails");
+                    b.Navigation("ProductComponentStatuses");
                 });
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
@@ -1640,7 +1642,7 @@ namespace DAO.Migrations
 
                     b.Navigation("ProductAttributes");
 
-                    b.Navigation("ProductDetails");
+                    b.Navigation("ProductComponentDetails");
 
                     b.Navigation("ProductImages");
 

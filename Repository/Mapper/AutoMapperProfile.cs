@@ -24,7 +24,8 @@ namespace Repository.Mapper
             CreateMap<Category, CategoryDto>();
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
 
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName));
         }
     }
 }

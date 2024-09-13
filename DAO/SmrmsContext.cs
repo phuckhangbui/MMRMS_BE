@@ -67,7 +67,7 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<ProductComponentStatus> ProductComponentStatuses { get; set; }
 
-    public virtual DbSet<ProductDetail> ProductDetails { get; set; }
+    public virtual DbSet<ProductComponentDetail> ProductDetails { get; set; }
 
     public virtual DbSet<ProductNumber> ProductNumbers { get; set; }
 
@@ -213,13 +213,13 @@ public partial class SmrmsContext : DbContext
 
         modelBuilder.Entity<ComponentProduct>(entity =>
         {
-            entity.HasKey(e => e.ComponentId);
+            entity.HasKey(e => e.ComponentProductId);
 
             entity.ToTable("ComponentProduct");
 
-            entity.Property(e => e.ComponentId)
-                .ValueGeneratedNever()
-                .HasColumnName("ComponentID");
+            entity.Property(e => e.ComponentProductId)
+                 .ValueGeneratedOnAdd()
+                 .UseIdentityColumn();
         });
 
         modelBuilder.Entity<Content>(entity =>
@@ -514,7 +514,7 @@ public partial class SmrmsContext : DbContext
                 .HasConstraintName("FK_ProductComponentStatus_SerialNumber");
         });
 
-        modelBuilder.Entity<ProductDetail>(entity =>
+        modelBuilder.Entity<ProductComponentDetail>(entity =>
         {
             entity.HasKey(e => e.ProductDetailId);
 
@@ -524,11 +524,11 @@ public partial class SmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Component).WithMany(p => p.ProductDetails)
+            entity.HasOne(d => d.ComponentProduct).WithMany(p => p.ProductComponentDetails)
                 .HasForeignKey(d => d.ComponentId)
                 .HasConstraintName("FK_ProductDetail_Component");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductDetails)
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductComponentDetails)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_ProductDetail_Product");
         });

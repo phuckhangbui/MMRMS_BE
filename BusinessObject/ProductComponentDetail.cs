@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace BusinessObject;
 
-namespace BusinessObject;
-
-public partial class ProductDetail
+public partial class ProductComponentDetail
 {
     public int ProductDetailId { get; set; }
 
@@ -15,7 +12,7 @@ public partial class ProductDetail
 
     public bool? IsDelete { get; set; }
 
-    public virtual ComponentProduct? Component { get; set; }
+    public virtual ComponentProduct? ComponentProduct { get; set; }
 
     public virtual Product? Product { get; set; }
 }

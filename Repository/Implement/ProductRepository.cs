@@ -28,7 +28,7 @@ namespace Repository.Implement
 
             return null;
         }
-        public Task<ProductDetailDto> GetProductDetail(int productId)
+        public Task<DisplayProductDetailDto> GetProductDetail(int productId)
         {
             throw new NotImplementedException();
         }
