@@ -25,6 +25,15 @@ namespace DAO
             }
         }
 
+        public async Task<bool> IsProductExisted(int productId)
+        {
+            using (var context = new SmrmsContext())
+            {
+                return await context.Products.AnyAsync(p => p.ProductId == productId);
+
+            }
+        }
+
         public async Task<IEnumerable<Product>> GetProductListWithCategory()
         {
             using (var context = new SmrmsContext())
@@ -46,5 +55,16 @@ namespace DAO
             }
         }
 
+        public async Task<Product> GetProductWithSerialProductNumber(int productId)
+        {
+            using (var context = new SmrmsContext())
+            {
+                var product = await context.Products.Include(p => p.ProductNumbers).FirstOrDefaultAsync(p => p.ProductId == productId);
+
+                return product;
+
+            }
+
+        }
     }
 }
