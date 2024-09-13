@@ -26,5 +26,17 @@ namespace Service.Implement
 
             return list;
         }
+
+        public async Task<DisplayProductDetailDto> GetProductDetailDto(int productId)
+        {
+            var productDetail = await _productRepository.GetProductDetail(productId);
+
+            if (productDetail == null)
+            {
+                throw new ServiceException("There is no product with the id: " + productId);
+            }
+
+            return productDetail;
+        }
     }
 }

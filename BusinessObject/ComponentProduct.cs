@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class ComponentProduct
 {
-    public int ComponentId { get; set; }
+    public int ComponentProductId { get; set; }
 
     public string? ComponentName { get; set; }
 
@@ -17,5 +14,5 @@ public partial class ComponentProduct
 
     public virtual ICollection<ProductComponentStatus> ProductComponentStatuses { get; set; } = new List<ProductComponentStatus>();
 
-    public virtual ICollection<ProductDetail> ProductDetails { get; set; } = new List<ProductDetail>();
+    public virtual ICollection<ProductComponentDetail> ProductComponentDetails { get; set; } = new List<ProductComponentDetail>();
 }

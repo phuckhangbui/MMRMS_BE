@@ -23,5 +23,7 @@
         public string? Status { get; set; }
 
         public bool? IsDelete { get; set; }
+
+        public IEnumerable<ProductImageDto>? ProductImageList { get; set; }
     }
 }

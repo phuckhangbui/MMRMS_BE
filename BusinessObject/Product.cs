@@ -28,7 +28,7 @@ public partial class Product
 
     public virtual ICollection<HiringRequestProductDetail> HiringRequestProductDetails { get; set; } = new List<HiringRequestProductDetail>();
 
-    public virtual ICollection<ProductDetail> ProductDetails { get; set; } = new List<ProductDetail>();
+    public virtual ICollection<ProductComponentDetail> ProductComponentDetails { get; set; } = new List<ProductComponentDetail>();
 
     public virtual ICollection<ProductNumber> ProductNumbers { get; set; } = new List<ProductNumber>();
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();

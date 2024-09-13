@@ -10,7 +10,7 @@ public partial class ProductAttribute
 
     public string? Specifications { get; set; }
 
-    public int? Status { get; set; }
+    public string? Status { get; set; }
 
     public bool? IsDelete { get; set; }
 

@@ -6,6 +6,6 @@ namespace Repository.Interface
     {
         Task<IEnumerable<ProductDto>> GetProductList();
 
-        Task<ProductDetailDto> GetProductDetail(int productId);
+        Task<DisplayProductDetailDto> GetProductDetail(int productId);
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(SmrmsContext))]
-    [Migration("20240910091240_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240913004824_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,9 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Position")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaxNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountBusinessId");
@@ -243,9 +246,11 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.Property<int>("ComponentId")
-                        .HasColumnType("int")
-                        .HasColumnName("ComponentID");
+                    b.Property<int>("ComponentProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentProductId"));
 
                     b.Property<string>("ComponentName")
                         .HasColumnType("nvarchar(max)");
@@ -259,7 +264,7 @@ namespace DAO.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ComponentId");
+                    b.HasKey("ComponentProductId");
 
                     b.ToTable("ComponentProduct", (string)null);
                 });
@@ -811,9 +816,6 @@ namespace DAO.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("ProductImg")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
@@ -860,6 +862,35 @@ namespace DAO.Migrations
                     b.ToTable("Attribute", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
+                {
+                    b.Property<int>("ProductDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
+
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductDetailId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductDetail", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.Property<int>("ProductComponentStatusId")
@@ -889,33 +920,28 @@ namespace DAO.Migrations
                     b.ToTable("ProductComponentStatus", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.ProductDetail", b =>
+            modelBuilder.Entity("BusinessObject.ProductImage", b =>
                 {
-                    b.Property<int>("ProductDetailId")
+                    b.Property<int>("ProductImageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductImageId"));
 
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
+                    b.Property<bool?>("IsThumbnail")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductDetailId");
+                    b.Property<string>("ProductImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ComponentId");
+                    b.HasKey("ProductImageId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductDetail", (string)null);
+                    b.ToTable("ProductImage", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ProductNumber", b =>
@@ -1394,6 +1420,23 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
+                {
+                    b.HasOne("BusinessObject.ComponentProduct", "ComponentProduct")
+                        .WithMany("ProductComponentDetails")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_ProductDetail_Component");
+
+                    b.HasOne("BusinessObject.Product", "Product")
+                        .WithMany("ProductComponentDetails")
+                        .HasForeignKey("ProductId")
+                        .HasConstraintName("FK_ProductDetail_Product");
+
+                    b.Navigation("ComponentProduct");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.HasOne("BusinessObject.ComponentProduct", "Component")
@@ -1411,19 +1454,12 @@ namespace DAO.Migrations
                     b.Navigation("SerialNumberNavigation");
                 });
 
-            modelBuilder.Entity("BusinessObject.ProductDetail", b =>
+            modelBuilder.Entity("BusinessObject.ProductImage", b =>
                 {
-                    b.HasOne("BusinessObject.ComponentProduct", "Component")
-                        .WithMany("ProductDetails")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_ProductDetail_Component");
-
                     b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductDetails")
+                        .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ProductDetail_Product");
-
-                    b.Navigation("Component");
+                        .HasConstraintName("FK_ProductImage_Product");
 
                     b.Navigation("Product");
                 });
@@ -1550,9 +1586,9 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.Navigation("ProductComponentStatuses");
+                    b.Navigation("ProductComponentDetails");
 
-                    b.Navigation("ProductDetails");
+                    b.Navigation("ProductComponentStatuses");
                 });
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
@@ -1609,7 +1645,9 @@ namespace DAO.Migrations
 
                     b.Navigation("ProductAttributes");
 
-                    b.Navigation("ProductDetails");
+                    b.Navigation("ProductComponentDetails");
+
+                    b.Navigation("ProductImages");
 
                     b.Navigation("ProductNumbers");
                 });

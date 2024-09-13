@@ -29,7 +29,20 @@ namespace DAO
         {
             using (var context = new SmrmsContext())
             {
-                return await context.Products.Include(p => p.Category).ToListAsync();
+                return await context.Products.Include(p => p.Category).Include(p => p.ProductImages).ToListAsync();
+            }
+        }
+
+        public async Task<Product> GetProductDetail(int productId)
+        {
+            using (var context = new SmrmsContext())
+            {
+                return await context.Products.Include(p => p.Category)
+                                             .Include(p => p.ProductImages)
+                                             .Include(p => p.ProductAttributes)
+                                             .Include(p => p.ProductComponentDetails)
+                                             .ThenInclude(componentDetail => componentDetail.ComponentProduct)
+                                             .FirstOrDefaultAsync(p => p.ProductId == productId);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DTOs.Product;
+using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -15,12 +16,30 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
         {
             try
             {
                 var products = await _productService.GetProductList();
                 return Ok(products);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{productId}")]
+        public async Task<ActionResult<DisplayProductDetailDto>> GetProductDetail([FromRoute] int productId)
+        {
+            try
+            {
+                var product = await _productService.GetProductDetailDto(productId);
+                return Ok(product);
             }
             catch (ServiceException ex)
             {
