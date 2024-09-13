@@ -24,6 +24,12 @@
 
         public bool? IsDelete { get; set; }
 
+        public IEnumerable<ProductAttributeDto>? ProductAttributeList { get; set; }
+
+        public IEnumerable<ProductImageDto>? ProductImageList { get; set; }
+
+        public IEnumerable<ComponentProductDto>? ComponentProductList { get; set; }
+
     }
 
     public class ProductComponentDetailDto
@@ -35,6 +41,34 @@
         public int? ComponentId { get; set; }
 
         public DateTime? DateCreate { get; set; }
+
+        public bool? IsDelete { get; set; }
+    }
+
+    public class ComponentProductDto
+    {
+        public int ComponentProductId { get; set; }
+
+        public string? ComponentName { get; set; }
+
+        public int? Quantity { get; set; }
+
+        public DateTime? DateCreate { get; set; }
+
+        public string? Status { get; set; }
+    }
+
+    public class ProductAttributeDto
+    {
+        public int ProductAttributeId { get; set; }
+
+        public int? ProductId { get; set; }
+
+        public string? AttributeName { get; set; }
+
+        public string? Specifications { get; set; }
+
+        public string? Status { get; set; }
 
         public bool? IsDelete { get; set; }
     }

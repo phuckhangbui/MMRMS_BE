@@ -25,7 +25,17 @@ namespace Repository.Mapper
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
 
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName));
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.ProductImageList, opt => opt.MapFrom(src => src.ProductImages));
+
+            CreateMap<Product, DisplayProductDetailDto>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.ProductImageList, opt => opt.MapFrom(src => src.ProductImages))
+                .ForMember(dest => dest.ProductAttributeList, opt => opt.MapFrom(src => src.ProductAttributes));
+
+            CreateMap<ProductImage, ProductImageDto>();
+            CreateMap<ProductAttribute, ProductAttributeDto>();
+            CreateMap<ComponentProduct, ComponentProductDto>();
         }
     }
 }
