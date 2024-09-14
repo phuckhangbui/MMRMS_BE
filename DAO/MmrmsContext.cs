@@ -4,13 +4,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace DAO;
 
-public partial class SmrmsContext : DbContext
+public partial class MmrmsContext : DbContext
 {
-    public SmrmsContext()
+    public MmrmsContext()
     {
     }
 
-    public SmrmsContext(DbContextOptions<SmrmsContext> options)
+    public MmrmsContext(DbContextOptions<MmrmsContext> options)
         : base(options)
     {
     }
@@ -67,9 +67,7 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<ProductComponentStatus> ProductComponentStatuses { get; set; }
 
-    public virtual DbSet<ProductComponentDetail> ProductDetails { get; set; }
-
-    public virtual DbSet<ProductNumber> ProductNumbers { get; set; }
+    public virtual DbSet<SerialNumberProduct> ProductNumbers { get; set; }
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 
@@ -79,7 +77,7 @@ public partial class SmrmsContext : DbContext
 
     public virtual DbSet<RequestDateResponse> RequestDateResponses { get; set; }
 
-    public virtual DbSet<SerialMechanicalMachinery> SerialMechanicalMachineries { get; set; }
+    public virtual DbSet<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; }
 
     public virtual DbSet<EmployeeTask> EmployeeTasks { get; set; }
 
@@ -206,9 +204,6 @@ public partial class SmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Components)
-                .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK_Component_CategoryID");
         });
 
         modelBuilder.Entity<ComponentProduct>(entity =>
@@ -220,6 +215,14 @@ public partial class SmrmsContext : DbContext
             entity.Property(e => e.ComponentProductId)
                  .ValueGeneratedOnAdd()
                  .UseIdentityColumn();
+
+            entity.HasOne(d => d.Component).WithMany(p => p.ComponentProducts)
+                .HasForeignKey(d => d.ComponentId)
+                .HasConstraintName("FK_ComponentProduct_ComponentID");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ComponentProducts)
+              .HasForeignKey(d => d.ProductId)
+              .HasConstraintName("FK_ComponentProduct_ProductID");
         });
 
         modelBuilder.Entity<Content>(entity =>
@@ -445,9 +448,9 @@ public partial class SmrmsContext : DbContext
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_MaintenanceRequest_Contract");
 
-            entity.HasOne(d => d.SerialNumberNavigation).WithMany(p => p.MaintenanceRequests)
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintenanceRequests)
                 .HasForeignKey(d => d.SerialNumber)
-                .HasConstraintName("FK_MaintenanceRequest_ProductNumber");
+                .HasConstraintName("FK_MaintenanceRequest_SerialNumberProduct");
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -509,35 +512,16 @@ public partial class SmrmsContext : DbContext
                 .HasForeignKey(d => d.ComponentId)
                 .HasConstraintName("FK_ProductComponentStatus_ComponentID");
 
-            entity.HasOne(d => d.SerialNumberNavigation).WithMany(p => p.ProductComponentStatuses)
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ProductComponentStatuses)
                 .HasForeignKey(d => d.SerialNumber)
-                .HasConstraintName("FK_ProductComponentStatus_SerialNumber");
+                .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
         });
 
-        modelBuilder.Entity<ProductComponentDetail>(entity =>
-        {
-            entity.HasKey(e => e.ProductDetailId);
-
-            entity.ToTable("ProductDetail");
-
-            entity.Property(e => e.ProductDetailId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.ComponentProduct).WithMany(p => p.ProductComponentDetails)
-                .HasForeignKey(d => d.ComponentId)
-                .HasConstraintName("FK_ProductDetail_Component");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductComponentDetails)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_ProductDetail_Product");
-        });
-
-        modelBuilder.Entity<ProductNumber>(entity =>
+        modelBuilder.Entity<SerialNumberProduct>(entity =>
         {
             entity.HasKey(e => e.SerialNumber);
 
-            entity.ToTable("ProductNumber");
+            entity.ToTable("SerialNumberProduct");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductNumbers)
                 .HasForeignKey(d => d.ProductId)
@@ -605,21 +589,21 @@ public partial class SmrmsContext : DbContext
                 .HasConstraintName("FK_RequestDateResponse_MaintenanceRequest");
         });
 
-        modelBuilder.Entity<SerialMechanicalMachinery>(entity =>
+        modelBuilder.Entity<ContractSerialNumberProduct>(entity =>
         {
-            entity.HasKey(e => e.ContractOrderId);
+            entity.HasKey(e => e.ContractSerialNumberProductId);
 
-            entity.ToTable("SerialMechanicalMachinery");
+            entity.ToTable("ContractSerialNumberProduct");
 
-            entity.Property(e => e.ContractOrderId)
+            entity.Property(e => e.ContractSerialNumberProductId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.SerialMechanicalMachineries)
+            entity.HasOne(d => d.Contract).WithMany(p => p.ContractSerialNumberProducts)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_SerialMechanicalMachinery_ContractID");
 
-            entity.HasOne(d => d.SerialNumberNavigation).WithMany(p => p.SerialMechanicalMachineries)
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ContractSerialNumberProducts)
                 .HasForeignKey(d => d.SerialNumber)
                 .HasConstraintName("FK_SerialMechanicalMachinery_SerialNumber");
         });

@@ -2,7 +2,7 @@
 
 namespace DAO
 {
-    public class ProductNumberDao : BaseDao<ProductNumber>
+    public class ProductNumberDao : BaseDao<SerialNumberProduct>
     {
         private static ProductNumberDao instance = null;
         private static readonly object instacelock = new object();

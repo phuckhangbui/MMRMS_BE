@@ -32,24 +32,11 @@
 
     }
 
-    public class ProductComponentDetailDto
-    {
-        public int ProductDetailId { get; set; }
-
-        public int? ProductId { get; set; }
-
-        public int? ComponentId { get; set; }
-
-        public DateTime? DateCreate { get; set; }
-
-        public bool? IsDelete { get; set; }
-    }
-
     public class ComponentProductDto
     {
         public int ComponentProductId { get; set; }
 
-        public string? ComponentName { get; set; }
+        public int ProductId { get; set; }
 
         public int? Quantity { get; set; }
 

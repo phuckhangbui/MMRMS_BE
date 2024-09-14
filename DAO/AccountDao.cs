@@ -28,7 +28,7 @@ namespace DAO
 
         public async Task<IEnumerable<Account>> GetAccountsByRoleAsync(int? roleId)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 IQueryable<Account> query = context.Accounts;
 
@@ -43,7 +43,7 @@ namespace DAO
 
         public async Task<IEnumerable<Account>> GetManagerAndStaffAccountsAsync()
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Accounts.Where(a => a.RoleId != (int)AccountRoleEnum.Customer).ToListAsync();
             }
@@ -51,7 +51,7 @@ namespace DAO
 
         public async Task<bool> IsAccountExistWithEmailAsync(string email)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Accounts.AnyAsync(a => a.Email.Equals(email));
             }
@@ -59,7 +59,7 @@ namespace DAO
 
         public async Task<Account> GetAccountAsyncById(int accountId)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Accounts
                     .Include(a => a.AccountBusinesses)
@@ -69,7 +69,7 @@ namespace DAO
 
         public async Task<bool> IsAccountExistWithUsernameAsync(string username)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Accounts.AnyAsync(a => a.Username.Equals(username));
             }

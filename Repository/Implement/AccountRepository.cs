@@ -18,7 +18,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task ChangeAccountStatus(int acocuntId, int status)
+        public async Task ChangeAccountStatus(int acocuntId, string status)
         {
             var currentAccount = await AccountDao.Instance.GetAccountAsyncById(acocuntId);
             if (currentAccount != null)
@@ -36,7 +36,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = (int)AccountStatusEnum.Inactive;
+            account.Status = "Inactive";
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
@@ -62,7 +62,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = (int)AccountStatusEnum.Inactive;
+            account.Status = "Inactive";
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 

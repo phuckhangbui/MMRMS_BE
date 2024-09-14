@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAO.Migrations
 {
-    [DbContext(typeof(SmrmsContext))]
-    partial class SmrmsContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MmrmsContext))]
+    partial class MmrmsContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -84,8 +84,8 @@ namespace DAO.Migrations
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("TokenDateExpire")
                         .HasColumnType("datetime2");
@@ -219,9 +219,6 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentId"));
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ComponentName")
                         .HasColumnType("nvarchar(max)");
 
@@ -236,8 +233,6 @@ namespace DAO.Migrations
 
                     b.HasKey("ComponentId");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Component", (string)null);
                 });
 
@@ -249,11 +244,14 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentProductId"));
 
-                    b.Property<string>("ComponentName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
@@ -262,6 +260,10 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ComponentProductId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ComponentProduct", (string)null);
                 });
@@ -389,6 +391,29 @@ namespace DAO.Migrations
                     b.HasIndex("ContractId");
 
                     b.ToTable("ContractPayment", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.ContractSerialNumberProduct", b =>
+                {
+                    b.Property<int>("ContractSerialNumberProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractSerialNumberProductId"));
+
+                    b.Property<int?>("ContractId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ContractSerialNumberProductId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.ToTable("ContractSerialNumberProduct", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ContractTerm", b =>
@@ -703,11 +728,17 @@ namespace DAO.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProductSerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumberProductSerialNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("Type")
                         .HasColumnType("int");
@@ -718,6 +749,8 @@ namespace DAO.Migrations
                     b.HasIndex("ComponentId");
 
                     b.HasIndex("EmployeeTaskId");
+
+                    b.HasIndex("SerialNumberProductSerialNumber");
 
                     b.ToTable("MaintainingTicket", (string)null);
                 });
@@ -859,35 +892,6 @@ namespace DAO.Migrations
                     b.ToTable("Attribute", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
-                {
-                    b.Property<int>("ProductDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDetailId"));
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductDetailId");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductDetail", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.Property<int>("ProductComponentStatusId")
@@ -939,30 +943,6 @@ namespace DAO.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImage", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductNumber", b =>
-                {
-                    b.Property<string>("SerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SerialNumber");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductNumber", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Promotion", b =>
@@ -1080,27 +1060,28 @@ namespace DAO.Migrations
                     b.ToTable("RequestDateResponse", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.SerialMechanicalMachinery", b =>
+            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
                 {
-                    b.Property<int>("ContractOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractOrderId"));
-
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ContractOrderId");
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("ContractId");
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("SerialNumber");
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
 
-                    b.ToTable("SerialMechanicalMachinery", (string)null);
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SerialNumber");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("SerialNumberProduct", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.TaskLog", b =>
@@ -1174,14 +1155,21 @@ namespace DAO.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("BusinessObject.Component", b =>
+            modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.HasOne("BusinessObject.Category", "Category")
-                        .WithMany("Components")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK_Component_CategoryID");
+                    b.HasOne("BusinessObject.Component", "Component")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_ComponentProduct_ComponentID");
 
-                    b.Navigation("Category");
+                    b.HasOne("BusinessObject.Product", "Product")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ProductId")
+                        .HasConstraintName("FK_ComponentProduct_ProductID");
+
+                    b.Navigation("Component");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BusinessObject.Content", b =>
@@ -1219,6 +1207,23 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_ContractPayment_ContractID");
 
                     b.Navigation("Contract");
+                });
+
+            modelBuilder.Entity("BusinessObject.ContractSerialNumberProduct", b =>
+                {
+                    b.HasOne("BusinessObject.Contract", "Contract")
+                        .WithMany("ContractSerialNumberProducts")
+                        .HasForeignKey("ContractId")
+                        .HasConstraintName("FK_SerialMechanicalMachinery_ContractID");
+
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
+                        .WithMany("ContractSerialNumberProducts")
+                        .HasForeignKey("SerialNumber")
+                        .HasConstraintName("FK_SerialMechanicalMachinery_SerialNumber");
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.ContractTerm", b =>
@@ -1365,9 +1370,15 @@ namespace DAO.Migrations
                         .HasForeignKey("EmployeeTaskId")
                         .HasConstraintName("FK_MaintainingTicket_TaskID");
 
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
+                        .WithMany()
+                        .HasForeignKey("SerialNumberProductSerialNumber");
+
                     b.Navigation("Component");
 
                     b.Navigation("EmployeeTask");
+
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
@@ -1377,14 +1388,14 @@ namespace DAO.Migrations
                         .HasForeignKey("ContractId")
                         .HasConstraintName("FK_MaintenanceRequest_Contract");
 
-                    b.HasOne("BusinessObject.ProductNumber", "SerialNumberNavigation")
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
                         .WithMany("MaintenanceRequests")
                         .HasForeignKey("SerialNumber")
-                        .HasConstraintName("FK_MaintenanceRequest_ProductNumber");
+                        .HasConstraintName("FK_MaintenanceRequest_SerialNumberProduct");
 
                     b.Navigation("Contract");
 
-                    b.Navigation("SerialNumberNavigation");
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.Notification", b =>
@@ -1417,23 +1428,6 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BusinessObject.ProductComponentDetail", b =>
-                {
-                    b.HasOne("BusinessObject.ComponentProduct", "ComponentProduct")
-                        .WithMany("ProductComponentDetails")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_ProductDetail_Component");
-
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductComponentDetails")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ProductDetail_Product");
-
-                    b.Navigation("ComponentProduct");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
                 {
                     b.HasOne("BusinessObject.ComponentProduct", "Component")
@@ -1441,14 +1435,14 @@ namespace DAO.Migrations
                         .HasForeignKey("ComponentId")
                         .HasConstraintName("FK_ProductComponentStatus_ComponentID");
 
-                    b.HasOne("BusinessObject.ProductNumber", "SerialNumberNavigation")
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
                         .WithMany("ProductComponentStatuses")
                         .HasForeignKey("SerialNumber")
-                        .HasConstraintName("FK_ProductComponentStatus_SerialNumber");
+                        .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
 
                     b.Navigation("Component");
 
-                    b.Navigation("SerialNumberNavigation");
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.ProductImage", b =>
@@ -1457,16 +1451,6 @@ namespace DAO.Migrations
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK_ProductImage_Product");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductNumber", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductNumbers")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ProductNumber_Product");
 
                     b.Navigation("Product");
                 });
@@ -1508,21 +1492,14 @@ namespace DAO.Migrations
                     b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("BusinessObject.SerialMechanicalMachinery", b =>
+            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
                 {
-                    b.HasOne("BusinessObject.Contract", "Contract")
-                        .WithMany("SerialMechanicalMachineries")
-                        .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_SerialMechanicalMachinery_ContractID");
+                    b.HasOne("BusinessObject.Product", "Product")
+                        .WithMany("ProductNumbers")
+                        .HasForeignKey("ProductId")
+                        .HasConstraintName("FK_ProductNumber_Product");
 
-                    b.HasOne("BusinessObject.ProductNumber", "SerialNumberNavigation")
-                        .WithMany("SerialMechanicalMachineries")
-                        .HasForeignKey("SerialNumber")
-                        .HasConstraintName("FK_SerialMechanicalMachinery_SerialNumber");
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("SerialNumberNavigation");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BusinessObject.TaskLog", b =>
@@ -1571,26 +1548,26 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Category", b =>
                 {
-                    b.Navigation("Components");
-
                     b.Navigation("Products");
                 });
 
             modelBuilder.Entity("BusinessObject.Component", b =>
                 {
+                    b.Navigation("ComponentProducts");
+
                     b.Navigation("MaintainingTickets");
                 });
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
                 {
-                    b.Navigation("ProductComponentDetails");
-
                     b.Navigation("ProductComponentStatuses");
                 });
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
                 {
                     b.Navigation("ContractPayments");
+
+                    b.Navigation("ContractSerialNumberProducts");
 
                     b.Navigation("ContractTerms");
 
@@ -1603,8 +1580,6 @@ namespace DAO.Migrations
                     b.Navigation("Invoices");
 
                     b.Navigation("MaintenanceRequests");
-
-                    b.Navigation("SerialMechanicalMachineries");
                 });
 
             modelBuilder.Entity("BusinessObject.DiscountType", b =>
@@ -1638,24 +1613,15 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Product", b =>
                 {
+                    b.Navigation("ComponentProducts");
+
                     b.Navigation("HiringRequestProductDetails");
 
                     b.Navigation("ProductAttributes");
 
-                    b.Navigation("ProductComponentDetails");
-
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductNumbers");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductNumber", b =>
-                {
-                    b.Navigation("MaintenanceRequests");
-
-                    b.Navigation("ProductComponentStatuses");
-
-                    b.Navigation("SerialMechanicalMachineries");
                 });
 
             modelBuilder.Entity("BusinessObject.Promotion", b =>
@@ -1668,6 +1634,15 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.PromotionType", b =>
                 {
                     b.Navigation("Promotions");
+                });
+
+            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
+                {
+                    b.Navigation("ContractSerialNumberProducts");
+
+                    b.Navigation("MaintenanceRequests");
+
+                    b.Navigation("ProductComponentStatuses");
                 });
 #pragma warning restore 612, 618
         }

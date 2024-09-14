@@ -115,7 +115,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{accountId}/status")]
-        public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery] int status)
+        public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery] string status)
         {
             try
             {

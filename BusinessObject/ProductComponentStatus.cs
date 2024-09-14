@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class ProductComponentStatus
 {
@@ -17,5 +14,5 @@ public partial class ProductComponentStatus
 
     public virtual ComponentProduct? Component { get; set; }
 
-    public virtual ProductNumber? SerialNumberNavigation { get; set; }
+    public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
 }

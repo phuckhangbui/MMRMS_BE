@@ -10,7 +10,7 @@ namespace DAO
             IEnumerable<T> list;
             try
             {
-                var _context = new SmrmsContext();
+                var _context = new MmrmsContext();
                 DbSet<T> _dbSet = _context.Set<T>();
                 list = await _dbSet.ToListAsync();
             }
@@ -26,7 +26,7 @@ namespace DAO
         {
             try
             {
-                var _context = new SmrmsContext();
+                var _context = new MmrmsContext();
                 DbSet<T> _dbSet = _context.Set<T>();
                 _dbSet.Add(entity);
                 await _context.SaveChangesAsync();
@@ -41,7 +41,7 @@ namespace DAO
         {
             try
             {
-                var _context = new SmrmsContext();
+                var _context = new MmrmsContext();
                 DbSet<T> _dbSet = _context.Set<T>();
                 var tracker = _context.Attach(entity);
                 tracker.State = EntityState.Modified;
@@ -57,7 +57,7 @@ namespace DAO
         {
             try
             {
-                var _context = new SmrmsContext();
+                var _context = new MmrmsContext();
                 DbSet<T> _dbSet = _context.Set<T>();
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
