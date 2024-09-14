@@ -15,7 +15,7 @@ namespace Service.Implement
             _accountRepository = accountRepository;
         }
 
-        public async Task ChangeAccountStatus(int accountId, int status)
+        public async Task ChangeAccountStatus(int accountId, string status)
         {
             await CheckAccountExist(accountId);
 

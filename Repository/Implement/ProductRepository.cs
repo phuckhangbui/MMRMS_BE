@@ -39,19 +39,6 @@ namespace Repository.Implement
 
             var productDetail = _mapper.Map<DisplayProductDetailDto>(product);
 
-            if (product.ProductComponentDetails != null && product.ProductComponentDetails.First().ComponentProduct != null)
-            {
-                List<ComponentProductDto> componentProductList = new List<ComponentProductDto>();
-
-                foreach (var detail in product.ProductComponentDetails)
-                {
-                    var componentProductDto = _mapper.Map<ComponentProductDto>(detail.ComponentProduct);
-
-                    componentProductList.Add(componentProductDto);
-                }
-                productDetail.ComponentProductList = componentProductList;
-            }
-
             return productDetail;
         }
 

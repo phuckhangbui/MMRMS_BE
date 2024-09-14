@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Category
 {
@@ -14,8 +11,6 @@ public partial class Category
     public DateTime? DateCreate { get; set; }
 
     public string? Status { get; set; }
-
-    public virtual ICollection<Component> Components { get; set; } = new List<Component>();
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

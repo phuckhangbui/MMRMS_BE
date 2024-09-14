@@ -10,7 +10,7 @@ namespace Repository.Interface
         Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto);
         Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> IsAccountExistWithEmail(string email);
-        Task ChangeAccountStatus(int acocuntId, int status);
+        Task ChangeAccountStatus(int acocuntId, string status);
         Task<AccountBaseDto> GetAccountById(int accountId);
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
         Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId);

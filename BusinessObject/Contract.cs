@@ -46,7 +46,7 @@ public partial class Contract
 
     public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
 
-    public virtual ICollection<SerialMechanicalMachinery> SerialMechanicalMachineries { get; set; } = new List<SerialMechanicalMachinery>();
+    public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
 
     public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 }

@@ -10,6 +10,8 @@ public partial class MaintainingTicket
 
     public int? ComponentId { get; set; }
 
+    public string? ProductSerialNumber { get; set; }
+
     public int? Quantity { get; set; }
 
     public DateTime? DateRepair { get; set; }
@@ -21,4 +23,7 @@ public partial class MaintainingTicket
     public virtual Component? Component { get; set; }
 
     public virtual EmployeeTask? EmployeeTask { get; set; }
+
+    public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
+
 }
