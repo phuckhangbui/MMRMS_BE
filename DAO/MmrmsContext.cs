@@ -523,7 +523,7 @@ public partial class MmrmsContext : DbContext
 
             entity.ToTable("SerialNumberProduct");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductNumbers)
+            entity.HasOne(d => d.Product).WithMany(p => p.SerialNumberProducts)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_ProductNumber_Product");
         });
