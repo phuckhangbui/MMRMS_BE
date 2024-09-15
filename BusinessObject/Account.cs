@@ -44,7 +44,7 @@ public partial class Account
 
     public int? BusinessType { get; set; }
 
-    public int? Status { get; set; }
+    public String? Status { get; set; }
 
     public bool? IsDelete { get; set; }
 

@@ -36,6 +36,8 @@ namespace Repository.Mapper
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();
             CreateMap<ComponentProduct, ComponentProductDto>();
+
+            CreateMap<SerialNumberProduct, SerialProductNumberDto>();
         }
     }
 }

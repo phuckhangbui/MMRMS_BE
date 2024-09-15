@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class MaintenanceRequest
 {
@@ -23,5 +20,5 @@ public partial class MaintenanceRequest
 
     public virtual ICollection<RequestDateResponse> RequestDateResponses { get; set; } = new List<RequestDateResponse>();
 
-    public virtual ProductNumber? SerialNumberNavigation { get; set; }
+    public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
 }

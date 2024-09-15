@@ -28,19 +28,19 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComponentProduct",
+                name: "Component",
                 columns: table => new
                 {
-                    ComponentProductId = table.Column<int>(type: "int", nullable: false)
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ComponentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
+                    ComponentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ComponentProduct", x => x.ComponentProductId);
+                    table.PrimaryKey("PK_Component", x => x.ComponentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,28 +67,6 @@ namespace DAO.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PromotionType", x => x.PromotionTypeId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Component",
-                columns: table => new
-                {
-                    ComponentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ComponentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Component", x => x.ComponentId);
-                    table.ForeignKey(
-                        name: "FK_Component_CategoryID",
-                        column: x => x.CategoryId,
-                        principalTable: "Category",
-                        principalColumn: "CategoryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -158,7 +136,7 @@ namespace DAO.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     AttributeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Specifications = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
@@ -172,26 +150,27 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductDetail",
+                name: "ComponentProduct",
                 columns: table => new
                 {
-                    ProductDetailId = table.Column<int>(type: "int", nullable: false)
+                    ComponentProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     ComponentId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductDetail", x => x.ProductDetailId);
+                    table.PrimaryKey("PK_ComponentProduct", x => x.ComponentProductId);
                     table.ForeignKey(
-                        name: "FK_ProductDetail_Component",
+                        name: "FK_ComponentProduct_ComponentID",
                         column: x => x.ComponentId,
-                        principalTable: "ComponentProduct",
-                        principalColumn: "ComponentProductId");
+                        principalTable: "Component",
+                        principalColumn: "ComponentId");
                     table.ForeignKey(
-                        name: "FK_ProductDetail_Product",
+                        name: "FK_ComponentProduct_ProductID",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "ProductId");
@@ -218,7 +197,7 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductNumber",
+                name: "SerialNumberProduct",
                 columns: table => new
                 {
                     SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -229,7 +208,7 @@ namespace DAO.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductNumber", x => x.SerialNumber);
+                    table.PrimaryKey("PK_SerialNumberProduct", x => x.SerialNumber);
                     table.ForeignKey(
                         name: "FK_ProductNumber_Product",
                         column: x => x.ProductId,
@@ -263,7 +242,7 @@ namespace DAO.Migrations
                     DateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: true),
                     BusinessType = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
@@ -296,9 +275,9 @@ namespace DAO.Migrations
                         principalTable: "ComponentProduct",
                         principalColumn: "ComponentProductId");
                     table.ForeignKey(
-                        name: "FK_ProductComponentStatus_SerialNumber",
+                        name: "FK_ProductComponentStatus_SerialNumberProduct",
                         column: x => x.SerialNumber,
-                        principalTable: "ProductNumber",
+                        principalTable: "SerialNumberProduct",
                         principalColumn: "SerialNumber");
                 });
 
@@ -541,6 +520,30 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContractSerialNumberProduct",
+                columns: table => new
+                {
+                    ContractSerialNumberProductId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractSerialNumberProduct", x => x.ContractSerialNumberProductId);
+                    table.ForeignKey(
+                        name: "FK_SerialMechanicalMachinery_ContractID",
+                        column: x => x.ContractId,
+                        principalTable: "Contract",
+                        principalColumn: "ContractId");
+                    table.ForeignKey(
+                        name: "FK_SerialMechanicalMachinery_SerialNumber",
+                        column: x => x.SerialNumber,
+                        principalTable: "SerialNumberProduct",
+                        principalColumn: "SerialNumber");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContractTerm",
                 columns: table => new
                 {
@@ -661,33 +664,9 @@ namespace DAO.Migrations
                         principalTable: "Contract",
                         principalColumn: "ContractId");
                     table.ForeignKey(
-                        name: "FK_MaintenanceRequest_ProductNumber",
+                        name: "FK_MaintenanceRequest_SerialNumberProduct",
                         column: x => x.SerialNumber,
-                        principalTable: "ProductNumber",
-                        principalColumn: "SerialNumber");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SerialMechanicalMachinery",
-                columns: table => new
-                {
-                    ContractOrderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SerialMechanicalMachinery", x => x.ContractOrderId);
-                    table.ForeignKey(
-                        name: "FK_SerialMechanicalMachinery_ContractID",
-                        column: x => x.ContractId,
-                        principalTable: "Contract",
-                        principalColumn: "ContractId");
-                    table.ForeignKey(
-                        name: "FK_SerialMechanicalMachinery_SerialNumber",
-                        column: x => x.SerialNumber,
-                        principalTable: "ProductNumber",
+                        principalTable: "SerialNumberProduct",
                         principalColumn: "SerialNumber");
                 });
 
@@ -782,10 +761,12 @@ namespace DAO.Migrations
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmployeeTaskId = table.Column<int>(type: "int", nullable: true),
                     ComponentId = table.Column<int>(type: "int", nullable: true),
+                    ProductSerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
                     DateRepair = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerialNumberProductSerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -795,6 +776,11 @@ namespace DAO.Migrations
                         column: x => x.ComponentId,
                         principalTable: "Component",
                         principalColumn: "ComponentId");
+                    table.ForeignKey(
+                        name: "FK_MaintainingTicket_SerialNumberProduct_SerialNumberProductSerialNumber",
+                        column: x => x.SerialNumberProductSerialNumber,
+                        principalTable: "SerialNumberProduct",
+                        principalColumn: "SerialNumber");
                     table.ForeignKey(
                         name: "FK_MaintainingTicket_TaskID",
                         column: x => x.EmployeeTaskId,
@@ -873,9 +859,14 @@ namespace DAO.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Component_CategoryId",
-                table: "Component",
-                column: "CategoryId");
+                name: "IX_ComponentProduct_ComponentId",
+                table: "ComponentProduct",
+                column: "ComponentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentProduct_ProductId",
+                table: "ComponentProduct",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Content_AccountCreateId",
@@ -896,6 +887,16 @@ namespace DAO.Migrations
                 name: "IX_ContractPayment_ContractId",
                 table: "ContractPayment",
                 column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractSerialNumberProduct_ContractId",
+                table: "ContractSerialNumberProduct",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractSerialNumberProduct_SerialNumber",
+                table: "ContractSerialNumberProduct",
+                column: "SerialNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContractTerm_ContractId",
@@ -968,6 +969,11 @@ namespace DAO.Migrations
                 column: "EmployeeTaskId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaintainingTicket_SerialNumberProductSerialNumber",
+                table: "MaintainingTicket",
+                column: "SerialNumberProductSerialNumber");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MaintenanceRequest_ContractId",
                 table: "MaintenanceRequest",
                 column: "ContractId");
@@ -998,23 +1004,8 @@ namespace DAO.Migrations
                 column: "SerialNumber");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductDetail_ComponentId",
-                table: "ProductDetail",
-                column: "ComponentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductDetail_ProductId",
-                table: "ProductDetail",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductImage_ProductId",
                 table: "ProductImage",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductNumber_ProductId",
-                table: "ProductNumber",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -1038,14 +1029,9 @@ namespace DAO.Migrations
                 column: "RequestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SerialMechanicalMachinery_ContractId",
-                table: "SerialMechanicalMachinery",
-                column: "ContractId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SerialMechanicalMachinery_SerialNumber",
-                table: "SerialMechanicalMachinery",
-                column: "SerialNumber");
+                name: "IX_SerialNumberProduct_ProductId",
+                table: "SerialNumberProduct",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Task_AssigneeId",
@@ -1087,6 +1073,9 @@ namespace DAO.Migrations
                 name: "ContractPayment");
 
             migrationBuilder.DropTable(
+                name: "ContractSerialNumberProduct");
+
+            migrationBuilder.DropTable(
                 name: "ContractTerm");
 
             migrationBuilder.DropTable(
@@ -1114,9 +1103,6 @@ namespace DAO.Migrations
                 name: "ProductComponentStatus");
 
             migrationBuilder.DropTable(
-                name: "ProductDetail");
-
-            migrationBuilder.DropTable(
                 name: "ProductImage");
 
             migrationBuilder.DropTable(
@@ -1124,9 +1110,6 @@ namespace DAO.Migrations
 
             migrationBuilder.DropTable(
                 name: "RequestDateResponse");
-
-            migrationBuilder.DropTable(
-                name: "SerialMechanicalMachinery");
 
             migrationBuilder.DropTable(
                 name: "TaskLog");
@@ -1138,9 +1121,6 @@ namespace DAO.Migrations
                 name: "Log");
 
             migrationBuilder.DropTable(
-                name: "Component");
-
-            migrationBuilder.DropTable(
                 name: "ComponentProduct");
 
             migrationBuilder.DropTable(
@@ -1150,7 +1130,10 @@ namespace DAO.Migrations
                 name: "Task");
 
             migrationBuilder.DropTable(
-                name: "ProductNumber");
+                name: "Component");
+
+            migrationBuilder.DropTable(
+                name: "SerialNumberProduct");
 
             migrationBuilder.DropTable(
                 name: "Contract");

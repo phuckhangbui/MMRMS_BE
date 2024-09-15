@@ -27,7 +27,7 @@ namespace DAO
 
         public async Task<IEnumerable<Category>> GetCategories()
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Categories
                     .Include(c => c.Products)
@@ -37,7 +37,7 @@ namespace DAO
 
         public async Task<bool> IsCategoryNameExist(string categoryName)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Categories.AnyAsync(c => c.CategoryName!.ToLower().Equals(categoryName.ToLower()));
             }
@@ -45,7 +45,7 @@ namespace DAO
 
         public async Task<Category> GetCategoryById(int categoryId)
         {
-            using (var context = new SmrmsContext())
+            using (var context = new MmrmsContext())
             {
                 return await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == categoryId);
             }

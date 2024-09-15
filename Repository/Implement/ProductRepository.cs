@@ -39,21 +39,24 @@ namespace Repository.Implement
 
             var productDetail = _mapper.Map<DisplayProductDetailDto>(product);
 
-            if (product.ProductComponentDetails != null && product.ProductComponentDetails.First().ComponentProduct != null)
-            {
-                List<ComponentProductDto> componentProductList = new List<ComponentProductDto>();
-
-                foreach (var detail in product.ProductComponentDetails)
-                {
-                    var componentProductDto = _mapper.Map<ComponentProductDto>(detail.ComponentProduct);
-
-                    componentProductList.Add(componentProductDto);
-                }
-                productDetail.ComponentProductList = componentProductList;
-            }
-
             return productDetail;
         }
 
+        public async Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId)
+        {
+            var product = await ProductDao.Instance.GetProductWithSerialProductNumber(productId);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.ProductNumbers);
+        }
+
+        public async Task<bool> IsProductExisted(int productId)
+        {
+            return await ProductDao.Instance.IsProductExisted(productId);
+        }
     }
 }

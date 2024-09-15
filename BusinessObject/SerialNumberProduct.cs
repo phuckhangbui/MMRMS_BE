@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace BusinessObject;
 
-namespace BusinessObject;
-
-public partial class ProductNumber
+public partial class SerialNumberProduct
 {
     public string SerialNumber { get; set; } = null!;
 
@@ -21,5 +18,5 @@ public partial class ProductNumber
 
     public virtual ICollection<ProductComponentStatus> ProductComponentStatuses { get; set; } = new List<ProductComponentStatus>();
 
-    public virtual ICollection<SerialMechanicalMachinery> SerialMechanicalMachineries { get; set; } = new List<SerialMechanicalMachinery>();
+    public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
 }
