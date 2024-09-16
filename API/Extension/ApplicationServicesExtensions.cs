@@ -1,5 +1,6 @@
 ﻿using Repository.Implement;
 using Repository.Interface;
+using Service.Cloundinary;
 using Service.Implement;
 using Service.Interface;
 
@@ -31,6 +32,8 @@ public static class ApplicationServicesExtensions
                 .AllowCredentials(); });
         });
 
+        services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         return services;
 
