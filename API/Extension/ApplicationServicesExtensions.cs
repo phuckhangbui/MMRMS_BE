@@ -1,5 +1,6 @@
 ﻿using Repository.Implement;
 using Repository.Interface;
+using Service.Cloundinary;
 using Service.Implement;
 using Service.Interface;
 
@@ -24,9 +25,15 @@ public static class ApplicationServicesExtensions
 
         services.AddCors(opt =>
         {
-            opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
+            opt.AddPolicy("CorsPolicy", policy => { policy
+                .WithOrigins("http://localhost:5173")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials(); });
         });
 
+        services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         return services;
 
