@@ -28,7 +28,6 @@ namespace Repository.Implement
             }
         }
 
-
         public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);

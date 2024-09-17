@@ -15,11 +15,13 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IContentRepository, ContentRepository>();
 
         //Service
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
+        services.AddScoped<IContentService, ContentServiceImpl>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
