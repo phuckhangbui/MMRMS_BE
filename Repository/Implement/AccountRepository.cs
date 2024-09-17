@@ -35,7 +35,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = "Inactive";
+            account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
@@ -61,7 +61,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = "Inactive";
+            account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
