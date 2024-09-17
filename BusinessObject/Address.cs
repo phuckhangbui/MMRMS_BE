@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Address
 {
@@ -9,7 +6,11 @@ public partial class Address
 
     public int? AccountId { get; set; }
 
-    public string? Address1 { get; set; }
+    public string? AddressBody { get; set; }
+
+    public string? District { get; set; }
+
+    public string? City { get; set; }
 
     public bool? IsDelete { get; set; }
 

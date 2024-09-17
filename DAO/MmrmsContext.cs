@@ -41,8 +41,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Delivery> Deliveries { get; set; }
 
-    public virtual DbSet<DiscountType> DiscountTypes { get; set; }
-
     public virtual DbSet<Feedback> Feedbacks { get; set; }
 
     public virtual DbSet<HiringRequest> HiringRequests { get; set; }
@@ -71,7 +69,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 
-    public virtual DbSet<PromotionType> PromotionTypes { get; set; }
+    public virtual DbSet<MembershipRank> MembershipRanks { get; set; }
 
     public virtual DbSet<Report> Reports { get; set; }
 
@@ -114,9 +112,9 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Promotion).WithMany(p => p.Accounts)
-                .HasForeignKey(d => d.PromotionId)
-                .HasConstraintName("FK_Account_Promotion");
+            entity.HasOne(d => d.MembershipRank).WithMany(p => p.Accounts)
+                .HasForeignKey(d => d.MembershipRankId)
+                .HasConstraintName("FK_Account_MembershipRank");
         });
 
         modelBuilder.Entity<AccountBusiness>(entity =>
@@ -136,11 +134,11 @@ public partial class MmrmsContext : DbContext
 
         modelBuilder.Entity<AccountPromotion>(entity =>
         {
-            entity.HasKey(e => e.PromotionAccountId);
+            entity.HasKey(e => e.AccountPromotionId);
 
             entity.ToTable("AccountPromotion");
 
-            entity.Property(e => e.PromotionAccountId)
+            entity.Property(e => e.AccountPromotionId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -234,10 +232,6 @@ public partial class MmrmsContext : DbContext
             entity.Property(e => e.ContentId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
-
-            entity.HasOne(d => d.AccountCreate).WithMany(p => p.Contents)
-                .HasForeignKey(d => d.AccountCreateId)
-                .HasConstraintName("FK_Content_Account");
         });
 
         modelBuilder.Entity<Contract>(entity =>
@@ -246,10 +240,6 @@ public partial class MmrmsContext : DbContext
 
             entity.ToTable("Contract");
 
-            entity.Property(e => e.ContractId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
             entity.HasOne(d => d.AccountSign).WithMany(p => p.Contracts)
                 .HasForeignKey(d => d.AccountSignId)
                 .HasConstraintName("FK_Contract_Account");
@@ -257,6 +247,36 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Address).WithMany(p => p.Contracts)
                 .HasForeignKey(d => d.AddressId)
                 .HasConstraintName("FK_Contract_Address");
+
+            entity.HasOne(d => d.HiringRequest).WithOne(d => d.Contract)
+                .HasConstraintName("FK_Contract_HiringRequest");
+
+            entity.HasOne(d => d.HiringRequest)
+                .WithOne(p => p.Contract)
+                .HasForeignKey<Contract>(d => d.HiringRequestId)
+                .IsRequired() // Contract requires HiringRequestId
+                .HasConstraintName("FK_Contract_HiringRequest");
+        });
+
+        modelBuilder.Entity<HiringRequest>(entity =>
+        {
+            entity.HasKey(e => e.HiringRequestId);
+
+            entity.ToTable("HiringRequest");
+
+            entity.HasOne(d => d.AccountOrder).WithMany(p => p.HiringRequests)
+                .HasForeignKey(d => d.AccountOrderId)
+                .HasConstraintName("FK_HiringRequest_Account");
+
+            entity.HasOne(d => d.Address).WithMany(p => p.HiringRequests)
+                .HasForeignKey(d => d.AddressId)
+                .HasConstraintName("FK_HiringRequest_Address");
+
+            entity.HasOne(d => d.Contract)
+                .WithOne(p => p.HiringRequest)
+                .HasForeignKey<Contract>(p => p.HiringRequestId)
+                .OnDelete(DeleteBehavior.Restrict) // Prevent cascading delete
+                .HasConstraintName("FK_HiringRequest_Contract");
         });
 
         modelBuilder.Entity<ContractPayment>(entity =>
@@ -304,16 +324,6 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Delivery_StaffID");
         });
 
-        modelBuilder.Entity<DiscountType>(entity =>
-        {
-            entity.HasKey(e => e.DiscountTypeId);
-
-            entity.ToTable("DiscountType");
-
-            entity.Property(e => e.DiscountTypeId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-        });
 
         modelBuilder.Entity<Feedback>(entity =>
         {
@@ -334,24 +344,7 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Feedback_Contract");
         });
 
-        modelBuilder.Entity<HiringRequest>(entity =>
-        {
-            entity.HasKey(e => e.HiringRequestId);
 
-            entity.ToTable("HiringRequest");
-
-            entity.Property(e => e.HiringRequestId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.AccountOrder).WithMany(p => p.HiringRequests)
-                .HasForeignKey(d => d.AccountOrderId)
-                .HasConstraintName("FK_HiringRequest_Account");
-
-            entity.HasOne(d => d.Address).WithMany(p => p.HiringRequests)
-                .HasForeignKey(d => d.AddressId)
-                .HasConstraintName("FK_HiringRequest_Address");
-        });
 
         modelBuilder.Entity<HiringRequestProductDetail>(entity =>
         {
@@ -375,10 +368,6 @@ public partial class MmrmsContext : DbContext
         modelBuilder.Entity<Invoice>(entity =>
         {
             entity.HasKey(e => e.InvoiceId);
-
-            entity.Property(e => e.InvoiceId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.ContractId)
@@ -538,25 +527,18 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.DiscountType).WithMany(p => p.Promotions)
-                .HasForeignKey(d => d.DiscountTypeId)
-                .HasConstraintName("FK_Promotion_DiscountTypeID");
-
-            entity.HasOne(d => d.PromotionType).WithMany(p => p.Promotions)
-                .HasForeignKey(d => d.PromotionTypeId)
-                .HasConstraintName("FK_Promotion_PromotionTypeID");
         });
 
-        modelBuilder.Entity<PromotionType>(entity =>
+        modelBuilder.Entity<MembershipRank>(entity =>
         {
-            entity.HasKey(e => e.PromotionTypeId);
+            entity.HasKey(e => e.MembershipRankId);
 
-            entity.ToTable("PromotionType");
+            entity.ToTable("MembershipRank");
 
-            entity.Property(e => e.PromotionTypeId)
+            entity.Property(e => e.MembershipRankId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
-            entity.Property(e => e.PromotionTypeName).HasMaxLength(100);
+
         });
 
         modelBuilder.Entity<Report>(entity =>

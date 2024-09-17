@@ -2,7 +2,7 @@
 
 public partial class Contract
 {
-    public int ContractId { get; set; }
+    public string ContractId { get; set; } = null!;
 
     public string? ContractName { get; set; }
 
@@ -10,7 +10,7 @@ public partial class Contract
 
     public int? AddressId { get; set; }
 
-    public int? OrderId { get; set; }
+    public string? HiringRequestId { get; set; }
 
     public double? Price { get; set; }
 
@@ -33,6 +33,8 @@ public partial class Contract
     public virtual Account? AccountSign { get; set; }
 
     public virtual Address? Address { get; set; }
+
+    public virtual HiringRequest? HiringRequest { get; set; }
 
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
 

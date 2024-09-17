@@ -22,7 +22,6 @@ namespace Repository.Implement
 
             category.Status = CategoryEnum.OutOfStock.ToString();
             category.DateCreate = DateTime.Now;
-            category.Type = 0;
 
             await CategoryDao.Instance.CreateAsync(category);
         }
@@ -35,7 +34,6 @@ namespace Repository.Implement
             {
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
-                Type = category.Type,
                 DateCreate = category.DateCreate,
                 Status = category.Status,
                 Quantity = category.Products.Sum(p => p.Quantity) ?? 0

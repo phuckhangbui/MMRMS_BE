@@ -18,7 +18,6 @@ namespace DAO.Migrations
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -44,29 +43,61 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiscountType",
+                name: "Content",
                 columns: table => new
                 {
-                    DiscountTypeId = table.Column<int>(type: "int", nullable: false)
+                    ContentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DiscountTypeName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContentBody = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DiscountType", x => x.DiscountTypeId);
+                    table.PrimaryKey("PK_Content", x => x.ContentId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PromotionType",
+                name: "MembershipRank",
                 columns: table => new
                 {
-                    PromotionTypeId = table.Column<int>(type: "int", nullable: false)
+                    MembershipRankId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PromotionTypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    MembershipRankName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MoneySpent = table.Column<double>(type: "float", nullable: true),
+                    DiscountPercentage = table.Column<double>(type: "float", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PromotionType", x => x.PromotionTypeId);
+                    table.PrimaryKey("PK_MembershipRank", x => x.MembershipRankId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Promotion",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PromotionPack = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActionPromotion = table.Column<int>(type: "int", nullable: true),
+                    DiscountPercentage = table.Column<double>(type: "float", nullable: true),
+                    PromotionTypeId = table.Column<int>(type: "int", nullable: true),
+                    DiscountTypeId = table.Column<int>(type: "int", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Promotion", x => x.PromotionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,35 +127,49 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Promotion",
+                name: "Account",
                 columns: table => new
                 {
-                    PromotionId = table.Column<int>(type: "int", nullable: false)
+                    AccountId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PromotionPack = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ActionPromotion = table.Column<int>(type: "int", nullable: true),
-                    DiscountPercentage = table.Column<double>(type: "float", nullable: true),
-                    PromotionTypeId = table.Column<int>(type: "int", nullable: true),
-                    DiscountTypeId = table.Column<int>(type: "int", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AvatarImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CitizenCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Gender = table.Column<int>(type: "int", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    OtpNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenRefresh = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenDateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AccountPromotionId = table.Column<int>(type: "int", nullable: true),
+                    MembershipRankId = table.Column<int>(type: "int", nullable: true),
+                    MoneySpent = table.Column<double>(type: "float", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RoleId = table.Column<int>(type: "int", nullable: true),
+                    BusinessType = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    PromotionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Promotion", x => x.PromotionId);
+                    table.PrimaryKey("PK_Account", x => x.AccountId);
                     table.ForeignKey(
-                        name: "FK_Promotion_DiscountTypeID",
-                        column: x => x.DiscountTypeId,
-                        principalTable: "DiscountType",
-                        principalColumn: "DiscountTypeId");
+                        name: "FK_Account_MembershipRank",
+                        column: x => x.MembershipRankId,
+                        principalTable: "MembershipRank",
+                        principalColumn: "MembershipRankId");
                     table.ForeignKey(
-                        name: "FK_Promotion_PromotionTypeID",
-                        column: x => x.PromotionTypeId,
-                        principalTable: "PromotionType",
-                        principalColumn: "PromotionTypeId");
+                        name: "FK_Account_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId");
                 });
 
             migrationBuilder.CreateTable(
@@ -136,6 +181,7 @@ namespace DAO.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     AttributeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Specifications = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
@@ -217,71 +263,6 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Account",
-                columns: table => new
-                {
-                    AccountId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AvatarImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CitizenCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    OtpNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TokenRefresh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TokenDateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ActionPromotion = table.Column<int>(type: "int", nullable: true),
-                    PromotionId = table.Column<int>(type: "int", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    RoleId = table.Column<int>(type: "int", nullable: true),
-                    BusinessType = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Account", x => x.AccountId);
-                    table.ForeignKey(
-                        name: "FK_Account_Promotion",
-                        column: x => x.PromotionId,
-                        principalTable: "Promotion",
-                        principalColumn: "PromotionId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProductComponentStatus",
-                columns: table => new
-                {
-                    ProductComponentStatusId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ComponentId = table.Column<int>(type: "int", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductComponentStatus", x => x.ProductComponentStatusId);
-                    table.ForeignKey(
-                        name: "FK_ProductComponentStatus_ComponentID",
-                        column: x => x.ComponentId,
-                        principalTable: "ComponentProduct",
-                        principalColumn: "ComponentProductId");
-                    table.ForeignKey(
-                        name: "FK_ProductComponentStatus_SerialNumberProduct",
-                        column: x => x.SerialNumber,
-                        principalTable: "SerialNumberProduct",
-                        principalColumn: "SerialNumber");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AccountBusiness",
                 columns: table => new
                 {
@@ -307,7 +288,7 @@ namespace DAO.Migrations
                 name: "AccountPromotion",
                 columns: table => new
                 {
-                    PromotionAccountId = table.Column<int>(type: "int", nullable: false)
+                    AccountPromotionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PromotionId = table.Column<int>(type: "int", nullable: true),
                     AccountId = table.Column<int>(type: "int", nullable: true),
@@ -316,7 +297,7 @@ namespace DAO.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountPromotion", x => x.PromotionAccountId);
+                    table.PrimaryKey("PK_AccountPromotion", x => x.AccountPromotionId);
                     table.ForeignKey(
                         name: "FK_AccountPromotion_Account",
                         column: x => x.AccountId,
@@ -336,7 +317,9 @@ namespace DAO.Migrations
                     AddressId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<int>(type: "int", nullable: true),
-                    Address1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressBody = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
@@ -345,29 +328,6 @@ namespace DAO.Migrations
                     table.ForeignKey(
                         name: "FK_Address_Account",
                         column: x => x.AccountId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Content",
-                columns: table => new
-                {
-                    ContentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Content1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountCreateId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Content", x => x.ContentId);
-                    table.ForeignKey(
-                        name: "FK_Content_Account",
-                        column: x => x.AccountCreateId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
                 });
@@ -415,48 +375,39 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Contract",
+                name: "ProductComponentStatus",
                 columns: table => new
                 {
-                    ContractId = table.Column<int>(type: "int", nullable: false)
+                    ProductComponentStatusId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountSignId = table.Column<int>(type: "int", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    Price = table.Column<double>(type: "float", nullable: true),
-                    ShippingPrice = table.Column<double>(type: "float", nullable: true),
-                    DiscountPrice = table.Column<double>(type: "float", nullable: true),
-                    FinalPrice = table.Column<double>(type: "float", nullable: true),
-                    Method = table.Column<int>(type: "int", nullable: true),
-                    DateSign = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ComponentId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contract", x => x.ContractId);
+                    table.PrimaryKey("PK_ProductComponentStatus", x => x.ProductComponentStatusId);
                     table.ForeignKey(
-                        name: "FK_Contract_Account",
-                        column: x => x.AccountSignId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
+                        name: "FK_ProductComponentStatus_ComponentID",
+                        column: x => x.ComponentId,
+                        principalTable: "ComponentProduct",
+                        principalColumn: "ComponentProductId");
                     table.ForeignKey(
-                        name: "FK_Contract_Address",
-                        column: x => x.AddressId,
-                        principalTable: "Address",
-                        principalColumn: "AddressId");
+                        name: "FK_ProductComponentStatus_SerialNumberProduct",
+                        column: x => x.SerialNumber,
+                        principalTable: "SerialNumberProduct",
+                        principalColumn: "SerialNumber");
                 });
 
             migrationBuilder.CreateTable(
                 name: "HiringRequest",
                 columns: table => new
                 {
-                    HiringRequestId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HiringRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AccountOrderId = table.Column<int>(type: "int", nullable: true),
                     AddressId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -496,12 +447,77 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Contract",
+                columns: table => new
+                {
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ContractName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountSignId = table.Column<int>(type: "int", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: true),
+                    HiringRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: true),
+                    ShippingPrice = table.Column<double>(type: "float", nullable: true),
+                    DiscountPrice = table.Column<double>(type: "float", nullable: true),
+                    FinalPrice = table.Column<double>(type: "float", nullable: true),
+                    Method = table.Column<int>(type: "int", nullable: true),
+                    DateSign = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contract", x => x.ContractId);
+                    table.ForeignKey(
+                        name: "FK_Contract_Account",
+                        column: x => x.AccountSignId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_Contract_Address",
+                        column: x => x.AddressId,
+                        principalTable: "Address",
+                        principalColumn: "AddressId");
+                    table.ForeignKey(
+                        name: "FK_HiringRequest_Contract",
+                        column: x => x.HiringRequestId,
+                        principalTable: "HiringRequest",
+                        principalColumn: "HiringRequestId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HiringRequestProductDetail",
+                columns: table => new
+                {
+                    HiringRequestProductDetailId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HiringRequestId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ProductId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HiringRequestProductDetail", x => x.HiringRequestProductDetailId);
+                    table.ForeignKey(
+                        name: "FK_HiringRequestProductDetail_HiringRequest",
+                        column: x => x.HiringRequestId,
+                        principalTable: "HiringRequest",
+                        principalColumn: "HiringRequestId");
+                    table.ForeignKey(
+                        name: "FK_HiringRequestProductDetail_Product",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "ProductId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContractPayment",
                 columns: table => new
                 {
                     ContractPaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: true),
                     CustomerPaidDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -525,7 +541,7 @@ namespace DAO.Migrations
                 {
                     ContractSerialNumberProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -549,7 +565,7 @@ namespace DAO.Migrations
                 {
                     ContractTermId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -571,7 +587,7 @@ namespace DAO.Migrations
                     DeliveryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StaffId = table.Column<int>(type: "int", nullable: true),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateShip = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -600,7 +616,7 @@ namespace DAO.Migrations
                     AccountFeedbackId = table.Column<int>(type: "int", nullable: true),
                     FeedbackImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true)
                 },
@@ -623,10 +639,9 @@ namespace DAO.Migrations
                 name: "Invoices",
                 columns: table => new
                 {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     InvoiceCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Method = table.Column<int>(type: "int", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -648,7 +663,7 @@ namespace DAO.Migrations
                 {
                     RequestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -677,7 +692,7 @@ namespace DAO.Migrations
                     EmployeeTaskId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TaskTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContractId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AssigneeId = table.Column<int>(type: "int", nullable: true),
                     ReporterId = table.Column<int>(type: "int", nullable: true),
@@ -704,31 +719,6 @@ namespace DAO.Migrations
                         column: x => x.ReporterId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HiringRequestProductDetail",
-                columns: table => new
-                {
-                    HiringRequestProductDetailId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    HiringRequestId = table.Column<int>(type: "int", nullable: true),
-                    ProductId = table.Column<int>(type: "int", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HiringRequestProductDetail", x => x.HiringRequestProductDetailId);
-                    table.ForeignKey(
-                        name: "FK_HiringRequestProductDetail_HiringRequest",
-                        column: x => x.HiringRequestId,
-                        principalTable: "HiringRequest",
-                        principalColumn: "HiringRequestId");
-                    table.ForeignKey(
-                        name: "FK_HiringRequestProductDetail_Product",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
-                        principalColumn: "ProductId");
                 });
 
             migrationBuilder.CreateTable(
@@ -829,6 +819,11 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Account_MembershipRankId",
+                table: "Account",
+                column: "MembershipRankId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Account_PromotionId",
                 table: "Account",
                 column: "PromotionId");
@@ -869,11 +864,6 @@ namespace DAO.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Content_AccountCreateId",
-                table: "Content",
-                column: "AccountCreateId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Contract_AccountSignId",
                 table: "Contract",
                 column: "AccountSignId");
@@ -882,6 +872,12 @@ namespace DAO.Migrations
                 name: "IX_Contract_AddressId",
                 table: "Contract",
                 column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contract_HiringRequestId",
+                table: "Contract",
+                column: "HiringRequestId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContractPayment_ContractId",
@@ -1009,16 +1005,6 @@ namespace DAO.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Promotion_DiscountTypeId",
-                table: "Promotion",
-                column: "DiscountTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Promotion_PromotionTypeId",
-                table: "Promotion",
-                column: "PromotionTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Report_EmployeeTaskId",
                 table: "Report",
                 column: "EmployeeTaskId");
@@ -1115,9 +1101,6 @@ namespace DAO.Migrations
                 name: "TaskLog");
 
             migrationBuilder.DropTable(
-                name: "HiringRequest");
-
-            migrationBuilder.DropTable(
                 name: "Log");
 
             migrationBuilder.DropTable(
@@ -1142,22 +1125,22 @@ namespace DAO.Migrations
                 name: "Product");
 
             migrationBuilder.DropTable(
-                name: "Address");
+                name: "HiringRequest");
 
             migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
+                name: "Address");
+
+            migrationBuilder.DropTable(
                 name: "Account");
 
             migrationBuilder.DropTable(
+                name: "MembershipRank");
+
+            migrationBuilder.DropTable(
                 name: "Promotion");
-
-            migrationBuilder.DropTable(
-                name: "DiscountType");
-
-            migrationBuilder.DropTable(
-                name: "PromotionType");
         }
     }
 }

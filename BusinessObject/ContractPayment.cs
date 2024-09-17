@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class ContractPayment
 {
     public int ContractPaymentId { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public string? Title { get; set; }
 

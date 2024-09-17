@@ -6,7 +6,7 @@ public partial class EmployeeTask
 
     public string? TaskTitle { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public string? Content { get; set; }
 

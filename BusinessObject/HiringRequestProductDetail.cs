@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class HiringRequestProductDetail
 {
     public int HiringRequestProductDetailId { get; set; }
 
-    public int? HiringRequestId { get; set; }
+    public string? HiringRequestId { get; set; }
 
     public int? ProductId { get; set; }
 
