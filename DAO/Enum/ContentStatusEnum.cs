@@ -1,6 +1,6 @@
 ﻿namespace DAO.Enum
 {
-    public enum AccountStatusEnum
+    public enum ContentStatusEnum
     {
         Active,
         Inactive,

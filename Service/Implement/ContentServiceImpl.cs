@@ -1,0 +1,106 @@
+﻿using DAO.Enum;
+using DTOs.Content;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using Repository.Interface;
+using Service.Exceptions;
+using Service.Interface;
+
+namespace Service.Implement
+{
+    public class ContentServiceImpl : IContentService
+    {
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly IContentRepository _contentRepository; 
+
+        public ContentServiceImpl(ICloudinaryService cloudinaryService, IContentRepository contentRepository)
+        {
+            _cloudinaryService = cloudinaryService;
+            _contentRepository = contentRepository;
+        }
+
+        public async Task ChangeContentImage(int contentId, IFormFile imageUrl)
+        {
+            var content = await CheckContentExist(contentId);
+
+            string imageUrlStr = await UploadImageToCloudinary(imageUrl);
+
+            await _contentRepository.ChangeContentImage(contentId, imageUrlStr);
+        }
+
+        public async Task CreateContent(ContentCreateRequestDto contentRequestDto)
+        {
+            string imageUrlStr = await UploadImageToCloudinary(contentRequestDto.ImageUrl);
+
+            await _contentRepository.CreateContent(contentRequestDto, imageUrlStr);
+        }
+
+        public async Task DeleteContent(int contentId)
+        {
+            var content = await CheckContentExist(contentId);
+
+            await _contentRepository.DeleteContent(contentId);
+        }
+
+        public async Task<ContentDto> GetContentDetailById(int contentId)
+        {
+            var content = await CheckContentExist(contentId);
+
+            return content;
+        }
+
+        public async Task<IEnumerable<ContentDto>> GetContents()
+        {
+            var contents = await _contentRepository.GetContents();
+
+            if (contents.IsNullOrEmpty())
+            {
+                throw new ServiceException("Content list is empty");
+            }
+
+            return contents;
+        }
+
+        public async Task UpdateContent(int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
+        {
+            var content = await CheckContentExist(contentId);
+
+            await _contentRepository.UpdateContent(contentId, contentUpdateRequestDto);
+        }
+
+        private async Task<string> UploadImageToCloudinary(IFormFile imageUrl)
+        {
+            var result = await _cloudinaryService.AddPhotoAsync(imageUrl);
+            if (result.Error != null)
+            {
+                throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
+            }
+
+            return result.SecureUrl.AbsoluteUri;
+        }
+
+        public async Task ChangeContentStatus(int contentId, string status)
+        {
+            await CheckContentExist(contentId);
+
+            if (!Enum.IsDefined(typeof(ContentStatusEnum), status))
+            {
+                throw new ServiceException("Invalid status value");
+            }
+
+            await _contentRepository.ChangeContentStatus(contentId, status);
+        }
+
+        private async Task<ContentDto> CheckContentExist(int contentId)
+        {
+            var content = await _contentRepository.GetContentDetailById(contentId);
+
+            if (content == null)
+            {
+                throw new ServiceException("Content not found");
+            }
+
+            return content;
+        }
+    }
+}
