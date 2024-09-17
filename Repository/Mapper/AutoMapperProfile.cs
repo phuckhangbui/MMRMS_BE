@@ -2,6 +2,7 @@
 using BusinessObject;
 using DTOs.Account;
 using DTOs.Category;
+using DTOs.Component;
 using DTOs.Content;
 using DTOs.Product;
 
@@ -38,10 +39,16 @@ namespace Repository.Mapper
             CreateMap<ProductAttribute, ProductAttributeDto>();
             CreateMap<ComponentProduct, ComponentProductDto>();
 
+            CreateMap<Component, ComponentDto>();
+            CreateMap<CreateComponentDto, Component>();
+
+
             CreateMap<SerialNumberProduct, SerialProductNumberDto>();
 
             CreateMap<Content, ContentDto>();
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();
+
+
         }
     }
 }

@@ -16,22 +16,27 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IContentRepository, ContentRepository>();
+        services.AddScoped<IComponentRepository, ComponentRepository>();
 
         //Service
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
         services.AddScoped<IContentService, ContentServiceImpl>();
+        services.AddScoped<IComponentService, ComponentServiceImpl>();
 
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddCors(opt =>
         {
-            opt.AddPolicy("CorsPolicy", policy => { policy
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy
                 .WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); });
+                .AllowCredentials();
+            });
         });
 
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));

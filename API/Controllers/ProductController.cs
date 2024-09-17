@@ -51,13 +51,33 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{productId}/serial-product")]
+        [HttpGet("{productId}/serial-products")]
         public async Task<ActionResult<DisplayProductDetailDto>> GetSerialProductList([FromRoute] int productId)
         {
             try
             {
                 var product = await _productService.GetSerialProductList(productId);
                 return Ok(product);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProductDto)
+        {
+            try
+            {
+
+
+
+                return StatusCode(201);
             }
             catch (ServiceException ex)
             {
