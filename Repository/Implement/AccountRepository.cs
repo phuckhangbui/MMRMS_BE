@@ -28,7 +28,6 @@ namespace Repository.Implement
             }
         }
 
-
         public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);
@@ -36,7 +35,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = "Inactive";
+            account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
@@ -62,7 +61,7 @@ namespace Repository.Implement
 
             account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
             account.DateCreate = DateTime.Now;
-            account.Status = "Inactive";
+            account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
 
