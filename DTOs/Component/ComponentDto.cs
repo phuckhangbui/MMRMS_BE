@@ -23,10 +23,11 @@ namespace DTOs.Component
         public string ComponentName { get; set; }
 
         [Required(ErrorMessage = "Quantity is required")]
+        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
         public int Quantity { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
-        [Range(minimum: 0, maximum: Double.MaxValue)]
+        [Range(0, Double.MaxValue, ErrorMessage = "Price must be a positive number")]
         public double? Price { get; set; }
     }
 

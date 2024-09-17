@@ -36,6 +36,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComponent([FromBody] CreateComponentDto createComponentDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 await _componentService.CreateComponet(createComponentDto);

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace API.Controllers
 {

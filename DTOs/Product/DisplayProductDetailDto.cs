@@ -55,6 +55,8 @@
 
         public string? Specifications { get; set; }
 
+        public string? Unit { get; set; }
+
         public string? Status { get; set; }
 
         public bool? IsDelete { get; set; }

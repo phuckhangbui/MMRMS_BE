@@ -54,6 +54,11 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.SerialNumberProducts);
         }
 
+        public async Task<ProductDto> CreateProduct(CreateProductAttributeDto createProductAttributeDto)
+        {
+
+        }
+
         public async Task<bool> IsProductExisted(int productId)
         {
             return await ProductDao.Instance.IsProductExisted(productId);

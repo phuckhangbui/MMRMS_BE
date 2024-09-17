@@ -65,5 +65,15 @@ namespace DAO
             }
 
         }
+
+        public async Task CreateProduct(Product product)
+        {
+            using (var context = new MmrmsContext())
+            {
+                DbSet<Product> _dbSet = context.Set<Product>();
+                _dbSet.Add(product);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }
