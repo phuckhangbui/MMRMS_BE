@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Feedback
 {
@@ -13,7 +10,7 @@ public partial class Feedback
 
     public string? Content { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public DateTime? DateCreate { get; set; }
 

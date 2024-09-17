@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Invoice
 {
-    public int InvoiceId { get; set; }
+    public string InvoiceId { get; set; } = null!;
 
     public string? InvoiceCode { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public int? Method { get; set; }
 

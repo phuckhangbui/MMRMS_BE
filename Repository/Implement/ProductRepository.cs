@@ -51,7 +51,7 @@ namespace Repository.Implement
                 return null;
             }
 
-            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.ProductNumbers);
+            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.SerialNumberProducts);
         }
 
         public async Task<bool> IsProductExisted(int productId)

@@ -4,7 +4,7 @@ public partial class MaintenanceRequest
 {
     public int RequestId { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public string? SerialNumber { get; set; }
 

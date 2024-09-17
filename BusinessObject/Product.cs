@@ -29,7 +29,7 @@ public partial class Product
     public virtual ICollection<HiringRequestProductDetail> HiringRequestProductDetails { get; set; } = new List<HiringRequestProductDetail>();
 
 
-    public virtual ICollection<SerialNumberProduct> ProductNumbers { get; set; } = new List<SerialNumberProduct>();
+    public virtual ICollection<SerialNumberProduct> SerialNumberProducts { get; set; } = new List<SerialNumberProduct>();
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     public virtual ICollection<ComponentProduct> ComponentProducts { get; set; } = new List<ComponentProduct>();
 

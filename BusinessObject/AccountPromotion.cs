@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class AccountPromotion
 {
-    public int PromotionAccountId { get; set; }
+    public int AccountPromotionId { get; set; }
 
     public int? PromotionId { get; set; }
 

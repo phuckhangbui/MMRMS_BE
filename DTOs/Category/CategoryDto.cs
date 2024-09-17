@@ -8,7 +8,6 @@ namespace DTOs.Category
 
         public string? CategoryName { get; set; }
 
-        public int? Type { get; set; }
 
         public DateTime? DateCreate { get; set; }
 

@@ -32,9 +32,10 @@ public partial class Account
 
     public DateTime? TokenDateExpire { get; set; }
 
-    public int? ActionPromotion { get; set; }
+    public int? AccountPromotionId { get; set; }
 
-    public int? PromotionId { get; set; }
+    public int? MembershipRankId { get; set; }
+    public double? MoneySpent { get; set; }
 
     public DateTime? DateCreate { get; set; }
 
@@ -48,13 +49,13 @@ public partial class Account
 
     public bool? IsDelete { get; set; }
 
+    public virtual MembershipRank? MembershipRank { get; set; }
+
     public virtual ICollection<AccountBusiness> AccountBusinesses { get; set; } = new List<AccountBusiness>();
 
     public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
 
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
-
-    public virtual ICollection<Content> Contents { get; set; } = new List<Content>();
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
@@ -67,8 +68,6 @@ public partial class Account
     public virtual ICollection<Log> Logs { get; set; } = new List<Log>();
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
-    public virtual Promotion? Promotion { get; set; }
 
     public virtual ICollection<EmployeeTask> TaskAssignees { get; set; } = new List<EmployeeTask>();
 

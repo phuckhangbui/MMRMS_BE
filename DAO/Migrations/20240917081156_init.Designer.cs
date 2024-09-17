@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    [Migration("20240914134846_init")]
+    [Migration("20240917081156_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -33,7 +33,7 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
 
-                    b.Property<int?>("ActionPromotion")
+                    b.Property<int?>("AccountPromotionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
@@ -65,6 +65,12 @@ namespace DAO.Migrations
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MembershipRankId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("MoneySpent")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -100,6 +106,8 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountId");
+
+                    b.HasIndex("MembershipRankId");
 
                     b.HasIndex("PromotionId");
 
@@ -138,11 +146,11 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.AccountPromotion", b =>
                 {
-                    b.Property<int>("PromotionAccountId")
+                    b.Property<int>("AccountPromotionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PromotionAccountId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountPromotionId"));
 
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
@@ -156,7 +164,7 @@ namespace DAO.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("PromotionAccountId");
+                    b.HasKey("AccountPromotionId");
 
                     b.HasIndex("AccountId");
 
@@ -176,7 +184,13 @@ namespace DAO.Migrations
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Address1")
+                    b.Property<string>("AddressBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
@@ -205,9 +219,6 @@ namespace DAO.Migrations
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
 
                     b.HasKey("CategoryId");
 
@@ -279,10 +290,7 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContentId"));
 
-                    b.Property<int?>("AccountCreateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content1")
+                    b.Property<string>("ContentBody")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DateCreate")
@@ -297,20 +305,18 @@ namespace DAO.Migrations
                     b.Property<string>("Summary")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ContentId");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("AccountCreateId");
+                    b.HasKey("ContentId");
 
                     b.ToTable("Content", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
                 {
-                    b.Property<int>("ContractId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractId"));
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("AccountSignId")
                         .HasColumnType("int");
@@ -336,10 +342,11 @@ namespace DAO.Migrations
                     b.Property<double?>("FinalPrice")
                         .HasColumnType("float");
 
-                    b.Property<int?>("Method")
-                        .HasColumnType("int");
+                    b.Property<string>("HiringRequestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("OrderId")
+                    b.Property<int?>("Method")
                         .HasColumnType("int");
 
                     b.Property<double?>("Price")
@@ -357,6 +364,9 @@ namespace DAO.Migrations
 
                     b.HasIndex("AddressId");
 
+                    b.HasIndex("HiringRequestId")
+                        .IsUnique();
+
                     b.ToTable("Contract", (string)null);
                 });
 
@@ -368,8 +378,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractPaymentId"));
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("CustomerPaidDate")
                         .HasColumnType("datetime2");
@@ -404,8 +414,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractSerialNumberProductId"));
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(450)");
@@ -430,8 +440,8 @@ namespace DAO.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -454,8 +464,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryId"));
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -478,22 +488,6 @@ namespace DAO.Migrations
                     b.ToTable("Delivery", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.DiscountType", b =>
-                {
-                    b.Property<int>("DiscountTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscountTypeId"));
-
-                    b.Property<string>("DiscountTypeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DiscountTypeId");
-
-                    b.ToTable("DiscountType", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
                 {
                     b.Property<int>("EmployeeTaskId")
@@ -508,8 +502,8 @@ namespace DAO.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -554,8 +548,8 @@ namespace DAO.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -577,17 +571,17 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.HiringRequest", b =>
                 {
-                    b.Property<int>("HiringRequestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HiringRequestId"));
+                    b.Property<string>("HiringRequestId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("AccountOrderId")
                         .HasColumnType("int");
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -612,8 +606,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HiringRequestProductDetailId"));
 
-                    b.Property<int?>("HiringRequestId")
-                        .HasColumnType("int");
+                    b.Property<string>("HiringRequestId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
@@ -632,14 +626,11 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Invoice", b =>
                 {
-                    b.Property<int>("InvoiceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("InvoiceId")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"));
-
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -766,8 +757,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
@@ -791,6 +782,37 @@ namespace DAO.Migrations
                     b.HasIndex("SerialNumber");
 
                     b.ToTable("MaintenanceRequest", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MembershipRank", b =>
+                {
+                    b.Property<int>("MembershipRankId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MembershipRankId"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("DiscountPercentage")
+                        .HasColumnType("float");
+
+                    b.Property<string>("MembershipRankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("MoneySpent")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MembershipRankId");
+
+                    b.ToTable("MembershipRank", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Notification", b =>
@@ -886,6 +908,9 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductAttributeId");
@@ -988,28 +1013,7 @@ namespace DAO.Migrations
 
                     b.HasKey("PromotionId");
 
-                    b.HasIndex("DiscountTypeId");
-
-                    b.HasIndex("PromotionTypeId");
-
                     b.ToTable("Promotion", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.PromotionType", b =>
-                {
-                    b.Property<int>("PromotionTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PromotionTypeId"));
-
-                    b.Property<string>("PromotionTypeName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("PromotionTypeId");
-
-                    b.ToTable("PromotionType", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Report", b =>
@@ -1113,12 +1117,16 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Account", b =>
                 {
-                    b.HasOne("BusinessObject.Promotion", "Promotion")
+                    b.HasOne("BusinessObject.MembershipRank", "MembershipRank")
                         .WithMany("Accounts")
-                        .HasForeignKey("PromotionId")
-                        .HasConstraintName("FK_Account_Promotion");
+                        .HasForeignKey("MembershipRankId")
+                        .HasConstraintName("FK_Account_MembershipRank");
 
-                    b.Navigation("Promotion");
+                    b.HasOne("BusinessObject.Promotion", null)
+                        .WithMany("Accounts")
+                        .HasForeignKey("PromotionId");
+
+                    b.Navigation("MembershipRank");
                 });
 
             modelBuilder.Entity("BusinessObject.AccountBusiness", b =>
@@ -1175,16 +1183,6 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BusinessObject.Content", b =>
-                {
-                    b.HasOne("BusinessObject.Account", "AccountCreate")
-                        .WithMany("Contents")
-                        .HasForeignKey("AccountCreateId")
-                        .HasConstraintName("FK_Content_Account");
-
-                    b.Navigation("AccountCreate");
-                });
-
             modelBuilder.Entity("BusinessObject.Contract", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountSign")
@@ -1197,9 +1195,18 @@ namespace DAO.Migrations
                         .HasForeignKey("AddressId")
                         .HasConstraintName("FK_Contract_Address");
 
+                    b.HasOne("BusinessObject.HiringRequest", "HiringRequest")
+                        .WithOne("Contract")
+                        .HasForeignKey("BusinessObject.Contract", "HiringRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_HiringRequest_Contract");
+
                     b.Navigation("AccountSign");
 
                     b.Navigation("Address");
+
+                    b.Navigation("HiringRequest");
                 });
 
             modelBuilder.Entity("BusinessObject.ContractPayment", b =>
@@ -1458,23 +1465,6 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BusinessObject.Promotion", b =>
-                {
-                    b.HasOne("BusinessObject.DiscountType", "DiscountType")
-                        .WithMany("Promotions")
-                        .HasForeignKey("DiscountTypeId")
-                        .HasConstraintName("FK_Promotion_DiscountTypeID");
-
-                    b.HasOne("BusinessObject.PromotionType", "PromotionType")
-                        .WithMany("Promotions")
-                        .HasForeignKey("PromotionTypeId")
-                        .HasConstraintName("FK_Promotion_PromotionTypeID");
-
-                    b.Navigation("DiscountType");
-
-                    b.Navigation("PromotionType");
-                });
-
             modelBuilder.Entity("BusinessObject.Report", b =>
                 {
                     b.HasOne("BusinessObject.EmployeeTask", "EmployeeTask")
@@ -1498,7 +1488,7 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
                 {
                     b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductNumbers")
+                        .WithMany("SerialNumberProducts")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK_ProductNumber_Product");
 
@@ -1522,8 +1512,6 @@ namespace DAO.Migrations
                     b.Navigation("AccountPromotions");
 
                     b.Navigation("Addresses");
-
-                    b.Navigation("Contents");
 
                     b.Navigation("Contracts");
 
@@ -1585,11 +1573,6 @@ namespace DAO.Migrations
                     b.Navigation("MaintenanceRequests");
                 });
 
-            modelBuilder.Entity("BusinessObject.DiscountType", b =>
-                {
-                    b.Navigation("Promotions");
-                });
-
             modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
                 {
                     b.Navigation("MaintainingTickets");
@@ -1601,6 +1584,8 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.HiringRequest", b =>
                 {
+                    b.Navigation("Contract");
+
                     b.Navigation("HiringRequestProductDetails");
                 });
 
@@ -1614,6 +1599,11 @@ namespace DAO.Migrations
                     b.Navigation("RequestDateResponses");
                 });
 
+            modelBuilder.Entity("BusinessObject.MembershipRank", b =>
+                {
+                    b.Navigation("Accounts");
+                });
+
             modelBuilder.Entity("BusinessObject.Product", b =>
                 {
                     b.Navigation("ComponentProducts");
@@ -1624,7 +1614,7 @@ namespace DAO.Migrations
 
                     b.Navigation("ProductImages");
 
-                    b.Navigation("ProductNumbers");
+                    b.Navigation("SerialNumberProducts");
                 });
 
             modelBuilder.Entity("BusinessObject.Promotion", b =>
@@ -1632,11 +1622,6 @@ namespace DAO.Migrations
                     b.Navigation("AccountPromotions");
 
                     b.Navigation("Accounts");
-                });
-
-            modelBuilder.Entity("BusinessObject.PromotionType", b =>
-                {
-                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BusinessObject;
+﻿namespace BusinessObject;
 
 public partial class Promotion
 {
@@ -31,7 +28,4 @@ public partial class Promotion
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
-    public virtual DiscountType? DiscountType { get; set; }
-
-    public virtual PromotionType? PromotionType { get; set; }
 }
