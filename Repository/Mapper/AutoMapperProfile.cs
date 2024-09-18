@@ -5,6 +5,7 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Product;
+using DTOs.Promotion;
 
 namespace Repository.Mapper
 {
@@ -53,7 +54,8 @@ namespace Repository.Mapper
             CreateMap<Content, ContentDto>();
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();
 
-
+            CreateMap<Promotion, PromotionDto>();
+            CreateMap<Promotion, PromotionCreateRequestDto>().ReverseMap();
         }
     }
 }

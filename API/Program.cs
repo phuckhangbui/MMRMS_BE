@@ -1,6 +1,7 @@
 using API.Extension;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
+using Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,13 +18,21 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Hangfire config
-builder.Services.AddHangfire((sp, config) =>
-{
-    var connectionString = sp.GetRequiredService<IConfiguration>().GetConnectionString("SqlCloud");
-    config.UseSqlServerStorage(connectionString);
-});
+
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("SqlCloud")));
+
+//builder.Services.AddHangfireServer(options =>
+//{
+//    options.Queues = new[] { "default", "critical" };
+//});
+
 builder.Services.AddHangfireServer();
+
+builder.Services.AddScoped<IBackgroundService, Service.Implement.BackgroundServiceImpl>();
 
 builder.Services.ApplicationServices(builder.Configuration);
 
@@ -47,21 +56,30 @@ app.MapHangfireDashboard("/hangfire");
 
 using (var scope = app.Services.CreateScope())
 {
-    //var serviceProvider = scope.ServiceProvider;
-    //var backgroundService = serviceProvider.GetRequiredService<IBackgroundService>();
+    var serviceProvider = scope.ServiceProvider;
+    var backgroundService = serviceProvider.GetRequiredService<IBackgroundService>();
 
     var timeZoneId = "SE Asia Standard Time";
     var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
-    var localTime = new DateTime(1, 1, 1, 17, 30, 0);
+    var localTime = new DateTime(1, 1, 1, 0, 0, 00);
     var utcTime = TimeZoneInfo.ConvertTimeToUtc(localTime, timeZone);
 
     var cronMinute = utcTime.Minute;
     var cronHour = utcTime.Hour;
 
     //var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-    RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at " +
-        timeZone.DisplayName + TimeZoneInfo.ConvertTime(DateTime.Now, timeZone), timeZone), $"{cronMinute} {cronHour} * * *");
+    //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at " +
+    //    timeZone.DisplayName + TimeZoneInfo.ConvertTime(DateTime.Now, timeZone), timeZone), $"{cronMinute} {cronHour} * * *");
+
+    //RecurringJob.AddOrUpdate("PromotionJob",
+    //    () => backgroundService.PromotionJob(), $"{cronMinute} {cronHour} * * *");
+
+    RecurringJob.AddOrUpdate(
+        "PromotionJob",
+        () => backgroundService.PromotionJob(),
+        "0 0 * * *",
+        timeZone);
 
     //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at TimeZone" + TimeZoneInfo.GetSystemTimeZones(), TimeZoneInfo.Local), "* * * * *");
     //RecurringJob.AddOrUpdate("TestSchedule", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
