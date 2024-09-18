@@ -1,5 +1,7 @@
 ﻿using BusinessObject;
+using DTOs.Component;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DAO
 {
@@ -50,6 +52,7 @@ namespace DAO
                                              .Include(p => p.ProductImages)
                                              .Include(p => p.ProductAttributes)
                                              .Include(p => p.ComponentProducts)
+                                             .ThenInclude(c => c.Component)
                                              .FirstOrDefaultAsync(p => p.ProductId == productId);
             }
         }
@@ -66,13 +69,56 @@ namespace DAO
 
         }
 
-        public async Task CreateProduct(Product product)
+        public async Task<Product> CreateProduct(Product product, IEnumerable<CreateComponentEmbeddedDto>? newComponentList)
         {
             using (var context = new MmrmsContext())
             {
-                DbSet<Product> _dbSet = context.Set<Product>();
-                _dbSet.Add(product);
-                await context.SaveChangesAsync();
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (!newComponentList.IsNullOrEmpty())
+                        {
+                            foreach (var c in newComponentList)
+                            {
+                                Component Component = new Component
+                                {
+                                    ComponentName = c.ComponentName.Trim(),
+                                    Quantity = null,
+                                    Price = null,
+                                    Status = "NoPriceAndQuantity",
+                                    DateCreate = DateTime.Now,
+                                };
+
+                                context.Components.Add(Component);
+                                await context.SaveChangesAsync();
+
+                                var componentProduct = new ComponentProduct()
+                                {
+                                    ComponentId = Component.ComponentId,
+                                    Quantity = c.Quantity,
+                                    Status = "Active"
+                                };
+
+                                product.ComponentProducts.Add(componentProduct);
+                            }
+                        }
+
+
+                        DbSet<Product> _dbSet = context.Set<Product>();
+                        _dbSet.Add(product);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                        return product;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
             }
         }
     }

@@ -11,5 +11,11 @@ namespace Repository.Interface
         Task Update(ComponentDto componentDto);
 
         Task Delete(int componentId);
+
+        Task<bool> IsComponentIdExisted(int componentId);
+        Task<ComponentDto> Create(string name);
+
+        Task<bool> IsComponentNameExisted(string componentName);
+
     }
 }

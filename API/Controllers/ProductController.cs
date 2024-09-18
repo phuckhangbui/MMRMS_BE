@@ -80,10 +80,9 @@ namespace API.Controllers
 
             try
             {
+                var product = await _productService.CreateProduct(createProductDto);
 
-
-
-                return StatusCode(201);
+                return StatusCode(201, new { productId = product.ProductId });
             }
             catch (ServiceException ex)
             {

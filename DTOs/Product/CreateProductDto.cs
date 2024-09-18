@@ -25,21 +25,31 @@ namespace DTOs.Product
 
         public IEnumerable<CreateProductAttributeDto>? ProductAttributes { get; set; }
 
-        public IEnumerable<int>? ComponentList { get; set; }
+        public IEnumerable<AddExistedComponentToProduct>? ExistedComponentList { get; set; }
 
-        public IEnumerable<CreateComponentEmbeddedDto>? ComponentListEmbedded { get; set; }
+        public IEnumerable<CreateComponentEmbeddedDto>? NewComponentList { get; set; }
     }
 
     public class CreateProductAttributeDto
     {
         [Required(ErrorMessage = "AttributeName is required")]
-        public string? AttributeName { get; set; }
+        public string AttributeName { get; set; }
 
         [Required(ErrorMessage = "Specifications is required")]
-        public string? Specifications { get; set; }
+        public string Specifications { get; set; }
 
         [Required(ErrorMessage = "Unit is required")]
-        public string? Unit { get; set; }
+        public string Unit { get; set; }
+    }
+
+    public class AddExistedComponentToProduct
+    {
+        [Required(ErrorMessage = "Component Id is required")]
+        public int ComponentId { get; set; }
+
+        [Required(ErrorMessage = "Quantity is required")]
+        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
+        public int Quantity { get; set; }
     }
 
 }

@@ -12,8 +12,6 @@ namespace DTOs.Component
 
         public double? Price { get; set; }
 
-        public DateTime? DateCreate { get; set; }
-
         public string? Status { get; set; }
     }
 
@@ -35,6 +33,10 @@ namespace DTOs.Component
     {
         [Required(ErrorMessage = "Component name is required")]
         public string ComponentName { get; set; }
+
+        [Required(ErrorMessage = "Quantity is required")]
+        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
+        public int Quantity { get; set; }
     }
 
 

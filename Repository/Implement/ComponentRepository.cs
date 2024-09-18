@@ -2,6 +2,7 @@
 using BusinessObject;
 using DAO;
 using DTOs.Component;
+using Repository.Exceptions;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -17,12 +18,43 @@ namespace Repository.Implement
         }
         public async Task Create(CreateComponentDto createComponentDto)
         {
+            var isExisted = await ComponentDao.Instance.IsComponentNameExisted(createComponentDto.ComponentName.Trim());
+
+            if (isExisted)
+            {
+                throw new RepositoryException("There is already component with the name: " + createComponentDto.ComponentName);
+            }
+
             var component = _mapper.Map<Component>(createComponentDto);
 
+            component.ComponentName = createComponentDto.ComponentName.Trim();
             component.DateCreate = DateTime.Now;
             component.Status = "Active";
 
             await ComponentDao.Instance.CreateAsync(component);
+        }
+
+        public async Task<ComponentDto> Create(string name)
+        {
+            var isExisted = await ComponentDao.Instance.IsComponentNameExisted(name.Trim());
+
+            if (isExisted)
+            {
+                throw new RepositoryException("There is already component with the name: " + name);
+            }
+
+            var component = new Component
+            {
+                ComponentName = name.Trim(),
+                Price = null,
+                Quantity = null,
+                DateCreate = DateTime.Now,
+                Status = "NoPriceAndQuantity"
+            };
+
+            component = await ComponentDao.Instance.CreateComponent(component);
+
+            return _mapper.Map<ComponentDto>(component);
         }
 
         public Task Delete(int componentId)
@@ -41,5 +73,16 @@ namespace Repository.Implement
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> IsComponentIdExisted(int componentId)
+        {
+            return await ComponentDao.Instance.IsComponentIdExisted(componentId);
+        }
+
+        public async Task<bool> IsComponentNameExisted(string componentName)
+        {
+            return await ComponentDao.Instance.IsComponentNameExisted(componentName);
+        }
+
     }
 }

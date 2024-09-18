@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObject;
 using DAO;
 using DTOs.Product;
 using Microsoft.IdentityModel.Tokens;
@@ -54,9 +55,33 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.SerialNumberProducts);
         }
 
-        public async Task<ProductDto> CreateProduct(CreateProductAttributeDto createProductAttributeDto)
+        public async Task<ProductDto> CreateProduct(CreateProductDto createProductDto)
         {
+            var product = _mapper.Map<Product>(createProductDto);
 
+            if (product == null)
+            {
+                return null;
+            }
+
+            var componentProducts = new List<ComponentProduct>();
+
+            if (!createProductDto.ExistedComponentList.IsNullOrEmpty())
+            {
+                foreach (AddExistedComponentToProduct component in createProductDto.ExistedComponentList)
+                {
+                    var componentProduct = _mapper.Map<ComponentProduct>(component);
+                    componentProduct.Status = "Active";
+                    componentProducts.Add(componentProduct);
+                }
+            }
+
+            product.ComponentProducts = componentProducts;
+
+            product = await ProductDao.Instance.CreateProduct(product, createProductDto.NewComponentList);
+
+
+            return _mapper.Map<ProductDto>(product);
         }
 
         public async Task<bool> IsProductExisted(int productId)

@@ -1,4 +1,6 @@
 ﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DAO
 {
@@ -21,6 +23,39 @@ namespace DAO
                     instance = new ComponentDao();
                 }
                 return instance;
+            }
+        }
+
+        public async Task<bool> IsComponentIdExisted(int id)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Components.AnyAsync(c => c.ComponentId == id);
+            }
+        }
+
+        public async Task<bool> IsComponentNameExisted(string name)
+        {
+            if (name.IsNullOrEmpty())
+            {
+                return false;
+            }
+
+            using (var context = new MmrmsContext())
+            {
+                return await context.Components.AnyAsync(c => c.ComponentName.ToLower().Equals(name.ToLower()));
+            }
+        }
+
+        public async Task<Component> CreateComponent(Component component)
+        {
+            using (var context = new MmrmsContext())
+            {
+                DbSet<Component> _dbSet = context.Set<Component>();
+                _dbSet.Add(component);
+                await context.SaveChangesAsync();
+
+                return component;
             }
         }
     }

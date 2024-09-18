@@ -33,11 +33,16 @@ namespace Repository.Mapper
             CreateMap<Product, DisplayProductDetailDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ForMember(dest => dest.ProductImageList, opt => opt.MapFrom(src => src.ProductImages))
-                .ForMember(dest => dest.ProductAttributeList, opt => opt.MapFrom(src => src.ProductAttributes));
+                .ForMember(dest => dest.ProductAttributeList, opt => opt.MapFrom(src => src.ProductAttributes))
+                .ForMember(dest => dest.ComponentProductList, opt => opt.MapFrom(src => src.ComponentProducts));
 
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();
-            CreateMap<ComponentProduct, ComponentProductDto>();
+            CreateMap<ComponentProduct, ComponentProductDto>()
+                .ForMember(dest => dest.ComponentName, opt => opt.MapFrom(src => src.Component.ComponentName));
+            CreateMap<CreateProductDto, Product>();
+            CreateMap<CreateProductAttributeDto, ProductAttribute>();
+            CreateMap<AddExistedComponentToProduct, ComponentProduct>();
 
             CreateMap<Component, ComponentDto>();
             CreateMap<CreateComponentDto, Component>();
