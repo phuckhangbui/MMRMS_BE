@@ -17,6 +17,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IContentRepository, ContentRepository>();
         services.AddScoped<IComponentRepository, ComponentRepository>();
+        services.AddScoped<IPromotionRepository, PromotionRepository>();
 
         //Service
         services.AddScoped<IAccountService, AccountServiceImpl>();
@@ -24,6 +25,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
         services.AddScoped<IContentService, ContentServiceImpl>();
         services.AddScoped<IComponentService, ComponentServiceImpl>();
+        services.AddScoped<IPromotionService, PromotionServiceImpl>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
