@@ -12,9 +12,5 @@ public partial class ProductAttribute
 
     public string? Unit { get; set; }
 
-    public string? Status { get; set; }
-
-    public bool? IsDelete { get; set; }
-
     public virtual Product? Product { get; set; }
 }

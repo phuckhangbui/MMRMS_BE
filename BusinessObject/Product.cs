@@ -16,6 +16,8 @@ public partial class Product
 
     public int? CategoryId { get; set; }
 
+    public string? Description { get; set; }
+
     public DateTime? DateCreate { get; set; }
 
     public string? Status { get; set; }

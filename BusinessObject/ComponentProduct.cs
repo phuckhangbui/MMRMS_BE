@@ -10,8 +10,6 @@ public partial class ComponentProduct
 
     public int? Quantity { get; set; }
 
-    public DateTime? DateCreate { get; set; }
-
     public string? Status { get; set; }
 
     public Component? Component { get; set; }
