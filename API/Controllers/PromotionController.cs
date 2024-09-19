@@ -1,6 +1,4 @@
-﻿using DTOs.Content;
-using DTOs.Promotion;
-using Microsoft.AspNetCore.Http;
+﻿using DTOs.Promotion;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;

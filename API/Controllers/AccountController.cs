@@ -1,5 +1,6 @@
 ﻿using DTOs.Account;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -115,7 +116,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{accountId}/status")]
-        public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery] string status)
+        public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery, BindRequired] string status)
         {
             try
             {
@@ -124,7 +125,7 @@ namespace API.Controllers
             }
             catch (ServiceException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
