@@ -45,7 +45,7 @@ namespace Service.Implement
         public async Task<CustomerAccountDto> GetCustomerAccountById(int accountId)
         {
             var account = await CheckAccountExist(accountId);
-            if (account.RoleID != (int)AccountRoleEnum.Customer)
+            if (account.RoleId != (int)AccountRoleEnum.Customer)
             {
                 throw new ServiceException("This account is not role customer");
             }
@@ -56,7 +56,7 @@ namespace Service.Implement
         public async Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId)
         {
             var account = await CheckAccountExist(accountId);
-            if (account.RoleID == (int)AccountRoleEnum.Customer)
+            if (account.RoleId == (int)AccountRoleEnum.Customer)
             {
                 throw new ServiceException("This account is not role staff or manager");
             }

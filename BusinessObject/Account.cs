@@ -35,6 +35,7 @@ public partial class Account
     public int? AccountPromotionId { get; set; }
 
     public int? MembershipRankId { get; set; }
+
     public double? MoneySpent { get; set; }
 
     public DateTime? DateCreate { get; set; }
