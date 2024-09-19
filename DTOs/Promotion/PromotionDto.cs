@@ -16,7 +16,7 @@ namespace DTOs.Promotion
         public string? Status { get; set; }
     }
 
-    public class PromotionCreateRequestDto
+    public class PromotionRequestDto
     {
         [Required(ErrorMessage = "Discount Type Name is required")]
         public string? DiscountTypeName { get; set; }

@@ -56,7 +56,7 @@ namespace Repository.Mapper
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();
 
             CreateMap<Promotion, PromotionDto>();
-            CreateMap<Promotion, PromotionCreateRequestDto>().ReverseMap();
+            CreateMap<Promotion, PromotionRequestDto>().ReverseMap();
 
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();

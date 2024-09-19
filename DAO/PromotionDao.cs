@@ -26,6 +26,14 @@ namespace DAO
             }
         }
 
+        public async Task<Promotion> GetPromotionById(int promotionId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Promotions.FirstOrDefaultAsync(p => p.PromotionId == promotionId);
+            }
+        }
+
         public async Task<IEnumerable<Promotion>> GetPromotionsForUpdateToExpired()
         {
             using (var context = new MmrmsContext())
