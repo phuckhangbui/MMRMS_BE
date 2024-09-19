@@ -15,9 +15,23 @@ namespace Service.Implement
             _promotionRepository = promotionRepository;
         }
 
-        public async Task CreatePromotion(PromotionCreateRequestDto promotionCreateRequestDto)
+        public async Task CreatePromotion(PromotionRequestDto promotionCreateRequestDto)
         {
             await _promotionRepository.CreatePromotion(promotionCreateRequestDto);
+        }
+
+        public async Task DeletePromotion(int promotionId)
+        {
+            await CheckPrmotionExist(promotionId);
+
+            await _promotionRepository.DeletePromotion(promotionId);
+        }
+
+        public async Task<PromotionDto> GetPromotionById(int promotionId)
+        {
+            var promotion = await CheckPrmotionExist(promotionId);
+
+            return promotion;
         }
 
         public async Task<IEnumerable<PromotionDto>> GetPromotions()
@@ -30,6 +44,25 @@ namespace Service.Implement
             }
 
             return promotions;
+        }
+
+        public async Task UpdatePromotion(int promotionId, PromotionRequestDto promotionRequestDto)
+        {
+            await CheckPrmotionExist(promotionId);
+
+            await _promotionRepository.UpdatePromotion(promotionId, promotionRequestDto);
+        }
+
+        private async Task<PromotionDto> CheckPrmotionExist(int promotionId)
+        {
+            var promotion = await _promotionRepository.GetPromotionById(promotionId);
+
+            if (promotion == null)
+            {
+                throw new ServiceException("Promotion not found");
+            }
+
+            return promotion;
         }
     }
 }

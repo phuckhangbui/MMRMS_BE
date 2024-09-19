@@ -20,13 +20,13 @@ namespace Repository.Implement
             _logger = logger;
         }
 
-        public async Task CreatePromotion(PromotionCreateRequestDto promotionCreateRequestDto)
+        public async Task CreatePromotion(PromotionRequestDto promotionRequestDto)
         {
-            var promotion = _mapper.Map<Promotion>(promotionCreateRequestDto);
+            var promotion = _mapper.Map<Promotion>(promotionRequestDto);
 
             promotion.DateCreate = DateTime.Now;
-            promotion.DateStart = promotionCreateRequestDto.DateStart?.Date;
-            promotion.DateEnd = promotionCreateRequestDto.DateEnd?.Date.AddDays(1).AddSeconds(-1);
+            promotion.DateStart = promotionRequestDto.DateStart?.Date;
+            promotion.DateEnd = promotionRequestDto.DateEnd?.Date.AddDays(1).AddSeconds(-1);
 
             if (promotion.DateStart > DateTime.Now)
             {
@@ -40,6 +40,26 @@ namespace Repository.Implement
             await PromotionDao.Instance.CreateAsync(promotion);
         }
 
+        public async Task DeletePromotion(int promotionId)
+        {
+            var promotion = await PromotionDao.Instance.GetPromotionById(promotionId);
+            if (promotion != null)
+            {
+                await PromotionDao.Instance.RemoveAsync(promotion);
+            }
+        }
+
+        public async Task<PromotionDto?> GetPromotionById(int promotionId)
+        {
+            var promotion = await PromotionDao.Instance.GetPromotionById(promotionId);
+            if (promotion != null)
+            {
+                return _mapper.Map<PromotionDto>(promotion);
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<PromotionDto>> GetPromotions()
         {
             var promotions = await PromotionDao.Instance.GetAllAsync();
@@ -50,6 +70,31 @@ namespace Repository.Implement
             }
 
             return [];
+        }
+
+        public async Task UpdatePromotion(int promotionId, PromotionRequestDto promotionRequestDto)
+        {
+            var promotion = await PromotionDao.Instance.GetPromotionById(promotionId);
+            if (promotion != null)
+            {
+                promotion = _mapper.Map<Promotion>(promotionRequestDto);
+                promotion.PromotionId = promotionId;
+
+                promotion.DateCreate = DateTime.Now;
+                promotion.DateStart = promotionRequestDto.DateStart?.Date;
+                promotion.DateEnd = promotionRequestDto.DateEnd?.Date.AddDays(1).AddSeconds(-1);
+
+                if (promotion.DateStart > DateTime.Now)
+                {
+                    promotion.Status = PromotionStatusEnum.Upcoming.ToString();
+                }
+                else
+                {
+                    promotion.Status = PromotionStatusEnum.Active.ToString();
+                }
+
+                await PromotionDao.Instance.UpdateAsync(promotion);
+            }
         }
 
         public async Task UpdatePromotionToActive()
