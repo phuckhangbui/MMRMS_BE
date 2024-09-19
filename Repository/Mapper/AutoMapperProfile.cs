@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using DTOs;
 using DTOs.Account;
 using DTOs.Category;
 using DTOs.Component;
@@ -56,6 +57,9 @@ namespace Repository.Mapper
 
             CreateMap<Promotion, PromotionDto>();
             CreateMap<Promotion, PromotionCreateRequestDto>().ReverseMap();
+
+            CreateMap<MembershipRank, MembershipRankDto>();
+            CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
         }
     }
 }
