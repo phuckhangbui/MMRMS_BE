@@ -3,6 +3,7 @@ using Repository.Interface;
 using Service.Cloundinary;
 using Service.Implement;
 using Service.Interface;
+using Service.Mail;
 
 namespace API.Extension;
 
@@ -30,6 +31,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPromotionService, PromotionServiceImpl>();
         services.AddScoped<IMembershipRankService, MembershipRankServiceImpl>();
         services.AddScoped<IDashboardService, DashboardServiceImpl>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IMailService, MailService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -46,6 +49,7 @@ public static class ApplicationServicesExtensions
         });
 
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
+        services.Configure<MailSetting>(config.GetSection("MailSetting"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         return services;

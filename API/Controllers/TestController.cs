@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
-using Service.Implement;
 using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/abcTest")]
+    [Route("api/test")]
     public class TestController : BaseApiController
     {
         private readonly ICloudinaryService _cloudinaryService;
@@ -19,6 +19,20 @@ namespace API.Controllers
         public async Task<ActionResult> GetDatetime()
         {
             return Ok(DateTime.Now);
+        }
+
+        [Authorize]
+        [HttpGet("token/expire")]
+        public async Task<ActionResult> CheckIsTokenExpire()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("images")]
