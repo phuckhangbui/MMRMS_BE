@@ -1,4 +1,4 @@
-﻿using DTOs.Content;
+﻿using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;
@@ -6,24 +6,24 @@ using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/contents")]
+    [Route("api/membershipRanks")]
     [ApiController]
-    public class ContentController : ControllerBase
+    public class MembershipRankController : ControllerBase
     {
-        private readonly IContentService _contentService;
+        private readonly IMembershipRankService _membershipRankService;
 
-        public ContentController(IContentService contentService)
+        public MembershipRankController(IMembershipRankService membershipRankService)
         {
-            _contentService = contentService;
+            _membershipRankService = membershipRankService;
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetContents()
+        public async Task<ActionResult> GetMembershipRanks()
         {
             try
             {
-                var contents = await _contentService.GetContents();
-                return Ok(contents);
+                var membershipRanks = await _membershipRankService.GetMembershipRanks();
+                return Ok(membershipRanks);
             }
             catch (ServiceException ex)
             {
@@ -35,13 +35,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{contentId}")]
-        public async Task<ActionResult<ContentDto>> GetContentDetailById(int contentId)
+        [HttpGet("{membershipRankId}")]
+        public async Task<ActionResult<MembershipRankDto>> GetMembershipRankById(int membershipRankId)
         {
             try
             {
-                var content = await _contentService.GetContentDetailById(contentId);
-                return Ok(content);
+                var membershipRank = await _membershipRankService.GetMembershipRankById(membershipRankId);
+                return Ok(membershipRank);
             }
             catch (ServiceException ex)
             {
@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateContent([FromForm] ContentCreateRequestDto contentRequestDto)
+        public async Task<ActionResult> CreateMembershipRank([FromBody] MembershipRankRequestDto membershipRankRequestDto)
         {
             if (!ModelState.IsValid)
             {
@@ -64,8 +64,8 @@ namespace API.Controllers
 
             try
             {
-                await _contentService.CreateContent(contentRequestDto);
-                return Created("", contentRequestDto);
+                await _membershipRankService.CreateMembershipRank(membershipRankRequestDto);
+                return Created("", membershipRankRequestDto);
             }
             catch (ServiceException ex)
             {
@@ -77,8 +77,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{contentId}")]
-        public async Task<ActionResult> UpdateContent(int contentId, [FromForm] ContentUpdateRequestDto contentUpdateRequestDto)
+        [HttpPut("{membershipRankId}")]
+        public async Task<ActionResult> UpdateMembershipRank(int membershipRankId, [FromBody] MembershipRankRequestDto membershipRankRequestDto)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace API.Controllers
 
             try
             {
-                await _contentService.UpdateContent(contentId, contentUpdateRequestDto);
+                await _membershipRankService.UpdateMembershipRank(membershipRankId, membershipRankRequestDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -101,12 +101,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{contentId}")]
-        public async Task<ActionResult> DeleteContent(int contentId)
+        [HttpDelete("{membershipRankId}")]
+        public async Task<ActionResult> DeleteMembershipRank(int membershipRankId)
         {
             try
             {
-                await _contentService.DeleteContent(contentId);
+                await _membershipRankService.DeleteMembershipRank(membershipRankId);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -119,35 +119,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{contentId}/status")]
-        public async Task<IActionResult> ChangeContentStatus(int contentId, [FromQuery, BindRequired] string status)
+        [HttpPatch("{membershipRankId}/status")]
+        public async Task<IActionResult> ChangeMembershipRankStatus(int membershipRankId, [FromQuery, BindRequired] string status)
         {
             try
             {
-                await _contentService.ChangeContentStatus(contentId, status);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpPut("{contentId}/images")]
-        public async Task<ActionResult> ChangeContentImage(int contentId, IFormFile imageUrl)
-        {
-            if (imageUrl == null || imageUrl.Length == 0)
-            {
-                return BadRequest("Invalid image file.");
-            }
-
-            try
-            {
-                await _contentService.ChangeContentImage(contentId, imageUrl);
+                await _membershipRankService.ChangeMembershipRankStatus(membershipRankId, status);
                 return NoContent();
             }
             catch (ServiceException ex)
