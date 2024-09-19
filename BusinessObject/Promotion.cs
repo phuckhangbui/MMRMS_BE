@@ -4,15 +4,9 @@ public partial class Promotion
 {
     public int PromotionId { get; set; }
 
-    public string? PromotionPack { get; set; }
-
-    public int? ActionPromotion { get; set; }
+    public string? DiscountTypeName { get; set; }
 
     public double? DiscountPercentage { get; set; }
-
-    public int? PromotionTypeId { get; set; }
-
-    public int? DiscountTypeId { get; set; }
 
     public string? Content { get; set; }
 
