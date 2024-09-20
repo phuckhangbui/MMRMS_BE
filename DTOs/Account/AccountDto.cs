@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Account
 {
@@ -87,56 +88,53 @@ namespace DTOs.Account
 
     public class NewBaseAccountDto
     {
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = MessageConstant.Account.NameRequired)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
+        [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Phone number is required")]
+        [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
         public string Phone { get; set; }
 
-        [Required(ErrorMessage = "Citizen Card is required")]
+        [Required(ErrorMessage = MessageConstant.Account.CitizenCardRequired)]
         public string CitizenCard { get; set; }
 
-        [Required(ErrorMessage = "Gender is required")]
+        [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
         public int Gender { get; set; }
     }
 
     public class NewCustomerAccountDto : NewBaseAccountDto
     {
-        [Required(ErrorMessage = "Address is required")]
-        public string Address { get; set; }
-
-        [Required(ErrorMessage = "Company is required")]
+        [Required(ErrorMessage = MessageConstant.Account.CompanyRequired)]
         public string Company { get; set; }
 
-        [Required(ErrorMessage = "Position is required")]
+        [Required(ErrorMessage = MessageConstant.Account.PositionRequired)]
         public string? Position { get; set; }
 
-        [Required(ErrorMessage = "TaxNumber is required")]
+        [Required(ErrorMessage = MessageConstant.Account.TaxNumberRequired)]
         public string? TaxNumber { get; set; }
 
-        [Required(ErrorMessage = "Business Type is required")]
+        [Required(ErrorMessage = MessageConstant.Account.BusinessTypeRequired)]
         public int BusinessType { get; set; }
     }
 
     public class NewStaffAndManagerAccountDto : NewBaseAccountDto
     {
-        [Required(ErrorMessage = "Username is required")]
+        [Required(ErrorMessage = MessageConstant.Account.UsernameRequired)]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Date of expire is required")]
+        [Required(ErrorMessage = MessageConstant.Account.DateExpireRequired)]
         public DateTime DateExpire { get; set; }
 
-        [Required(ErrorMessage = "DateBirth is required")]
+        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
         public DateTime DateBirth { get; set; }
 
-        [Required(ErrorMessage = "Role ID is required")]
+        [Required(ErrorMessage = MessageConstant.Account.RoleIdRequired)]
         public int RoleId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DAO.Enum;
+﻿using Common;
+using DAO.Enum;
 using DTOs.Account;
 using Repository.Interface;
 using Service.Exceptions;
@@ -21,7 +22,7 @@ namespace Service.Implement
 
             if (!Enum.IsDefined(typeof(AccountStatusEnum), status))
             {
-                throw new ServiceException("Invalid status value");
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
             await _accountRepository.ChangeAccountStatus(accountId, status);
@@ -31,7 +32,7 @@ namespace Service.Implement
         {
             if (role.HasValue && !Enum.IsDefined(typeof(AccountRoleEnum), role.Value))
             {
-                throw new ServiceException("Invalid role value");
+                throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
             }
 
             return await _accountRepository.GetAccountsByRole(role);
@@ -47,7 +48,7 @@ namespace Service.Implement
             var account = await CheckAccountExist(accountId);
             if (account.RoleId != (int)AccountRoleEnum.Customer)
             {
-                throw new ServiceException("This account is not role customer");
+                throw new ServiceException(MessageConstant.Account.NotCustomerRole);
             }
 
             return await _accountRepository.GetCustomerAccountById(accountId);
@@ -58,7 +59,7 @@ namespace Service.Implement
             var account = await CheckAccountExist(accountId);
             if (account.RoleId == (int)AccountRoleEnum.Customer)
             {
-                throw new ServiceException("This account is not role staff or manager");
+                throw new ServiceException(MessageConstant.Account.NotStaffOrManagerRole);
             }
 
             return await _accountRepository.GetStaffAndManagerAccountById(accountId);
@@ -69,7 +70,7 @@ namespace Service.Implement
             var account = await _accountRepository.GetAccountById(accountId);
             if (account == null)
             {
-                throw new ServiceException("Account not found");
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
             return account;
@@ -81,13 +82,13 @@ namespace Service.Implement
 
             if (isExist)
             {
-                throw new ServiceException("An account with this email already exists.");
+                throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
             bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newStaffAndManagerAccountDto.Username);
             if (isUsernameExist)
             {
-                throw new ServiceException("An account with this username already exists.");
+                throw new ServiceException(MessageConstant.Account.UsernameAlreadyExists);
             }
 
             await _accountRepository.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
@@ -99,7 +100,7 @@ namespace Service.Implement
 
             if (isExist)
             {
-                throw new ServiceException("An account with this email already exists.");
+                throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
             await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);

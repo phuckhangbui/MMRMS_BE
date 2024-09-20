@@ -1,4 +1,5 @@
-﻿using DTOs.Validation;
+﻿using Common;
+using DTOs.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Promotion
@@ -18,24 +19,24 @@ namespace DTOs.Promotion
 
     public class PromotionRequestDto
     {
-        [Required(ErrorMessage = "Discount Type Name is required")]
+        [Required(ErrorMessage = MessageConstant.Promotion.DiscountTypeNameRequired)]
         public string? DiscountTypeName { get; set; }
 
-        [Required(ErrorMessage = "Discount Percentage is required")]
-        [Range(0, 100, ErrorMessage = "Discount Percentage must be between 0 and 100")]
+        [Required(ErrorMessage = MessageConstant.Promotion.DiscountPercentageRequired)]
+        [Range(0, 100, ErrorMessage = MessageConstant.Promotion.DiscountPercentageRange)]
         public double? DiscountPercentage { get; set; }
 
-        [Required(ErrorMessage = "Description is required")]
+        [Required(ErrorMessage = MessageConstant.Promotion.DescriptionRequired)]
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Content is required")]
+        [Required(ErrorMessage = MessageConstant.Promotion.ContentRequired)]
         public string? Content { get; set; }
 
-        [Required(ErrorMessage = "Date Start is required")]
-        [FutureOrPresentDate(ErrorMessage = "Date Start must be today or in the future")]
+        [Required(ErrorMessage = MessageConstant.Promotion.DateStartRequired)]
+        [FutureOrPresentDate(ErrorMessage = MessageConstant.Promotion.DateStartFutureOrPresent)]
         public DateTime? DateStart { get; set; }
 
-        [Required(ErrorMessage = "Date End is required")]
+        [Required(ErrorMessage = MessageConstant.Promotion.DateEndRequired)]
         public DateTime? DateEnd { get; set; }
     }
 }

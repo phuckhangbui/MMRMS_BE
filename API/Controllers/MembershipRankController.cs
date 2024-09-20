@@ -1,4 +1,4 @@
-﻿using DTOs;
+﻿using DTOs.MembershipRank;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;

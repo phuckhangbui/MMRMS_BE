@@ -2,7 +2,7 @@
 using BusinessObject;
 using DAO;
 using DAO.Enum;
-using DTOs;
+using DTOs.MembershipRank;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
