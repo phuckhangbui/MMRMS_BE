@@ -8,6 +8,10 @@ public partial class ContractSerialNumberProduct
 
     public string? SerialNumber { get; set; }
 
+    public double? DepositPrice { get; set; }
+
+    public double? DiscountPrice { get; set; }
+
     public virtual Contract? Contract { get; set; }
 
     public virtual SerialNumberProduct? SerialNumberProduct { get; set; }

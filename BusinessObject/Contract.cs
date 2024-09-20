@@ -12,15 +12,19 @@ public partial class Contract
 
     public string? HiringRequestId { get; set; }
 
-    public double? Price { get; set; }
+    public double? TotalRentPrice { get; set; }
 
     public double? ShippingPrice { get; set; }
 
+    public double? TotalDepositPrice { get; set; }
+
     public double? DiscountPrice { get; set; }
 
-    public double? FinalPrice { get; set; }
+    public double? FinalAmount { get; set; }
 
-    public int? Method { get; set; }
+    public string? Content { get; set; }
+
+    public DateTime? DateCreate { get; set; }
 
     public DateTime? DateSign { get; set; }
 

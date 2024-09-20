@@ -421,6 +421,10 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.EmployeeTask).WithMany(p => p.MaintainingTickets)
                 .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_MaintainingTicket_TaskID");
+
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintainingTickets)
+                .HasForeignKey(d => d.ProductSerialNumber)
+                .HasConstraintName("FK_MaintainingTicket_SerialNumberProduct");
         });
 
         modelBuilder.Entity<MaintenanceRequest>(entity =>
