@@ -9,6 +9,7 @@ public partial class Promotion
     public double? DiscountPercentage { get; set; }
 
     public string? Content { get; set; }
+    public string? Description { get; set; }
 
     public DateTime? DateStart { get; set; }
 
@@ -20,6 +21,5 @@ public partial class Promotion
 
     public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
 
-    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
 }

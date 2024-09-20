@@ -2,6 +2,57 @@
 
 namespace DTOs.Account
 {
+    public class AccountDto
+    {
+        public int AccountId { get; set; }
+
+        public string? AvatarImg { get; set; }
+
+        public string? Name { get; set; }
+
+        public string? Email { get; set; }
+
+        public string? CitizenCard { get; set; }
+
+        public string? Phone { get; set; }
+
+        public DateTime? DateBirth { get; set; }
+
+        public int? Gender { get; set; }
+
+        public string? Address { get; set; }
+
+        public string? Username { get; set; }
+
+        public byte[]? PasswordHash { get; set; }
+
+        public byte[]? PasswordSalt { get; set; }
+
+        public string? OtpNumber { get; set; }
+
+        public string? TokenRefresh { get; set; }
+
+        public DateTime? TokenDateExpire { get; set; }
+
+        public int? AccountPromotionId { get; set; }
+
+        public int? MembershipRankId { get; set; }
+
+        public double? MoneySpent { get; set; }
+
+        public DateTime? DateCreate { get; set; }
+
+        public DateTime? DateExpire { get; set; }
+
+        public int? RoleId { get; set; }
+
+        public int? BusinessType { get; set; }
+
+        public String? Status { get; set; }
+
+        public bool? IsDelete { get; set; }
+    }
+
     public class AccountBaseDto
     {
         public int AccountId { get; set; }
