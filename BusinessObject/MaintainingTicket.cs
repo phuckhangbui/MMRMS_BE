@@ -4,8 +4,6 @@ public partial class MaintainingTicket
 {
     public int MaintainingTicketId { get; set; }
 
-    public string? SerialNumber { get; set; }
-
     public int? EmployeeTaskId { get; set; }
 
     public int? ComponentId { get; set; }

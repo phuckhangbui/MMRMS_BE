@@ -12,6 +12,14 @@ public partial class HiringRequest
 
     public DateTime? DateCreate { get; set; }
 
+    public DateTime? DateStart { get; set; }
+
+    public int? NumberOfMonth { get; set; }
+
+    public bool? IsOnetimePayment { get; set; }
+
+    public string? Note { get; set; }
+
     public string? Status { get; set; }
 
     public virtual Account? AccountOrder { get; set; }

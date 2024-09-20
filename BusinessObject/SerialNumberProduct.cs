@@ -10,6 +10,8 @@ public partial class SerialNumberProduct
 
     public DateTime? DateCreate { get; set; }
 
+    public int? RentTimeCounter { get; set; }
+
     public bool? IsDelete { get; set; }
 
     public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
@@ -19,4 +21,6 @@ public partial class SerialNumberProduct
     public virtual ICollection<ProductComponentStatus> ProductComponentStatuses { get; set; } = new List<ProductComponentStatus>();
 
     public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
+    public virtual ICollection<MaintainingTicket> MaintainingTickets { get; set; } = new List<MaintainingTicket>();
+
 }
