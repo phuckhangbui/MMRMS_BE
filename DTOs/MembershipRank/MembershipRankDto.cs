@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common;
+using System.ComponentModel.DataAnnotations;
 
-namespace DTOs
+namespace DTOs.MembershipRank
 {
     public class MembershipRankDto
     {
@@ -15,18 +16,18 @@ namespace DTOs
 
     public class MembershipRankRequestDto
     {
-        [Required(ErrorMessage = "MembershipRankName is required")]
+        [Required(ErrorMessage = MessageConstant.MembershipRank.MembershipRankNameRequired)]
         public string? MembershipRankName { get; set; }
 
-        [Required(ErrorMessage = "MoneySpent is required")]
-        [Range(0, double.MaxValue, ErrorMessage = "MoneySpent must be a positive number")]
+        [Required(ErrorMessage = MessageConstant.MembershipRank.MoneySpentRequired)]
+        [Range(0, double.MaxValue, ErrorMessage = MessageConstant.MembershipRank.MoneySpentRange)]
         public double? MoneySpent { get; set; }
 
-        [Required(ErrorMessage = "DiscountPercentage is required")]
-        [Range(0, 100, ErrorMessage = "DiscountPercentage must be between 0 and 100")]
+        [Required(ErrorMessage = MessageConstant.MembershipRank.DiscountPercentageRequired)]
+        [Range(0, 100, ErrorMessage = MessageConstant.MembershipRank.DiscountPercentageRange)]
         public double? DiscountPercentage { get; set; }
 
-        [Required(ErrorMessage = "Content is required")]
+        [Required(ErrorMessage = MessageConstant.MembershipRank.ContentRequired)]
         public string? Content { get; set; }
     }
 }

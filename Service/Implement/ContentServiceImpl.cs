@@ -1,4 +1,5 @@
-﻿using DAO.Enum;
+﻿using Common;
+using DAO.Enum;
 using DTOs.Content;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
@@ -55,7 +56,7 @@ namespace Service.Implement
 
             if (contents.IsNullOrEmpty())
             {
-                throw new ServiceException("Content list is empty");
+                throw new ServiceException(MessageConstant.Content.EmptyContentList);
             }
 
             return contents;
@@ -73,7 +74,8 @@ namespace Service.Implement
             var result = await _cloudinaryService.AddPhotoAsync(imageUrl);
             if (result.Error != null)
             {
-                throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
+                //TODO
+                throw new ServiceException(MessageConstant.ImageUploadError);
             }
 
             return result.SecureUrl.AbsoluteUri;
@@ -85,7 +87,7 @@ namespace Service.Implement
 
             if (!Enum.IsDefined(typeof(ContentStatusEnum), status))
             {
-                throw new ServiceException("Invalid status value");
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
             await _contentRepository.ChangeContentStatus(contentId, status);
@@ -97,7 +99,7 @@ namespace Service.Implement
 
             if (content == null)
             {
-                throw new ServiceException("Content not found");
+                throw new ServiceException(MessageConstant.Content.ContentNotFound);
             }
 
             return content;

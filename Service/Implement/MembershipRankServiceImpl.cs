@@ -1,5 +1,6 @@
-﻿using DAO.Enum;
-using DTOs;
+﻿using Common;
+using DAO.Enum;
+using DTOs.MembershipRank;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -22,7 +23,7 @@ namespace Service.Implement
 
             if (!Enum.IsDefined(typeof(MembershipRankStatusEnum), status))
             {
-                throw new ServiceException("Invalid status value");
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
             await _membershipRankRepository.ChangeMembershipRankStatus(membershipRankId, status);
@@ -53,7 +54,7 @@ namespace Service.Implement
 
             if (membershipRanks.IsNullOrEmpty())
             {
-                throw new ServiceException("Membership Ranks list is empty");
+                throw new ServiceException(MessageConstant.MembershipRank.MembershipRanksEmpty);
             }
 
             return membershipRanks;
@@ -72,7 +73,7 @@ namespace Service.Implement
 
             if (membershipRank == null)
             {
-                throw new ServiceException("Membership Rank not found");
+                throw new ServiceException(MessageConstant.MembershipRank.MembershipRankNotFound);
             }
 
             return membershipRank;

@@ -1,4 +1,5 @@
-﻿using DTOs.Promotion;
+﻿using Common;
+using DTOs.Promotion;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -40,7 +41,7 @@ namespace Service.Implement
 
             if (promotions.IsNullOrEmpty())
             {
-                throw new ServiceException("Promotion list is empty");
+                throw new ServiceException(MessageConstant.Promotion.PromotionListEmpty);
             }
 
             return promotions;
@@ -59,7 +60,7 @@ namespace Service.Implement
 
             if (promotion == null)
             {
-                throw new ServiceException("Promotion not found");
+                throw new ServiceException(MessageConstant.Promotion.PromotionNotFound);
             }
 
             return promotion;

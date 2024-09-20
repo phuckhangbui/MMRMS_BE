@@ -1,4 +1,5 @@
-﻿using DTOs.Category;
+﻿using Common;
+using DTOs.Category;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -31,7 +32,7 @@ namespace Service.Implement
             var category = await _categoryRepository.GetCategoryById(categoryId);
             if (category == null)
             {
-                throw new ServiceException("Category not found.");
+                throw new ServiceException(MessageConstant.Category.CategoryNotFound);
             }
 
             await CheckCategoryExist(categoryRequestDto.CategoryName);
@@ -44,7 +45,7 @@ namespace Service.Implement
             var isCategoryNameExist = await _categoryRepository.IsCategoryNameExist(categoryName);
             if (isCategoryNameExist)
             {
-                throw new ServiceException("Category with this name already exists.");
+                throw new ServiceException(MessageConstant.Category.CategoryExistsError);
             }
         }
     }

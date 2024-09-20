@@ -1,4 +1,4 @@
-﻿using DTOs;
+﻿using DTOs.MembershipRank;
 
 namespace Repository.Interface
 {

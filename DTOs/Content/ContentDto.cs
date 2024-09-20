@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Content
@@ -21,28 +22,28 @@ namespace DTOs.Content
 
     public class ContentCreateRequestDto
     {
-        [Required(ErrorMessage = "Title is required")]
+        [Required(ErrorMessage = MessageConstant.Content.TitleRequired)]
         public string? Title { get; set; }
 
-        [Required(ErrorMessage = "Summary is required")]
+        [Required(ErrorMessage = MessageConstant.Content.SummaryRequired)]
         public string? Summary { get; set; }
 
-        [Required(ErrorMessage = "Content is required")]
+        [Required(ErrorMessage = MessageConstant.Content.ContentRequired)]
         public string? ContentBody { get; set; }
 
-        [Required(ErrorMessage = "ImageUrl is required")]
+        [Required(ErrorMessage = MessageConstant.Content.ImageUrlRequired)]
         public IFormFile ImageUrl { get; set; }
     }
 
     public class ContentUpdateRequestDto
     {
-        [Required(ErrorMessage = "Title is required")]
+        [Required(ErrorMessage = MessageConstant.Content.TitleRequired)]
         public string? Title { get; set; }
 
-        [Required(ErrorMessage = "Summary is required")]
+        [Required(ErrorMessage = MessageConstant.Content.SummaryRequired)]
         public string? Summary { get; set; }
 
-        [Required(ErrorMessage = "Content is required")]
+        [Required(ErrorMessage = MessageConstant.Content.ContentRequired)]
         public string? ContentBody { get; set; }
     }
 }

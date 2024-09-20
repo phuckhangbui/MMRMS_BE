@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DTOs;
 using DTOs.Account;
 using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
+using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
 

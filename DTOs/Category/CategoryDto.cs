@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Category
 {
@@ -17,7 +18,7 @@ namespace DTOs.Category
 
     public class CategoryRequestDto
     {
-        [Required(ErrorMessage = "Category name is required")]
+        [Required(ErrorMessage = MessageConstant.Category.CategoryNameRequired)]
         public string CategoryName { get; set; }
     }
 }
