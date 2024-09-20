@@ -1,6 +1,7 @@
 ﻿using BusinessObject;
 using DAO.Enum;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DAO
 {
@@ -72,6 +73,25 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Accounts.AnyAsync(a => a.Username.Equals(username));
+            }
+        }
+
+
+        public async Task<Account?> GetAccountByEmail(string email)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Accounts.FirstOrDefaultAsync(a =>
+                                            (!a.Email.IsNullOrEmpty() && a.Email.Equals(email)));
+            }
+        }
+
+        public async Task<Account?> GetAccountByUsername(string username)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Accounts.FirstOrDefaultAsync(a =>
+                                            (!a.Email.IsNullOrEmpty() && a.Username.Equals(username)));
             }
         }
     }

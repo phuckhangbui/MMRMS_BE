@@ -23,6 +23,9 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         //Service
+        services.AddScoped<IMailService, MailService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
@@ -31,8 +34,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPromotionService, PromotionServiceImpl>();
         services.AddScoped<IMembershipRankService, MembershipRankServiceImpl>();
         services.AddScoped<IDashboardService, DashboardServiceImpl>();
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IMailService, MailService>();
+
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

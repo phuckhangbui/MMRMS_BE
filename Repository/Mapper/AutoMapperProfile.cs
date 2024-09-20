@@ -2,6 +2,7 @@
 using BusinessObject;
 using DTOs;
 using DTOs.Account;
+using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
@@ -14,14 +15,31 @@ namespace Repository.Mapper
     {
         public AutoMapperProfile()
         {
+            CreateMap<Account, AccountDto>().ReverseMap();
+            CreateMap<AccountDto, LoginAccountDto>();
+
             CreateMap<Account, AccountBaseDto>();
             CreateMap<Account, StaffAndManagerAccountDto>();
             CreateMap<Account, CustomerAccountDto>()
-                .ForMember(dest => dest.BusinessType, opt => opt.MapFrom(src => src.BusinessType))
-                .ForMember(dest => dest.Company, opt => opt.MapFrom(src => src.AccountBusinesses.FirstOrDefault().Company))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.AccountBusinesses.FirstOrDefault().Address))
-                .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.AccountBusinesses.FirstOrDefault().Position))
-                .ForMember(dest => dest.TaxNumber, opt => opt.MapFrom(src => src.AccountBusinesses.FirstOrDefault().TaxNumber));
+                        .ForMember(dest => dest.BusinessType,
+                            opt => opt.MapFrom(src => src.BusinessType))
+                        .ForMember(dest => dest.Company,
+                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
+                                ? src.AccountBusinesses.FirstOrDefault().Company
+                                : null))
+                        .ForMember(dest => dest.Address,
+                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
+                                ? src.AccountBusinesses.FirstOrDefault().Address
+                                : null))
+                        .ForMember(dest => dest.Position,
+                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
+                                ? src.AccountBusinesses.FirstOrDefault().Position
+                                : null))
+                        .ForMember(dest => dest.TaxNumber,
+                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
+                                ? src.AccountBusinesses.FirstOrDefault().TaxNumber
+                                : null));
+
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
             CreateMap<Account, NewStaffAndManagerAccountDto>().ReverseMap();
 

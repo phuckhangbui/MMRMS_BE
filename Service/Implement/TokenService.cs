@@ -1,4 +1,4 @@
-﻿using DTOs.Account;
+﻿using DTOs.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Service.Interface;
@@ -39,13 +39,13 @@ namespace Service.Implement
             return tokenHandler.WriteToken(token);
         }
 
-        public string CreateToken(AccountBaseDto accountBase)
+        public string CreateToken(LoginAccountDto loginAccountDto)
         {
             var claim = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, accountBase.AccountId.ToString()),
-                new Claim("RoleId", accountBase.RoleId.ToString()),
-                new Claim("AccountId", accountBase.AccountId.ToString())
+                new Claim(JwtRegisteredClaimNames.NameId, loginAccountDto.AccountId.ToString()),
+                new Claim("RoleId", loginAccountDto.RoleId.ToString()),
+                new Claim("AccountId", loginAccountDto.AccountId.ToString())
             };
 
             return CreateToken(claim);

@@ -123,5 +123,31 @@ namespace Repository.Implement
         {
             return await AccountDao.Instance.IsAccountExistWithUsernameAsync(username);
         }
+
+        public async Task<AccountDto> GetCustomerAccountWithEmail(string email)
+        {
+            var account = await AccountDao.Instance.GetAccountByEmail(email);
+            return _mapper.Map<AccountDto>(account);
+        }
+
+        public async Task<AccountDto> GetStaffAndManagerAccountWithUsername(string username)
+        {
+            var account = await AccountDao.Instance.GetAccountByEmail(username);
+            return _mapper.Map<AccountDto>(account);
+        }
+
+        public async Task<AccountDto> GetAccountDtoById(int accountId)
+        {
+            var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
+
+            return _mapper.Map<AccountDto>(account);
+        }
+
+        public async Task UpdateAccount(AccountDto accountDto)
+        {
+            var account = _mapper.Map<Account>(accountDto);
+
+            await AccountDao.Instance.UpdateAsync(account);
+        }
     }
 }

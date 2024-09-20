@@ -15,5 +15,10 @@ namespace Repository.Interface
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
         Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId);
         Task<bool> IsAccountExistWithUsername(string username);
+        Task<AccountDto> GetCustomerAccountWithEmail(string email);
+        Task<AccountDto> GetStaffAndManagerAccountWithUsername(string username);
+        Task<AccountDto> GetAccountDtoById(int accountId);
+
+        Task UpdateAccount(AccountDto accountDto);
     }
 }
