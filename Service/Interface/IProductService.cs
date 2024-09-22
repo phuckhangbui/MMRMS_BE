@@ -1,4 +1,5 @@
 ﻿using DTOs.Product;
+using DTOs.SerialNumberProduct;
 
 namespace Service.Interface
 {
@@ -12,5 +13,8 @@ namespace Service.Interface
 
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
 
+        Task ToggleProductIsDelete(int productId);
+        Task UpdateProductStatus(int productId, string status);
+        Task UpdateProductDetail(int productId, UpdateProductDto updateProductDto);
     }
 }

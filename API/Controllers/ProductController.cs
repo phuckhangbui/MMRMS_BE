@@ -93,5 +93,65 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPatch("/{productId}/toggle-delete")]
+        public async Task<ActionResult> ToggleProductDelete([FromRoute] int productId)
+        {
+            try
+            {
+                await _productService.ToggleProductIsDelete(productId);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("/{productId}/status")]
+        public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
+        {
+            try
+            {
+                await _productService.UpdateProductStatus(productId, status);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("/{productId}/detail/update")]
+        public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
+            try
+            {
+                await _productService.UpdateProductDetail(productId, updateProductDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

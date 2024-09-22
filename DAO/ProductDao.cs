@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using DAO.Enum;
 using DTOs.Component;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -36,11 +37,30 @@ namespace DAO
             }
         }
 
+        public async Task<Product> GetProduct(int productId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+
+            }
+        }
+
+
         public async Task<bool> IsProductExisted(string name)
         {
             using (var context = new MmrmsContext())
             {
                 return await context.Products.AnyAsync(p => p.ProductName.ToLower().Equals(name.Trim().ToLower()));
+
+            }
+        }
+
+        public async Task<bool> IsProductModelExisted(string model)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Products.AnyAsync(p => p.Model.ToLower().Equals(model.Trim().ToLower()));
 
             }
         }
@@ -95,7 +115,7 @@ namespace DAO
                                     ComponentName = c.ComponentName.Trim(),
                                     Quantity = null,
                                     Price = null,
-                                    Status = "NoPriceAndQuantity",
+                                    Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
                                     DateCreate = DateTime.Now,
                                 };
 
@@ -106,7 +126,7 @@ namespace DAO
                                 {
                                     ComponentId = Component.ComponentId,
                                     Quantity = c.Quantity,
-                                    Status = "Active"
+                                    Status = ProductComponentStatusEnum.Normal.ToString(),
                                 };
 
                                 product.ComponentProducts.Add(componentProduct);

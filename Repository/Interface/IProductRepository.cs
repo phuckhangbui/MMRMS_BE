@@ -1,4 +1,5 @@
 ﻿using DTOs.Product;
+using DTOs.SerialNumberProduct;
 
 namespace Repository.Interface
 {
@@ -8,11 +9,16 @@ namespace Repository.Interface
 
         Task<bool> IsProductExisted(int productId);
         Task<bool> IsProductExisted(string name);
+        Task<bool> IsProductModelExisted(string model);
 
         Task<DisplayProductDetailDto> GetProductDetail(int productId);
 
         Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId);
 
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
+
+        Task<ProductDto> GetProduct(int productId);
+
+        Task UpdateProduct(ProductDto productDto);
     }
 }

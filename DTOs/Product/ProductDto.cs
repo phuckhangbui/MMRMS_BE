@@ -8,7 +8,9 @@
 
         public string? CategoryName { get; set; }
 
-        public double? Price { get; set; }
+        public double? RentPrice { get; set; }
+
+        public double? ProductPrice { get; set; }
 
         public int? Quantity { get; set; }
 

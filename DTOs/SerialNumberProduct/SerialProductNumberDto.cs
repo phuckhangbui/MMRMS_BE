@@ -1,4 +1,4 @@
-﻿namespace DTOs.Product
+﻿namespace DTOs.SerialNumberProduct
 {
     public class SerialProductNumberDto
     {
