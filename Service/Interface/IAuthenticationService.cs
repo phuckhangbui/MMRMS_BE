@@ -14,7 +14,9 @@ namespace Service.Interface
         Task RegisterCustomer(NewCustomerAccountDto newCustomerAccountDto);
         Task ActivateMemberEmailByOtp(MemberConfirmEmailOtpDto memberConfirmEmailOtpDto);
         Task SendOtp(string email);
-        Task ConfirmOtpAndChangePasswordWhenForget(MemberConfirmOtpWhenForgetPasswordDto memberConfirmOtpWhenForgetPasswordDto);
+        Task ConfirmOtpAndChangePasswordWhenForget(ChangePasswordWithOtpDto changePasswordWithOtp);
+        Task ChangePasswordWithOldPassword(int accountId, ChangePasswordDto changePasswordDto);
+
 
     }
 }

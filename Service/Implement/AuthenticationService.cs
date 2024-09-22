@@ -206,20 +206,42 @@ namespace Service.Implement
 
 
 
-        public async Task ConfirmOtpAndChangePasswordWhenForget(MemberConfirmOtpWhenForgetPasswordDto memberConfirmOtpWhenForgetPasswordDto)
+        public async Task ConfirmOtpAndChangePasswordWhenForget(ChangePasswordWithOtpDto changePasswordWithOtpDto)
         {
-            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(memberConfirmOtpWhenForgetPasswordDto.Email);
+            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(changePasswordWithOtpDto.Email);
             if (accountDto == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
-            if (!memberConfirmOtpWhenForgetPasswordDto.Otp.Equals(accountDto.OtpNumber))
+            if (!changePasswordWithOtpDto.Otp.Equals(accountDto.OtpNumber))
             {
                 throw new ServiceException(MessageConstant.Account.WrongOtp);
             }
 
-            await _accountRepository.ChangeAccountPassword(accountDto, memberConfirmOtpWhenForgetPasswordDto.Password);
+            await _accountRepository.ChangeAccountPassword(accountDto, changePasswordWithOtpDto.Password);
+        }
+
+        public async Task ChangePasswordWithOldPassword(int accountId, ChangePasswordDto changePasswordDto)
+        {
+            AccountDto accountDto = await _accountRepository.GetAccounById(accountId);
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+
+            using var hmac = new HMACSHA512(accountDto.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.OldPassword));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != accountDto.PasswordHash[i])
+                {
+                    throw new ServiceException(MessageConstant.Account.WrongPassword);
+                }
+            }
+
+            await _accountRepository.ChangeAccountPassword(accountDto, changePasswordDto.Password);
         }
     }
 }

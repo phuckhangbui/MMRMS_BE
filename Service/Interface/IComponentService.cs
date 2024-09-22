@@ -5,6 +5,6 @@ namespace Service.Interface
     public interface IComponentService
     {
         Task<IEnumerable<ComponentDto>> GetComponents();
-        Task CreateComponet(CreateComponentDto createComponentDto);
+        Task CreateComponent(CreateComponentDto createComponentDto);
     }
 }

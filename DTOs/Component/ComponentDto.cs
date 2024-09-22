@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Component
 {
@@ -17,26 +18,27 @@ namespace DTOs.Component
 
     public class CreateComponentDto
     {
-        [Required(ErrorMessage = "Component name is required")]
+        [Required(ErrorMessage = MessageConstant.Component.ComponentNameRequired)]
         public string ComponentName { get; set; }
 
-        [Required(ErrorMessage = "Quantity is required")]
-        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
+        [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
         public int Quantity { get; set; }
 
-        [Required(ErrorMessage = "Price is required")]
-        [Range(0, Double.MaxValue, ErrorMessage = "Price must be a positive number")]
+        [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
         public double? Price { get; set; }
     }
 
     public class CreateComponentEmbeddedDto
     {
-        [Required(ErrorMessage = "Component name is required")]
+        [Required(ErrorMessage = MessageConstant.Component.ComponentNameRequired)]
         public string ComponentName { get; set; }
 
-        [Required(ErrorMessage = "Quantity is required")]
-        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
+        [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
         public int Quantity { get; set; }
+
     }
 
 

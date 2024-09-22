@@ -7,6 +7,7 @@ namespace Repository.Interface
         Task<IEnumerable<ProductDto>> GetProductList();
 
         Task<bool> IsProductExisted(int productId);
+        Task<bool> IsProductExisted(string name);
 
         Task<DisplayProductDetailDto> GetProductDetail(int productId);
 

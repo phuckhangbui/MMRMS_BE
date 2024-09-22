@@ -41,7 +41,7 @@ namespace DTOs.Authentication
         public string Otp { get; set; }
     }
 
-    public class MemberConfirmOtpWhenForgetPasswordDto
+    public class ChangePasswordWithOtpDto
     {
         [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
         [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
@@ -49,6 +49,15 @@ namespace DTOs.Authentication
 
         [Required(ErrorMessage = MessageConstant.Account.OtpRequired)]
         public string Otp { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
+        public string Password { get; set; }
+    }
+
+    public class ChangePasswordDto
+    {
+        [Required(ErrorMessage = MessageConstant.Account.OtpRequired)]
+        public string OldPassword { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
         public string Password { get; set; }

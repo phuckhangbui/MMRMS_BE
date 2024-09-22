@@ -10,6 +10,8 @@
 
         public DateTime? DateCreate { get; set; }
 
+        public int? RentTimeCounter { get; set; }
+
         public bool? IsDelete { get; set; }
     }
 }

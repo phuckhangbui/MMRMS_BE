@@ -1,4 +1,6 @@
-﻿using DTOs.Product;
+﻿using AutoMapper;
+using Common;
+using DTOs.Product;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -11,12 +13,14 @@ namespace Service.Implement
         private readonly IProductRepository _productRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
 
-        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository)
+        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductList()
@@ -25,7 +29,7 @@ namespace Service.Implement
 
             if (list.IsNullOrEmpty())
             {
-                throw new ServiceException("There is no product available");
+                return null;
             }
 
             return list;
@@ -37,7 +41,7 @@ namespace Service.Implement
 
             if (productDetail == null)
             {
-                throw new ServiceException("There is no product with the id: " + productId);
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
             }
 
             return productDetail;
@@ -52,28 +56,29 @@ namespace Service.Implement
                 var list = await _productRepository.GetProductNumberList(productId);
                 if (list.IsNullOrEmpty())
                 {
-                    throw new ServiceException("There is no available serial product number with the id: " + productId);
+                    return null;
                 }
 
-                return list;
+
+                return _mapper.Map<IEnumerable<SerialProductNumberDto>>(list);
             }
 
-            throw new ServiceException("There is no product with the id: " + productId);
+            throw new ServiceException(MessageConstant.Product.ProductNotFound);
 
         }
 
         public async Task<ProductDto> CreateProduct(CreateProductDto createProductDto)
         {
-            if (createProductDto == null)
+            if (await _productRepository.IsProductExisted(createProductDto.ProductName))
             {
-                throw new ServiceException("There is no product to create");
+                throw new ServiceException(MessageConstant.Product.ProductNameDuplicated);
             }
 
             var category = await _categoryRepository.GetCategoryById(createProductDto.CategoryId);
 
             if (category == null)
             {
-                throw new ServiceException("There is no category with id: " + createProductDto.CategoryId);
+                throw new ServiceException(MessageConstant.Category.CategoryNotFound);
 
             }
 
@@ -93,7 +98,7 @@ namespace Service.Implement
 
             if (!flag)
             {
-                throw new ServiceException("The component id list provided is not correct");
+                throw new ServiceException(MessageConstant.Product.ComponentIdListNotCorrect);
             }
 
             if (!createProductDto.NewComponentList.IsNullOrEmpty())
@@ -109,7 +114,7 @@ namespace Service.Implement
 
             if (!flag)
             {
-                throw new ServiceException("The newly added component name already exist in database, please provide a id or a new name");
+                throw new ServiceException(MessageConstant.Component.ComponetNameDuplicated);
             }
 
             var productDto = await _productRepository.CreateProduct(createProductDto);
