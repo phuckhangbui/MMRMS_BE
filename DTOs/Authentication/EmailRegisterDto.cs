@@ -1,29 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Authentication
 {
     public class EmailRegisterDto
     {
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = MessageConstant.Account.NameRequired)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress]
+        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Citizen Card is required")]
-        public string CitizenCard { get; set; }
+        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
+        public string Password { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
+        public string Address { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
         public string Phone { get; set; }
 
-        [Required(ErrorMessage = "Date of birth is required")]
-        public DateTime DateBirth { get; set; }
+        [Required(ErrorMessage = MessageConstant.Account.CitizenCardRequired)]
+        public string CitizenCard { get; set; }
 
-        [Required(ErrorMessage = "Gender is required")]
+        [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
         public int Gender { get; set; }
 
-        [Required(ErrorMessage = "Address is required")]
-        public string Address { get; set; }
+        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
+        public DateTime DateBirth { get; set; }
     }
 }

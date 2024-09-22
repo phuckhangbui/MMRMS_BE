@@ -1,4 +1,5 @@
 ﻿using DTOs;
+using DTOs.Account;
 using DTOs.Authentication;
 
 namespace Service.Interface
@@ -10,5 +11,6 @@ namespace Service.Interface
         Task<LoginAccountDto> ForgetPassword(string email);
         Task<LoginAccountDto> RefreshToken(TokenApiDto tokenApiDto);
         Task Logout(int accountId);
+        Task RegisterCustomer(NewCustomerAccountDto newCustomerAccountDto);
     }
 }

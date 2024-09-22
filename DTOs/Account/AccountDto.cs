@@ -106,6 +106,9 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
         public int Gender { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
+        public string Password { get; set; }
     }
 
     public class NewCustomerAccountDto : NewBaseAccountDto
@@ -121,6 +124,8 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.BusinessTypeRequired)]
         public int BusinessType { get; set; }
+
+
     }
 
     public class NewStaffAndManagerAccountDto : NewBaseAccountDto

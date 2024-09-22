@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common;
 using DAO.Enum;
 using DTOs;
 using DTOs.Account;
@@ -62,12 +63,12 @@ namespace Service.Implement
 
             if (accountDto == null)
             {
-                throw new ServiceException("No account associate with this username");
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
             if (accountDto.IsDelete.HasValue && (bool)accountDto.IsDelete)
             {
-                throw new ServiceException("The account has been deleted");
+                throw new ServiceException(MessageConstant.Account.AccountDeleted);
             }
 
             using var hmac = new HMACSHA512(accountDto.PasswordSalt);
@@ -76,7 +77,7 @@ namespace Service.Implement
             {
                 if (computedHash[i] != accountDto.PasswordHash[i])
                 {
-                    throw new ServiceException("Wrong password");
+                    throw new ServiceException(MessageConstant.Account.WrongPassword);
                 }
             }
 
@@ -89,9 +90,14 @@ namespace Service.Implement
             loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
 
-            if (loginAccountDto.Status.Equals("Inactive"))
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
             {
-                throw new ServiceException("The account has been locked, please contact administrator");
+                throw new ServiceException(MessageConstant.Account.AccountInactive);
+            }
+
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
 
             return loginAccountDto;
@@ -104,12 +110,12 @@ namespace Service.Implement
 
             if (accountDto == null)
             {
-                throw new ServiceException("No account associate with this email");
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
             if (accountDto.IsDelete.HasValue && (bool)accountDto.IsDelete)
             {
-                throw new ServiceException("The account has been deleted");
+                throw new ServiceException(MessageConstant.Account.AccountDeleted);
             }
 
             using var hmac = new HMACSHA512(accountDto.PasswordSalt);
@@ -118,7 +124,7 @@ namespace Service.Implement
             {
                 if (computedHash[i] != accountDto.PasswordHash[i])
                 {
-                    throw new ServiceException("Wrong password");
+                    throw new ServiceException(MessageConstant.Account.WrongPassword);
                 }
             }
 
@@ -131,9 +137,14 @@ namespace Service.Implement
             loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
 
-            if (loginAccountDto.Status.Equals("Inactive"))
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
             {
-                throw new ServiceException("The account has been locked");
+                throw new ServiceException(MessageConstant.Account.AccountInactive);
+            }
+
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
 
             return loginAccountDto;
@@ -173,5 +184,22 @@ namespace Service.Implement
             loginAccountDto.Token = newAccessToken;
             return loginAccountDto;
         }
+
+        public async Task RegisterCustomer(NewCustomerAccountDto newCustomerAccountDto)
+        {
+            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(newCustomerAccountDto.Email);
+            if (accountDto != null)
+            {
+                throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
+            }
+
+            await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
+
+            //send email opt here
+
+
+        }
+
+
     }
 }

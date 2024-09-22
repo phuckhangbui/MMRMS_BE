@@ -67,6 +67,25 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(NewCustomerAccountDto newCustomerAccountDto)
+        {
+            try
+            {
+                await _authenticationService.RegisterCustomer(newCustomerAccountDto);
+
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("refresh")]
         public async Task<ActionResult<LoginAccountDto>> Refresh(TokenApiDto tokenApiDto)
         {

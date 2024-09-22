@@ -37,6 +37,10 @@
             public const string AccountNotFound = "Tài khoản không tồn tại.";
             public const string EmailAlreadyExists = "Tài khoản với email này đã tồn tại.";
             public const string UsernameAlreadyExists = "Tài khoản với tên người dùng này đã tồn tại.";
+            public const string AccountDeleted = "Tài khoản đã bị xóa";
+            public const string WrongPassword = "Sai mật khẩu";
+            public const string AccountInactive = "Tài khoản chưa kích hoạt";
+            public const string AccountLocked = "Tài khoản đã bị khóa";
 
             //DTO
             public const string NameRequired = "Tên là bắt buộc.";
@@ -54,6 +58,7 @@
             public const string PositionRequired = "Chức vụ là bắt buộc.";
             public const string TaxNumberRequired = "Số thuế là bắt buộc.";
             public const string BusinessTypeRequired = "Loại hình doanh nghiệp là bắt buộc.";
+            public const string PasswordRequired = "Mật khẩu là bắt buộc.";
         }
 
         public static class MembershipRank
