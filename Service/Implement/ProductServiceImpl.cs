@@ -161,5 +161,47 @@ namespace Service.Implement
 
             await _productRepository.UpdateProduct(productDto);
         }
+
+        public async Task UpdateProductDetail(int productId, UpdateProductDto updateProductDto)
+        {
+            var productDto = await _productRepository.GetProduct(productId);
+            if (productDto == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            if (!productDto.ProductName.ToLower().Equals(updateProductDto.ProductName.ToLower()))
+            {
+                if (await _productRepository.IsProductExisted(updateProductDto.ProductName))
+                {
+                    throw new ServiceException(MessageConstant.Product.ProductNameDuplicated);
+                }
+            }
+            if (!productDto.Model.ToLower().Equals(updateProductDto.Model.ToLower()))
+            {
+                if (await _productRepository.IsProductModelExisted(updateProductDto.Model))
+                {
+                    throw new ServiceException(MessageConstant.Product.ProductModelDuplicated);
+                }
+            }
+
+            var category = await _categoryRepository.GetCategoryById(updateProductDto.CategoryId);
+
+            if (category == null)
+            {
+                throw new ServiceException(MessageConstant.Category.CategoryNotFound);
+
+            }
+
+            productDto.ProductName = updateProductDto.ProductName;
+            productDto.Description = updateProductDto.Description;
+            productDto.RentPrice = updateProductDto.RentPrice;
+            productDto.ProductPrice = updateProductDto.ProductPrice;
+            productDto.Model = updateProductDto.Model;
+            productDto.Origin = updateProductDto.Origin;
+            productDto.CategoryId = updateProductDto.CategoryId;
+
+            await _productRepository.UpdateProduct(productDto);
+        }
     }
 }

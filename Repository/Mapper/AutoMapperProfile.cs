@@ -58,6 +58,8 @@ namespace Repository.Mapper
                              : null));
             CreateMap<ProductDto, Product>();
 
+            CreateMap<UpdateProductDto, ProductDto>();
+
             CreateMap<Product, DisplayProductDetailDto>()
                     .ForMember(dest => dest.CategoryName,
                         opt => opt.MapFrom(src => src.Category != null

@@ -15,5 +15,6 @@ namespace Service.Interface
 
         Task ToggleProductIsDelete(int productId);
         Task UpdateProductStatus(int productId, string status);
+        Task UpdateProductDetail(int productId, UpdateProductDto updateProductDto);
     }
 }
