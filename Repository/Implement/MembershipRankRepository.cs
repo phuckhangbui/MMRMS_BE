@@ -32,7 +32,7 @@ namespace Repository.Implement
             var membershipRank = _mapper.Map<MembershipRank>(membershipRankRequestDto);
 
             membershipRank.DateCreate = DateTime.Now;
-            membershipRank.Status = MembershipRankStatusEnum.Inactive.ToString();
+            membershipRank.Status = MembershipRankStatusEnum.Active.ToString();
 
             await MembershipRankDao.Instance.CreateAsync(membershipRank);
         }

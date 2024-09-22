@@ -13,9 +13,14 @@ namespace Service.Implement
             _dashboardRepository = dashboardRepository;
         }
 
-        public async Task<DataTotalAdminDto> GetDataTotalAdminDashboard()
+        public async Task<DataTotalAdminDto> GetDataTotalAdminDashboard(DateTime? startDate, DateTime? endDate)
         {
-            return await _dashboardRepository.GetDataTotalAdminDashboard();
+            return await _dashboardRepository.GetDataTotalAdminDashboard(startDate, endDate);
+        }
+
+        public async Task<List<DataUserAdminDto>> GetMonthlyCustomerDataAsync(DateTime? startDate, DateTime? endDate)
+        {
+            return await _dashboardRepository.GetMonthlyCustomerDataAsync(startDate, endDate);
         }
     }
 }

@@ -32,5 +32,26 @@ namespace DAO
                 return await context.Contents.FirstOrDefaultAsync(c => c.ContentId == contentId);
             }
         }
+
+        public async Task<IEnumerable<Content>> GetAllInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using (var context = new MmrmsContext())
+            {
+                IQueryable<Content> query = context.Contents;
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(c => c.DateCreate >= startDate.Value);
+                }
+
+                if (endDate.HasValue)
+                {
+                    query = query.Where(c => c.DateCreate <= endDate.Value);
+                }
+
+                return await query.ToListAsync();
+            }
+        }
+
     }
 }
