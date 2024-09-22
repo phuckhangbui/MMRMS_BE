@@ -25,7 +25,7 @@ namespace API.Controllers
 
             try
             {
-                var user = await _authenticationService.Login(loginDto);
+                var user = await _authenticationService.LoginUsername(loginDto);
 
                 if (user == null)
                 {
@@ -49,7 +49,7 @@ namespace API.Controllers
 
             try
             {
-                var user = await _authenticationService.Login(loginDto);
+                var user = await _authenticationService.LoginEmail(loginDto);
 
                 if (user == null)
                 {
@@ -73,6 +73,63 @@ namespace API.Controllers
             try
             {
                 await _authenticationService.RegisterCustomer(newCustomerAccountDto);
+
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("activate-account")]
+        public async Task<ActionResult> ActivateMemberAccount(MemberConfirmEmailOtpDto memberConfirmEmailOtpDto)
+        {
+            try
+            {
+                await _authenticationService.ActivateMemberEmailByOtp(memberConfirmEmailOtpDto);
+
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("send-otp")]
+        public async Task<ActionResult> SendOtp([FromQuery] string email)
+        {
+            try
+            {
+                await _authenticationService.SendOtp(email);
+
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("change-password/otp")]
+        public async Task<ActionResult> ChangePasswordWithOtp(MemberConfirmOtpWhenForgetPasswordDto memberConfirmOtpWhenForgetPasswordDto)
+        {
+            try
+            {
+                await _authenticationService.ConfirmOtpAndChangePasswordWhenForget(memberConfirmOtpWhenForgetPasswordDto);
 
                 return Ok();
             }

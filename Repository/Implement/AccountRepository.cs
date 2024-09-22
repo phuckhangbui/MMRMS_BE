@@ -7,6 +7,7 @@ using DTOs.Account;
 using Repository.Interface;
 using System.Security.Cryptography;
 using System.Text;
+using Account = BusinessObject.Account;
 
 namespace Repository.Implement
 {
@@ -154,6 +155,17 @@ namespace Repository.Implement
 
         public async Task UpdateAccount(AccountDto accountDto)
         {
+            var account = _mapper.Map<Account>(accountDto);
+
+            await AccountDao.Instance.UpdateAsync(account);
+        }
+
+        public async Task ChangeAccountPassword(AccountDto accountDto, string password)
+        {
+            using var hmac = new HMACSHA512();
+            accountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            accountDto.PasswordSalt = hmac.Key;
+
             var account = _mapper.Map<Account>(accountDto);
 
             await AccountDao.Instance.UpdateAsync(account);

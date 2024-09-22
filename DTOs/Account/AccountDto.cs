@@ -107,6 +107,9 @@ namespace DTOs.Account
         [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
         public int Gender { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
+        public DateTime DateBirth { get; set; }
+
         [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
         public string Password { get; set; }
     }
@@ -135,9 +138,6 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.DateExpireRequired)]
         public DateTime DateExpire { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
-        public DateTime DateBirth { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.RoleIdRequired)]
         public int RoleId { get; set; }

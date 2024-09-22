@@ -30,4 +30,27 @@ namespace DTOs.Authentication
         [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
         public DateTime DateBirth { get; set; }
     }
+
+    public class MemberConfirmEmailOtpDto
+    {
+        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.OtpRequired)]
+        public string Otp { get; set; }
+    }
+
+    public class MemberConfirmOtpWhenForgetPasswordDto
+    {
+        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.OtpRequired)]
+        public string Otp { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
+        public string Password { get; set; }
+    }
 }

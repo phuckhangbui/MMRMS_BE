@@ -7,6 +7,7 @@ using DTOs.Authentication;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using Service.Mail;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,12 +18,14 @@ namespace Service.Implement
         private readonly IAccountRepository _accountRepository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IMailService _mailService;
 
-        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper)
+        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
         {
             _accountRepository = accountRepository;
             _tokenService = tokenService;
             _mapper = mapper;
+            _mailService = mailService;
         }
 
         private LoginAccountDto AdminLogin(LoginUsernameDto loginUsernameDto)
@@ -51,7 +54,51 @@ namespace Service.Implement
             throw new NotImplementedException();
         }
 
-        public async Task<LoginAccountDto> Login(LoginUsernameDto loginUsernameDto)
+        private async Task<LoginAccountDto> Login(AccountDto accountDto, string password)
+        {
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            if (accountDto.IsDelete.HasValue && (bool)accountDto.IsDelete)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountDeleted);
+            }
+
+            using var hmac = new HMACSHA512(accountDto.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != accountDto.PasswordHash[i])
+                {
+                    throw new ServiceException(MessageConstant.Account.WrongPassword);
+                }
+            }
+
+            LoginAccountDto loginAccountDto = _mapper.Map<LoginAccountDto>(accountDto);
+
+            loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
+
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            loginAccountDto.RefreshToken = refreshToken;
+            loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountInactive);
+            }
+
+            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountLocked);
+            }
+
+            return loginAccountDto;
+        }
+
+        public async Task<LoginAccountDto> LoginUsername(LoginUsernameDto loginUsernameDto)
         {
             var adminAccount = AdminLogin(loginUsernameDto);
             if (adminAccount != null)
@@ -61,93 +108,14 @@ namespace Service.Implement
 
             AccountDto accountDto = await _accountRepository.GetStaffAndManagerAccountWithUsername(loginUsernameDto.Username);
 
-            if (accountDto == null)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountNotFound);
-            }
-
-            if (accountDto.IsDelete.HasValue && (bool)accountDto.IsDelete)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountDeleted);
-            }
-
-            using var hmac = new HMACSHA512(accountDto.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginUsernameDto.Password));
-            for (int i = 0; i < computedHash.Length; i++)
-            {
-                if (computedHash[i] != accountDto.PasswordHash[i])
-                {
-                    throw new ServiceException(MessageConstant.Account.WrongPassword);
-                }
-            }
-
-            LoginAccountDto loginAccountDto = _mapper.Map<LoginAccountDto>(accountDto);
-
-            loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
-
-            var refreshToken = _tokenService.GenerateRefreshToken();
-            loginAccountDto.RefreshToken = refreshToken;
-            loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-
-
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountInactive);
-            }
-
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountLocked);
-            }
-
-            return loginAccountDto;
-
+            return await Login(accountDto, loginUsernameDto.Password);
         }
 
-        public async Task<LoginAccountDto> Login(LoginEmailDto loginEmailDto)
+        public async Task<LoginAccountDto> LoginEmail(LoginEmailDto loginEmailDto)
         {
             AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(loginEmailDto.Email);
 
-            if (accountDto == null)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountNotFound);
-            }
-
-            if (accountDto.IsDelete.HasValue && (bool)accountDto.IsDelete)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountDeleted);
-            }
-
-            using var hmac = new HMACSHA512(accountDto.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginEmailDto.Password));
-            for (int i = 0; i < computedHash.Length; i++)
-            {
-                if (computedHash[i] != accountDto.PasswordHash[i])
-                {
-                    throw new ServiceException(MessageConstant.Account.WrongPassword);
-                }
-            }
-
-            LoginAccountDto loginAccountDto = _mapper.Map<LoginAccountDto>(accountDto);
-
-            loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
-
-            var refreshToken = _tokenService.GenerateRefreshToken();
-            loginAccountDto.RefreshToken = refreshToken;
-            loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-
-
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountInactive);
-            }
-
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountLocked);
-            }
-
-            return loginAccountDto;
+            return await Login(accountDto, loginEmailDto.Password);
         }
 
         public async Task Logout(int accountId)
@@ -196,10 +164,62 @@ namespace Service.Implement
             await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
 
             //send email opt here
-
+            _mailService.SendMail(AuthenticationMail.SendWelcomeAndOtpToCustomer(accountDto.Email, accountDto.Name, accountDto.OtpNumber));
 
         }
 
+        public async Task ActivateMemberEmailByOtp(MemberConfirmEmailOtpDto memberConfirmEmailOtpDto)
+        {
+            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(memberConfirmEmailOtpDto.Email);
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
 
+            if (!memberConfirmEmailOtpDto.Otp.Equals(accountDto.OtpNumber))
+            {
+                throw new ServiceException(MessageConstant.Account.WrongOtp);
+            }
+
+            accountDto.Status = AccountStatusEnum.Active.ToString();
+
+            await _accountRepository.UpdateAccount(accountDto);
+        }
+
+        public async Task SendOtp(string email)
+        {
+            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(email);
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            Random random = new Random();
+            var otp = random.Next(111111, 999999).ToString();
+
+            accountDto.OtpNumber = otp;
+            await _accountRepository.UpdateAccount(accountDto);
+
+            //send mail here
+            _mailService.SendMail(AuthenticationMail.SendOtpToCustomer(accountDto.Email, accountDto.Name, accountDto.OtpNumber));
+        }
+
+
+
+        public async Task ConfirmOtpAndChangePasswordWhenForget(MemberConfirmOtpWhenForgetPasswordDto memberConfirmOtpWhenForgetPasswordDto)
+        {
+            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(memberConfirmOtpWhenForgetPasswordDto.Email);
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            if (!memberConfirmOtpWhenForgetPasswordDto.Otp.Equals(accountDto.OtpNumber))
+            {
+                throw new ServiceException(MessageConstant.Account.WrongOtp);
+            }
+
+            await _accountRepository.ChangeAccountPassword(accountDto, memberConfirmOtpWhenForgetPasswordDto.Password);
+        }
     }
 }
