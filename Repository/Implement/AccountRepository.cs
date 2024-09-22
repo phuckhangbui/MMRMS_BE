@@ -85,7 +85,7 @@ namespace Repository.Implement
             return _mapper.Map<AccountBaseDto>(account);
         }
 
-        public async Task<AccountDto> GetAccounBaseById(int accountId)
+        public async Task<AccountDto> GetAccounById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
 

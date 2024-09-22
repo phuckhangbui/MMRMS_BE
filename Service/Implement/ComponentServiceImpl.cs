@@ -1,5 +1,7 @@
 ﻿using DTOs.Component;
+using Repository.Exceptions;
 using Repository.Interface;
+using Service.Exceptions;
 using Service.Interface;
 
 namespace Service.Implement
@@ -18,9 +20,14 @@ namespace Service.Implement
         {
             return await _componentRepository.GetAll();
         }
-        public async Task CreateComponet(CreateComponentDto createComponentDto)
+        public async Task CreateComponent(CreateComponentDto createComponentDto)
         {
-            await _componentRepository.Create(createComponentDto);
+            try
+            {
+                await _componentRepository.Create(createComponentDto);
+            }
+            catch (RepositoryException ex)
+            { throw new ServiceException(ex.Message); };
         }
 
     }

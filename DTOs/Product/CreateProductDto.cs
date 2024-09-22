@@ -1,26 +1,32 @@
-﻿using DTOs.Component;
+﻿using Common;
+using DTOs.Component;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Product
 {
     public class CreateProductDto
     {
-        [Required(ErrorMessage = "Product name is required")]
+        [Required(ErrorMessage = MessageConstant.Product.ProductNameRequired)]
         public string ProductName { get; set; }
 
-        [Required(ErrorMessage = "Description is required")]
+        [Required(ErrorMessage = MessageConstant.Product.DescriptionRequired)]
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Price is required")]
-        public double Price { get; set; }
+        [Required(ErrorMessage = MessageConstant.Product.ProductPriceRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Product.ProductPricePositiveNumber)]
+        public double ProductPrice { get; set; }
 
-        [Required(ErrorMessage = "Model is required")]
+        [Required(ErrorMessage = MessageConstant.Product.RentPriceRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Product.RentPricePositiveNumber)]
+        public double RentPrice { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Product.ModelRequired)]
         public string Model { get; set; }
 
-        [Required(ErrorMessage = "Origin is required")]
+        [Required(ErrorMessage = MessageConstant.Product.OrginRequired)]
         public string Origin { get; set; }
 
-        [Required(ErrorMessage = "CategoryId is required")]
+        [Required(ErrorMessage = MessageConstant.Product.CategoryRequired)]
         public int CategoryId { get; set; }
 
         public IEnumerable<CreateProductAttributeDto>? ProductAttributes { get; set; }
@@ -32,23 +38,22 @@ namespace DTOs.Product
 
     public class CreateProductAttributeDto
     {
-        [Required(ErrorMessage = "AttributeName is required")]
+        [Required(ErrorMessage = MessageConstant.ProductAttribute.NameRequired)]
         public string AttributeName { get; set; }
 
-        [Required(ErrorMessage = "Specifications is required")]
+        [Required(ErrorMessage = MessageConstant.ProductAttribute.SpecsRequired)]
         public string Specifications { get; set; }
 
-        [Required(ErrorMessage = "Unit is required")]
-        public string Unit { get; set; }
+        public string? Unit { get; set; }
     }
 
     public class AddExistedComponentToProduct
     {
-        [Required(ErrorMessage = "Component Id is required")]
+        [Required(ErrorMessage = MessageConstant.Component.ComponentIdRequired)]
         public int ComponentId { get; set; }
 
-        [Required(ErrorMessage = "Quantity is required")]
-        [Range(0, Double.MaxValue, ErrorMessage = "Quantity must be a positive number")]
+        [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
         public int Quantity { get; set; }
     }
 

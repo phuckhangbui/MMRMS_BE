@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using DAO;
 using DTOs.Component;
 using Repository.Exceptions;
@@ -22,7 +23,7 @@ namespace Repository.Implement
 
             if (isExisted)
             {
-                throw new RepositoryException("There is already component with the name: " + createComponentDto.ComponentName);
+                throw new RepositoryException(MessageConstant.Component.ComponetNameDuplicated);
             }
 
             var component = _mapper.Map<Component>(createComponentDto);
@@ -40,7 +41,7 @@ namespace Repository.Implement
 
             if (isExisted)
             {
-                throw new RepositoryException("There is already component with the name: " + name);
+                throw new RepositoryException(MessageConstant.Component.ComponetNameDuplicated);
             }
 
             var component = new Component
