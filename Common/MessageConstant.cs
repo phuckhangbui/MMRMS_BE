@@ -8,7 +8,7 @@
         public static class Content
         {
             //Service
-            public const string EmptyContentList = "Danh sách nội dung trống";
+            public const string ContentListEmpty = "Danh sách nội dung trống";
             public const string ContentNotFound = "Nội dung không tồn tại";
 
             //DTO
@@ -144,6 +144,13 @@
 
 
 
+        }
+
+        public static class Contract
+        {
+            //Service
+            public const string ContractListEmpty = "Danh sách hợp đồng trống.";
+            public const string ContractNotFound = "Hợp đồng không tồn tại.";
         }
     }
 }
