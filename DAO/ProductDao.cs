@@ -36,6 +36,15 @@ namespace DAO
             }
         }
 
+        public async Task<bool> IsProductExisted(string name)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Products.AnyAsync(p => p.ProductName.ToLower().Equals(name.Trim().ToLower()));
+
+            }
+        }
+
         public async Task<IEnumerable<Product>> GetProductListWithCategory()
         {
             using (var context = new MmrmsContext())

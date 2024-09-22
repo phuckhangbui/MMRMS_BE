@@ -8,7 +8,7 @@
         public static class Content
         {
             //Service
-            public const string ContentListEmpty = "Danh sách nội dung trống";
+            public const string EmptyContentList = "Danh sách nội dung trống";
             public const string ContentNotFound = "Nội dung không tồn tại";
 
             //DTO
@@ -95,11 +95,55 @@
             public const string DateEndRequired = "Ngày kết thúc là bắt buộc.";
         }
 
-        public static class Contract
+        public static class Product
         {
             //Service
-            public const string ContractListEmpty = "Danh sách hợp đồng trống.";
-            public const string ContractNotFound = "Hợp đồng không tồn tại.";
+            public const string ProductNotFound = "";
+            public const string ProductNameDuplicated = "";
+            public const string ComponentIdListNotCorrect = "";
+
+
+            //DTO
+            public const string ProductNameRequired = "";
+            public const string DescriptionRequired = "";
+            public const string ProductPriceRequired = "";
+            public const string RentPriceRequired = "";
+            public const string ModelRequired = "";
+            public const string OrginRequired = "";
+            public const string CategoryRequired = "";
+
+            public const string ProductPricePositiveNumber = "";
+            public const string RentPricePositiveNumber = "";
+
+        }
+
+        public static class ProductAttribute
+        {
+            //Service
+
+
+            //DTO
+            public const string NameRequired = "";
+            public const string SpecsRequired = "";
+        }
+
+        public static class Component
+        {
+            //Service
+            public const string ComponetNameDuplicated = "";
+            public const string ComponentNotExisted = "";
+
+
+            //DTO
+            public const string ComponentIdRequired = "";
+            public const string ComponentNameRequired = "";
+            public const string QuantityRequired = "";
+            public const string QuantityPositiveNumber = "";
+            public const string PriceRequired = "";
+            public const string PricePositiveNumber = "";
+
+
+
         }
     }
 }

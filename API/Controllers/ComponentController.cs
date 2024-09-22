@@ -44,7 +44,7 @@ namespace API.Controllers
 
             try
             {
-                await _componentService.CreateComponet(createComponentDto);
+                await _componentService.CreateComponent(createComponentDto);
                 return StatusCode(201);
             }
             catch (ServiceException ex)

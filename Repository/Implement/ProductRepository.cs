@@ -93,5 +93,10 @@ namespace Repository.Implement
         {
             return await ProductDao.Instance.IsProductExisted(productId);
         }
+
+        public async Task<bool> IsProductExisted(string name)
+        {
+            return await ProductDao.Instance.IsProductExisted(name);
+        }
     }
 }

@@ -78,11 +78,18 @@ namespace Repository.Implement
             await AccountDao.Instance.CreateAsync(account);
         }
 
-        public async Task<AccountBaseDto> GetAccountById(int accountId)
+        public async Task<AccountBaseDto> GetAccountBaseById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
 
             return _mapper.Map<AccountBaseDto>(account);
+        }
+
+        public async Task<AccountDto> GetAccounById(int accountId)
+        {
+            var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
+
+            return _mapper.Map<AccountDto>(account);
         }
 
         public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
@@ -170,5 +177,6 @@ namespace Repository.Implement
 
             await AccountDao.Instance.UpdateAsync(account);
         }
+
     }
 }
