@@ -56,7 +56,7 @@ namespace Service.Implement
 
             if (contents.IsNullOrEmpty())
             {
-                throw new ServiceException(MessageConstant.Content.EmptyContentList);
+                throw new ServiceException(MessageConstant.Content.ContentListEmpty);
             }
 
             return contents;

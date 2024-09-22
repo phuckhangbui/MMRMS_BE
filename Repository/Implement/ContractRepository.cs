@@ -1,0 +1,101 @@
+﻿using AutoMapper;
+using BusinessObject;
+using DAO;
+using DAO.Enum;
+using DTOs.Contract;
+using Microsoft.IdentityModel.Tokens;
+using Repository.Interface;
+
+namespace Repository.Implement
+{
+    public class ContractRepository : IContractRepository
+    {
+        private readonly IMapper _mapper;
+
+        public ContractRepository(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<ContractDto>> GetContracts()
+        {
+            var contracts = await ContractDao.Instance.GetAllAsync();
+
+            if (!contracts.IsNullOrEmpty())
+            {
+                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+            }
+
+            return [];
+        }
+
+        public async Task<ContractDto?> GetContractDetailById(string contractId)
+        {
+            var contract = await ContractDao.Instance.GetContractById(contractId);
+            if (contract != null)
+            {
+                return _mapper.Map<ContractDto>(contract);
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId)
+        {
+            var contracts = await ContractDao.Instance.GetContractsForCustomer(customerId);
+
+            if (!contracts.IsNullOrEmpty())
+            {
+                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+            }
+
+            return [];
+        }
+
+        public async Task CreateContract(ContractRequestDto contractRequestDto)
+        {
+            var context = new MmrmsContext();
+
+            var contract = new Contract()
+            {
+                ContractId = "2",
+                DateCreate = DateTime.Now,
+                Status = ContractStatusEnum.Pending.ToString(),
+
+                ContractName = contractRequestDto.ContractName,
+                DateStart = contractRequestDto.DateStart,
+                DateEnd = contractRequestDto.DateEnd,
+                Content = contractRequestDto.Content,
+
+                AccountSignId = contractRequestDto.AccountSignId,
+                HiringRequestId = contractRequestDto.HiringRequestId,
+                AddressId = contractRequestDto.AddressId,
+            };
+
+            foreach(var contractTerm in contractRequestDto.ContractTerms)
+            {
+                var term = new ContractTerm()
+                {
+                    Content = contractTerm.Content,
+                    Title = contractTerm.Title,
+                    DateCreate = DateTime.Now,
+                };
+
+                contract.ContractTerms.Add(term);
+            }
+
+            //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);
+            //var hiringAccount = await AccountDao.Instance.GetAccountAsyncById(contractRequestDto.AccountSignId);
+            //var hiringAddress = await AddressDao.Instance.GetAddressById(contractRequestDto.AddressId);
+
+            //contract.HiringRequest = hiringRequest;
+            //contract.AccountSign = hiringAccount;
+            //contract.Address = hiringAddress;
+
+            //await ContractDao.Instance.CreateAsync(contract);
+
+            context.Contracts.Add(contract);
+            await context.SaveChangesAsync();
+        }
+    }
+}

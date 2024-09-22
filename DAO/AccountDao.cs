@@ -94,5 +94,50 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<Account>> GetAccountsByRoleInRangeAsync(int? roleId, DateTime? startDate, DateTime? endDate)
+        {
+            using (var context = new MmrmsContext())
+            {
+                IQueryable<Account> query = context.Accounts;
+
+                if (roleId.HasValue)
+                {
+                    query = query.Where(a => a.RoleId == roleId.Value);
+                }
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(a => a.DateCreate >= startDate.Value);
+                }
+
+                if (endDate.HasValue)
+                {
+                    query = query.Where(a => a.DateCreate <= endDate.Value);
+                }
+
+                return await query.ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Account>> GetManagerAndStaffAccountsInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using (var context = new MmrmsContext())
+            {
+                IQueryable<Account> query = context.Accounts.Where(a => a.RoleId != (int)AccountRoleEnum.Customer);
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(a => a.DateCreate >= startDate.Value);
+                }
+
+                if (endDate.HasValue)
+                {
+                    query = query.Where(a => a.DateCreate <= endDate.Value);
+                }
+
+                return await query.ToListAsync();
+            }
+        }
+
     }
 }

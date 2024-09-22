@@ -5,9 +5,11 @@ using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
+using DTOs.Contract;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
+using DTOs.Term;
 using DTOs.SerialNumberProduct;
 
 namespace Repository.Mapper
@@ -101,6 +103,10 @@ namespace Repository.Mapper
 
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
+
+            CreateMap<Contract, ContractDto>();
+            CreateMap<Contract, ContractRequestDto>().ReverseMap();
+            CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
         }
     }
 }
