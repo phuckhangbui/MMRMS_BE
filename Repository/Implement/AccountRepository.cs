@@ -5,7 +5,9 @@ using DAO;
 using DAO.Enum;
 using DTOs.Account;
 using Repository.Interface;
+using System.Security.Cryptography;
 using System.Text;
+using Account = BusinessObject.Account;
 
 namespace Repository.Implement
 {
@@ -30,14 +32,18 @@ namespace Repository.Implement
 
         public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);
+            Random random = new Random();
+            var otp = random.Next(111111, 999999).ToString();
             var account = _mapper.Map<Account>(newCustomerAccountDto);
 
-            account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
+            using var hmac = new HMACSHA512();
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newCustomerAccountDto.Password));
+            account.PasswordSalt = hmac.Key;
             account.DateCreate = DateTime.Now;
             account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
+            account.OtpNumber = otp;
 
             account.RoleId = (int)AccountRoleEnum.Customer;
             account.BusinessType = newCustomerAccountDto.BusinessType;
@@ -52,14 +58,18 @@ namespace Repository.Implement
             account.AccountBusinesses.Add(accountBusiness);
 
             await AccountDao.Instance.CreateAsync(account);
+
+
         }
 
         public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(GlobalConstants.DefaultPassword);
+
             var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
 
-            account.PasswordHash = Encoding.UTF8.GetBytes(hashedPassword);
+            using var hmac = new HMACSHA512();
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GlobalConstants.DefaultPassword));
+            account.PasswordSalt = hmac.Key;
             account.DateCreate = DateTime.Now;
             account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
@@ -132,7 +142,7 @@ namespace Repository.Implement
 
         public async Task<AccountDto> GetStaffAndManagerAccountWithUsername(string username)
         {
-            var account = await AccountDao.Instance.GetAccountByEmail(username);
+            var account = await AccountDao.Instance.GetAccountByUsername(username);
             return _mapper.Map<AccountDto>(account);
         }
 
@@ -145,6 +155,17 @@ namespace Repository.Implement
 
         public async Task UpdateAccount(AccountDto accountDto)
         {
+            var account = _mapper.Map<Account>(accountDto);
+
+            await AccountDao.Instance.UpdateAsync(account);
+        }
+
+        public async Task ChangeAccountPassword(AccountDto accountDto, string password)
+        {
+            using var hmac = new HMACSHA512();
+            accountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            accountDto.PasswordSalt = hmac.Key;
+
             var account = _mapper.Map<Account>(accountDto);
 
             await AccountDao.Instance.UpdateAsync(account);

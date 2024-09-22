@@ -20,5 +20,6 @@ namespace Repository.Interface
         Task<AccountDto> GetAccountDtoById(int accountId);
 
         Task UpdateAccount(AccountDto accountDto);
+        Task ChangeAccountPassword(AccountDto accountDto, string password);
     }
 }
