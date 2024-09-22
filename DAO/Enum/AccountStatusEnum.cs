@@ -4,5 +4,6 @@
     {
         Active,
         Inactive,
+        Locked,
     }
 }
