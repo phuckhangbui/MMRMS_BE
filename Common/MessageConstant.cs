@@ -100,7 +100,11 @@
             //Service
             public const string ProductNotFound = "";
             public const string ProductNameDuplicated = "";
+            public const string ProductModelDuplicated = "";
             public const string ComponentIdListNotCorrect = "";
+            public const string StatusRequired = "";
+            public const string StatusNotAvailable = "";
+
 
 
             //DTO

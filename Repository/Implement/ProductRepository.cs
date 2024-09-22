@@ -2,6 +2,7 @@
 using BusinessObject;
 using DAO;
 using DTOs.Product;
+using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -29,6 +30,17 @@ namespace Repository.Implement
 
             return null;
         }
+
+        public async Task<ProductDto> GetProduct(int productId)
+        {
+            var product = await ProductDao.Instance.GetProduct(productId);
+
+            if (product == null)
+                return null;
+
+            return _mapper.Map<ProductDto>(product);
+        }
+
         public async Task<DisplayProductDetailDto> GetProductDetail(int productId)
         {
             var product = await ProductDao.Instance.GetProductDetail(productId);
@@ -97,6 +109,18 @@ namespace Repository.Implement
         public async Task<bool> IsProductExisted(string name)
         {
             return await ProductDao.Instance.IsProductExisted(name);
+        }
+
+        public async Task<bool> IsProductModelExisted(string model)
+        {
+            return await ProductDao.Instance.IsProductModelExisted(model);
+        }
+
+        public async Task UpdateProduct(ProductDto productDto)
+        {
+            var product = _mapper.Map<Product>(productDto);
+
+            await ProductDao.Instance.UpdateAsync(product);
         }
     }
 }

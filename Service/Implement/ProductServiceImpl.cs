@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Common;
+using DAO.Enum;
 using DTOs.Product;
+using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -74,6 +76,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Product.ProductNameDuplicated);
             }
 
+            if (await _productRepository.IsProductModelExisted(createProductDto.Model))
+            {
+                throw new ServiceException(MessageConstant.Product.ProductModelDuplicated);
+            }
+
             var category = await _categoryRepository.GetCategoryById(createProductDto.CategoryId);
 
             if (category == null)
@@ -120,6 +127,39 @@ namespace Service.Implement
             var productDto = await _productRepository.CreateProduct(createProductDto);
 
             return productDto;
+        }
+
+        public async Task ToggleProductIsDelete(int productId)
+        {
+            var productDto = await _productRepository.GetProduct(productId);
+
+            if (productDto == null)
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+
+            if ((bool)productDto.IsDelete)
+            {
+                productDto.IsDelete = false;
+            }
+            else productDto.IsDelete = true;
+
+            await _productRepository.UpdateProduct(productDto);
+        }
+
+        public async Task UpdateProductStatus(int productId, string status)
+        {
+            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(ProductStatusEnum), status, true, out _))
+            {
+                throw new ServiceException(MessageConstant.Product.StatusNotAvailable);
+            }
+
+            var productDto = await _productRepository.GetProduct(productId);
+
+            if (productDto == null)
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+
+            productDto.Status = status;
+
+            await _productRepository.UpdateProduct(productDto);
         }
     }
 }

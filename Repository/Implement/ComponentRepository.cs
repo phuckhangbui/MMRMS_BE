@@ -2,6 +2,7 @@
 using BusinessObject;
 using Common;
 using DAO;
+using DAO.Enum;
 using DTOs.Component;
 using Repository.Exceptions;
 using Repository.Interface;
@@ -30,7 +31,7 @@ namespace Repository.Implement
 
             component.ComponentName = createComponentDto.ComponentName.Trim();
             component.DateCreate = DateTime.Now;
-            component.Status = "Active";
+            component.Status = ComponentStatusEnum.Active.ToString();
 
             await ComponentDao.Instance.CreateAsync(component);
         }
@@ -50,7 +51,7 @@ namespace Repository.Implement
                 Price = null,
                 Quantity = null,
                 DateCreate = DateTime.Now,
-                Status = "NoPriceAndQuantity"
+                Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
             };
 
             component = await ComponentDao.Instance.CreateComponent(component);

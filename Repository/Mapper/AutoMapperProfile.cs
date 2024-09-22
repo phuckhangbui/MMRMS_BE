@@ -8,6 +8,7 @@ using DTOs.Content;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
+using DTOs.SerialNumberProduct;
 
 namespace Repository.Mapper
 {
@@ -47,14 +48,34 @@ namespace Repository.Mapper
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
 
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
-                .ForMember(dest => dest.ProductImageList, opt => opt.MapFrom(src => src.ProductImages));
+                     .ForMember(dest => dest.CategoryName,
+                         opt => opt.MapFrom(src => src.Category != null
+                             ? src.Category.CategoryName
+                             : null))
+                     .ForMember(dest => dest.ProductImageList,
+                         opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
+                             ? src.ProductImages
+                             : null));
+            CreateMap<ProductDto, Product>();
 
             CreateMap<Product, DisplayProductDetailDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
-                .ForMember(dest => dest.ProductImageList, opt => opt.MapFrom(src => src.ProductImages))
-                .ForMember(dest => dest.ProductAttributeList, opt => opt.MapFrom(src => src.ProductAttributes))
-                .ForMember(dest => dest.ComponentProductList, opt => opt.MapFrom(src => src.ComponentProducts));
+                    .ForMember(dest => dest.CategoryName,
+                        opt => opt.MapFrom(src => src.Category != null
+                            ? src.Category.CategoryName
+                            : null))
+                    .ForMember(dest => dest.ProductImageList,
+                        opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
+                            ? src.ProductImages
+                            : null))
+                    .ForMember(dest => dest.ProductAttributeList,
+                        opt => opt.MapFrom(src => src.ProductAttributes != null && src.ProductAttributes.Any()
+                            ? src.ProductAttributes
+                            : null))
+                    .ForMember(dest => dest.ComponentProductList,
+                        opt => opt.MapFrom(src => src.ComponentProducts != null && src.ComponentProducts.Any()
+                            ? src.ComponentProducts
+                            : null));
+
 
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();
