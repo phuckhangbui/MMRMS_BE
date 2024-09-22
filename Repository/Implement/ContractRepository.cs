@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using BusinessObject;
 using DAO;
-using DTOs.Content;
+using DAO.Enum;
 using DTOs.Contract;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -49,6 +50,52 @@ namespace Repository.Implement
             }
 
             return [];
+        }
+
+        public async Task CreateContract(ContractRequestDto contractRequestDto)
+        {
+            var context = new MmrmsContext();
+
+            var contract = new Contract()
+            {
+                ContractId = "2",
+                DateCreate = DateTime.Now,
+                Status = ContractStatusEnum.Pending.ToString(),
+
+                ContractName = contractRequestDto.ContractName,
+                DateStart = contractRequestDto.DateStart,
+                DateEnd = contractRequestDto.DateEnd,
+                Content = contractRequestDto.Content,
+
+                AccountSignId = contractRequestDto.AccountSignId,
+                HiringRequestId = contractRequestDto.HiringRequestId,
+                AddressId = contractRequestDto.AddressId,
+            };
+
+            foreach(var contractTerm in contractRequestDto.ContractTerms)
+            {
+                var term = new ContractTerm()
+                {
+                    Content = contractTerm.Content,
+                    Title = contractTerm.Title,
+                    DateCreate = DateTime.Now,
+                };
+
+                contract.ContractTerms.Add(term);
+            }
+
+            //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);
+            //var hiringAccount = await AccountDao.Instance.GetAccountAsyncById(contractRequestDto.AccountSignId);
+            //var hiringAddress = await AddressDao.Instance.GetAddressById(contractRequestDto.AddressId);
+
+            //contract.HiringRequest = hiringRequest;
+            //contract.AccountSign = hiringAccount;
+            //contract.Address = hiringAddress;
+
+            //await ContractDao.Instance.CreateAsync(contract);
+
+            context.Contracts.Add(contract);
+            await context.SaveChangesAsync();
         }
     }
 }

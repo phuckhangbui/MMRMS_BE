@@ -9,6 +9,7 @@ using DTOs.Contract;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
+using DTOs.Term;
 
 namespace Repository.Mapper
 {
@@ -81,6 +82,8 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
             CreateMap<Contract, ContractDto>();
+            CreateMap<Contract, ContractRequestDto>().ReverseMap();
+            CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
         }
     }
 }

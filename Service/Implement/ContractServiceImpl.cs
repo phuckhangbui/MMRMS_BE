@@ -16,6 +16,11 @@ namespace Service.Implement
             _contractRepository = contractRepository;
         }
 
+        public async Task CreateContract(ContractRequestDto contractRequestDto)
+        {
+            await _contractRepository.CreateContract(contractRequestDto);
+        }
+
         public async Task<ContractDto> GetContractDetailById(string contractId)
         {
             var contract = await CheckContractExist(contractId);

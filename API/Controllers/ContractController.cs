@@ -1,4 +1,5 @@
 ﻿using DTOs.Content;
+using DTOs.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -59,6 +60,30 @@ namespace API.Controllers
             {
                 var contracts = await _contractService.GetContractsForCustomer(accountId);
                 return Ok(contracts);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateContract([FromBody] ContractRequestDto contractRequestDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
+            try
+            {
+                await _contractService.CreateContract(contractRequestDto);
+                return Created("", contractRequestDto);
             }
             catch (ServiceException ex)
             {
