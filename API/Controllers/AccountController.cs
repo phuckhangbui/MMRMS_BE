@@ -7,8 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/accounts")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private readonly IAccountService _accountService;
 
@@ -168,6 +167,7 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
     }
 }

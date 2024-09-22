@@ -125,7 +125,7 @@ namespace API.Controllers
         }
 
         [HttpPost("change-password/otp")]
-        public async Task<ActionResult> ChangePasswordWithOtp(MemberConfirmOtpWhenForgetPasswordDto memberConfirmOtpWhenForgetPasswordDto)
+        public async Task<ActionResult> ChangePasswordWithOtp(ChangePasswordWithOtpDto memberConfirmOtpWhenForgetPasswordDto)
         {
             try
             {
@@ -142,6 +142,28 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePasswordWithOldPassword(ChangePasswordDto changePasswordDto)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                await _authenticationService.ChangePasswordWithOldPassword(accountId, changePasswordDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPost("refresh")]
         public async Task<ActionResult<LoginAccountDto>> Refresh(TokenApiDto tokenApiDto)

@@ -67,7 +67,7 @@ namespace Service.Implement
 
         private async Task<AccountBaseDto> CheckAccountExist(int accountId)
         {
-            var account = await _accountRepository.GetAccountById(accountId);
+            var account = await _accountRepository.GetAccountBaseById(accountId);
             if (account == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
