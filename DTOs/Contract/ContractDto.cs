@@ -1,4 +1,5 @@
-﻿using DTOs.Term;
+﻿using DTOs.AccountAddressDto;
+using DTOs.Term;
 
 namespace DTOs.Contract
 {
@@ -35,6 +36,15 @@ namespace DTOs.Contract
         public DateTime? DateEnd { get; set; }
 
         public string? Status { get; set; }
+
+        public List<AccountBusinessDto> AccountBusinesses { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    public class ContractDetailDto : ContractDto
+    {
+        public List<ContractTermDto> ContractTerms { get; set; }
     }
 
     public class ContractRequestDto

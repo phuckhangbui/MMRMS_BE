@@ -21,7 +21,7 @@ namespace Service.Implement
             await _contractRepository.CreateContract(contractRequestDto);
         }
 
-        public async Task<ContractDto> GetContractDetailById(string contractId)
+        public async Task<ContractDetailDto> GetContractDetailById(string contractId)
         {
             var contract = await CheckContractExist(contractId);
 
@@ -52,7 +52,7 @@ namespace Service.Implement
             return contracts;
         }
 
-        private async Task<ContractDto> CheckContractExist(string contractId)
+        private async Task<ContractDetailDto> CheckContractExist(string contractId)
         {
             var contract = await _contractRepository.GetContractDetailById(contractId);
 

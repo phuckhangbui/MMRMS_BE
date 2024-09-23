@@ -19,22 +19,24 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<ContractDto>> GetContracts()
         {
-            var contracts = await ContractDao.Instance.GetAllAsync();
+            var contracts = await ContractDao.Instance.GetContracts();
 
             if (!contracts.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+                var contractDtos = _mapper.Map<IEnumerable<ContractDto>>(contracts);
+                return contractDtos;
             }
 
             return [];
         }
 
-        public async Task<ContractDto?> GetContractDetailById(string contractId)
+        public async Task<ContractDetailDto?> GetContractDetailById(string contractId)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
             {
-                return _mapper.Map<ContractDto>(contract);
+                var contractDetailDto = _mapper.Map<ContractDetailDto>(contract);
+                return contractDetailDto;
             }
 
             return null;
