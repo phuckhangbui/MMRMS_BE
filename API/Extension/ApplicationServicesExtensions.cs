@@ -22,6 +22,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMembershipRankRepository, MembershipRankRepository>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IHiringRepository, HiringRepository>();
+        services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();

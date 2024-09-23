@@ -11,6 +11,7 @@ using DTOs.Product;
 using DTOs.Promotion;
 using DTOs.Term;
 using DTOs.SerialNumberProduct;
+using DTOs.AccountAddressDto;
 
 namespace Repository.Mapper
 {
@@ -104,9 +105,17 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
-            CreateMap<Contract, ContractDto>();
+            CreateMap<Contract, ContractDto>()
+                .ForMember(dest => dest.AccountBusinesses, opt => opt.MapFrom(src => src.AccountSign.AccountBusinesses))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountSign.Name));
+            CreateMap<Contract, ContractDetailDto>()
+                .ForMember(dest => dest.AccountBusinesses, opt => opt.MapFrom(src => src.AccountSign.AccountBusinesses))
+                .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
+            CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
+
+            CreateMap<AccountBusiness, AccountBusinessDto>();
         }
     }
 }

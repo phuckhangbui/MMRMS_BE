@@ -29,7 +29,11 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Contracts.FirstOrDefaultAsync(c => c.ContractId == contractId);
+                return await context.Contracts
+                     .Include(c => c.AccountSign)
+                        .ThenInclude(a => a.AccountBusinesses)
+                    .Include(c => c.ContractTerms)
+                    .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
         }
 
@@ -39,6 +43,18 @@ namespace DAO
             {
                 return await context.Contracts
                     .Where(c => c.AccountSignId == customerId)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Contract>> GetContracts()
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Contracts
+                    .Include(c => c.AccountSign)
+                        .ThenInclude(a => a.AccountBusinesses)
+                    .Include(c => c.ContractTerms)
                     .ToListAsync();
             }
         }

@@ -19,22 +19,24 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<ContractDto>> GetContracts()
         {
-            var contracts = await ContractDao.Instance.GetAllAsync();
+            var contracts = await ContractDao.Instance.GetContracts();
 
             if (!contracts.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+                var contractDtos = _mapper.Map<IEnumerable<ContractDto>>(contracts);
+                return contractDtos;
             }
 
             return [];
         }
 
-        public async Task<ContractDto?> GetContractDetailById(string contractId)
+        public async Task<ContractDetailDto?> GetContractDetailById(string contractId)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
             {
-                return _mapper.Map<ContractDto>(contract);
+                var contractDetailDto = _mapper.Map<ContractDetailDto>(contract);
+                return contractDetailDto;
             }
 
             return null;
@@ -58,7 +60,7 @@ namespace Repository.Implement
 
             var contract = new Contract()
             {
-                ContractId = "2",
+                ContractId = Guid.NewGuid().ToString(),
                 DateCreate = DateTime.Now,
                 Status = ContractStatusEnum.Pending.ToString(),
 
@@ -82,6 +84,26 @@ namespace Repository.Implement
                 };
 
                 contract.ContractTerms.Add(term);
+            }
+
+            foreach (var rentSerialNumberProduct in contractRequestDto.SerialNumberProducts)
+            {
+                var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                {
+                    SerialNumber = rentSerialNumberProduct.SerialNumber,
+
+                };
+                contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+
+                //TODO
+                //Product quantity -- ??
+                var serialNumberProduct = await ProductNumberDao.Instance
+                    .GetSerialNumberProductBySerialNumberAndProductId(rentSerialNumberProduct.SerialNumber, rentSerialNumberProduct.ProductId);
+
+                serialNumberProduct.Status = SerialMachineStatusEnum.Rented.ToString();
+                serialNumberProduct.RentTimeCounter++;
+
+                await ProductNumberDao.Instance.UpdateAsync(serialNumberProduct);
             }
 
             //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);

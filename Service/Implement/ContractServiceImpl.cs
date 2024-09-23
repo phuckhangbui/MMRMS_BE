@@ -1,4 +1,5 @@
 ﻿using Common;
+using DAO.Enum;
 using DTOs.Contract;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -10,18 +11,51 @@ namespace Service.Implement
     public class ContractServiceImpl : IContractService
     {
         private readonly IContractRepository _contractRepository;
+        private readonly IHiringRepository _hiringRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
 
-        public ContractServiceImpl(IContractRepository contractRepository)
+        public ContractServiceImpl(
+            IContractRepository contractRepository, 
+            IHiringRepository hiringRepository, 
+            IAccountRepository accountRepository, 
+            ISerialNumberProductRepository serialNumberProductRepository)
         {
             _contractRepository = contractRepository;
+            _hiringRepository = hiringRepository;
+            _accountRepository = accountRepository;
+            _serialNumberProductRepository = serialNumberProductRepository;
         }
 
         public async Task CreateContract(ContractRequestDto contractRequestDto)
         {
+            //TODO
+            //Check hiring request valid
+            var isHiringRequestValid = await _hiringRepository.CheckHiringRequestValidToRent(contractRequestDto.HiringRequestId);
+            if (!isHiringRequestValid )
+            {
+                throw new ServiceException(MessageConstant.Contract.HiringRequestInvalid);
+            }
+
+            //Check account rent valid (Exist + Active)
+            var rentAccount = await _accountRepository.GetAccounById(contractRequestDto.AccountSignId);
+            if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
+            {
+                throw new ServiceException(MessageConstant.Contract.AccountRentInvalid);
+            }
+
+            //Check address valid (Exist)
+            //Check list rent serail number valid (Available)
+            var isSerialNumberProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductsValidToRent(contractRequestDto.SerialNumberProducts);
+            if (!isSerialNumberProductsValid)
+            {
+                throw new ServiceException(MessageConstant.Contract.SerialNumberProductsInvalid);
+            }
+
             await _contractRepository.CreateContract(contractRequestDto);
         }
 
-        public async Task<ContractDto> GetContractDetailById(string contractId)
+        public async Task<ContractDetailDto> GetContractDetailById(string contractId)
         {
             var contract = await CheckContractExist(contractId);
 
@@ -52,7 +86,7 @@ namespace Service.Implement
             return contracts;
         }
 
-        private async Task<ContractDto> CheckContractExist(string contractId)
+        private async Task<ContractDetailDto> CheckContractExist(string contractId)
         {
             var contract = await _contractRepository.GetContractDetailById(contractId);
 
