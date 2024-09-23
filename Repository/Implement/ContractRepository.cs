@@ -60,7 +60,7 @@ namespace Repository.Implement
 
             var contract = new Contract()
             {
-                ContractId = "2",
+                ContractId = Guid.NewGuid().ToString(),
                 DateCreate = DateTime.Now,
                 Status = ContractStatusEnum.Pending.ToString(),
 
@@ -84,6 +84,26 @@ namespace Repository.Implement
                 };
 
                 contract.ContractTerms.Add(term);
+            }
+
+            foreach (var rentSerialNumberProduct in contractRequestDto.SerialNumberProducts)
+            {
+                var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                {
+                    SerialNumber = rentSerialNumberProduct.SerialNumber,
+
+                };
+                contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+
+                //TODO
+                //Product quantity -- ??
+                var serialNumberProduct = await ProductNumberDao.Instance
+                    .GetSerialNumberProductBySerialNumberAndProductId(rentSerialNumberProduct.SerialNumber, rentSerialNumberProduct.ProductId);
+
+                serialNumberProduct.Status = SerialMachineStatusEnum.Rented.ToString();
+                serialNumberProduct.RentTimeCounter++;
+
+                await ProductNumberDao.Instance.UpdateAsync(serialNumberProduct);
             }
 
             //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);

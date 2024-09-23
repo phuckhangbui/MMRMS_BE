@@ -1,5 +1,9 @@
-﻿using DTOs.AccountAddressDto;
+﻿using Common;
+using DTOs.AccountAddressDto;
+using DTOs.SerialNumberProduct;
 using DTOs.Term;
+using DTOs.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Contract
 {
@@ -49,20 +53,32 @@ namespace DTOs.Contract
 
     public class ContractRequestDto
     {
+        [Required(ErrorMessage = MessageConstant.Contract.ContractNameRequired)]
         public string ContractName { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.AccountSignIdRequired)]
         public int AccountSignId { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.AddressIdRequired)]
         public int AddressId { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.HiringRequestIdRequired)]
         public string HiringRequestId { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.ContentRequired)]
         public string Content { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.DateStartRequired)]
+        [FutureOrPresentDate(ErrorMessage = MessageConstant.Contract.DateStartFutureOrPresent)]
         public DateTime DateStart { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.DateEndRequired)]
         public DateTime DateEnd { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.Contract.ContractTermsRequired)]
         public List<ContractTermRequestDto> ContractTerms { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Contract.SerialNumberProductsRequired)]
+        public List<SerialNumberProductRentRequestDto> SerialNumberProducts { get; set; }
     }
 }

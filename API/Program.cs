@@ -109,8 +109,7 @@ using (var scope = app.Services.CreateScope())
     RecurringJob.AddOrUpdate(
         "PromotionJob",
         () => backgroundService.PromotionJob(),
-        "0 0 * * *",
-        timeZone);
+        "0 0 * * *");
 
     //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at TimeZone" + TimeZoneInfo.GetSystemTimeZones(), TimeZoneInfo.Local), "* * * * *");
     //RecurringJob.AddOrUpdate("TestSchedule", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
