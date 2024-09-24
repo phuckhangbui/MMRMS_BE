@@ -73,4 +73,6 @@ public partial class Account
     public virtual ICollection<EmployeeTask> TaskAssignees { get; set; } = new List<EmployeeTask>();
 
     public virtual ICollection<EmployeeTask> TaskReporters { get; set; } = new List<EmployeeTask>();
+
+    public virtual ICollection<Invoice> Invoices { get; set; }
 }

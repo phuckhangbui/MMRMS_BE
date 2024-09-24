@@ -372,6 +372,10 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Contract).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_Invoices_Contract");
+
+            entity.HasOne(d => d.AccountPaid).WithMany(p => p.Invoices)
+                .HasForeignKey(d => d.AccountPaidId)
+                .HasConstraintName("FK_Invoices_Account");
         });
 
         modelBuilder.Entity<Log>(entity =>

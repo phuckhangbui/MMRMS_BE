@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using BusinessObject;
 using DAO;
 using DAO.Enum;
+using DTOs.HiringRequest;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -18,6 +20,13 @@ namespace Repository.Implement
         {
             var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestByIdAndStatus(hiringRequestId, HiringRequestStatusEnum.Approved.ToString());
             return hiringRequest != null;
+        }
+
+        public async Task<IEnumerable<HiringRequestDto>> GetHiringRequests()
+        {
+            IEnumerable<HiringRequest> hiringRequests = await HiringRequestDao.Instance.GetHiringRequests();
+
+            return _mapper.Map<IEnumerable<HiringRequestDto>>(hiringRequests);
         }
     }
 }

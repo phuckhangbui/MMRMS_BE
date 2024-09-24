@@ -13,6 +13,8 @@ namespace DTOs.Component
 
         public double? Price { get; set; }
 
+        public DateTime? DateCreate { get; set; }
+
         public string? Status { get; set; }
     }
 

@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using DTOs;
 using DTOs.Account;
+using DTOs.AccountAddressDto;
 using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
+using DTOs.HiringRequest;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
-using DTOs.Term;
 using DTOs.SerialNumberProduct;
-using DTOs.AccountAddressDto;
+using DTOs.Term;
 
 namespace Repository.Mapper
 {
@@ -116,6 +118,18 @@ namespace Repository.Mapper
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
 
             CreateMap<AccountBusiness, AccountBusinessDto>();
+
+            CreateMap<Invoice, InvoiceDto>()
+                 .ForMember(dest => dest.AccountPaidName,
+                        opt => opt.MapFrom(src => src.AccountPaid != null
+                            ? src.AccountPaid.Name
+                            : null));
+
+            CreateMap<HiringRequest, HiringRequestDto>()
+                 .ForMember(dest => dest.AccountOrderName,
+                        opt => opt.MapFrom(src => src.AccountOrder != null
+                            ? src.AccountOrder.Name
+                            : null));
         }
     }
 }
