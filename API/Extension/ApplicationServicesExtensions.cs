@@ -41,6 +41,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IContractService, ContractServiceImpl>();
         services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<IHiringService, HiringService>();
 
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

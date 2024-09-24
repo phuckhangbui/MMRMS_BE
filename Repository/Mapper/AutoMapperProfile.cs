@@ -8,6 +8,7 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
+using DTOs.HiringRequest;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.Promotion;
@@ -122,6 +123,12 @@ namespace Repository.Mapper
                  .ForMember(dest => dest.AccountPaidName,
                         opt => opt.MapFrom(src => src.AccountPaid != null
                             ? src.AccountPaid.Name
+                            : null));
+
+            CreateMap<HiringRequest, HiringRequestDto>()
+                 .ForMember(dest => dest.AccountOrderName,
+                        opt => opt.MapFrom(src => src.AccountOrder != null
+                            ? src.AccountOrder.Name
                             : null));
         }
     }
