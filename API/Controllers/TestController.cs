@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -9,10 +10,30 @@ namespace API.Controllers
     public class TestController : BaseApiController
     {
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
 
-        public TestController(ICloudinaryService cloudinaryService)
+        public TestController(ICloudinaryService cloudinaryService, ISerialNumberProductRepository serialNumberProductRepository)
         {
             _cloudinaryService = cloudinaryService;
+            _serialNumberProductRepository = serialNumberProductRepository;
+        }
+
+        [HttpGet("{hiringRequestId}")]
+        public async Task<ActionResult> GetSerialProductNumbersAvailableForRenting(string hiringRequestId)
+        {
+            try
+            {
+                var serialNumberProducts = await _serialNumberProductRepository.GetSerialProductNumbersAvailableForRenting(hiringRequestId);
+                return Ok(serialNumberProducts);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("datetime")]
