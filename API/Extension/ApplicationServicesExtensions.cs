@@ -38,6 +38,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMembershipRankService, MembershipRankServiceImpl>();
         services.AddScoped<IDashboardService, DashboardServiceImpl>();
         services.AddScoped<IContractService, ContractServiceImpl>();
+        services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

@@ -1,33 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DTOs.SerialNumberProduct;
+using Microsoft.AspNetCore.Mvc;
+using Service.Exceptions;
+using Service.Interface;
 
 namespace API.Controllers
 {
     [Route("api/serial-number-product")]
     public class SerialNumberProductController : BaseApiController
     {
-        //    [HttpPost]
-        //    public async Task<IActionResult> CreateSerialNumberProduct([FromBody] CreateProductDto createProductDto)
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
-        //            return BadRequest(errorMessages);
-        //        }
+        private readonly ISerialNumberProductService _serialNumberProductService;
 
-        //        try
-        //        {
-        //            var product = await _productService.CreateProduct(createProductDto);
+        public SerialNumberProductController(ISerialNumberProductService serialNumberProductService)
+        {
+            _serialNumberProductService = serialNumberProductService;
+        }
 
-        //            return StatusCode(201, new { productId = product.ProductId });
-        //        }
-        //        catch (ServiceException ex)
-        //        {
-        //            return BadRequest(ex.Message);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return StatusCode(500, ex.Message);
-        //        }
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> CreateSerialNumberProduct([FromBody] SerialNumberProductCreateRequestDto createSerialProductNumberDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
+            try
+            {
+                await _serialNumberProductService.CreateSerialNumberProduct(createSerialProductNumberDto);
+                return StatusCode(201);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

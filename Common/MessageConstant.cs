@@ -150,6 +150,20 @@
 
         }
 
+        public static class SerialNumberProduct
+        {
+            //Service
+            public const string SerialNumberProductDuplicated = "";
+            public const string ProductHaveNoComponentAndIsForceSetToFalse = "";
+
+
+            //DTO
+            public const string ProductIdRequired = "";
+            public const string SerialNumberRequired = "";
+            public const string ForceWhenNoComponentInProductRequired = "";
+
+        }
+
         public static class Contract
         {
             //Service
