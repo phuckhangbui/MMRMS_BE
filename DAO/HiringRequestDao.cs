@@ -30,6 +30,7 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.HiringRequests
+                    .Include(h => h.HiringRequestProductDetails)
                     .FirstOrDefaultAsync(h => h.HiringRequestId.Equals(hiringRequestId));
             }
         }

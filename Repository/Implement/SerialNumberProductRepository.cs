@@ -71,6 +71,23 @@ namespace Repository.Implement
             await SerialNumberProductDao.Instance.CreateAsync(serialProduct);
         }
 
+        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string hiringRequestId)
+        {
+            var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(hiringRequestId);
+
+            var allSerialNumberProducts = new List<SerialNumberProduct>();
+
+            foreach (var hiringRequestProductDetail in hiringRequest.HiringRequestProductDetails)
+            {
+                var serialNumberProducts = await SerialNumberProductDao.Instance
+                    .GetSerialNumberProductsByProductIdAndStatus((int)hiringRequestProductDetail.ProductId, SerialNumberProductStatus.Available.ToString());
+
+                allSerialNumberProducts.AddRange(serialNumberProducts);
+            }
+
+            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(allSerialNumberProducts);
+        }
+
         public async Task<bool> IsSerialNumberExist(string serialNumber)
         {
             return await SerialNumberProductDao.Instance.IsSerialNumberExisted(serialNumber);

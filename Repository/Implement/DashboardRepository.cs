@@ -44,7 +44,6 @@ namespace Repository.Implement
                 var query = context.Accounts
                     .Where(a => a.RoleId == (int)AccountRoleEnum.Customer);
 
-                // Apply date range filtering if provided
                 if (startDate.HasValue)
                 {
                     query = query.Where(a => a.DateCreate >= startDate.Value);
@@ -55,12 +54,11 @@ namespace Repository.Implement
                     query = query.Where(a => a.DateCreate <= endDate.Value);
                 }
 
-                // Group by month and year, then count customers
                 var monthlyData = await query
-                    .GroupBy(a => new { Year = a.DateCreate.Value.Year, Month = a.DateCreate.Value.Month })
+                    .GroupBy(a => new { a.DateCreate!.Value.Year, a.DateCreate.Value.Month })
                     .Select(g => new DataUserAdminDto
                     {
-                        Time = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key.Month),
+                        Time = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key.Month) + " / " + g.Key.Year,
                         Customer = g.Count()
                     })
                     .ToListAsync();
@@ -68,6 +66,5 @@ namespace Repository.Implement
                 return monthlyData;
             }
         }
-
     }
 }

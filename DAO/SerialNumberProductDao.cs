@@ -1,6 +1,6 @@
-﻿using DAO.Enum;
+﻿using BusinessObject;
+using DAO.Enum;
 using Microsoft.EntityFrameworkCore;
-using SerialNumberProduct = BusinessObject.SerialNumberProduct;
 
 namespace DAO
 {
@@ -56,6 +56,14 @@ namespace DAO
             }
         }
 
-
+        public async Task<IEnumerable<SerialNumberProduct>> GetSerialNumberProductsByProductIdAndStatus(int productId, string status)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.SerialNumberProducts
+                    .Where(s => s.ProductId == productId && s.Status.Equals(status))
+                    .ToListAsync();
+            }
+        }
     }
 }
