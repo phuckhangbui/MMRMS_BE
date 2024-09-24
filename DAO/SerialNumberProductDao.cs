@@ -1,26 +1,26 @@
-﻿using BusinessObject;
-using DAO.Enum;
+﻿using DAO.Enum;
 using Microsoft.EntityFrameworkCore;
+using SerialNumberProduct = BusinessObject.SerialNumberProduct;
 
 namespace DAO
 {
-    public class ProductNumberDao : BaseDao<SerialNumberProduct>
+    public class SerialNumberProductDao : BaseDao<SerialNumberProduct>
     {
-        private static ProductNumberDao instance = null;
+        private static SerialNumberProductDao instance = null;
         private static readonly object instacelock = new object();
 
-        private ProductNumberDao()
+        private SerialNumberProductDao()
         {
 
         }
 
-        public static ProductNumberDao Instance
+        public static SerialNumberProductDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new ProductNumberDao();
+                    instance = new SerialNumberProductDao();
                 }
                 return instance;
             }
@@ -30,7 +30,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.ProductNumbers
+                return await context.SerialNumberProducts
                     .FirstOrDefaultAsync(s => s.ProductId == productId && s.SerialNumber.Equals(serialNumber));
             }
         }
@@ -39,12 +39,23 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.ProductNumbers
-                    .AnyAsync(s => s.ProductId == productId 
+                return await context.SerialNumberProducts
+                    .AnyAsync(s => s.ProductId == productId
                             && s.SerialNumber.Equals(serialNumber)
                             && s.IsDelete == false
-                            && s.Status == SerialMachineStatusEnum.Available.ToString());
+                            && s.Status == SerialNumberProductStatus.Available.ToString());
             }
         }
+
+        public async Task<bool> IsSerialNumberExisted(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.SerialNumberProducts
+                    .AnyAsync(s => s.SerialNumber.Equals(serialNumber));
+            }
+        }
+
+
     }
 }

@@ -56,10 +56,6 @@ namespace Service.Implement
             if (isProductExisted)
             {
                 var list = await _productRepository.GetProductNumberList(productId);
-                if (list.IsNullOrEmpty())
-                {
-                    return null;
-                }
 
 
                 return _mapper.Map<IEnumerable<SerialProductNumberDto>>(list);

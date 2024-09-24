@@ -65,7 +65,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ProductComponentStatus> ProductComponentStatuses { get; set; }
 
-    public virtual DbSet<SerialNumberProduct> ProductNumbers { get; set; }
+    public virtual DbSet<SerialNumberProduct> SerialNumberProducts { get; set; }
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 

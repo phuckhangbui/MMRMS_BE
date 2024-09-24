@@ -98,26 +98,26 @@
         public static class Product
         {
             //Service
-            public const string ProductNotFound = "";
-            public const string ProductNameDuplicated = "";
-            public const string ProductModelDuplicated = "";
-            public const string ComponentIdListNotCorrect = "";
-            public const string StatusRequired = "";
-            public const string StatusNotAvailable = "";
+            public const string ProductNotFound = "Không tìm thấy sản phẩm";
+            public const string ProductNameDuplicated = "Tên sản phẩm bị trùng";
+            public const string ProductModelDuplicated = "Mã model sản phẩm bị trùng";
+            public const string ComponentIdListNotCorrect = "Danh sách bộ phận máy không đúng";
+            public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
 
 
             //DTO
-            public const string ProductNameRequired = "";
-            public const string DescriptionRequired = "";
-            public const string ProductPriceRequired = "";
-            public const string RentPriceRequired = "";
-            public const string ModelRequired = "";
-            public const string OrginRequired = "";
-            public const string CategoryRequired = "";
+            public const string ProductNameRequired = "Tên máy là bắt buộc";
+            public const string DescriptionRequired = "Miêu tả máy là bắt buộc";
+            public const string ProductPriceRequired = "Giá máy là bắt buộc";
+            public const string RentPriceRequired = "Giá thuê là bắt buộc";
+            public const string ModelRequired = "Mã model là bắt buộc";
+            public const string OrginRequired = "Nguồn gốc là bắt buộc";
+            public const string CategoryRequired = "Loại máy là bắt buộc";
+            public const string StatusRequired = "Trạng thái là bắt buộc";
 
-            public const string ProductPricePositiveNumber = "";
-            public const string RentPricePositiveNumber = "";
+            public const string ProductPricePositiveNumber = "Giá máy phải là số dương";
+            public const string RentPricePositiveNumber = "Giá thuê phải là số dương";
 
         }
 
@@ -127,26 +127,40 @@
 
 
             //DTO
-            public const string NameRequired = "";
-            public const string SpecsRequired = "";
+            public const string NameRequired = "Tên là bắt buộc";
+            public const string SpecsRequired = "Chi tiết máy là bắt buộc";
         }
 
         public static class Component
         {
             //Service
-            public const string ComponetNameDuplicated = "";
-            public const string ComponentNotExisted = "";
+            public const string ComponetNameDuplicated = "Tên bộ phận máy bị trùng";
+            public const string ComponentNotExisted = "Bộ phận máy không tồn tại";
 
 
             //DTO
-            public const string ComponentIdRequired = "";
-            public const string ComponentNameRequired = "";
-            public const string QuantityRequired = "";
-            public const string QuantityPositiveNumber = "";
-            public const string PriceRequired = "";
-            public const string PricePositiveNumber = "";
+            public const string ComponentIdRequired = "ID bộ phận máy là bắt buộc";
+            public const string ComponentNameRequired = "Tên bộ phận máy là bắt buộc";
+            public const string QuantityRequired = "Số lượng là bắt buộc";
+            public const string QuantityPositiveNumber = "Số lượng phải là số dương";
+            public const string PriceRequired = "Giá bộ phận máy là bắt buộc";
+            public const string PricePositiveNumber = "Giá bộ phận máy phải là số dương";
 
 
+
+        }
+
+        public static class SerialNumberProduct
+        {
+            //Service
+            public const string SerialNumberProductDuplicated = "Mã máy bị trùng";
+            public const string ProductHaveNoComponentAndIsForceSetToFalse = "Máy này chưa có bộ phận, bạn có chắc là muốn thêm mã máy này?";
+
+
+            //DTO
+            public const string ProductIdRequired = "ID máy là bắt buộc";
+            public const string SerialNumberRequired = "Mã máy là bắt buộc";
+            public const string ForceWhenNoComponentInProductRequired = "Thêm flag khi sản phẩm có hoặc không có bộ phận máy";
 
         }
 

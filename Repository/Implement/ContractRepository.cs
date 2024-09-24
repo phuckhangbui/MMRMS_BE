@@ -97,13 +97,13 @@ namespace Repository.Implement
 
                 //TODO
                 //Product quantity -- ??
-                var serialNumberProduct = await ProductNumberDao.Instance
+                var serialNumberProduct = await SerialNumberProductDao.Instance
                     .GetSerialNumberProductBySerialNumberAndProductId(rentSerialNumberProduct.SerialNumber, rentSerialNumberProduct.ProductId);
 
-                serialNumberProduct.Status = SerialMachineStatusEnum.Rented.ToString();
+                serialNumberProduct.Status = SerialNumberProductStatus.Rented.ToString();
                 serialNumberProduct.RentTimeCounter++;
 
-                await ProductNumberDao.Instance.UpdateAsync(serialNumberProduct);
+                await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
             }
 
             //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);
