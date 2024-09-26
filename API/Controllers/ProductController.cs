@@ -94,12 +94,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/toggle-delete")]
-        public async Task<ActionResult> ToggleProductDelete([FromRoute] int productId)
+        [HttpDelete("/{productId}")]
+        public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
         {
             try
             {
-                await _productService.ToggleProductIsDelete(productId);
+                await _productService.DeleteProduct(productId);
                 return Ok();
             }
             catch (ServiceException ex)

@@ -13,7 +13,7 @@ namespace Service.Interface
 
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
 
-        Task ToggleProductIsDelete(int productId);
+        Task DeleteProduct(int productId);
         Task UpdateProductStatus(int productId, string status);
         Task UpdateProductDetail(int productId, UpdateProductDto updateProductDto);
     }

@@ -122,5 +122,10 @@ namespace Repository.Implement
 
             await ProductDao.Instance.UpdateAsync(product);
         }
+
+        public async Task DeleteProduct(int productId)
+        {
+            await ProductDao.Instance.DeleteProduct(productId);
+        }
     }
 }

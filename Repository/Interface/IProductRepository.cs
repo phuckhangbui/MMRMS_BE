@@ -20,5 +20,7 @@ namespace Repository.Interface
         Task<ProductDto> GetProduct(int productId);
 
         Task UpdateProduct(ProductDto productDto);
+
+        Task DeleteProduct(int productId);
     }
 }

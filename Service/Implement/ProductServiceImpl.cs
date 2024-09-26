@@ -125,20 +125,25 @@ namespace Service.Implement
             return productDto;
         }
 
-        public async Task ToggleProductIsDelete(int productId)
+        public async Task DeleteProduct(int productId)
         {
             var productDto = await _productRepository.GetProduct(productId);
+
+            var productNumberList = await _productRepository.GetProductNumberList(productId);
 
             if (productDto == null)
                 throw new ServiceException(MessageConstant.Product.ProductNotFound);
 
-            if ((bool)productDto.IsDelete)
+            if (!productNumberList.IsNullOrEmpty())
             {
-                productDto.IsDelete = false;
-            }
-            else productDto.IsDelete = true;
+                throw new ServiceException(MessageConstant.Product.ProductHasSerialNumberCannotDeleted);
 
-            await _productRepository.UpdateProduct(productDto);
+            }
+
+            await _productRepository.DeleteProduct(productId);
+            //else productDto.IsDelete = true;
+
+            //await _productRepository.UpdateProduct(productDto);
         }
 
         public async Task UpdateProductStatus(int productId, string status)
