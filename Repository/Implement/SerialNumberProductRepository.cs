@@ -69,6 +69,12 @@ namespace Repository.Implement
 
 
             await SerialNumberProductDao.Instance.CreateAsync(serialProduct);
+
+            var product = await ProductDao.Instance.GetProduct((int)serialProduct.ProductId);
+
+            product.Quantity += 1;
+
+            await ProductDao.Instance.UpdateAsync(product);
         }
 
         public async Task<bool> IsSerialNumberExist(string serialNumber)
