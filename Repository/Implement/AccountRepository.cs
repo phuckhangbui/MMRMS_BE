@@ -178,5 +178,12 @@ namespace Repository.Implement
             await AccountDao.Instance.UpdateAsync(account);
         }
 
+        public async Task<AccountDto> FirebaseTokenExisted(string firebaseToken)
+        {
+            var list = await AccountDao.Instance.GetAllAsync();
+            var account = list.FirstOrDefault(x => x.FirebaseMessageToken == firebaseToken);
+            return _mapper.Map<AccountDto>(account);
+        }
+
     }
 }

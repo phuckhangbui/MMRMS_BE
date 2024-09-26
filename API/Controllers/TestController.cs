@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DTOs.Notification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
 using Service.Exceptions;
@@ -11,11 +12,15 @@ namespace API.Controllers
     {
         private readonly ICloudinaryService _cloudinaryService;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IFirebaseMessagingService _firebaseMessagingService;
 
-        public TestController(ICloudinaryService cloudinaryService, ISerialNumberProductRepository serialNumberProductRepository)
+        public TestController(ICloudinaryService cloudinaryService, ISerialNumberProductRepository serialNumberProductRepository, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService)
         {
             _cloudinaryService = cloudinaryService;
             _serialNumberProductRepository = serialNumberProductRepository;
+            _firebaseMessagingService = firebaseMessagingService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("{hiringRequestId}")]
@@ -53,6 +58,39 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return BadRequest();
+            }
+        }
+
+        //for testing purpose
+        [HttpPost("create-noti")]
+        public async Task<ActionResult> Post([FromBody] CreateNotificationDto createNotificationDto)
+        {
+            try
+            {
+                await _notificationService.CreateNotification(createNotificationDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("pushnoti")]
+        public async Task<IActionResult> SendNotification([FromBody] NotificationRequest request)
+        {
+            try
+            {
+                string response = await _firebaseMessagingService.SendPushNotification(request.RegistrationToken, request.Title, request.Body, request.Data);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -94,6 +132,14 @@ namespace API.Controllers
         {
             public string? Name { get; set; }
             public IFormFile File { get; set; }
+        }
+
+        public class NotificationRequest
+        {
+            public string RegistrationToken { get; set; }
+            public string Title { get; set; }
+            public string Body { get; set; }
+            public Dictionary<string, string> Data { get; set; }
         }
     }
 }

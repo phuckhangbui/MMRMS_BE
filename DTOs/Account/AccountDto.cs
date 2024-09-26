@@ -31,6 +31,8 @@ namespace DTOs.Account
 
         public string? OtpNumber { get; set; }
 
+        public string? FirebaseMessageToken { get; set; }
+
         public string? TokenRefresh { get; set; }
 
         public DateTime? TokenDateExpire { get; set; }

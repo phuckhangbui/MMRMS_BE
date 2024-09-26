@@ -38,7 +38,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Promotions.Where(p => p.DateEnd.Value.Date <= DateTime.Now.Date.AddDays(-1) 
+                return await context.Promotions.Where(p => p.DateEnd.Value.Date <= DateTime.Now.Date.AddDays(-1)
                     && p.Status == PromotionStatusEnum.Active.ToString()).ToListAsync();
             }
         }

@@ -54,7 +54,7 @@ namespace Service.Implement
             throw new NotImplementedException();
         }
 
-        private async Task<LoginAccountDto> Login(AccountDto accountDto, string password)
+        private async Task<LoginAccountDto> Login(AccountDto accountDto, string password, string? firebaseMessagingToken)
         {
             if (accountDto == null)
             {
@@ -76,6 +76,16 @@ namespace Service.Implement
                 }
             }
 
+            if (accountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountInactive);
+            }
+
+            if (accountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountLocked);
+            }
+
             LoginAccountDto loginAccountDto = _mapper.Map<LoginAccountDto>(accountDto);
 
             loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
@@ -84,16 +94,21 @@ namespace Service.Implement
             loginAccountDto.RefreshToken = refreshToken;
             loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
+            if (string.IsNullOrEmpty(firebaseMessagingToken))
             {
-                throw new ServiceException(MessageConstant.Account.AccountInactive);
-            }
 
-            if (loginAccountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
+            else if (!firebaseMessagingToken.Equals(accountDto.FirebaseMessageToken))
+            {
+                var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(firebaseMessagingToken);
+                if (firebaseTokenExistedAccount != null)
+                {
+                    firebaseTokenExistedAccount.FirebaseMessageToken = null;
+                    await _accountRepository.UpdateAccount(firebaseTokenExistedAccount);
+                }
+                accountDto.FirebaseMessageToken = firebaseMessagingToken;
+            }
+            await _accountRepository.UpdateAccount(accountDto);
 
             return loginAccountDto;
         }
@@ -108,14 +123,14 @@ namespace Service.Implement
 
             AccountDto accountDto = await _accountRepository.GetStaffAndManagerAccountWithUsername(loginUsernameDto.Username);
 
-            return await Login(accountDto, loginUsernameDto.Password);
+            return await Login(accountDto, loginUsernameDto.Password, loginUsernameDto.FirebaseMessageToken);
         }
 
         public async Task<LoginAccountDto> LoginEmail(LoginEmailDto loginEmailDto)
         {
             AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(loginEmailDto.Email);
 
-            return await Login(accountDto, loginEmailDto.Password);
+            return await Login(accountDto, loginEmailDto.Password, loginEmailDto.FirebaseMessageToken);
         }
 
         public async Task Logout(int accountId)

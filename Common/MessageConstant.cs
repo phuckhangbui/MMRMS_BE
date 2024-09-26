@@ -186,5 +186,12 @@
             public const string ContractTermsRequired = "Danh sách điều khoản hợp đồng là bắt buộc.";
             public const string SerialNumberProductsRequired = "Danh sách sản phẩm với số serial là bắt buộc.";
         }
+
+        public static class Notification
+        {
+            //Service
+            public const string NotificationNotFound = "Thông báo này không tồn tại";
+
+        }
     }
 }
