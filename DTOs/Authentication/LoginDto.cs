@@ -11,6 +11,8 @@ namespace DTOs.Authentication
 
         [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
         public string Password { get; set; }
+        public string? FirebaseMessageToken { get; set; }
+
     }
 
 
@@ -22,5 +24,7 @@ namespace DTOs.Authentication
 
         [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
         public string Password { get; set; }
+        public string? FirebaseMessageToken { get; set; }
+
     }
 }
