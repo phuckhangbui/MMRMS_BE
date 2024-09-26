@@ -10,6 +10,7 @@ using DTOs.Content;
 using DTOs.Contract;
 using DTOs.HiringRequest;
 using DTOs.MembershipRank;
+using DTOs.Notification;
 using DTOs.Product;
 using DTOs.Promotion;
 using DTOs.SerialNumberProduct;
@@ -130,6 +131,9 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountOrder != null
                             ? src.AccountOrder.Name
                             : null));
+
+            CreateMap<Notification, NotificationDto>().ReverseMap();
+            CreateMap<CreateNotificationDto, Notification>();
         }
     }
 }

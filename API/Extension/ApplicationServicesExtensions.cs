@@ -25,10 +25,12 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IHiringRepository, HiringRepository>();
         services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ITokenService, TokenService>();
+        //services.AddScoped<IFirebaseMessagingService, FirebaseMessagingService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
@@ -42,6 +44,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IHiringService, HiringService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -61,6 +64,13 @@ public static class ApplicationServicesExtensions
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.Configure<MailSetting>(config.GetSection("MailSetting"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+        services.AddSingleton<IFirebaseMessagingService>(provider =>
+        {
+            // Assuming jsonCredentialsPath is configured elsewhere, possibly in appsettings.json
+            var jsonCredentialsPath = config["Firebase:CredentialsPath"];
+            return new FirebaseMessagingService(jsonCredentialsPath);
+        });
 
         return services;
 
