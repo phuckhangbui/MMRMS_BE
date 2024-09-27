@@ -204,5 +204,10 @@ namespace Service.Implement
 
             await _productRepository.UpdateProduct(productDto);
         }
+
+        public Task UpdateProductAttribute(int productId, CreateProductAttributeDto productAttributeDto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

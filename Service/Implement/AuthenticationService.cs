@@ -176,7 +176,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
-            await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
+            accountDto = await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
 
             //send email opt here
             _mailService.SendMail(AuthenticationMail.SendWelcomeAndOtpToCustomer(accountDto.Email, accountDto.Name, accountDto.OtpNumber));
