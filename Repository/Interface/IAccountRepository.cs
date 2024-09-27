@@ -8,7 +8,7 @@ namespace Repository.Interface
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
         Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole();
         Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto);
-        Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
+        Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> IsAccountExistWithEmail(string email);
         Task ChangeAccountStatus(int acocuntId, string status);
         Task<AccountBaseDto> GetAccountBaseById(int accountId);

@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpPost("username/login")]
-        public async Task<ActionResult<AccountBaseDto>> LoginUsername(LoginUsernameDto loginDto)
+        public async Task<ActionResult<LoginAccountDto>> LoginUsername(LoginUsernameDto loginDto)
         {
 
             try
@@ -44,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpPost("email/login")]
-        public async Task<ActionResult<AccountBaseDto>> LoginEmail(LoginEmailDto loginDto)
+        public async Task<ActionResult<LoginAccountDto>> LoginEmail(LoginEmailDto loginDto)
         {
 
             try

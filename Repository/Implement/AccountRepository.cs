@@ -30,7 +30,7 @@ namespace Repository.Implement
             }
         }
 
-        public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
+        public async Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
             Random random = new Random();
             var otp = random.Next(111111, 999999).ToString();
@@ -60,6 +60,8 @@ namespace Repository.Implement
             await AccountDao.Instance.CreateAsync(account);
 
 
+
+            return _mapper.Map<AccountDto>(account);
         }
 
         public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)

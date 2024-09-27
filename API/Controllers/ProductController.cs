@@ -94,12 +94,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/toggle-delete")]
-        public async Task<ActionResult> ToggleProductDelete([FromRoute] int productId)
+        [HttpDelete("/{productId}")]
+        public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
         {
             try
             {
-                await _productService.ToggleProductIsDelete(productId);
+                await _productService.DeleteProduct(productId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -130,7 +130,25 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("/{productId}/detail/update")]
+        //[HttpPatch("/{productId}/attribute/update")]
+        //public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] CreateProductAttributeDto productAttributeDto)
+        //{
+        //    try
+        //    {
+        //        await _productService.UpdateProductStatus(productId, productAttributeDto);
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+        [HttpPut("/{productId}/detail/update")]
         public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
         {
             if (!ModelState.IsValid)

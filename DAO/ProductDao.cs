@@ -3,6 +3,9 @@ using DAO.Enum;
 using DTOs.Component;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Component = BusinessObject.Component;
+using Product = BusinessObject.Product;
+using ProductAttribute = BusinessObject.ProductAttribute;
 
 namespace DAO
 {
@@ -96,6 +99,64 @@ namespace DAO
 
             }
 
+        }
+
+        public async Task DeleteProduct(int productId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var product = await context.Products.Include(p => p.Category)
+                                            .Include(p => p.ProductImages)
+                                            .Include(p => p.ProductAttributes)
+                                            .Include(p => p.ComponentProducts)
+                                            .ThenInclude(c => c.Component)
+                                            .FirstOrDefaultAsync(p => p.ProductId == productId);
+
+                        foreach (var image in product.ProductImages)
+                        {
+                            DbSet<ProductImage> _dbSet = context.Set<ProductImage>();
+                            _dbSet.Remove(image);
+
+                        }
+
+                        foreach (var attribute in product.ProductAttributes)
+                        {
+                            DbSet<ProductAttribute> _dbSet = context.Set<ProductAttribute>();
+                            _dbSet.Remove(attribute);
+
+                        }
+
+                        foreach (var componentProduct in product.ComponentProducts)
+                        {
+                            DbSet<ComponentProduct> _dbSet = context.Set<ComponentProduct>();
+                            _dbSet.Remove(componentProduct);
+
+                        }
+
+                        product.ComponentProducts = null;
+                        product.ProductImages = null;
+                        product.ProductAttributes = null;
+
+                        DbSet<Product> dbSet = context.Set<Product>();
+                        dbSet.Remove(product);
+
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+
+            }
         }
 
         public async Task<Product> CreateProduct(Product product, IEnumerable<CreateComponentEmbeddedDto>? newComponentList)
