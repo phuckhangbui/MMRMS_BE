@@ -13,8 +13,6 @@ namespace DTOs.Account
 
         public string? Email { get; set; }
 
-        public string? CitizenCard { get; set; }
-
         public string? Phone { get; set; }
 
         public DateTime? DateBirth { get; set; }
@@ -49,8 +47,6 @@ namespace DTOs.Account
 
         public int? RoleId { get; set; }
 
-        public int? BusinessType { get; set; }
-
         public String? Status { get; set; }
 
         public bool? IsDelete { get; set; }
@@ -63,8 +59,6 @@ namespace DTOs.Account
         public string Email { get; set; }
         public string Phone { get; set; }
         public string DateCreate { get; set; }
-        public string Address { get; set; }
-        public string CitizenCard { get; set; }
         public string Status { get; set; }
         public int RoleId { get; set; }
         public int Gender { get; set; }
@@ -81,7 +75,6 @@ namespace DTOs.Account
     public class CustomerAccountDto : AccountBaseDto
     {
         public string? AvatarImg { get; set; }
-        public int? BusinessType { get; set; }
         public string? Company { get; set; }
         public string? Address { get; set; }
         public string? Position { get; set; }
@@ -97,23 +90,14 @@ namespace DTOs.Account
         [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
-        public string Address { get; set; }
-
         [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
         public string Phone { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Account.CitizenCardRequired)]
-        public string CitizenCard { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
         public int Gender { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
         public DateTime DateBirth { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
-        public string Password { get; set; }
     }
 
     public class NewCustomerAccountDto : NewBaseAccountDto
@@ -127,10 +111,11 @@ namespace DTOs.Account
         [Required(ErrorMessage = MessageConstant.Account.TaxNumberRequired)]
         public string? TaxNumber { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.BusinessTypeRequired)]
-        public int BusinessType { get; set; }
+        [Required(ErrorMessage = MessageConstant.Account.PasswordRequired)]
+        public string Password { get; set; }
 
-
+        [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
+        public string Address { get; set; }
     }
 
     public class NewStaffAndManagerAccountDto : NewBaseAccountDto
