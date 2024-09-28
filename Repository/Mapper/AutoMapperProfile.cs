@@ -134,6 +134,11 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountOrder != null
                             ? src.AccountOrder.Name
                             : null));
+            CreateMap<RentingRequest, NewRentingRequestDto>()
+                .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore());
+            CreateMap<RentingRequestProductDetail, RentingRequestProductDetailDto>().ReverseMap();
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
             CreateMap<CreateNotificationDto, Notification>();

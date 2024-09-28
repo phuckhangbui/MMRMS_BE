@@ -2,8 +2,9 @@
 
 namespace Service.Interface
 {
-    public interface IRentingService
+    public interface IRentingRequestService
     {
         Task<IEnumerable<RentingRequestDto>> GetAll();
+        Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto);
     }
 }
