@@ -94,7 +94,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("/{productId}")]
+        [HttpDelete("{productId}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
         {
             try
@@ -112,7 +112,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/status")]
+        [HttpPatch("{productId}/status")]
         public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
         {
             try
@@ -130,25 +130,43 @@ namespace API.Controllers
             }
         }
 
-        //[HttpPatch("/{productId}/attribute/update")]
-        //public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] CreateProductAttributeDto productAttributeDto)
-        //{
-        //    try
-        //    {
-        //        await _productService.UpdateProductStatus(productId, productAttributeDto);
-        //        return Ok();
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
+        [HttpPatch("{productId}/attribute/update")]
+        public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] IEnumerable<CreateProductAttributeDto> productAttributeDtos)
+        {
+            try
+            {
+                await _productService.UpdateProductAttribute(productId, productAttributeDtos);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-        [HttpPut("/{productId}/detail/update")]
+        [HttpPatch("{productId}/component/update")]
+        public async Task<ActionResult> UpdateProductComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
+        {
+            try
+            {
+                await _productService.UpdateProductComponent(productId, componentList);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{productId}/detail/update")]
         public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
         {
             if (!ModelState.IsValid)

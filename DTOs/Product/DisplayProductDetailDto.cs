@@ -8,7 +8,9 @@
 
         public string? CategoryName { get; set; }
 
-        public double? Price { get; set; }
+        public double? RentPrice { get; set; }
+
+        public double? ProductPrice { get; set; }
 
         public int? Quantity { get; set; }
 
@@ -22,7 +24,6 @@
 
         public string? Status { get; set; }
 
-        public bool? IsDelete { get; set; }
 
         public IEnumerable<ProductAttributeDto>? ProductAttributeList { get; set; }
 
@@ -36,13 +37,13 @@
     {
         public int ComponentProductId { get; set; }
 
+        public int? ComponentId { get; set; }
+
         public string? ComponentName { get; set; }
 
         public int ProductId { get; set; }
 
         public int? Quantity { get; set; }
-
-        public DateTime? DateCreate { get; set; }
 
         public string? Status { get; set; }
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
+using DAO.Enum;
 using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
@@ -84,7 +85,7 @@ namespace Repository.Implement
                 foreach (AddExistedComponentToProduct component in createProductDto.ExistedComponentList)
                 {
                     var componentProduct = _mapper.Map<ComponentProduct>(component);
-                    componentProduct.Status = "Active";
+                    componentProduct.Status = ProductComponentStatusEnum.Normal.ToString();
                     componentProducts.Add(componentProduct);
                 }
             }
@@ -93,9 +94,27 @@ namespace Repository.Implement
 
             product.Quantity = 0;
             product.DateCreate = DateTime.Now;
-            product.Status = "NoSerialMachine";
+            product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
-            product = await ProductDao.Instance.CreateProduct(product, createProductDto.NewComponentList);
+            List<Tuple<Component, int>> componentsTuple = new List<Tuple<Component, int>>();
+
+            if (!createProductDto.NewComponentList.IsNullOrEmpty())
+                foreach (var component in createProductDto.NewComponentList)
+                {
+                    Component Component = new Component
+                    {
+                        ComponentName = component.ComponentName.Trim(),
+                        Quantity = null,
+                        Price = null,
+                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        DateCreate = DateTime.Now,
+                    };
+
+                    componentsTuple.Add(new Tuple<Component, int>(Component, component.Quantity));
+
+                }
+
+            product = await ProductDao.Instance.CreateProduct(product, componentsTuple);
 
 
             return _mapper.Map<ProductDto>(product);
@@ -141,6 +160,66 @@ namespace Repository.Implement
             }
 
             return true;
+
+        }
+
+        public async Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos)
+        {
+            var product = await ProductDao.Instance.GetProductDetail(productId);
+
+            var productAttributes = new List<ProductAttribute>();
+
+            foreach (var attributeDto in productAttributeDtos)
+            {
+                var attribute = new ProductAttribute
+                {
+                    ProductId = product.ProductId,
+                    AttributeName = attributeDto.AttributeName,
+                    Unit = attributeDto.Unit,
+                    Specifications = attributeDto.Specifications
+                };
+
+                productAttributes.Add(attribute);
+            }
+
+            await ProductDao.Instance.UpdateProductAttribute(product, productAttributes);
+        }
+
+        public async Task UpdateProductComponent(int productId, ComponentList componentList)
+        {
+            var product = await ProductDao.Instance.GetProductDetail(productId);
+
+            var componentProducts = new List<ComponentProduct>();
+
+            if (!componentList.ExistedComponentList.IsNullOrEmpty())
+            {
+                foreach (AddExistedComponentToProduct component in componentList.ExistedComponentList)
+                {
+                    var componentProduct = _mapper.Map<ComponentProduct>(component);
+                    componentProduct.Status = ProductComponentStatusEnum.Normal.ToString();
+                    componentProducts.Add(componentProduct);
+                }
+            }
+
+            product.ComponentProducts = componentProducts;
+
+            List<Tuple<Component, int>> components = new List<Tuple<Component, int>>();
+            if (!componentList.NewComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.NewComponentList)
+                {
+                    Component Component = new Component
+                    {
+                        ComponentName = component.ComponentName.Trim(),
+                        Quantity = null,
+                        Price = null,
+                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        DateCreate = DateTime.Now,
+                    };
+
+                    components.Add(new Tuple<Component, int>(Component, component.Quantity));
+                }
+
+            await ProductDao.Instance.UpdateProductComponent(product, components, componentProducts);
         }
     }
 }
