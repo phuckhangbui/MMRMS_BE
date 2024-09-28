@@ -49,7 +49,6 @@
             public const string InvalidEmail = "Địa chỉ email không hợp lệ.";
             public const string AddressRequired = "Địa chỉ là bắt buộc.";
             public const string PhoneRequired = "Số điện thoại là bắt buộc.";
-            public const string CitizenCardRequired = "Số chứng minh nhân dân là bắt buộc.";
             public const string GenderRequired = "Giới tính là bắt buộc.";
             public const string UsernameRequired = "Tên người dùng là bắt buộc.";
             public const string DateExpireRequired = "Ngày hết hạn là bắt buộc.";
@@ -58,7 +57,6 @@
             public const string CompanyRequired = "Công ty là bắt buộc.";
             public const string PositionRequired = "Chức vụ là bắt buộc.";
             public const string TaxNumberRequired = "Số thuế là bắt buộc.";
-            public const string BusinessTypeRequired = "Loại hình doanh nghiệp là bắt buộc.";
             public const string PasswordRequired = "Mật khẩu là bắt buộc.";
             public const string OtpRequired = "Mã OTP là bắt buộc.";
         }
