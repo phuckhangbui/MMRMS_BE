@@ -233,21 +233,22 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Product.ProductHasSerialNumberCannotUpdateComponentList);
             }
 
-            foreach (var component in componentList.ExistedComponentList)
-            {
-                if (!await _componentRepository.IsComponentIdExisted(component.ComponentId))
+            if (!componentList.ExistedComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.ExistedComponentList)
                 {
-                    throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+                    if (!await _componentRepository.IsComponentIdExisted(component.ComponentId))
+                    {
+                        throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+                    }
                 }
-            }
-
-            foreach (var component in componentList.NewComponentList)
-            {
-                if (await _componentRepository.IsComponentNameExisted(component.ComponentName))
+            if (!componentList.NewComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.NewComponentList)
                 {
-                    throw new ServiceException(MessageConstant.Component.ComponetNameDuplicated);
+                    if (await _componentRepository.IsComponentNameExisted(component.ComponentName))
+                    {
+                        throw new ServiceException(MessageConstant.Component.ComponetNameDuplicated);
+                    }
                 }
-            }
 
             await _productRepository.UpdateProductComponent(productId, componentList);
         }

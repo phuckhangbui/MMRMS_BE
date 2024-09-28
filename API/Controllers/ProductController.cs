@@ -94,7 +94,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("/{productId}")]
+        [HttpDelete("{productId}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
         {
             try
@@ -112,7 +112,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/status")]
+        [HttpPatch("{productId}/status")]
         public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
         {
             try
@@ -130,7 +130,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/attribute/update")]
+        [HttpPatch("{productId}/attribute/update")]
         public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] IEnumerable<CreateProductAttributeDto> productAttributeDtos)
         {
             try
@@ -148,7 +148,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("/{productId}/component/update")]
+        [HttpPatch("{productId}/component/update")]
         public async Task<ActionResult> UpdateProductComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
         {
             try
@@ -166,7 +166,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("/{productId}/detail/update")]
+        [HttpPut("{productId}/detail/update")]
         public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
         {
             if (!ModelState.IsValid)

@@ -95,7 +95,25 @@ namespace Repository.Implement
             product.DateCreate = DateTime.Now;
             product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
-            product = await ProductDao.Instance.CreateProduct(product, createProductDto.NewComponentList);
+            List<Tuple<Component, int>> componentsTuple = new List<Tuple<Component, int>>();
+
+            if (!createProductDto.NewComponentList.IsNullOrEmpty())
+                foreach (var component in createProductDto.NewComponentList)
+                {
+                    Component Component = new Component
+                    {
+                        ComponentName = component.ComponentName.Trim(),
+                        Quantity = null,
+                        Price = null,
+                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        DateCreate = DateTime.Now,
+                    };
+
+                    componentsTuple.Add(new Tuple<Component, int>(Component, component.Quantity));
+
+                }
+
+            product = await ProductDao.Instance.CreateProduct(product, componentsTuple);
 
 
             return _mapper.Map<ProductDto>(product);
@@ -132,7 +150,7 @@ namespace Repository.Implement
         {
             var product = await ProductDao.Instance.GetProductDetail(productId);
 
-            product.ProductAttributes = new List<ProductAttribute>();
+            var productAttributes = new List<ProductAttribute>();
 
             foreach (var attributeDto in productAttributeDtos)
             {
@@ -144,10 +162,10 @@ namespace Repository.Implement
                     Specifications = attributeDto.Specifications
                 };
 
-                product.ProductAttributes.Add(attribute);
+                productAttributes.Add(attribute);
             }
 
-            await ProductDao.Instance.UpdateAsync(product);
+            await ProductDao.Instance.UpdateProductAttribute(product, productAttributes);
         }
 
         public async Task UpdateProductComponent(int productId, ComponentList componentList)
@@ -168,7 +186,23 @@ namespace Repository.Implement
 
             product.ComponentProducts = componentProducts;
 
-            await ProductDao.Instance.UpdateProductComponent(product, componentList.NewComponentList);
+            List<Tuple<Component, int>> components = new List<Tuple<Component, int>>();
+            if (!componentList.NewComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.NewComponentList)
+                {
+                    Component Component = new Component
+                    {
+                        ComponentName = component.ComponentName.Trim(),
+                        Quantity = null,
+                        Price = null,
+                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        DateCreate = DateTime.Now,
+                    };
+
+                    components.Add(new Tuple<Component, int>(Component, component.Quantity));
+                }
+
+            await ProductDao.Instance.UpdateProductComponent(product, components, componentProducts);
         }
     }
 }

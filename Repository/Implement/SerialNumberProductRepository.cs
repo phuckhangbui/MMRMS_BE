@@ -71,6 +71,11 @@ namespace Repository.Implement
 
             var product = await ProductDao.Instance.GetProduct((int)serialProduct.ProductId);
 
+            if (product.Status.Equals(ProductStatusEnum.NoSerialMachine))
+            {
+                product.Status = ProductStatusEnum.Active.ToString();
+            }
+
             product.Quantity += 1;
 
             await ProductDao.Instance.UpdateAsync(product);
