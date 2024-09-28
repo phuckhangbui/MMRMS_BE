@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
+using DAO.Enum;
 using DTOs.Product;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
@@ -83,7 +84,7 @@ namespace Repository.Implement
                 foreach (AddExistedComponentToProduct component in createProductDto.ExistedComponentList)
                 {
                     var componentProduct = _mapper.Map<ComponentProduct>(component);
-                    componentProduct.Status = "Active";
+                    componentProduct.Status = ProductComponentStatusEnum.Normal.ToString();
                     componentProducts.Add(componentProduct);
                 }
             }
@@ -92,7 +93,7 @@ namespace Repository.Implement
 
             product.Quantity = 0;
             product.DateCreate = DateTime.Now;
-            product.Status = "NoSerialMachine";
+            product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
             product = await ProductDao.Instance.CreateProduct(product, createProductDto.NewComponentList);
 
@@ -125,6 +126,49 @@ namespace Repository.Implement
         public async Task DeleteProduct(int productId)
         {
             await ProductDao.Instance.DeleteProduct(productId);
+        }
+
+        public async Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos)
+        {
+            var product = await ProductDao.Instance.GetProductDetail(productId);
+
+            product.ProductAttributes = new List<ProductAttribute>();
+
+            foreach (var attributeDto in productAttributeDtos)
+            {
+                var attribute = new ProductAttribute
+                {
+                    ProductId = product.ProductId,
+                    AttributeName = attributeDto.AttributeName,
+                    Unit = attributeDto.Unit,
+                    Specifications = attributeDto.Specifications
+                };
+
+                product.ProductAttributes.Add(attribute);
+            }
+
+            await ProductDao.Instance.UpdateAsync(product);
+        }
+
+        public async Task UpdateProductComponent(int productId, ComponentList componentList)
+        {
+            var product = await ProductDao.Instance.GetProductDetail(productId);
+
+            var componentProducts = new List<ComponentProduct>();
+
+            if (!componentList.ExistedComponentList.IsNullOrEmpty())
+            {
+                foreach (AddExistedComponentToProduct component in componentList.ExistedComponentList)
+                {
+                    var componentProduct = _mapper.Map<ComponentProduct>(component);
+                    componentProduct.Status = ProductComponentStatusEnum.Normal.ToString();
+                    componentProducts.Add(componentProduct);
+                }
+            }
+
+            product.ComponentProducts = componentProducts;
+
+            await ProductDao.Instance.UpdateProductComponent(product, componentList.NewComponentList);
         }
     }
 }

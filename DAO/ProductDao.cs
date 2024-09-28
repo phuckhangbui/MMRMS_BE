@@ -211,5 +211,58 @@ namespace DAO
                 }
             }
         }
+
+        public async Task<Product> UpdateProductComponent(Product product, IEnumerable<CreateComponentEmbeddedDto> newComponentList)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (!newComponentList.IsNullOrEmpty())
+                        {
+                            foreach (var c in newComponentList)
+                            {
+                                Component Component = new Component
+                                {
+                                    ComponentName = c.ComponentName.Trim(),
+                                    Quantity = null,
+                                    Price = null,
+                                    Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                                    DateCreate = DateTime.Now,
+                                };
+
+                                context.Components.Add(Component);
+                                await context.SaveChangesAsync();
+
+                                var componentProduct = new ComponentProduct()
+                                {
+                                    ComponentId = Component.ComponentId,
+                                    Quantity = c.Quantity,
+                                    Status = ProductComponentStatusEnum.Normal.ToString(),
+                                };
+
+                                product.ComponentProducts.Add(componentProduct);
+                            }
+                        }
+
+
+                        DbSet<Product> _dbSet = context.Set<Product>();
+                        _dbSet.Add(product);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                        return product;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
     }
 }
