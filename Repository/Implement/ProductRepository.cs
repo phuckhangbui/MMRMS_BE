@@ -91,7 +91,6 @@ namespace Repository.Implement
 
             product.ComponentProducts = componentProducts;
 
-            product.Quantity = 0;
             product.DateCreate = DateTime.Now;
             product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 

@@ -42,7 +42,7 @@ namespace DAO
                 return await context.SerialNumberProducts
                     .AnyAsync(s => s.ProductId == productId
                             && s.SerialNumber.Equals(serialNumber)
-                            && s.Status == SerialNumberProductStatus.Available.ToString());
+                            && s.Status == SerialNumberProductStatusEnum.Available.ToString());
             }
         }
 
@@ -89,5 +89,60 @@ namespace DAO
                 }
             }
         }
+
+        public async Task UpdateStatus(string serialNumber, string status)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var serialNumberProduct = await context.SerialNumberProducts
+                    .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+
+                if (serialNumberProduct != null)
+                {
+                    serialNumberProduct.Status = status;
+                    DbSet<SerialNumberProduct> _dbSet = context.Set<SerialNumberProduct>();
+                    var tracker = context.Attach(serialNumberProduct);
+                    tracker.State = EntityState.Modified;
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
+
+        public async Task<SerialNumberProduct> GetSerialNumberProduct(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var serialNumberProduct = await context.SerialNumberProducts
+                    .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+
+                return serialNumberProduct;
+            }
+        }
+
+        //public async Task CreateSerialProduct(SerialNumberProduct serialProduct)
+        //{
+        //    using (var context = new MmrmsContext())
+        //    {
+        //        using (var transaction = context.Database.BeginTransaction())
+        //        {
+        //            try
+        //            {
+        //                DbSet<SerialNumberProduct> _dbSet = context.Set<SerialNumberProduct>();
+        //                _dbSet.Add(serialProduct);
+        //                await context.SaveChangesAsync();
+
+        //                var serialNumberProduct
+
+        //                await transaction.CommitAsync();
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                transaction.Rollback();
+        //                throw new Exception(e.Message);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

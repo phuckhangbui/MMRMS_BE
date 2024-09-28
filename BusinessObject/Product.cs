@@ -10,8 +10,6 @@ public partial class Product
 
     public double? ProductPrice { get; set; }
 
-    public int? Quantity { get; set; }
-
     public string? Model { get; set; }
 
     public string? Origin { get; set; }

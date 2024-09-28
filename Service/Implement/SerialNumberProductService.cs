@@ -1,4 +1,5 @@
 ﻿using Common;
+using DAO.Enum;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -64,6 +65,43 @@ namespace Service.Implement
 
             await _serialNumberProductRepository.Delete(serialNumber);
 
+        }
+
+        public async Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto)
+        {
+            if (string.IsNullOrEmpty(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
+            }
+
+            if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            await _serialNumberProductRepository.Update(serialNumber, serialNumberProductUpdateDto);
+        }
+
+        public async Task UpdateStatus(string serialNumber, string status)
+        {
+            if (string.IsNullOrEmpty(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
+            }
+
+            if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            if (!status.Equals(SerialNumberProductStatusEnum.Maintenance.ToString()) ||
+               !status.Equals(SerialNumberProductStatusEnum.Locked.ToString()) ||
+               !status.Equals(SerialNumberProductStatusEnum.Available.ToString()))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.StatusCannotSet);
+            }
+
+            await _serialNumberProductRepository.UpdateStatus(serialNumber, status);
         }
     }
 }

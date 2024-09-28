@@ -11,5 +11,7 @@ namespace Repository.Interface
         Task<IEnumerable<SerialNumberProductDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId);
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsSerialNumberProductHasContract(string serialNumber);
+        Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto);
+        Task UpdateStatus(string serialNumber, string status);
     }
 }

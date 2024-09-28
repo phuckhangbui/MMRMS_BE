@@ -138,7 +138,7 @@
             public const string ComponetNameDuplicated = "Tên bộ phận máy bị trùng";
             public const string ComponentNotExisted = "Bộ phận máy không tồn tại";
             public const string ComponentHasBeenUsedCannotUpdateName = "Bộ phận máy đã được sử dụng, không thể đổi tên";
-            public const string ComponentStatusCannotSet = "Tình trạng bộ phận máy này không thể được cài đặc";
+            public const string ComponentStatusCannotSet = "Tình trạng bộ phận máy này không thể được cài đặt";
             public const string ComponentHasBeenUsedCannotDelete = "Bộ phận máy đã được sử dụng, không thể xóa";
 
 
@@ -162,12 +162,16 @@
             public const string ProductHaveNoComponentAndIsForceSetToFalse = "Máy này chưa có bộ phận, bạn có chắc là muốn thêm mã máy này?";
             public const string SerialNumberProductNotFound = "Mã máy không tồn tại";
             public const string SerialNumberProductHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
+            public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
 
 
             //DTO
             public const string ProductIdRequired = "ID máy là bắt buộc";
             public const string SerialNumberRequired = "Mã máy là bắt buộc";
             public const string ForceWhenNoComponentInProductRequired = "Thêm flag khi sản phẩm có hoặc không có bộ phận máy";
+
+            public const string ActualRentPriceRequired = "Giá thuê máy là bắt buộc";
+            public const string RentTimeCounterequired = "Số lần máy đã cho thuê là bắt buộc";
 
         }
 

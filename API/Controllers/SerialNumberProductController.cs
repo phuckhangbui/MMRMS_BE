@@ -57,5 +57,47 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPatch("{serialNumber}/status")]
+        public async Task<IActionResult> UpdateSerialNumberProductStatus([FromRoute] string serialNumber, [FromQuery] string status)
+        {
+
+            try
+            {
+                await _serialNumberProductService.UpdateStatus(serialNumber, status);
+                return StatusCode(201);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{serialNumber}")]
+        public async Task<IActionResult> UpdateSerialNumberProduct([FromRoute] string serialNumber, [FromBody] SerialNumberProductUpdateDto serialNumberProductUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+            try
+            {
+                await _serialNumberProductService.Update(serialNumber, serialNumberProductUpdateDto);
+                return StatusCode(201);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
