@@ -15,9 +15,9 @@ namespace Service.Implement
         private readonly IAddressRepository _addressRepository;
 
         public RentingRequestServiceImpl(
-            IRentingRepository rentingRepository, 
-            IProductRepository productRepository, 
-            IAccountRepository accountRepository, 
+            IRentingRepository rentingRepository,
+            IProductRepository productRepository,
+            IAccountRepository accountRepository,
             IAddressRepository addressRepository)
         {
             _rentingRepository = rentingRepository;

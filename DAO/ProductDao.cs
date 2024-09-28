@@ -213,7 +213,7 @@ namespace DAO
             using var context = new MmrmsContext();
             return await context.Products
                 .AnyAsync(p => p.ProductId == productId
-                        && p.Quantity >= quantity
+                        //&& p.Quantity >= quantity
                         && p.Status == ProductStatusEnum.Active.ToString());
         }
 
