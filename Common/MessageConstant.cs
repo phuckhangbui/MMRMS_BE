@@ -137,11 +137,15 @@
             //Service
             public const string ComponetNameDuplicated = "Tên bộ phận máy bị trùng";
             public const string ComponentNotExisted = "Bộ phận máy không tồn tại";
+            public const string ComponentHasBeenUsedCannotUpdateName = "Bộ phận máy đã được sử dụng, không thể đổi tên";
+            public const string ComponentStatusCannotSet = "Tình trạng bộ phận máy này không thể được cài đặc";
+            public const string ComponentHasBeenUsedCannotDelete = "Bộ phận máy đã được sử dụng, không thể xóa";
 
 
             //DTO
             public const string ComponentIdRequired = "ID bộ phận máy là bắt buộc";
             public const string ComponentNameRequired = "Tên bộ phận máy là bắt buộc";
+            public const string ComponentStatusRequired = "Tình trạng máy là bắt buộc";
             public const string QuantityRequired = "Số lượng là bắt buộc";
             public const string QuantityPositiveNumber = "Số lượng phải là số dương";
             public const string PriceRequired = "Giá bộ phận máy là bắt buộc";

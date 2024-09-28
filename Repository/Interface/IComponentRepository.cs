@@ -1,4 +1,5 @@
 ﻿using DTOs.Component;
+using DTOs.Product;
 
 namespace Repository.Interface
 {
@@ -16,6 +17,8 @@ namespace Repository.Interface
         Task<ComponentDto> Create(string name);
 
         Task<bool> IsComponentNameExisted(string componentName);
-
+        Task<ComponentDto> GetComponent(int componentId);
+        Task<IEnumerable<ComponentProductDto>> GetComponentProductList(int componentId);
+        Task UpdateComponent(ComponentDto component);
     }
 }

@@ -4,6 +4,7 @@ using Common;
 using DAO;
 using DAO.Enum;
 using DTOs.Component;
+using DTOs.Product;
 using Repository.Exceptions;
 using Repository.Interface;
 
@@ -59,9 +60,14 @@ namespace Repository.Implement
             return _mapper.Map<ComponentDto>(component);
         }
 
-        public Task Delete(int componentId)
+        public async Task Delete(int componentId)
         {
-            throw new NotImplementedException();
+            var componet = await ComponentDao.Instance.GetComponent(componentId);
+
+            if (componet != null)
+            {
+                await ComponentDao.Instance.RemoveAsync(componet);
+            }
         }
 
         public async Task<IEnumerable<ComponentDto>> GetAll()
@@ -86,5 +92,30 @@ namespace Repository.Implement
             return await ComponentDao.Instance.IsComponentNameExisted(componentName);
         }
 
+        public async Task<ComponentDto> GetComponent(int componentId)
+        {
+            var component = await ComponentDao.Instance.GetComponent(componentId);
+
+            return _mapper.Map<ComponentDto>(component);
+        }
+
+        public async Task<IEnumerable<ComponentProductDto>> GetComponentProductList(int componentId)
+        {
+            var list = await ComponentProductDao.Instance.GetComponentProductBaseOnComponentId(componentId);
+
+            return _mapper.Map<IEnumerable<ComponentProductDto>>(list);
+        }
+
+        public async Task UpdateComponent(ComponentDto componentDto)
+        {
+            var component = await ComponentDao.Instance.GetComponent(componentDto.ComponentId);
+
+            component.ComponentName = componentDto.ComponentName;
+            component.Status = componentDto.Status;
+            component.Price = componentDto.Price;
+            component.Quantity = componentDto.Quantity;
+
+            await ComponentDao.Instance.UpdateAsync(component);
+        }
     }
 }
