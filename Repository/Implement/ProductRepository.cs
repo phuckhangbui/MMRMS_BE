@@ -56,7 +56,7 @@ namespace Repository.Implement
             return productDetail;
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId)
+        public async Task<IEnumerable<SerialNumberProductDto>> GetProductNumberList(int productId)
         {
             var product = await ProductDao.Instance.GetProductWithSerialProductNumber(productId);
 
@@ -65,7 +65,7 @@ namespace Repository.Implement
                 return null;
             }
 
-            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.SerialNumberProducts);
+            return _mapper.Map<IEnumerable<SerialNumberProductDto>>(product.SerialNumberProducts);
         }
 
         public async Task<ProductDto> CreateProduct(CreateProductDto createProductDto)

@@ -160,6 +160,8 @@
             //Service
             public const string SerialNumberProductDuplicated = "Mã máy bị trùng";
             public const string ProductHaveNoComponentAndIsForceSetToFalse = "Máy này chưa có bộ phận, bạn có chắc là muốn thêm mã máy này?";
+            public const string SerialNumberProductNotFound = "Mã máy không tồn tại";
+            public const string SerialNumberProductHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
 
 
             //DTO

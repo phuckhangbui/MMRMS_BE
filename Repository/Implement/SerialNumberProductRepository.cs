@@ -33,7 +33,7 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList)
+        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price)
         {
             var serialProduct = new SerialNumberProduct
             {
@@ -41,6 +41,7 @@ namespace Repository.Implement
                 ProductId = createSerialProductNumberDto.ProductId,
                 DateCreate = DateTime.Now,
                 RentTimeCounter = 0,
+                ActualRentPrice = price,
                 Status = SerialNumberProductStatus.Available.ToString()
             };
 
@@ -81,7 +82,12 @@ namespace Repository.Implement
             await ProductDao.Instance.UpdateAsync(product);
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
+        public async Task Delete(string serialNumber)
+        {
+            await SerialNumberProductDao.Instance.Delete(serialNumber);
+        }
+
+        public async Task<IEnumerable<SerialNumberProductDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
 
@@ -95,12 +101,17 @@ namespace Repository.Implement
                 allSerialNumberProducts.AddRange(serialNumberProducts);
             }
 
-            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(allSerialNumberProducts);
+            return _mapper.Map<IEnumerable<SerialNumberProductDto>>(allSerialNumberProducts);
         }
 
         public async Task<bool> IsSerialNumberExist(string serialNumber)
         {
             return await SerialNumberProductDao.Instance.IsSerialNumberExisted(serialNumber);
+        }
+
+        public async Task<bool> IsSerialNumberProductHasContract(string serialNumber)
+        {
+            return await SerialNumberProductDao.Instance.IsSerialNumberInAnyContract(serialNumber);
         }
     }
 }

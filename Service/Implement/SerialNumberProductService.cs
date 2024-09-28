@@ -42,7 +42,28 @@ namespace Service.Implement
                 }
             }
 
-            await _serialNumberProductRepository.CreateSerialNumberProduct(dto, productDetail.ComponentProductList);
+            await _serialNumberProductRepository.CreateSerialNumberProduct(dto, productDetail.ComponentProductList, (double)productDetail.RentPrice);
+        }
+
+        public async Task Delete(string serialNumber)
+        {
+            if (string.IsNullOrEmpty(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
+            }
+
+            if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            if (await _serialNumberProductRepository.IsSerialNumberProductHasContract(serialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductHasContract);
+            }
+
+            await _serialNumberProductRepository.Delete(serialNumber);
+
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Repository.Interface
 
         Task<DisplayProductDetailDto> GetProductDetail(int productId);
 
-        Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId);
+        Task<IEnumerable<SerialNumberProductDto>> GetProductNumberList(int productId);
 
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
 

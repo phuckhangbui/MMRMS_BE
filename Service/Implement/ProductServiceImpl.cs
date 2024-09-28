@@ -52,7 +52,7 @@ namespace Service.Implement
             return productDetail;
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductList(int productId)
+        public async Task<IEnumerable<SerialNumberProductDto>> GetSerialProductList(int productId)
         {
             var isProductExisted = await _productRepository.IsProductExisted(productId);
 
@@ -61,7 +61,7 @@ namespace Service.Implement
                 var list = await _productRepository.GetProductNumberList(productId);
 
 
-                return _mapper.Map<IEnumerable<SerialProductNumberDto>>(list);
+                return _mapper.Map<IEnumerable<SerialNumberProductDto>>(list);
             }
 
             throw new ServiceException(MessageConstant.Product.ProductNotFound);

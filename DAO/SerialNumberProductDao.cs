@@ -1,6 +1,6 @@
-﻿using BusinessObject;
-using DAO.Enum;
+﻿using DAO.Enum;
 using Microsoft.EntityFrameworkCore;
+using SerialNumberProduct = BusinessObject.SerialNumberProduct;
 
 namespace DAO
 {
@@ -62,6 +62,31 @@ namespace DAO
                 return await context.SerialNumberProducts
                     .Where(s => s.ProductId == productId && s.Status.Equals(status))
                     .ToListAsync();
+            }
+        }
+
+        public async Task<bool> IsSerialNumberInAnyContract(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ContractSerialNumberProducts
+                    .AnyAsync(s => s.SerialNumber.Equals(serialNumber));
+            }
+        }
+
+        public async Task Delete(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var serialNumberProduct = await context.SerialNumberProducts
+                    .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+
+                if (serialNumberProduct != null)
+                {
+                    DbSet<SerialNumberProduct> _dbSet = context.Set<SerialNumberProduct>();
+                    _dbSet.Remove(serialNumberProduct);
+                    await context.SaveChangesAsync();
+                }
             }
         }
     }

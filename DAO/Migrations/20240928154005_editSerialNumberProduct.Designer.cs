@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20240928154005_editSerialNumberProduct")]
+    partial class editSerialNumberProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1684,7 +1687,6 @@ namespace DAO.Migrations
                     b.HasOne("BusinessObject.ProductComponentStatus", "ProductComponentStatus")
                         .WithMany("ProductComponentStatusLogs")
                         .HasForeignKey("ProductComponentStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_ProductComponentStatus_Log");
 
                     b.Navigation("ProductComponentStatus");
@@ -1695,7 +1697,6 @@ namespace DAO.Migrations
                     b.HasOne("BusinessObject.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_ProductImage_Product");
 
                     b.Navigation("Product");

@@ -38,5 +38,24 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpDelete("{serialNumber}")]
+        public async Task<IActionResult> DeleteSerialNumberProduct([FromRoute] string serialNumber)
+        {
+
+            try
+            {
+                await _serialNumberProductService.Delete(serialNumber);
+                return StatusCode(201);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
