@@ -1,21 +1,21 @@
-﻿using DTOs.HiringRequest;
+﻿using DTOs.RentingRequest;
 using Repository.Interface;
 using Service.Interface;
 
 namespace Service.Implement
 {
-    public class HiringService : IHiringService
+    public class RentingService : IRentingService
     {
-        private readonly IHiringRepository _hiringRepository;
+        private readonly IRentingRepository _rentingRepository;
 
-        public HiringService(IHiringRepository hiringRepository)
+        public RentingService(IRentingRepository rentingRepository)
         {
-            _hiringRepository = hiringRepository;
+            _rentingRepository = rentingRepository;
         }
 
-        public async Task<IEnumerable<HiringRequestDto>> GetAll()
+        public async Task<IEnumerable<RentingRequestDto>> GetAll()
         {
-            return await _hiringRepository.GetHiringRequests();
+            return await _rentingRepository.GetRentingRequests();
         }
     }
 }

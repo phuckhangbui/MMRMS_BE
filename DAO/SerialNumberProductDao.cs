@@ -42,7 +42,6 @@ namespace DAO
                 return await context.SerialNumberProducts
                     .AnyAsync(s => s.ProductId == productId
                             && s.SerialNumber.Equals(serialNumber)
-                            && s.IsDelete == false
                             && s.Status == SerialNumberProductStatus.Available.ToString());
             }
         }

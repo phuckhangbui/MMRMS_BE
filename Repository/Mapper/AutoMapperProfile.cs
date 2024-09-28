@@ -8,11 +8,11 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
-using DTOs.HiringRequest;
 using DTOs.MembershipRank;
 using DTOs.Notification;
 using DTOs.Product;
 using DTOs.Promotion;
+using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
 using DTOs.Term;
 
@@ -28,8 +28,6 @@ namespace Repository.Mapper
             CreateMap<Account, AccountBaseDto>();
             CreateMap<Account, StaffAndManagerAccountDto>();
             CreateMap<Account, CustomerAccountDto>()
-                        .ForMember(dest => dest.BusinessType,
-                            opt => opt.MapFrom(src => src.BusinessType))
                         .ForMember(dest => dest.Company,
                             opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
                                 ? src.AccountBusinesses.FirstOrDefault().Company
@@ -126,7 +124,7 @@ namespace Repository.Mapper
                             ? src.AccountPaid.Name
                             : null));
 
-            CreateMap<HiringRequest, HiringRequestDto>()
+            CreateMap<RentingRequest, RentingRequestDto>()
                  .ForMember(dest => dest.AccountOrderName,
                         opt => opt.MapFrom(src => src.AccountOrder != null
                             ? src.AccountOrder.Name

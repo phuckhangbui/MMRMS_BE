@@ -24,13 +24,11 @@ public partial class Product
 
     public string? Status { get; set; }
 
-    public bool? IsDelete { get; set; }
-
     public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
 
     public virtual Category? Category { get; set; }
 
-    public virtual ICollection<HiringRequestProductDetail> HiringRequestProductDetails { get; set; } = new List<HiringRequestProductDetail>();
+    public virtual ICollection<RentingRequestProductDetail> RentingRequestProductDetails { get; set; } = new List<RentingRequestProductDetail>();
 
 
     public virtual ICollection<SerialNumberProduct> SerialNumberProducts { get; set; } = new List<SerialNumberProduct>();

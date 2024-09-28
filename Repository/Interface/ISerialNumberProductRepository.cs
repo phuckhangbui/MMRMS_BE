@@ -8,6 +8,6 @@ namespace Repository.Interface
         Task<bool> CheckSerialNumberProductsValidToRent(List<SerialNumberProductRentRequestDto> serialNumberProductRentRequestDtos);
         Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList);
         Task<bool> IsSerialNumberExist(string serialNumber);
-        Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string hiringRequestId);
+        Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId);
     }
 }

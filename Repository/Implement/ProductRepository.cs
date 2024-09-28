@@ -92,7 +92,6 @@ namespace Repository.Implement
 
             product.Quantity = 0;
             product.DateCreate = DateTime.Now;
-            product.IsDelete = false;
             product.Status = "NoSerialMachine";
 
             product = await ProductDao.Instance.CreateProduct(product, createProductDto.NewComponentList);

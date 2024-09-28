@@ -70,11 +70,10 @@ namespace Repository.Implement
                 Content = contractRequestDto.Content,
 
                 AccountSignId = contractRequestDto.AccountSignId,
-                HiringRequestId = contractRequestDto.HiringRequestId,
-                AddressId = contractRequestDto.AddressId,
+                RentingRequestId = contractRequestDto.RentingRequestId,
             };
 
-            foreach(var contractTerm in contractRequestDto.ContractTerms)
+            foreach (var contractTerm in contractRequestDto.ContractTerms)
             {
                 var term = new ContractTerm()
                 {
@@ -106,13 +105,13 @@ namespace Repository.Implement
                 await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
             }
 
-            //var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(contractRequestDto.HiringRequestId);
-            //var hiringAccount = await AccountDao.Instance.GetAccountAsyncById(contractRequestDto.AccountSignId);
-            //var hiringAddress = await AddressDao.Instance.GetAddressById(contractRequestDto.AddressId);
+            //var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
+            //var rentingAccount = await AccountDao.Instance.GetAccountAsyncById(contractRequestDto.AccountSignId);
+            //var rentingAddress = await AddressDao.Instance.GetAddressById(contractRequestDto.AddressId);
 
-            //contract.HiringRequest = hiringRequest;
-            //contract.AccountSign = hiringAccount;
-            //contract.Address = hiringAddress;
+            //contract.RentingRequest = rentingRequest;
+            //contract.AccountSign = rentingAccount;
+            //contract.Address = rentingAddress;
 
             //await ContractDao.Instance.CreateAsync(contract);
 

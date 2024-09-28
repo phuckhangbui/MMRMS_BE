@@ -23,12 +23,12 @@ namespace API.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpGet("{hiringRequestId}")]
-        public async Task<ActionResult> GetSerialProductNumbersAvailableForRenting(string hiringRequestId)
+        [HttpGet("{rentingRequestId}")]
+        public async Task<ActionResult> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
         {
             try
             {
-                var serialNumberProducts = await _serialNumberProductRepository.GetSerialProductNumbersAvailableForRenting(hiringRequestId);
+                var serialNumberProducts = await _serialNumberProductRepository.GetSerialProductNumbersAvailableForRenting(rentingRequestId);
                 return Ok(serialNumberProducts);
             }
             catch (ServiceException ex)

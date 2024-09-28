@@ -8,17 +8,21 @@ public partial class Contract
 
     public int? AccountSignId { get; set; }
 
-    public int? AddressId { get; set; }
+    public int? AccountCreateId { get; set; }
 
-    public string? HiringRequestId { get; set; }
+    public int? ContractAddressId { get; set; }
 
-    public double? TotalRentPrice { get; set; }
+    public string? RentingRequestId { get; set; }
 
-    public double? ShippingPrice { get; set; }
+    public double? TotalRentPricePerMonth { get; set; }
 
     public double? TotalDepositPrice { get; set; }
 
+    public double? ShippingPrice { get; set; }
+
     public double? DiscountPrice { get; set; }
+
+    public double? DiscountShip { get; set; }
 
     public double? FinalAmount { get; set; }
 
@@ -36,9 +40,11 @@ public partial class Contract
 
     public virtual Account? AccountSign { get; set; }
 
-    public virtual Address? Address { get; set; }
+    public virtual Account? AccountCreate { get; set; }
 
-    public virtual HiringRequest? HiringRequest { get; set; }
+    public virtual ContractAddress? ContractAddress { get; set; }
+
+    public virtual RentingRequest? RentingRequest { get; set; }
 
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
 
@@ -48,11 +54,12 @@ public partial class Contract
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
-
     public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
 
     public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
 
     public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
+
+    public virtual ICollection<ServiceContract> ServiceContracts { get; set; } = new List<ServiceContract>();
+
 }

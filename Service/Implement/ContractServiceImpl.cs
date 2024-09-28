@@ -11,18 +11,18 @@ namespace Service.Implement
     public class ContractServiceImpl : IContractService
     {
         private readonly IContractRepository _contractRepository;
-        private readonly IHiringRepository _hiringRepository;
+        private readonly IRentingRepository _rentingRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
 
         public ContractServiceImpl(
-            IContractRepository contractRepository, 
-            IHiringRepository hiringRepository, 
-            IAccountRepository accountRepository, 
+            IContractRepository contractRepository,
+            IRentingRepository rentingRepository,
+            IAccountRepository accountRepository,
             ISerialNumberProductRepository serialNumberProductRepository)
         {
             _contractRepository = contractRepository;
-            _hiringRepository = hiringRepository;
+            _rentingRepository = rentingRepository;
             _accountRepository = accountRepository;
             _serialNumberProductRepository = serialNumberProductRepository;
         }
@@ -30,11 +30,11 @@ namespace Service.Implement
         public async Task CreateContract(ContractRequestDto contractRequestDto)
         {
             //TODO
-            //Check hiring request valid
-            var isHiringRequestValid = await _hiringRepository.CheckHiringRequestValidToRent(contractRequestDto.HiringRequestId);
-            if (!isHiringRequestValid )
+            //Check renting request valid
+            var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
+            if (!isRentingRequestValid)
             {
-                throw new ServiceException(MessageConstant.Contract.HiringRequestInvalid);
+                throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
             }
 
             //Check account rent valid (Exist + Active)

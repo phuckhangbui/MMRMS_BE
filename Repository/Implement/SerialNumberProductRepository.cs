@@ -41,7 +41,6 @@ namespace Repository.Implement
                 ProductId = createSerialProductNumberDto.ProductId,
                 DateCreate = DateTime.Now,
                 RentTimeCounter = 0,
-                IsDelete = false,
                 Status = SerialNumberProductStatus.Available.ToString()
             };
 
@@ -77,16 +76,16 @@ namespace Repository.Implement
             await ProductDao.Instance.UpdateAsync(product);
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string hiringRequestId)
+        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
         {
-            var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestById(hiringRequestId);
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
 
             var allSerialNumberProducts = new List<SerialNumberProduct>();
 
-            foreach (var hiringRequestProductDetail in hiringRequest.HiringRequestProductDetails)
+            foreach (var rentingRequestProductDetail in rentingRequest.RentingRequestProductDetails)
             {
                 var serialNumberProducts = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductsByProductIdAndStatus((int)hiringRequestProductDetail.ProductId, SerialNumberProductStatus.Available.ToString());
+                    .GetSerialNumberProductsByProductIdAndStatus((int)rentingRequestProductDetail.ProductId, SerialNumberProductStatus.Available.ToString());
 
                 allSerialNumberProducts.AddRange(serialNumberProducts);
             }

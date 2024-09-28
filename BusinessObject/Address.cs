@@ -16,7 +16,5 @@ public partial class Address
 
     public virtual Account? Account { get; set; }
 
-    public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
-
-    public virtual ICollection<HiringRequest> HiringRequests { get; set; } = new List<HiringRequest>();
+    public virtual ICollection<RentingRequest> RentingRequests { get; set; } = new List<RentingRequest>();
 }

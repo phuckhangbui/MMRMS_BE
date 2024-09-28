@@ -1,6 +1,6 @@
 ﻿namespace DAO.Enum
 {
-    public enum HiringRequestStatusEnum
+    public enum RentingRequestStatusEnum
     {
         Pending,       
         Approved,      

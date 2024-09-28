@@ -22,7 +22,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMembershipRankRepository, MembershipRankRepository>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
-        services.AddScoped<IHiringRepository, HiringRepository>();
+        services.AddScoped<IRentingRepository, RentingRepository>();
         services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
@@ -43,7 +43,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IContractService, ContractServiceImpl>();
         services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
-        services.AddScoped<IHiringService, HiringService>();
+        services.AddScoped<IRentingService, RentingService>();
         services.AddScoped<INotificationService, NotificationService>();
 
 

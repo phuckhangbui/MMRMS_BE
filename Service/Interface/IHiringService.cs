@@ -1,9 +1,9 @@
-﻿using DTOs.HiringRequest;
+﻿using DTOs.RentingRequest;
 
 namespace Service.Interface
 {
-    public interface IHiringService
+    public interface IRentingService
     {
-        Task<IEnumerable<HiringRequestDto>> GetAll();
+        Task<IEnumerable<RentingRequestDto>> GetAll();
     }
 }

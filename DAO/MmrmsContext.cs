@@ -35,6 +35,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Contract> Contracts { get; set; }
 
+    public virtual DbSet<ContractAddress> ContractAddresses { get; set; }
+
     public virtual DbSet<ContractPayment> ContractPayments { get; set; }
 
     public virtual DbSet<ContractTerm> ContractTerms { get; set; }
@@ -43,9 +45,9 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Feedback> Feedbacks { get; set; }
 
-    public virtual DbSet<HiringRequest> HiringRequests { get; set; }
+    public virtual DbSet<RentingRequest> RentingRequests { get; set; }
 
-    public virtual DbSet<HiringRequestProductDetail> HiringRequestProductDetails { get; set; }
+    public virtual DbSet<RentingRequestProductDetail> RentingRequestProductDetails { get; set; }
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
@@ -80,6 +82,15 @@ public partial class MmrmsContext : DbContext
     public virtual DbSet<EmployeeTask> EmployeeTasks { get; set; }
 
     public virtual DbSet<TaskLog> TaskLogs { get; set; }
+
+    public virtual DbSet<ProductComponentStatusLog> ProductComponentStatusLogs { get; set; }
+
+    public virtual DbSet<RentingService> RentingServices { get; set; }
+
+    public virtual DbSet<ServiceRentingRequest> ServiceRentingRequests { get; set; }
+
+    public virtual DbSet<ServiceContract> ServiceContracts { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -170,7 +181,7 @@ public partial class MmrmsContext : DbContext
         {
             entity.HasKey(e => e.ProductAttributeId);
 
-            entity.ToTable("Attribute");
+            entity.ToTable("ProductAttribute");
 
             entity.Property(e => e.ProductAttributeId)
                 .ValueGeneratedOnAdd()
@@ -234,6 +245,19 @@ public partial class MmrmsContext : DbContext
                 .UseIdentityColumn();
         });
 
+        modelBuilder.Entity<ContractAddress>(entity =>
+        {
+            entity.HasKey(e => e.ContractAddressId);
+
+            entity.ToTable("ContractAddress");
+
+            entity.HasOne(d => d.Contract)
+               .WithOne(p => p.ContractAddress)
+               .HasForeignKey<Contract>(p => p.ContractAddressId)
+               .OnDelete(DeleteBehavior.Restrict) // Prevent cascading delete
+               .HasConstraintName("FK_ContractAddress_Contract");
+        });
+
         modelBuilder.Entity<Contract>(entity =>
         {
             entity.HasKey(e => e.ContractId);
@@ -244,39 +268,44 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.AccountSignId)
                 .HasConstraintName("FK_Contract_Account");
 
-            entity.HasOne(d => d.Address).WithMany(p => p.Contracts)
-                .HasForeignKey(d => d.AddressId)
-                .HasConstraintName("FK_Contract_Address");
+            entity.HasOne(d => d.AccountCreate).WithMany(p => p.CreateContracts)
+                .HasForeignKey(d => d.AccountCreateId)
+                .HasConstraintName("FK_Contract_Account_Create");
 
-            entity.HasOne(d => d.HiringRequest).WithOne(d => d.Contract)
-                .HasConstraintName("FK_Contract_HiringRequest");
+            entity.HasOne(d => d.ContractAddress).WithOne(p => p.Contract)
+                .HasForeignKey<Contract>(p => p.ContractAddressId)
+                .IsRequired()
+                .HasConstraintName("FK_ContractAddress_Contract");
 
-            entity.HasOne(d => d.HiringRequest)
+            //entity.HasOne(d => d.RentingRequest).WithOne(d => d.Contract)
+            //    .HasConstraintName("FK_Contract_RentingRequest");
+
+            entity.HasOne(d => d.RentingRequest)
                 .WithOne(p => p.Contract)
-                .HasForeignKey<Contract>(d => d.HiringRequestId)
-                .IsRequired() // Contract requires HiringRequestId
-                .HasConstraintName("FK_Contract_HiringRequest");
+                .HasForeignKey<Contract>(d => d.RentingRequestId)
+                .IsRequired() // Contract requires RentingRequestId
+                .HasConstraintName("FK_Contract_RentingRequest");
         });
 
-        modelBuilder.Entity<HiringRequest>(entity =>
+        modelBuilder.Entity<RentingRequest>(entity =>
         {
-            entity.HasKey(e => e.HiringRequestId);
+            entity.HasKey(e => e.RentingRequestId);
 
-            entity.ToTable("HiringRequest");
+            entity.ToTable("RentingRequest");
 
-            entity.HasOne(d => d.AccountOrder).WithMany(p => p.HiringRequests)
+            entity.HasOne(d => d.AccountOrder).WithMany(p => p.RentingRequests)
                 .HasForeignKey(d => d.AccountOrderId)
-                .HasConstraintName("FK_HiringRequest_Account");
+                .HasConstraintName("FK_RentingRequest_Account");
 
-            entity.HasOne(d => d.Address).WithMany(p => p.HiringRequests)
+            entity.HasOne(d => d.Address).WithMany(p => p.RentingRequests)
                 .HasForeignKey(d => d.AddressId)
-                .HasConstraintName("FK_HiringRequest_Address");
+                .HasConstraintName("FK_RentingRequest_Address");
 
             entity.HasOne(d => d.Contract)
-                .WithOne(p => p.HiringRequest)
-                .HasForeignKey<Contract>(p => p.HiringRequestId)
+                .WithOne(p => p.RentingRequest)
+                .HasForeignKey<Contract>(p => p.RentingRequestId)
                 .OnDelete(DeleteBehavior.Restrict) // Prevent cascading delete
-                .HasConstraintName("FK_HiringRequest_Contract");
+                .HasConstraintName("FK_RentingRequest_Contract");
         });
 
         modelBuilder.Entity<ContractPayment>(entity =>
@@ -289,10 +318,43 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.ContractPayments)
+            // Foreign key for Contract
+            entity.HasOne(d => d.Contract)
+                .WithMany(p => p.ContractPayments)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_ContractPayment_ContractID");
+
+            // One-to-one with Invoice, using ContractPaymentId as foreign key in Invoice
+            entity.HasOne(d => d.Invoice)
+                .WithOne(p => p.ContractPayment)
+                .HasForeignKey<Invoice>(d => d.ContractPaymentId)  // Use ContractPaymentId as the foreign key
+                .HasConstraintName("FK_Invoice_ContractPayment");
         });
+
+
+        modelBuilder.Entity<Invoice>(entity =>
+        {
+            entity.HasKey(e => e.InvoiceId);
+
+            // One-to-one relationship with ContractPayment
+            entity.HasOne(d => d.ContractPayment)
+                .WithOne(p => p.Invoice)
+                .HasForeignKey<Invoice>(d => d.ContractPaymentId)  // Use ContractPaymentId
+                .HasConstraintName("FK_Invoice_ContractPayment");
+
+            // One-to-many relationship with AccountPaid
+            entity.HasOne(d => d.AccountPaid)
+                .WithMany(p => p.Invoices)
+                .HasForeignKey(d => d.AccountPaidId)
+                .HasConstraintName("FK_Invoices_Account");
+
+            // One-to-one relationship with MaintainTicket
+            entity.HasOne(d => d.MaintainingTicket)
+                .WithOne(p => p.Invoice)
+                .HasForeignKey<Invoice>(d => d.MaintainTicketId)
+                .HasConstraintName("FK_Invoice_MaintainTicket");
+        });
+
 
         modelBuilder.Entity<ContractTerm>(entity =>
         {
@@ -346,37 +408,26 @@ public partial class MmrmsContext : DbContext
 
 
 
-        modelBuilder.Entity<HiringRequestProductDetail>(entity =>
+        modelBuilder.Entity<RentingRequestProductDetail>(entity =>
         {
-            entity.HasKey(e => e.HiringRequestProductDetailId);
+            entity.HasKey(e => e.RentingRequestProductDetailId);
 
-            entity.ToTable("HiringRequestProductDetail");
+            entity.ToTable("RentingRequestProductDetail");
 
-            entity.Property(e => e.HiringRequestProductDetailId)
+            entity.Property(e => e.RentingRequestProductDetailId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.HiringRequest).WithMany(p => p.HiringRequestProductDetails)
-                .HasForeignKey(d => d.HiringRequestId)
-                .HasConstraintName("FK_HiringRequestProductDetail_HiringRequest");
+            entity.HasOne(d => d.RentingRequest).WithMany(p => p.RentingRequestProductDetails)
+                .HasForeignKey(d => d.RentingRequestId)
+                .HasConstraintName("FK_RentingRequestProductDetail_RentingRequest");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.HiringRequestProductDetails)
+            entity.HasOne(d => d.Product).WithMany(p => p.RentingRequestProductDetails)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_HiringRequestProductDetail_Product");
+                .HasConstraintName("FK_RentingRequestProductDetail_Product");
         });
 
-        modelBuilder.Entity<Invoice>(entity =>
-        {
-            entity.HasKey(e => e.InvoiceId);
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.Invoices)
-                .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_Invoices_Contract");
-
-            entity.HasOne(d => d.AccountPaid).WithMany(p => p.Invoices)
-                .HasForeignKey(d => d.AccountPaidId)
-                .HasConstraintName("FK_Invoices_Account");
-        });
 
         modelBuilder.Entity<Log>(entity =>
         {
@@ -429,6 +480,12 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintainingTickets)
                 .HasForeignKey(d => d.ProductSerialNumber)
                 .HasConstraintName("FK_MaintainingTicket_SerialNumberProduct");
+
+            entity.HasOne(d => d.Invoice)
+                .WithOne(p => p.MaintainingTicket)
+                .HasForeignKey<MaintainingTicket>(d => d.InvoiceId)
+                .HasConstraintName("FK_Invoice_MaintainTicket");
+
         });
 
         modelBuilder.Entity<MaintenanceRequest>(entity =>
@@ -512,6 +569,21 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ProductComponentStatuses)
                 .HasForeignKey(d => d.SerialNumber)
                 .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
+        });
+
+        modelBuilder.Entity<ProductComponentStatusLog>(entity =>
+        {
+            entity.HasKey(e => e.ProductComponentStatusLogId);
+
+            entity.ToTable("ProductComponentStatusLog");
+
+            entity.Property(e => e.ProductComponentStatusLogId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.ProductComponentStatus).WithMany(p => p.ProductComponentStatusLogs)
+                .HasForeignKey(d => d.ProductComponentStatusId)
+                .HasConstraintName("FK_ProductComponentStatus_Log");
         });
 
         modelBuilder.Entity<SerialNumberProduct>(entity =>
@@ -602,23 +674,23 @@ public partial class MmrmsContext : DbContext
         {
             entity.HasKey(e => e.EmployeeTaskId);
 
-            entity.ToTable("Task");
+            entity.ToTable("EmployeeTask");
 
             entity.Property(e => e.EmployeeTaskId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Assignee).WithMany(p => p.TaskAssignees)
-                .HasForeignKey(d => d.AssigneeId)
-                .HasConstraintName("FK_Task_Assignee");
+            entity.HasOne(d => d.Staff).WithMany(p => p.TaskReceivedList)
+                .HasForeignKey(d => d.StaffId)
+                .HasConstraintName("FK_Task_Staff");
 
             entity.HasOne(d => d.Contract).WithMany(p => p.EmployeeTasks)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_Task_Contract");
 
-            entity.HasOne(d => d.Reporter).WithMany(p => p.TaskReporters)
-                .HasForeignKey(d => d.ReporterId)
-                .HasConstraintName("FK_Task_Reporter");
+            entity.HasOne(d => d.Manager).WithMany(p => p.TaskGaveList)
+                .HasForeignKey(d => d.ManagerId)
+                .HasConstraintName("FK_Task_Manager");
         });
 
         modelBuilder.Entity<TaskLog>(entity =>
@@ -634,6 +706,55 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.EmployeeTask).WithMany(p => p.TaskLogs)
                 .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_TaskLog_TaskID");
+        });
+
+        modelBuilder.Entity<RentingService>(entity =>
+        {
+            entity.HasKey(e => e.RentingServiceId);
+
+            entity.ToTable("RentingService");
+
+            entity.Property(e => e.RentingServiceId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+        });
+
+        modelBuilder.Entity<ServiceRentingRequest>(entity =>
+        {
+            entity.HasKey(e => e.ServiceRentingRequestId);
+
+            entity.ToTable("ServiceRentingRequest");
+
+            entity.Property(e => e.ServiceRentingRequestId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.RentingService).WithMany(p => p.ServiceRentingRequests)
+               .HasForeignKey(d => d.RentingServiceId)
+               .HasConstraintName("FK_rentingservice_servicerequest");
+
+            entity.HasOne(d => d.RentingRequest).WithMany(p => p.ServiceRentingRequests)
+               .HasForeignKey(d => d.RentingRequestId)
+               .HasConstraintName("FK_servicerequest_rentingrequest");
+        });
+
+        modelBuilder.Entity<ServiceContract>(entity =>
+        {
+            entity.HasKey(e => e.ServiceContractId);
+
+            entity.ToTable("ServiceContract");
+
+            entity.Property(e => e.ServiceContractId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.RentingService).WithMany(p => p.ServiceContracts)
+             .HasForeignKey(d => d.RentingServiceId)
+             .HasConstraintName("FK_rentingservice_servicecontract");
+
+            entity.HasOne(d => d.Contract).WithMany(p => p.ServiceContracts)
+               .HasForeignKey(d => d.ContractId)
+               .HasConstraintName("FK_servicecontract_contract");
         });
 
         OnModelCreatingPartial(modelBuilder);

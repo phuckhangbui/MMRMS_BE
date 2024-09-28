@@ -3,52 +3,52 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
-    public class HiringRequestDao : BaseDao<HiringRequest>
+    public class RentingRequestDao : BaseDao<RentingRequest>
     {
-        private static HiringRequestDao instance = null;
+        private static RentingRequestDao instance = null;
         private static readonly object instacelock = new object();
 
-        private HiringRequestDao()
+        private RentingRequestDao()
         {
 
         }
 
-        public static HiringRequestDao Instance
+        public static RentingRequestDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new HiringRequestDao();
+                    instance = new RentingRequestDao();
                 }
                 return instance;
             }
         }
 
-        public async Task<HiringRequest> GetHiringRequestById(string hiringRequestId)
+        public async Task<RentingRequest> GetRentingRequestById(string rentingRequestId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.HiringRequests
-                    .Include(h => h.HiringRequestProductDetails)
-                    .FirstOrDefaultAsync(h => h.HiringRequestId.Equals(hiringRequestId));
+                return await context.RentingRequests
+                    .Include(h => h.RentingRequestProductDetails)
+                    .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId));
             }
         }
 
-        public async Task<IEnumerable<HiringRequest>> GetHiringRequests()
+        public async Task<IEnumerable<RentingRequest>> GetRentingRequests()
         {
             using (var context = new MmrmsContext())
             {
-                return await context.HiringRequests.Include(h => h.AccountOrder).ToListAsync();
+                return await context.RentingRequests.Include(h => h.AccountOrder).ToListAsync();
             }
         }
 
-        public async Task<HiringRequest> GetHiringRequestByIdAndStatus(string hiringRequestId, string status)
+        public async Task<RentingRequest> GetRentingRequestByIdAndStatus(string rentingRequestId, string status)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.HiringRequests
-                    .FirstOrDefaultAsync(h => h.HiringRequestId.Equals(hiringRequestId)
+                return await context.RentingRequests
+                    .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId)
                         && h.Status.Equals(status));
             }
         }
