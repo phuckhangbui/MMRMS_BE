@@ -12,7 +12,7 @@ namespace Service.Implement
     public class ContentServiceImpl : IContentService
     {
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IContentRepository _contentRepository; 
+        private readonly IContentRepository _contentRepository;
 
         public ContentServiceImpl(ICloudinaryService cloudinaryService, IContentRepository contentRepository)
         {
@@ -24,14 +24,14 @@ namespace Service.Implement
         {
             var content = await CheckContentExist(contentId);
 
-            string imageUrlStr = await UploadImageToCloudinary(imageUrl);
+            string imageUrlStr = await _cloudinaryService.UploadImageToCloudinary(imageUrl);
 
             await _contentRepository.ChangeContentImage(contentId, imageUrlStr);
         }
 
         public async Task CreateContent(ContentCreateRequestDto contentRequestDto)
         {
-            string imageUrlStr = await UploadImageToCloudinary(contentRequestDto.ImageUrl);
+            string imageUrlStr = await _cloudinaryService.UploadImageToCloudinary(contentRequestDto.ImageUrl);
 
             await _contentRepository.CreateContent(contentRequestDto, imageUrlStr);
         }
@@ -69,17 +69,6 @@ namespace Service.Implement
             await _contentRepository.UpdateContent(contentId, contentUpdateRequestDto);
         }
 
-        private async Task<string> UploadImageToCloudinary(IFormFile imageUrl)
-        {
-            var result = await _cloudinaryService.AddPhotoAsync(imageUrl);
-            if (result.Error != null)
-            {
-                //TODO
-                throw new ServiceException(MessageConstant.ImageUploadError);
-            }
-
-            return result.SecureUrl.AbsoluteUri;
-        }
 
         public async Task ChangeContentStatus(int contentId, string status)
         {

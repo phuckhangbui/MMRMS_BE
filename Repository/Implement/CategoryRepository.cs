@@ -36,7 +36,7 @@ namespace Repository.Implement
                 CategoryName = category.CategoryName,
                 DateCreate = category.DateCreate,
                 Status = category.Status,
-                Quantity = category.Products.Sum(p => p.Quantity) ?? 0
+                //Quantity = category.Products.Sum(p => p.Quantity) ?? 0
             }).ToList();
 
             return categoryDtos;

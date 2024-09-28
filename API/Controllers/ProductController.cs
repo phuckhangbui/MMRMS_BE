@@ -54,6 +54,11 @@ namespace API.Controllers
         [HttpGet("{productId}/serial-products")]
         public async Task<ActionResult<DisplayProductDetailDto>> GetSerialProductList([FromRoute] int productId)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
             try
             {
                 var product = await _productService.GetSerialProductList(productId);
@@ -115,6 +120,7 @@ namespace API.Controllers
         [HttpPatch("{productId}/status")]
         public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
         {
+
             try
             {
                 await _productService.UpdateProductStatus(productId, status);
@@ -133,6 +139,11 @@ namespace API.Controllers
         [HttpPatch("{productId}/attribute/update")]
         public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] IEnumerable<CreateProductAttributeDto> productAttributeDtos)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
             try
             {
                 await _productService.UpdateProductAttribute(productId, productAttributeDtos);
@@ -151,6 +162,11 @@ namespace API.Controllers
         [HttpPatch("{productId}/component/update")]
         public async Task<ActionResult> UpdateProductComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
             try
             {
                 await _productService.UpdateProductComponent(productId, componentList);
@@ -169,6 +185,7 @@ namespace API.Controllers
         [HttpPut("{productId}/detail/update")]
         public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
         {
+
             if (!ModelState.IsValid)
             {
                 string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
@@ -189,5 +206,54 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpPut("{productId}/thumbnail")]
+        public async Task<ActionResult> ChangeContentImage(int productId, IFormFile imageUrl)
+        {
+            if (imageUrl == null || imageUrl.Length == 0)
+            {
+                return BadRequest("Chưa có hình ảnh nào được chọn");
+            }
+
+            try
+            {
+                await _productService.ChangeProductThumbnail(productId, imageUrl);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{productId}/images")]
+        public async Task<ActionResult> ChangeContentImages(int productId, List<IFormFile> imageFiles)
+        {
+            if (imageFiles == null || !imageFiles.Any())
+            {
+                return BadRequest("Chưa có hình ảnh nào được chọn");
+            }
+
+            try
+            {
+                // Pass the list of image files to the service to handle the thumbnails change
+                await _productService.ChangeProductImages(productId, imageFiles);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

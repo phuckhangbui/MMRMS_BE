@@ -57,7 +57,7 @@ namespace Repository.Implement
             return productDetail;
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId)
+        public async Task<IEnumerable<SerialNumberProductDto>> GetProductNumberList(int productId)
         {
             var product = await ProductDao.Instance.GetProductWithSerialProductNumber(productId);
 
@@ -66,7 +66,7 @@ namespace Repository.Implement
                 return null;
             }
 
-            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(product.SerialNumberProducts);
+            return _mapper.Map<IEnumerable<SerialNumberProductDto>>(product.SerialNumberProducts);
         }
 
         public async Task<ProductDto> CreateProduct(CreateProductDto createProductDto)
@@ -92,7 +92,6 @@ namespace Repository.Implement
 
             product.ComponentProducts = componentProducts;
 
-            product.Quantity = 0;
             product.DateCreate = DateTime.Now;
             product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
@@ -221,5 +220,35 @@ namespace Repository.Implement
 
             await ProductDao.Instance.UpdateProductComponent(product, components, componentProducts);
         }
+
+        public async Task ChangeProductThumbnail(int productId, string imageUrlStr)
+        {
+            var productImage = new ProductImage
+            {
+                ProductImageUrl = imageUrlStr,
+                ProductId = productId,
+                IsThumbnail = true
+            };
+
+            await ProductDao.Instance.ChangeProductThumbnail(productImage);
+        }
+
+        public async Task AddProductImages(int productId, List<string> uploadedImageUrls)
+        {
+            var productImages = new List<ProductImage>();
+
+            foreach (var imageUrl in uploadedImageUrls)
+            {
+                var productImage = new ProductImage
+                {
+                    ProductImageUrl = imageUrl,
+                    ProductId = productId,
+                    IsThumbnail = false // Set all images to non-thumbnail initially
+                };
+                productImages.Add(productImage);
+            }
+            await ProductDao.Instance.AddProductImages(productId, productImages);
+        }
+
     }
 }

@@ -33,7 +33,7 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList)
+        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price)
         {
             var serialProduct = new SerialNumberProduct
             {
@@ -41,7 +41,8 @@ namespace Repository.Implement
                 ProductId = createSerialProductNumberDto.ProductId,
                 DateCreate = DateTime.Now,
                 RentTimeCounter = 0,
-                Status = SerialNumberProductStatus.Available.ToString()
+                ActualRentPrice = price,
+                Status = SerialNumberProductStatusEnum.Available.ToString()
             };
 
             IList<ProductComponentStatus> productComponentStatuses = new List<ProductComponentStatus>();
@@ -56,6 +57,21 @@ namespace Repository.Implement
                     Status = ProductComponentStatusEnum.Normal.ToString()
                 };
 
+                var logs = new List<ProductComponentStatusLog>();
+
+                var productComponentStatusLog = new ProductComponentStatusLog
+                {
+                    ProductComponentStatusId = productComponentStatus.ProductComponentStatusId,
+                    DateCreate = DateTime.Now,
+                    Status = ProductComponentStatusEnum.Normal.ToString(),
+                    Note = "Initial status created.",
+                    Type = ProductComponentStatusLogTypeEnum.System.ToString()
+                };
+
+                logs.Add(productComponentStatusLog);
+
+                productComponentStatus.ProductComponentStatusLogs = logs;
+
                 productComponentStatuses.Add(productComponentStatus);
             }
 
@@ -69,6 +85,9 @@ namespace Repository.Implement
 
             await SerialNumberProductDao.Instance.CreateAsync(serialProduct);
 
+
+
+
             var product = await ProductDao.Instance.GetProduct((int)serialProduct.ProductId);
 
             if (product.Status.Equals(ProductStatusEnum.NoSerialMachine))
@@ -76,12 +95,16 @@ namespace Repository.Implement
                 product.Status = ProductStatusEnum.Active.ToString();
             }
 
-            product.Quantity += 1;
 
             await ProductDao.Instance.UpdateAsync(product);
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
+        public async Task Delete(string serialNumber)
+        {
+            await SerialNumberProductDao.Instance.Delete(serialNumber);
+        }
+
+        public async Task<IEnumerable<SerialNumberProductDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
 
@@ -90,17 +113,40 @@ namespace Repository.Implement
             foreach (var rentingRequestProductDetail in rentingRequest.RentingRequestProductDetails)
             {
                 var serialNumberProducts = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductsByProductIdAndStatus((int)rentingRequestProductDetail.ProductId, SerialNumberProductStatus.Available.ToString());
+                    .GetSerialNumberProductsByProductIdAndStatus((int)rentingRequestProductDetail.ProductId, SerialNumberProductStatusEnum.Available.ToString());
 
                 allSerialNumberProducts.AddRange(serialNumberProducts);
             }
 
-            return _mapper.Map<IEnumerable<SerialProductNumberDto>>(allSerialNumberProducts);
+            return _mapper.Map<IEnumerable<SerialNumberProductDto>>(allSerialNumberProducts);
         }
 
         public async Task<bool> IsSerialNumberExist(string serialNumber)
         {
             return await SerialNumberProductDao.Instance.IsSerialNumberExisted(serialNumber);
+        }
+
+        public async Task<bool> IsSerialNumberProductHasContract(string serialNumber)
+        {
+            return await SerialNumberProductDao.Instance.IsSerialNumberInAnyContract(serialNumber);
+        }
+
+        public async Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto)
+        {
+            var serialNumberProduct = await SerialNumberProductDao.Instance.GetSerialNumberProduct(serialNumber);
+
+            if (serialNumberProduct != null)
+            {
+                serialNumberProduct.ActualRentPrice = serialNumberProductUpdateDto.ActualRentPrice;
+                serialNumberProduct.RentTimeCounter = serialNumberProductUpdateDto.RentTimeCounter;
+
+                await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
+            }
+        }
+
+        public async Task UpdateStatus(string serialNumber, string status)
+        {
+            await SerialNumberProductDao.Instance.UpdateStatus(serialNumber, status);
         }
     }
 }

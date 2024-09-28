@@ -1,6 +1,6 @@
 ﻿namespace DAO.Enum
 {
-    public enum SerialNumberProductStatus
+    public enum SerialNumberProductStatusEnum
     {
         Available,
         Rented,

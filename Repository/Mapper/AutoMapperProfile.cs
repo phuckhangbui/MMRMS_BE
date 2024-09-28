@@ -86,16 +86,21 @@ namespace Repository.Mapper
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();
             CreateMap<ComponentProduct, ComponentProductDto>()
-                .ForMember(dest => dest.ComponentName, opt => opt.MapFrom(src => src.Component.ComponentName));
+                 .ForMember(dest => dest.ComponentName,
+                        opt => opt.MapFrom(src => src.Component != null
+                            ? src.Component.ComponentName
+                            : null));
+
             CreateMap<CreateProductDto, Product>();
             CreateMap<CreateProductAttributeDto, ProductAttribute>();
             CreateMap<AddExistedComponentToProduct, ComponentProduct>();
 
             CreateMap<Component, ComponentDto>();
+            CreateMap<UpdateComponentDto, Component>();
             CreateMap<CreateComponentDto, Component>();
 
 
-            CreateMap<SerialNumberProduct, SerialProductNumberDto>();
+            CreateMap<SerialNumberProduct, SerialNumberProductDto>();
 
             CreateMap<Content, ContentDto>();
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();

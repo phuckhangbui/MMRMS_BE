@@ -11,7 +11,9 @@ namespace Repository.Interface
         Task<bool> IsProductExisted(string name);
         Task<bool> IsProductModelExisted(string model);
         Task<DisplayProductDetailDto> GetProductDetail(int productId);
-        Task<IEnumerable<SerialProductNumberDto>> GetProductNumberList(int productId);
+
+        Task<IEnumerable<SerialNumberProductDto>> GetProductNumberList(int productId);
+
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
         Task<ProductDto> GetProduct(int productId);
         Task UpdateProduct(ProductDto productDto);
@@ -19,5 +21,7 @@ namespace Repository.Interface
         Task<bool> CheckProductValidToRent(List<RentingRequestProductDetailDto> rentingRequestProductDetails);
         Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);
         Task UpdateProductComponent(int productId, ComponentList productComponentDtos);
+        Task ChangeProductThumbnail(int productId, string imageUrlStr);
+        Task AddProductImages(int productId, List<string> uploadedImageUrls);
     }
 }

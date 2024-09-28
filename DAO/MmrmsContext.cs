@@ -549,6 +549,7 @@ public partial class MmrmsContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_ProductImage_Product");
         });
 
@@ -568,6 +569,7 @@ public partial class MmrmsContext : DbContext
 
             entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ProductComponentStatuses)
                 .HasForeignKey(d => d.SerialNumber)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
         });
 
@@ -583,6 +585,7 @@ public partial class MmrmsContext : DbContext
 
             entity.HasOne(d => d.ProductComponentStatus).WithMany(p => p.ProductComponentStatusLogs)
                 .HasForeignKey(d => d.ProductComponentStatusId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_ProductComponentStatus_Log");
         });
 

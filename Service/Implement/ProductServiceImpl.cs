@@ -3,6 +3,7 @@ using Common;
 using DAO.Enum;
 using DTOs.Product;
 using DTOs.SerialNumberProduct;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -15,14 +16,16 @@ namespace Service.Implement
         private readonly IProductRepository _productRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
 
-        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductList()
@@ -49,7 +52,7 @@ namespace Service.Implement
             return productDetail;
         }
 
-        public async Task<IEnumerable<SerialProductNumberDto>> GetSerialProductList(int productId)
+        public async Task<IEnumerable<SerialNumberProductDto>> GetSerialProductList(int productId)
         {
             var isProductExisted = await _productRepository.IsProductExisted(productId);
 
@@ -58,7 +61,7 @@ namespace Service.Implement
                 var list = await _productRepository.GetProductNumberList(productId);
 
 
-                return _mapper.Map<IEnumerable<SerialProductNumberDto>>(list);
+                return _mapper.Map<IEnumerable<SerialNumberProductDto>>(list);
             }
 
             throw new ServiceException(MessageConstant.Product.ProductNotFound);
@@ -252,5 +255,45 @@ namespace Service.Implement
 
             await _productRepository.UpdateProductComponent(productId, componentList);
         }
+
+        public async Task ChangeProductThumbnail(int productId, IFormFile imageUrl)
+        {
+            var product = await _productRepository.GetProduct(productId);
+
+            if (product == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            string imageUrlStr = await _cloudinaryService.UploadImageToCloudinary(imageUrl);
+
+            await _productRepository.ChangeProductThumbnail(productId, imageUrlStr);
+        }
+
+        public async Task ChangeProductImages(int productId, List<IFormFile> imageFiles)
+        {
+            var product = await _productRepository.GetProduct(productId);
+
+            if (product == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            var uploadedImageUrls = new List<string>();
+
+            foreach (var imageFile in imageFiles)
+            {
+                if (imageFile.Length > 0)
+                {
+                    // Upload each image to Cloudinary
+                    string imageUrl = await _cloudinaryService.UploadImageToCloudinary(imageFile);
+                    uploadedImageUrls.Add(imageUrl);
+                }
+            }
+
+            // Assuming you have a repository method to save multiple image URLs
+            await _productRepository.AddProductImages(productId, uploadedImageUrls);
+        }
+
     }
 }

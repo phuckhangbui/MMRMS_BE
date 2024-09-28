@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
@@ -21,6 +22,14 @@ namespace DAO
                     instance = new ComponentProductDao();
                 }
                 return instance;
+            }
+        }
+
+        public async Task<IEnumerable<ComponentProduct>> GetComponentProductBaseOnComponentId(int componentId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ComponentProducts.Where(c => c.ComponentId == componentId).ToListAsync();
             }
         }
     }

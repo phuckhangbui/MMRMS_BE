@@ -58,5 +58,15 @@ namespace DAO
                 return component;
             }
         }
+
+        public async Task<Component> GetComponent(int componentId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Components.FirstOrDefaultAsync(c => c.ComponentId == componentId);
+            }
+        }
+
+        
     }
 }

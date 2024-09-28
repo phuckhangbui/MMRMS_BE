@@ -28,8 +28,8 @@ namespace DTOs.Component
         public int Quantity { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
-        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
-        public double? Price { get; set; }
+        [Range(1, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
+        public double Price { get; set; }
     }
 
     public class CreateComponentEmbeddedDto
@@ -40,6 +40,26 @@ namespace DTOs.Component
         [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
         [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
         public int Quantity { get; set; }
+
+    }
+
+
+    public class UpdateComponentDto
+    {
+        [Required(ErrorMessage = MessageConstant.Component.ComponentIdRequired)]
+        public int ComponentId { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.ComponentNameRequired)]
+        public string ComponentName { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
+        public int Quantity { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
+        [Range(1, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
+        public double Price { get; set; }
+
 
     }
 

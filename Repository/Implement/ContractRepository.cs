@@ -99,7 +99,7 @@ namespace Repository.Implement
                 var serialNumberProduct = await SerialNumberProductDao.Instance
                     .GetSerialNumberProductBySerialNumberAndProductId(rentSerialNumberProduct.SerialNumber, rentSerialNumberProduct.ProductId);
 
-                serialNumberProduct.Status = SerialNumberProductStatus.Rented.ToString();
+                serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
                 serialNumberProduct.RentTimeCounter++;
 
                 await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
