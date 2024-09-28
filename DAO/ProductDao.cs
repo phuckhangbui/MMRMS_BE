@@ -307,5 +307,39 @@ namespace DAO
                 }
             }
         }
+
+        public async Task ChangeProductThumbnail(ProductImage productImage)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var oldProductThumbnail = await context.ProductImages.FirstOrDefaultAsync(i => i.ProductId == productImage.ProductId && (bool)i.IsThumbnail);
+
+                if (oldProductThumbnail != null)
+                {
+                    context.ProductImages.Remove(oldProductThumbnail);
+                    await context.SaveChangesAsync();
+                }
+
+                DbSet<ProductImage> _dbSet = context.Set<ProductImage>();
+                _dbSet.Add(productImage);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddProductImages(int productId, List<ProductImage> newProductImages)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var oldNonThumbnailImages = context.ProductImages
+                    .Where(i => i.ProductId == productId && i.IsThumbnail == false);
+
+                context.ProductImages.RemoveRange(oldNonThumbnailImages);
+                await context.SaveChangesAsync();
+
+                context.ProductImages.AddRange(newProductImages);
+                await context.SaveChangesAsync();
+            }
+        }
+
     }
 }

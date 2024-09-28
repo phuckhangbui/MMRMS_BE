@@ -1,5 +1,6 @@
 ﻿using DTOs.Product;
 using DTOs.SerialNumberProduct;
+using Microsoft.AspNetCore.Http;
 
 namespace Service.Interface
 {
@@ -18,5 +19,7 @@ namespace Service.Interface
         Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);
         Task UpdateProductDetail(int productId, UpdateProductDto updateProductDto);
         Task UpdateProductComponent(int productId, ComponentList productAttributeDtos);
+        Task ChangeProductThumbnail(int productId, IFormFile imageUrl);
+        Task ChangeProductImages(int productId, List<IFormFile> imageFiles);
     }
 }

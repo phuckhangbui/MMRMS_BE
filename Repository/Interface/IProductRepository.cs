@@ -25,5 +25,7 @@ namespace Repository.Interface
 
         Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);
         Task UpdateProductComponent(int productId, ComponentList productComponentDtos);
+        Task ChangeProductThumbnail(int productId, string imageUrlStr);
+        Task AddProductImages(int productId, List<string> uploadedImageUrls);
     }
 }

@@ -204,5 +204,35 @@ namespace Repository.Implement
 
             await ProductDao.Instance.UpdateProductComponent(product, components, componentProducts);
         }
+
+        public async Task ChangeProductThumbnail(int productId, string imageUrlStr)
+        {
+            var productImage = new ProductImage
+            {
+                ProductImageUrl = imageUrlStr,
+                ProductId = productId,
+                IsThumbnail = true
+            };
+
+            await ProductDao.Instance.ChangeProductThumbnail(productImage);
+        }
+
+        public async Task AddProductImages(int productId, List<string> uploadedImageUrls)
+        {
+            var productImages = new List<ProductImage>();
+
+            foreach (var imageUrl in uploadedImageUrls)
+            {
+                var productImage = new ProductImage
+                {
+                    ProductImageUrl = imageUrl,
+                    ProductId = productId,
+                    IsThumbnail = false // Set all images to non-thumbnail initially
+                };
+                productImages.Add(productImage);
+            }
+            await ProductDao.Instance.AddProductImages(productId, productImages);
+        }
+
     }
 }
