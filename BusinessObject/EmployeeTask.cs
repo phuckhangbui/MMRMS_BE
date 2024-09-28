@@ -10,25 +10,25 @@ public partial class EmployeeTask
 
     public string? Content { get; set; }
 
-    public int? AssigneeId { get; set; }
+    public int? StaffId { get; set; }
 
-    public int? ReporterId { get; set; }
+    public int? ManagerId { get; set; }
 
-    public DateTime? Deadline { get; set; }
+    public DateTime? DateStart { get; set; }
 
     public DateTime? DateCreate { get; set; }
 
     public string? Status { get; set; }
 
-    public int? TaskType { get; set; }
+    public string? Type { get; set; }
 
-    public virtual Account? Assignee { get; set; }
+    public virtual Account? Staff { get; set; }
+
+    public virtual Account? Manager { get; set; }
 
     public virtual Contract? Contract { get; set; }
 
     public virtual ICollection<MaintainingTicket> MaintainingTickets { get; set; } = new List<MaintainingTicket>();
-
-    public virtual Account? Reporter { get; set; }
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 

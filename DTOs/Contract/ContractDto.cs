@@ -17,7 +17,7 @@ namespace DTOs.Contract
 
         public int? AddressId { get; set; }
 
-        public string? HiringRequestId { get; set; }
+        public string? RentingRequestId { get; set; }
 
         public double? TotalRentPrice { get; set; }
 
@@ -62,8 +62,8 @@ namespace DTOs.Contract
         [Required(ErrorMessage = MessageConstant.Contract.AddressIdRequired)]
         public int AddressId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Contract.HiringRequestIdRequired)]
-        public string HiringRequestId { get; set; }
+        [Required(ErrorMessage = MessageConstant.Contract.RentingRequestIdRequired)]
+        public string RentingRequestId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Contract.ContentRequired)]
         public string Content { get; set; }

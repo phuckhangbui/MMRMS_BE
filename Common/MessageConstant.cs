@@ -170,7 +170,7 @@
             //Service
             public const string ContractListEmpty = "Danh sách hợp đồng trống.";
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
-            public const string HiringRequestInvalid = "Yêu cầu thuê không hợp lệ.";
+            public const string RentingRequestInvalid = "Yêu cầu thuê không hợp lệ.";
             public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
             public const string SerialNumberProductsInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
 
@@ -178,7 +178,7 @@
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
             public const string AccountSignIdRequired = "Tài khoản ký là bắt buộc.";
             public const string AddressIdRequired = "Địa chỉ là bắt buộc.";
-            public const string HiringRequestIdRequired = "Mã yêu cầu thuê là bắt buộc.";
+            public const string RentingRequestIdRequired = "Mã yêu cầu thuê là bắt buộc.";
             public const string ContentRequired = "Nội dung hợp đồng là bắt buộc.";
             public const string DateStartRequired = "Ngày bắt đầu là bắt buộc.";
             public const string DateStartFutureOrPresent = "Ngày bắt đầu phải là hôm nay hoặc trong tương lai.";

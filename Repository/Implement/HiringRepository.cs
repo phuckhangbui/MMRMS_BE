@@ -2,31 +2,31 @@
 using BusinessObject;
 using DAO;
 using DAO.Enum;
-using DTOs.HiringRequest;
+using DTOs.RentingRequest;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
-    public class HiringRepository : IHiringRepository
+    public class RentingRepository : IRentingRepository
     {
         private readonly IMapper _mapper;
 
-        public HiringRepository(IMapper mapper)
+        public RentingRepository(IMapper mapper)
         {
             _mapper = mapper;
         }
 
-        public async Task<bool> CheckHiringRequestValidToRent(string hiringRequestId)
+        public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
         {
-            var hiringRequest = await HiringRequestDao.Instance.GetHiringRequestByIdAndStatus(hiringRequestId, HiringRequestStatusEnum.Approved.ToString());
-            return hiringRequest != null;
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByIdAndStatus(rentingRequestId, RentingRequestStatusEnum.Approved.ToString());
+            return rentingRequest != null;
         }
 
-        public async Task<IEnumerable<HiringRequestDto>> GetHiringRequests()
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests()
         {
-            IEnumerable<HiringRequest> hiringRequests = await HiringRequestDao.Instance.GetHiringRequests();
+            IEnumerable<RentingRequest> rentingRequests = await RentingRequestDao.Instance.GetRentingRequests();
 
-            return _mapper.Map<IEnumerable<HiringRequestDto>>(hiringRequests);
+            return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
         }
     }
 }

@@ -1,27 +1,27 @@
-﻿using DTOs.HiringRequest;
+﻿using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/hirings")]
-    public class HiringController : BaseApiController
+    [Route("api/rentings")]
+    public class RentingController : BaseApiController
     {
-        private readonly IHiringService _hiringService;
+        private readonly IRentingService _rentingService;
 
-        public HiringController(IHiringService hiringService)
+        public RentingController(IRentingService rentingService)
         {
-            _hiringService = hiringService;
+            _rentingService = rentingService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HiringRequestDto>>> GetHiringRequests()
+        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequests()
         {
             try
             {
-                var hiringRequests = await _hiringService.GetAll();
-                return Ok(hiringRequests);
+                var rentingRequests = await _rentingService.GetAll();
+                return Ok(rentingRequests);
             }
             catch (ServiceException ex)
             {

@@ -10,15 +10,11 @@ public partial class Account
 
     public string? Email { get; set; }
 
-    public string? CitizenCard { get; set; }
-
     public string? Phone { get; set; }
 
     public DateTime? DateBirth { get; set; }
 
     public int? Gender { get; set; }
-
-    public string? Address { get; set; }
 
     public string? Username { get; set; }
 
@@ -46,9 +42,7 @@ public partial class Account
 
     public int? RoleId { get; set; }
 
-    public int? BusinessType { get; set; }
-
-    public String? Status { get; set; }
+    public string? Status { get; set; }
 
     public bool? IsDelete { get; set; }
 
@@ -66,15 +60,18 @@ public partial class Account
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    public virtual ICollection<HiringRequest> HiringRequests { get; set; } = new List<HiringRequest>();
+    public virtual ICollection<RentingRequest> RentingRequests { get; set; } = new List<RentingRequest>();
 
     public virtual ICollection<Log> Logs { get; set; } = new List<Log>();
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
-    public virtual ICollection<EmployeeTask> TaskAssignees { get; set; } = new List<EmployeeTask>();
+    public virtual ICollection<EmployeeTask> TaskReceivedList { get; set; } = new List<EmployeeTask>();
 
-    public virtual ICollection<EmployeeTask> TaskReporters { get; set; } = new List<EmployeeTask>();
+    public virtual ICollection<EmployeeTask> TaskGaveList { get; set; } = new List<EmployeeTask>();
 
-    public virtual ICollection<Invoice> Invoices { get; set; }
+    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+
+    public virtual ICollection<Contract> CreateContracts { get; set; } = new List<Contract>();
+
 }

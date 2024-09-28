@@ -17,4 +17,6 @@ public partial class ProductComponentStatus
     public virtual ComponentProduct? Component { get; set; }
 
     public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
+
+    public virtual IEnumerable<ProductComponentStatusLog> ProductComponentStatusLogs { get; set; } = new List<ProductComponentStatusLog>();
 }

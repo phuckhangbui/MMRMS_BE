@@ -8,7 +8,9 @@ public partial class Invoice
 
     public int? AccountPaidId { get; set; }
 
-    public string? ContractId { get; set; }
+    public int? ContractPaymentId { get; set; }
+
+    public string? MaintainTicketId { get; set; }
 
     public string? PaymentMethod { get; set; }
 
@@ -22,7 +24,10 @@ public partial class Invoice
 
     public string? Note { get; set; }
 
-    public virtual Contract? Contract { get; set; }
+    public virtual ContractPayment? ContractPayment { get; set; }
 
     public virtual Account? AccountPaid { get; set; }
+
+    public virtual MaintainingTicket? MaintainingTicket { get; set; }
+
 }

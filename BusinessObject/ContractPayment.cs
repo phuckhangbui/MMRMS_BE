@@ -6,6 +6,8 @@ public partial class ContractPayment
 
     public string? ContractId { get; set; }
 
+    public string? InvoiceId { get; set; }
+
     public string? Title { get; set; }
 
     public double? Price { get; set; }
@@ -19,4 +21,6 @@ public partial class ContractPayment
     public DateTime? DateCreate { get; set; }
 
     public virtual Contract? Contract { get; set; }
+
+    public virtual Invoice? Invoice { get; set; }
 }

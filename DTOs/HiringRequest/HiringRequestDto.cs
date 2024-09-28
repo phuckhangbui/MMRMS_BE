@@ -1,8 +1,8 @@
-﻿namespace DTOs.HiringRequest
+﻿namespace DTOs.RentingRequest
 {
-    public class HiringRequestDto
+    public class RentingRequestDto
     {
-        public string HiringRequestId { get; set; } = null!;
+        public string RentingRequestId { get; set; } = null!;
 
         public int? AccountOrderId { get; set; }
 

@@ -46,7 +46,6 @@ namespace Repository.Implement
             account.OtpNumber = otp;
 
             account.RoleId = (int)AccountRoleEnum.Customer;
-            account.BusinessType = newCustomerAccountDto.BusinessType;
             var accountBusiness = new AccountBusiness
             {
                 Company = newCustomerAccountDto.Company,

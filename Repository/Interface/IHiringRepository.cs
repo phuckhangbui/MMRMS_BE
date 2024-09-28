@@ -1,11 +1,11 @@
-﻿using DTOs.HiringRequest;
+﻿using DTOs.RentingRequest;
 
 namespace Repository.Interface
 {
-    public interface IHiringRepository
+    public interface IRentingRepository
     {
-        Task<bool> CheckHiringRequestValidToRent(string hiringRequestId);
+        Task<bool> CheckRentingRequestValidToRent(string rentingRequestId);
 
-        Task<IEnumerable<HiringRequestDto>> GetHiringRequests();
+        Task<IEnumerable<RentingRequestDto>> GetRentingRequests();
     }
 }
