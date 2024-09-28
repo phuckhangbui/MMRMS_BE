@@ -1,6 +1,5 @@
 ﻿using BusinessObject;
 using DAO.Enum;
-using DTOs.Component;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Component = BusinessObject.Component;
@@ -159,7 +158,7 @@ namespace DAO
             }
         }
 
-        public async Task<Product> CreateProduct(Product product, IEnumerable<CreateComponentEmbeddedDto>? newComponentList)
+        public async Task<Product> CreateProduct(Product product, List<Tuple<Component, int>>? newComponentList)
         {
             using (var context = new MmrmsContext())
             {
@@ -169,27 +168,23 @@ namespace DAO
                     {
                         if (!newComponentList.IsNullOrEmpty())
                         {
-                            foreach (var c in newComponentList)
+                            foreach (var tuple in newComponentList)
                             {
-                                Component Component = new Component
-                                {
-                                    ComponentName = c.ComponentName.Trim(),
-                                    Quantity = null,
-                                    Price = null,
-                                    Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
-                                    DateCreate = DateTime.Now,
-                                };
+                                var component = tuple.Item1;
+                                var quantity = tuple.Item2;
 
-                                context.Components.Add(Component);
+                                context.Components.Add(component);
                                 await context.SaveChangesAsync();
 
                                 var componentProduct = new ComponentProduct()
                                 {
-                                    ComponentId = Component.ComponentId,
-                                    Quantity = c.Quantity,
+                                    ComponentId = component.ComponentId,
+                                    ProductId = product.ProductId,
+                                    Quantity = quantity,
                                     Status = ProductComponentStatusEnum.Normal.ToString(),
                                 };
 
+                                // Add the ComponentProduct to the product's ComponentProducts
                                 product.ComponentProducts.Add(componentProduct);
                             }
                         }
@@ -202,6 +197,107 @@ namespace DAO
                         await transaction.CommitAsync();
 
                         return product;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task UpdateProductComponent(Product product, List<Tuple<Component, int>>? newComponentList, IEnumerable<ComponentProduct>? componentProducts)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        var oldComponentProducts = context.ComponentProducts
+                         .Where(cp => cp.ProductId == product.ProductId);
+
+                        context.ComponentProducts.RemoveRange(oldComponentProducts);
+                        await context.SaveChangesAsync();
+
+                        //Handle the new component list
+                        if (!newComponentList.IsNullOrEmpty())
+                        {
+                            foreach (var tuple in newComponentList)
+                            {
+                                var component = tuple.Item1;
+                                var quantity = tuple.Item2;
+
+                                context.Components.Add(component);
+                                await context.SaveChangesAsync();
+
+                                var componentProduct = new ComponentProduct()
+                                {
+                                    ComponentId = component.ComponentId,
+                                    ProductId = product.ProductId,
+                                    Quantity = quantity,
+                                    Status = ProductComponentStatusEnum.Normal.ToString(),
+                                };
+
+                                // Add the ComponentProduct to the product's ComponentProducts
+                                product.ComponentProducts.Add(componentProduct);
+                            }
+                        }
+
+                        // Append the additional ComponentProducts to the product (if any)
+                        var componentProductList = new List<ComponentProduct>();
+                        if (!componentProducts.IsNullOrEmpty())
+                        {
+                            foreach (var cp in componentProducts)
+                            {
+                                cp.ProductId = product.ProductId;
+                                componentProductList.Add(cp);
+                            }
+                        }
+
+                        context.ComponentProducts.AddRange(componentProductList);
+
+                        context.Products.Update(product);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                    }
+                    catch (Exception e)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
+
+
+
+        public async Task UpdateProductAttribute(Product product, IEnumerable<ProductAttribute> productAttributeLists)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        var oldAttributeProducts = context.ProductAttributes
+                       .Where(cp => cp.ProductId == product.ProductId);
+
+                        context.ProductAttributes.RemoveRange(oldAttributeProducts);
+                        await context.SaveChangesAsync();
+
+                        product.ProductAttributes = (ICollection<ProductAttribute>)productAttributeLists;
+
+
+                        context.Products.Update(product);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
                     }
                     catch (Exception e)
                     {

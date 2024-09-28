@@ -205,9 +205,52 @@ namespace Service.Implement
             await _productRepository.UpdateProduct(productDto);
         }
 
-        public Task UpdateProductAttribute(int productId, CreateProductAttributeDto productAttributeDto)
+        public async Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos)
         {
-            throw new NotImplementedException();
+            var product = await _productRepository.GetProduct(productId);
+
+            if (product == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            await _productRepository.UpdateProductAttribute(productId, productAttributeDtos);
+        }
+
+        public async Task UpdateProductComponent(int productId, ComponentList componentList)
+        {
+            var product = await _productRepository.GetProduct(productId);
+
+            if (product == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            var serialProducts = await _productRepository.GetProductNumberList(productId);
+
+            if (!serialProducts.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.Product.ProductHasSerialNumberCannotUpdateComponentList);
+            }
+
+            if (!componentList.ExistedComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.ExistedComponentList)
+                {
+                    if (!await _componentRepository.IsComponentIdExisted(component.ComponentId))
+                    {
+                        throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+                    }
+                }
+            if (!componentList.NewComponentList.IsNullOrEmpty())
+                foreach (var component in componentList.NewComponentList)
+                {
+                    if (await _componentRepository.IsComponentNameExisted(component.ComponentName))
+                    {
+                        throw new ServiceException(MessageConstant.Component.ComponetNameDuplicated);
+                    }
+                }
+
+            await _productRepository.UpdateProductComponent(productId, componentList);
         }
     }
 }

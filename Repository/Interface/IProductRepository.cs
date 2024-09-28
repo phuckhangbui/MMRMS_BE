@@ -22,5 +22,8 @@ namespace Repository.Interface
         Task UpdateProduct(ProductDto productDto);
 
         Task DeleteProduct(int productId);
+
+        Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);
+        Task UpdateProductComponent(int productId, ComponentList productComponentDtos);
     }
 }

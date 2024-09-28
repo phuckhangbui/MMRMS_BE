@@ -57,4 +57,10 @@ namespace DTOs.Product
         public int Quantity { get; set; }
     }
 
+    public class ComponentList
+    {
+        public IEnumerable<AddExistedComponentToProduct>? ExistedComponentList { get; set; }
+        public IEnumerable<CreateComponentEmbeddedDto>? NewComponentList { get; set; }
+    }
+
 }
