@@ -192,5 +192,12 @@
             public const string NotificationNotFound = "Thông báo này không tồn tại";
 
         }
+
+        public static class RentingRequest
+        {
+            public const string RequestProductsInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
+            public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
+            public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
+        }
     }
 }

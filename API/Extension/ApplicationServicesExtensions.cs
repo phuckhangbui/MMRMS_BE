@@ -26,6 +26,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
@@ -43,7 +44,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IContractService, ContractServiceImpl>();
         services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
-        services.AddScoped<IRentingService, RentingService>();
+        services.AddScoped<IRentingRequestService, RentingRequestServiceImpl>();
         services.AddScoped<INotificationService, NotificationService>();
 
 

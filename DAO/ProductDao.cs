@@ -211,5 +211,14 @@ namespace DAO
                 }
             }
         }
+    
+        public static async Task<bool> IsProductValidToRent(int productId, int quantity)
+        {
+            using var context = new MmrmsContext();
+            return await context.Products
+                .AnyAsync(p => p.ProductId == productId
+                        && p.Quantity >= quantity
+                        && p.Status == ProductStatusEnum.Active.ToString());
+        }
     }
 }
