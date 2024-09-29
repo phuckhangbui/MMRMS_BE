@@ -30,11 +30,11 @@ namespace Service.Implement
         {
             //TODO
             //Check renting request valid
-            var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
-            if (!isRentingRequestValid)
-            {
-                throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
-            }
+            //var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
+            //if (!isRentingRequestValid)
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
+            //}
 
             //Check account rent valid (Exist + Active)
             //var rentAccount = await _accountRepository.GetAccounById(contractRequestDto.AccountSignId);
@@ -43,7 +43,6 @@ namespace Service.Implement
             //    throw new ServiceException(MessageConstant.Contract.AccountRentInvalid);
             //}
 
-            //Check address valid (Exist)
             //Check list rent serail number valid (Available)
             var isSerialNumberProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductsValidToRent(contractRequestDto.SerialNumberProducts);
             if (!isSerialNumberProductsValid)

@@ -1,5 +1,9 @@
 ﻿using BusinessObject;
+using DAO.Enum;
+using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
+using static Common.MessageConstant;
+using Contract = BusinessObject.Contract;
 
 namespace DAO
 {
@@ -56,6 +60,60 @@ namespace DAO
                         .ThenInclude(a => a.AccountBusinesses)
                     .Include(c => c.ContractTerms)
                     .ToListAsync();
+            }
+        }
+
+        public async Task CreateContract(Contract contract, ContractRequestDto contractRequestDto)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        double totalDepositPrice = 0;
+
+                        foreach (var rentSerialNumberProduct in contractRequestDto.SerialNumberProducts)
+                        {
+                            var serialNumberProduct = await context.SerialNumberProducts
+                                .FirstOrDefaultAsync(s => s.ProductId == rentSerialNumberProduct.ProductId && s.SerialNumber.Equals(rentSerialNumberProduct.SerialNumber));
+                            
+                            //TODO
+                            var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                            {
+                                SerialNumber = rentSerialNumberProduct.SerialNumber,
+                                DepositPrice = 0,
+                                DiscountPrice = 0,
+                                //RentPrice
+                            };
+                            contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+                            totalDepositPrice += (double)contractSerialNumberProduct.DepositPrice;
+
+                            serialNumberProduct!.Status = SerialNumberProductStatusEnum.Rented.ToString();
+                            serialNumberProduct.RentTimeCounter++;
+
+                            context.SerialNumberProducts.Update(serialNumberProduct);
+                        }
+
+                        //TODO
+                        contract.TotalDepositPrice = totalDepositPrice;
+                        contract.TotalRentPricePerMonth = 0;
+                        contract.ShippingPrice = 0;
+                        contract.DiscountPrice = 0;
+                        contract.FinalAmount = contract.TotalDepositPrice + contract.TotalRentPricePerMonth + contract.ShippingPrice - contract.DiscountPrice;
+
+                        DbSet<Contract> _dbSet = context.Set<Contract>();
+                        _dbSet.Add(contract);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
             }
         }
     }
