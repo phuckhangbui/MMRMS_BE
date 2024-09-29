@@ -27,6 +27,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IRentingServiceRepository, RentingServiceRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
@@ -46,7 +47,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IRentingRequestService, RentingRequestServiceImpl>();
         services.AddScoped<INotificationService, NotificationService>();
-
+        services.AddScoped<IRentingServiceService, RentingServiceServiceImpl>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

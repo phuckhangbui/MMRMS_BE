@@ -13,6 +13,7 @@ using DTOs.Notification;
 using DTOs.Product;
 using DTOs.Promotion;
 using DTOs.RentingRequest;
+using DTOs.RentingService;
 using DTOs.SerialNumberProduct;
 using DTOs.Term;
 
@@ -142,6 +143,9 @@ namespace Repository.Mapper
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
             CreateMap<CreateNotificationDto, Notification>();
+
+            CreateMap<RentingService, RentingServiceDto>();
+            CreateMap<RentingService, RentingServiceRequestDto>().ReverseMap();
         }
     }
 }

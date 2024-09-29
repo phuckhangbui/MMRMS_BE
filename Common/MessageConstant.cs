@@ -209,5 +209,17 @@
             public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
         }
+
+        public static class RentingService
+        {
+            //Service
+            public const string RentingServiceListEmpty = "Danh sách dịch vụ thuê trống";
+
+            //DTO
+            public const string RentingServiceNameRequired = "Tên dịch vụ thuê là bắt buộc.";
+            public const string DescriptionRequired = "Mô tả là bắt buộc.";
+            public const string PriceRequired = "Giá dịch vụ phải lớn hơn 0.";
+            public const string PayTypeRequired = "Loại thanh toán là bắt buộc.";
+        }
     }
 }
