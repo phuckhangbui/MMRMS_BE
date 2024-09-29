@@ -1,5 +1,4 @@
-﻿using DTOs.Content;
-using DTOs.RentingRequest;
+﻿using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -27,6 +26,24 @@ namespace API.Controllers
             catch (ServiceException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{rentingRequestId}")]
+        public async Task<ActionResult<RentingRequestDetailDto>> GetRentingRequesteDetailById(string rentingRequestId)
+        {
+            try
+            {
+                var rentingRequest = await _rentingService.GetRentingRequestDetailById(rentingRequestId);
+                return Ok(rentingRequest);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {

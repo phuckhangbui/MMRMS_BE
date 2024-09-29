@@ -30,8 +30,12 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.RentingRequests
-                    .Include(h => h.RentingRequestProductDetails)
-                    .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId));
+                    .Include(rr => rr.RentingRequestProductDetails)
+                        .ThenInclude(rr => rr.Product)
+                    .Include(rr => rr.ServiceRentingRequests)
+                        .ThenInclude(rr => rr.RentingService)
+                    .Include(rr => rr.AccountOrder)
+                    .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
         }
 

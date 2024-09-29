@@ -1,5 +1,4 @@
 ﻿using DTOs.Product;
-using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
 
 namespace Repository.Interface

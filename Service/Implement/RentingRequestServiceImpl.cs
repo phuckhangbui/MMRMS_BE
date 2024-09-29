@@ -56,5 +56,10 @@ namespace Service.Implement
         {
             return await _rentingRepository.GetRentingRequests();
         }
+
+        public async Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId)
+        {
+            return await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+        }
     }
 }

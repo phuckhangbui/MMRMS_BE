@@ -34,7 +34,7 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task<bool> CheckSerialNumberProductValidToRequest(List<RentingRequestProductDetailDto> rentingRequestProductDetailDtos)
+        public async Task<bool> CheckSerialNumberProductValidToRequest(List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos)
         {
             foreach (var rentingRequestProductDetailDto in rentingRequestProductDetailDtos)
             {

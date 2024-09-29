@@ -69,7 +69,7 @@ namespace Repository.Implement
                 DateEnd = contractRequestDto.DateEnd,
                 Content = contractRequestDto.Content,
 
-                AccountSignId = contractRequestDto.AccountSignId,
+                //AccountSignId = contractRequestDto.AccountSignId,
                 RentingRequestId = contractRequestDto.RentingRequestId,
             };
 
