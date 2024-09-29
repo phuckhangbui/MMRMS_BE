@@ -3,7 +3,6 @@ using BusinessObject;
 using DAO;
 using DAO.Enum;
 using DTOs.Product;
-using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -146,21 +145,6 @@ namespace Repository.Implement
             await ProductDao.Instance.DeleteProduct(productId);
         }
 
-        public async Task<bool> CheckProductValidToRent(List<RentingRequestProductDetailDto> rentingRequestProductDetails)
-        {
-            foreach (var rentingRequestProductDetail in rentingRequestProductDetails)
-            {
-                var isProductValid = await ProductDao.IsProductValidToRent(rentingRequestProductDetail.ProductId, rentingRequestProductDetail.Quantity);
-
-                if (!isProductValid)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-
-        }
 
         public async Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos)
         {

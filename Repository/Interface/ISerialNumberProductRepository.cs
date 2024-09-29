@@ -1,4 +1,6 @@
-﻿using DTOs.Product;
+﻿using BusinessObject;
+using DTOs.Product;
+using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
 
 namespace Repository.Interface
@@ -13,5 +15,6 @@ namespace Repository.Interface
         Task<bool> IsSerialNumberProductHasContract(string serialNumber);
         Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto);
         Task UpdateStatus(string serialNumber, string status);
+        Task<bool> CheckSerialNumberProductValidToRequest(List<RentingRequestProductDetailDto> rentingRequestProductDetailDtos);
     }
 }

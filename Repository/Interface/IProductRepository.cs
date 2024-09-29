@@ -18,7 +18,6 @@ namespace Repository.Interface
         Task<ProductDto> GetProduct(int productId);
         Task UpdateProduct(ProductDto productDto);
         Task DeleteProduct(int productId);
-        Task<bool> CheckProductValidToRent(List<RentingRequestProductDetailDto> rentingRequestProductDetails);
         Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);
         Task UpdateProductComponent(int productId, ComponentList productComponentDtos);
         Task ChangeProductThumbnail(int productId, string imageUrlStr);
