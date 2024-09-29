@@ -6,5 +6,6 @@ namespace Service.Interface
     {
         Task<IEnumerable<RentingRequestDto>> GetAll();
         Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto);
+        Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId);
     }
 }

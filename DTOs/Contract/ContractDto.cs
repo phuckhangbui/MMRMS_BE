@@ -56,11 +56,11 @@ namespace DTOs.Contract
         [Required(ErrorMessage = MessageConstant.Contract.ContractNameRequired)]
         public string ContractName { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Contract.AccountSignIdRequired)]
-        public int AccountSignId { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Contract.AccountSignIdRequired)]
+        //public int AccountSignId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Contract.AddressIdRequired)]
-        public int AddressId { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Contract.AddressIdRequired)]
+        //public int AddressId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Contract.RentingRequestIdRequired)]
         public string RentingRequestId { get; set; }

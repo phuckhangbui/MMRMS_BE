@@ -3,6 +3,7 @@ using BusinessObject;
 using DAO;
 using DAO.Enum;
 using DTOs.Product;
+using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
 using Repository.Interface;
 
@@ -23,6 +24,22 @@ namespace Repository.Implement
             {
                 var isSerialNumberProductValid = await SerialNumberProductDao.Instance.IsSerialNumberProductValidToRent(
                     serialNumberProductRentRequestDto.SerialNumber, serialNumberProductRentRequestDto.ProductId);
+
+                if (!isSerialNumberProductValid)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> CheckSerialNumberProductValidToRequest(List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos)
+        {
+            foreach (var rentingRequestProductDetailDto in rentingRequestProductDetailDtos)
+            {
+                var isSerialNumberProductValid = await SerialNumberProductDao.Instance
+                    .IsSerialNumberProductValidToRequest(rentingRequestProductDetailDto.ProductId, rentingRequestProductDetailDto.Quantity);
 
                 if (!isSerialNumberProductValid)
                 {

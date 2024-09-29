@@ -51,12 +51,12 @@
 
         public string Note { get; set; }
 
-        public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
-        
+        public List<NewRentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
+
         public List<int> ServiceRentingRequests { get; set; }
     }
 
-    public class RentingRequestProductDetailDto
+    public class NewRentingRequestProductDetailDto
     {
         public int ProductId { get; set; }
 

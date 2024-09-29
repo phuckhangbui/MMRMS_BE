@@ -10,18 +10,18 @@ namespace Service.Implement
     public class RentingRequestServiceImpl : IRentingRequestService
     {
         private readonly IRentingRepository _rentingRepository;
-        private readonly IProductRepository _productRepository;
+        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IAddressRepository _addressRepository;
 
         public RentingRequestServiceImpl(
             IRentingRepository rentingRepository,
-            IProductRepository productRepository,
+            ISerialNumberProductRepository serialNumberProductRepository,
             IAccountRepository accountRepository,
             IAddressRepository addressRepository)
         {
             _rentingRepository = rentingRepository;
-            _productRepository = productRepository;
+            _serialNumberProductRepository = serialNumberProductRepository;
             _accountRepository = accountRepository;
             _addressRepository = addressRepository;
         }
@@ -29,7 +29,7 @@ namespace Service.Implement
         public async Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
-            var isProductsValid = await _productRepository.CheckProductValidToRent(newRentingRequestDto.RentingRequestProductDetails);
+            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto.RentingRequestProductDetails);
             if (!isProductsValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestProductsInvalid);
@@ -55,6 +55,11 @@ namespace Service.Implement
         public async Task<IEnumerable<RentingRequestDto>> GetAll()
         {
             return await _rentingRepository.GetRentingRequests();
+        }
+
+        public async Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId)
+        {
+            return await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
         }
     }
 }

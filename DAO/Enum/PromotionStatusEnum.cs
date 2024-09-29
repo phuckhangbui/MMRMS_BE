@@ -2,9 +2,9 @@
 {
     public enum PromotionStatusEnum
     {
-        Active,      
-        Inactive,    
-        Upcoming,    
+        Active,
+        Inactive,
+        Upcoming,
         Expired,
     }
 }

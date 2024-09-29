@@ -75,6 +75,18 @@ namespace Repository.Implement
             await RentingRequestDao.Instance.CreateAsync(rentingRequest);
         }
 
+        public async Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId)
+        {
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
+            if (rentingRequest != null)
+            {
+                var rentingRequesteDto = _mapper.Map<RentingRequestDetailDto>(rentingRequest);
+                return rentingRequesteDto;
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests()
         {
             IEnumerable<RentingRequest> rentingRequests = await RentingRequestDao.Instance.GetRentingRequests();

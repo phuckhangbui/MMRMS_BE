@@ -2,8 +2,8 @@
 {
     public enum RentingRequestStatusEnum
     {
-        Pending,       
-        Approved,      
+        Pending,
+        Approved,
         Rejected
     }
 }

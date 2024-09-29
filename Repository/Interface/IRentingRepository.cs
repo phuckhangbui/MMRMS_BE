@@ -7,5 +7,6 @@ namespace Repository.Interface
         Task<bool> CheckRentingRequestValidToRent(string rentingRequestId);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequests();
         Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto);
+        Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId);
     }
 }

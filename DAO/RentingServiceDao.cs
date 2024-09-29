@@ -1,9 +1,5 @@
 ﻿using BusinessObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
@@ -27,6 +23,12 @@ namespace DAO
                 }
                 return instance;
             }
+        }
+
+        public async Task<RentingService> GetRentingServiceById(int rentingServiceId)
+        {
+            using var context = new MmrmsContext();
+            return await context.RentingServices.FirstOrDefaultAsync(rs => rs.RentingServiceId == rentingServiceId);
         }
     }
 }

@@ -144,5 +144,15 @@ namespace DAO
         //        }
         //    }
         //}
+
+        public async Task<bool> IsSerialNumberProductValidToRequest(int productId, int quantity)
+        {
+            using var context = new MmrmsContext();
+            var availableSerialNumberCount = await context.SerialNumberProducts
+                .Where(s => s.ProductId == productId
+                        && s.Status == SerialNumberProductStatusEnum.Available.ToString()).CountAsync();
+
+            return availableSerialNumberCount >= quantity;
+        }
     }
 }

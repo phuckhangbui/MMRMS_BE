@@ -56,8 +56,77 @@ namespace Repository.Implement
 
         public async Task CreateContract(ContractRequestDto contractRequestDto)
         {
-            var context = new MmrmsContext();
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
 
+            //Contract
+            var contract = InitContract(contractRequestDto, rentingRequest);
+
+            //Contract Address
+            var address = await AddressDao.Instance.GetAddressById((int)rentingRequest.AddressId!);
+            var contractAddress = new ContractAddress()
+            {
+                AddressBody = address.AddressBody,
+                City = address.City,
+                District = address.District,
+            };
+            contract.ContractAddress = contractAddress;
+
+            //TODO
+            var isOneTimePayment = rentingRequest.IsOnetimePayment;
+            if ((bool)isOneTimePayment!)
+            {
+                var contractPayment = new ContractPayment
+                {
+                    Title = string.Empty,
+                    Price = 0,
+                    //CustomerPaidDate = DateTime.Now,
+                    //SystemPaidDate = DateTime.Now,
+                    Status = string.Empty,
+                    DateCreate = DateTime.Now,
+                };
+
+                var invoice = new Invoice
+                {
+                    InvoiceId = Guid.NewGuid().ToString(),
+                    AccountPaidId = rentingRequest.AccountOrderId,
+                    Amount = contractPayment.Price,
+                    PaymentMethod = string.Empty,
+                    Type = string.Empty,
+                    Note = string.Empty,
+                    DateCreate = contractPayment.DateCreate,
+                    Status = string.Empty,
+                    ContractPayment = contractPayment
+                };
+
+                contractPayment.InvoiceId = invoice.InvoiceId;
+                contract.ContractPayments.Add(contractPayment);
+            } 
+            else
+            {
+                var rentingPeriod = rentingRequest.NumberOfMonth;
+                for (int i = 0; i < rentingPeriod!.Value; i++)
+                {
+                    var contractPayment = new ContractPayment
+                    {
+                        Title = string.Empty,
+                        Price = 0,
+                        CustomerPaidDate = DateTime.Now,
+                        SystemPaidDate = DateTime.Now,
+                        Status = string.Empty,
+                        DateCreate = DateTime.Now,
+                    };
+
+                    contract.ContractPayments.Add(contractPayment);
+                }
+            }
+
+            await ContractDao.Instance.CreateContract(contract, contractRequestDto);
+        }
+    
+        private Contract InitContract(ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
+        {
+            //TODO: AccountCreateId
+            //Contract
             var contract = new Contract()
             {
                 ContractId = Guid.NewGuid().ToString(),
@@ -68,11 +137,12 @@ namespace Repository.Implement
                 DateStart = contractRequestDto.DateStart,
                 DateEnd = contractRequestDto.DateEnd,
                 Content = contractRequestDto.Content,
-
-                AccountSignId = contractRequestDto.AccountSignId,
                 RentingRequestId = contractRequestDto.RentingRequestId,
+                AccountCreateId = 1,
+                AccountSignId = rentingRequest.AccountOrderId,
             };
 
+            //Contract Term
             foreach (var contractTerm in contractRequestDto.ContractTerms)
             {
                 var term = new ContractTerm()
@@ -85,38 +155,22 @@ namespace Repository.Implement
                 contract.ContractTerms.Add(term);
             }
 
-            foreach (var rentSerialNumberProduct in contractRequestDto.SerialNumberProducts)
+            //Service Contract
+            var serviceRentingRequests = rentingRequest.ServiceRentingRequests;
+            foreach (var serviceRentingRequest in serviceRentingRequests)
             {
-                var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                var serviceContract = new ServiceContract
                 {
-                    SerialNumber = rentSerialNumberProduct.SerialNumber,
-
+                    RentingServiceId = serviceRentingRequest.RentingServiceId,
+                    ServicePrice = serviceRentingRequest.ServicePrice,
+                    DiscountPrice = serviceRentingRequest.DiscountPrice,
+                    FinalPrice = serviceRentingRequest.FinalPrice,
                 };
-                contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
 
-                //TODO
-                //Product quantity -- ??
-                var serialNumberProduct = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductBySerialNumberAndProductId(rentSerialNumberProduct.SerialNumber, rentSerialNumberProduct.ProductId);
-
-                serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
-                serialNumberProduct.RentTimeCounter++;
-
-                await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
+                contract.ServiceContracts.Add(serviceContract);
             }
 
-            //var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
-            //var rentingAccount = await AccountDao.Instance.GetAccountAsyncById(contractRequestDto.AccountSignId);
-            //var rentingAddress = await AddressDao.Instance.GetAddressById(contractRequestDto.AddressId);
-
-            //contract.RentingRequest = rentingRequest;
-            //contract.AccountSign = rentingAccount;
-            //contract.Address = rentingAddress;
-
-            //await ContractDao.Instance.CreateAsync(contract);
-
-            context.Contracts.Add(contract);
-            await context.SaveChangesAsync();
+            return contract;
         }
     }
 }

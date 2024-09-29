@@ -1,5 +1,4 @@
 ﻿using Common;
-using DAO.Enum;
 using DTOs.Contract;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -31,20 +30,19 @@ namespace Service.Implement
         {
             //TODO
             //Check renting request valid
-            var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
-            if (!isRentingRequestValid)
-            {
-                throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
-            }
+            //var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
+            //if (!isRentingRequestValid)
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
+            //}
 
             //Check account rent valid (Exist + Active)
-            var rentAccount = await _accountRepository.GetAccounById(contractRequestDto.AccountSignId);
-            if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
-            {
-                throw new ServiceException(MessageConstant.Contract.AccountRentInvalid);
-            }
+            //var rentAccount = await _accountRepository.GetAccounById(contractRequestDto.AccountSignId);
+            //if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.AccountRentInvalid);
+            //}
 
-            //Check address valid (Exist)
             //Check list rent serail number valid (Available)
             var isSerialNumberProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductsValidToRent(contractRequestDto.SerialNumberProducts);
             if (!isSerialNumberProductsValid)

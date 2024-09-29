@@ -13,6 +13,7 @@ using DTOs.Notification;
 using DTOs.Product;
 using DTOs.Promotion;
 using DTOs.RentingRequest;
+using DTOs.RentingService;
 using DTOs.SerialNumberProduct;
 using DTOs.Term;
 
@@ -47,6 +48,7 @@ namespace Repository.Mapper
 
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
             CreateMap<Account, NewStaffAndManagerAccountDto>().ReverseMap();
+            CreateMap<Account, AccountOrderDto>();
 
             CreateMap<Category, CategoryDto>();
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
@@ -138,10 +140,18 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore());
-            CreateMap<RentingRequestProductDetail, RentingRequestProductDetailDto>().ReverseMap();
+            CreateMap<RentingRequestProductDetail, NewRentingRequestProductDetailDto>().ReverseMap();
+            CreateMap<RentingRequest, RentingRequestDetailDto>();
+            CreateMap<RentingRequestProductDetail, RentingRequestProductDetailDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName));
+            CreateMap<ServiceRentingRequest, ServiceRentingRequestDto>()
+                .ForMember(dest => dest.RentingServiceName, opt => opt.MapFrom(src => src.RentingService.RentingServiceName));
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
             CreateMap<CreateNotificationDto, Notification>();
+
+            CreateMap<RentingService, RentingServiceDto>();
+            CreateMap<RentingService, RentingServiceRequestDto>().ReverseMap();
         }
     }
 }

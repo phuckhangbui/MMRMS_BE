@@ -1,7 +1,4 @@
-﻿using Common;
-using System.ComponentModel.DataAnnotations;
-
-namespace DTOs.Term
+﻿namespace DTOs.Term
 {
     public class ContractTermDto
     {
