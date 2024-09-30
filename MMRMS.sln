@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{709DFF11-5CEC-4AD4-858B-87061876946F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{4056EDBC-6F87-4924-BA57-9F1FD9218522}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{4056EDBC-6F87-4924-BA57-9F1FD9218522}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "APITests\APITests.csproj", "{10671BFC-D1B6-4224-9E83-DEA26C504279}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{4056EDBC-6F87-4924-BA57-9F1FD9218522}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4056EDBC-6F87-4924-BA57-9F1FD9218522}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4056EDBC-6F87-4924-BA57-9F1FD9218522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10671BFC-D1B6-4224-9E83-DEA26C504279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10671BFC-D1B6-4224-9E83-DEA26C504279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10671BFC-D1B6-4224-9E83-DEA26C504279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10671BFC-D1B6-4224-9E83-DEA26C504279}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
