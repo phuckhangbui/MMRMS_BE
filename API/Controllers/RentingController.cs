@@ -1,4 +1,5 @@
 ﻿using DTOs.RentingRequest;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -64,6 +65,26 @@ namespace API.Controllers
             {
                 await _rentingService.CreateRentingRequest(newRentingRequestDto);
                 return Created("", newRentingRequestDto);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("init-data")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult<RentingRequestInitDataDto>> GetRentingRequestInitData([FromBody] List<int> productIds)
+        {
+            try
+            {
+                int customerId = GetLoginAccountId();
+                var rentingRequests = await _rentingService.GetRentingRequestInitData(customerId, productIds);
+                return Ok(rentingRequests);
             }
             catch (ServiceException ex)
             {

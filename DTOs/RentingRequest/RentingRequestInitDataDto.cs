@@ -5,7 +5,18 @@ namespace DTOs.RentingRequest
 {
     public class RentingRequestInitDataDto
     {
-        public AccountPromotionDto AccountPromotionDto { get; set; }
-        public MembershipRankDto MembershipRankDto { get; set; }
+        public List<AccountPromotionDto> AccountPromotions { get; set; }
+        public MembershipRankDto MembershipRank { get; set; }
+        public List<RentingRequestProductDataDto> RentingRequestProductDatas { get; set; }
+    }
+
+    public class RentingRequestProductDataDto
+    {
+        public int ProductId { get; set; }
+        public string? ProductName { get; set; }
+        public double ProductPrice { get; set; }
+        public double RentPrice { get; set; }
+        public int Quantity { get; set; }
+        public string CategoryName { get; set; }
     }
 }
