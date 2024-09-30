@@ -1,4 +1,5 @@
 ﻿using DTOs.MembershipRank;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;
@@ -7,8 +8,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/membershipRanks")]
-    [ApiController]
-    public class MembershipRankController : ControllerBase
+    public class MembershipRankController : BaseApiController
     {
         private readonly IMembershipRankService _membershipRankService;
 
@@ -126,6 +126,26 @@ namespace API.Controllers
             {
                 await _membershipRankService.ChangeMembershipRankStatus(membershipRankId, status);
                 return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("customer")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult<MembershipRankDto>> GetMembershipRankForCustomer()
+        {
+            try
+            {
+                int customerId = GetLoginAccountId();
+                var membershipRank = await _membershipRankService.GetMembershipRankForCustomer(customerId);
+                return Ok(membershipRank);
             }
             catch (ServiceException ex)
             {

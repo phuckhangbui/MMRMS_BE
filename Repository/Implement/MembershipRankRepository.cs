@@ -69,6 +69,17 @@ namespace Repository.Implement
             return [];
         }
 
+        public async Task<MembershipRankDto?> GetMembershipRankForCustomer(int customerId)
+        {
+            var membershipRank = await MembershipRankDao.Instance.GetMembershipRanksForCustomer(customerId);
+            if (membershipRank != null)
+            {
+                return _mapper.Map<MembershipRankDto>(membershipRank);
+            }
+
+            return null;
+        }
+
         public async Task UpdateMembershipRank(int membershipRankId, MembershipRankRequestDto membershipRankRequestDto)
         {
             var membershipRank = await MembershipRankDao.Instance.GetMembershipRankById(membershipRankId);

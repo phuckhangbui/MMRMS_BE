@@ -2,7 +2,6 @@
 using DAO.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
-using static Common.MessageConstant;
 using Contract = BusinessObject.Contract;
 
 namespace DAO
@@ -77,7 +76,7 @@ namespace DAO
                         {
                             var serialNumberProduct = await context.SerialNumberProducts
                                 .FirstOrDefaultAsync(s => s.ProductId == rentSerialNumberProduct.ProductId && s.SerialNumber.Equals(rentSerialNumberProduct.SerialNumber));
-                            
+
                             //TODO
                             var contractSerialNumberProduct = new ContractSerialNumberProduct()
                             {

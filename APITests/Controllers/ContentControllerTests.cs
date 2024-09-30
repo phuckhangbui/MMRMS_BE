@@ -1,13 +1,13 @@
-﻿using Service.Interface;
-using Moq;
-using Xunit;
-using DTOs.Content;
-using Microsoft.AspNetCore.Mvc;
-using Assert = Xunit.Assert;
-using Common;
-using Service.Exceptions;
+﻿using Common;
 using DAO.Enum;
+using DTOs.Content;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Service.Exceptions;
+using Service.Interface;
+using Xunit;
+using Assert = Xunit.Assert;
 
 namespace API.Controllers.Tests
 {

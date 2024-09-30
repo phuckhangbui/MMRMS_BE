@@ -48,6 +48,17 @@ namespace Service.Implement
             return membershipRank;
         }
 
+        public async Task<MembershipRankDto> GetMembershipRankForCustomer(int customerId)
+        {
+            var membershipRank = await _membershipRankRepository.GetMembershipRankForCustomer(customerId);
+            if (membershipRank == null)
+            {
+                throw new ServiceException(MessageConstant.MembershipRank.NoMembershipRank);
+            }
+
+            return membershipRank;
+        }
+
         public async Task<IEnumerable<MembershipRankDto>> GetMembershipRanks()
         {
             var membershipRanks = await _membershipRankRepository.GetMembershipRanks();

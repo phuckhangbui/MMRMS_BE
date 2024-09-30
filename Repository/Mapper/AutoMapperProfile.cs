@@ -3,6 +3,7 @@ using BusinessObject;
 using DTOs;
 using DTOs.Account;
 using DTOs.AccountAddressDto;
+using DTOs.AccountPromotion;
 using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
@@ -152,6 +153,8 @@ namespace Repository.Mapper
 
             CreateMap<RentingService, RentingServiceDto>();
             CreateMap<RentingService, RentingServiceRequestDto>().ReverseMap();
+
+            CreateMap<AccountPromotion, AccountPromotionDto>();
         }
     }
 }

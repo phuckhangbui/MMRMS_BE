@@ -66,6 +66,7 @@
             //Service
             public const string MembershipRanksEmpty = "Danh sách hạng thành viên trống.";
             public const string MembershipRankNotFound = "Hạng thành viên không tồn tại.";
+            public const string NoMembershipRank = "Khách hàng hiện không có hạng thành viên.";
 
             //DTO
             public const string MembershipRankNameRequired = "Tên hạng thành viên là bắt buộc.";
@@ -220,6 +221,12 @@
             public const string DescriptionRequired = "Mô tả là bắt buộc.";
             public const string PriceRequired = "Giá dịch vụ phải lớn hơn 0.";
             public const string PayTypeRequired = "Loại thanh toán là bắt buộc.";
+        }
+
+        public static class AccountPromotion
+        {
+            //Service
+            public const string AccountPromotionListEmpty = "Danh sách khuyến mãi của bạn trống";
         }
     }
 }

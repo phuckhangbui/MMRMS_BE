@@ -100,7 +100,7 @@ namespace Repository.Implement
 
                 contractPayment.InvoiceId = invoice.InvoiceId;
                 contract.ContractPayments.Add(contractPayment);
-            } 
+            }
             else
             {
                 var rentingPeriod = rentingRequest.NumberOfMonth;
@@ -122,7 +122,7 @@ namespace Repository.Implement
 
             await ContractDao.Instance.CreateContract(contract, contractRequestDto);
         }
-    
+
         private Contract InitContract(ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
         {
             //TODO: AccountCreateId
