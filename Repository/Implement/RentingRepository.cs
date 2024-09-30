@@ -87,6 +87,11 @@ namespace Repository.Implement
             return null;
         }
 
+        public Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests()
         {
             IEnumerable<RentingRequest> rentingRequests = await RentingRequestDao.Instance.GetRentingRequests();

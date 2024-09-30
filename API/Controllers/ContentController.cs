@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetContents()
+        public async Task<ActionResult<List<ContentDto>>> GetContents()
         {
             try
             {

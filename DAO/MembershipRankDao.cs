@@ -32,5 +32,17 @@ namespace DAO
                 return await context.MembershipRanks.FirstOrDefaultAsync(m => m.MembershipRankId == membershipRankId);
             }
         }
+
+        public async Task<MembershipRank?> GetMembershipRanksForCustomer(int customerId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var account = await context.Accounts
+                    .Include(a => a.MembershipRank)
+                    .FirstOrDefaultAsync(a => a.AccountId == customerId);
+
+                return account?.MembershipRank;
+            }
+        }
     }
 }

@@ -33,5 +33,15 @@ namespace DAO
                     .FirstOrDefaultAsync(a => a.AddressId == addressId);
             }
         }
+
+        public async Task<IEnumerable<Address>> GetAddressesForCustomer(int customerId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Addresses
+                    .Where(a => a.AccountId == customerId)
+                    .ToListAsync();
+            }
+        }
     }
 }
