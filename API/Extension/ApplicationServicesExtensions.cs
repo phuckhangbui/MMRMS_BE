@@ -48,6 +48,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IRentingRequestService, RentingRequestServiceImpl>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IAddressService, AddressServiceImpl>();
         services.AddScoped<IRentingServiceService, RentingServiceServiceImpl>();
         services.AddScoped<IAccountPromotionService, AccountPromotionServiceImpl>();
 

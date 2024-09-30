@@ -228,5 +228,16 @@
             //Service
             public const string AccountPromotionListEmpty = "Danh sách khuyến mãi của bạn trống";
         }
+
+        public static class Address
+        {
+            //Service
+            public const string AddressListEmpty = "Danh sách địa chỉ của bạn trống";
+
+            //DTO
+            public const string AddressBodyRequired = "Địa chỉ chi tiết là bắt buộc.";
+            public const string DistrictRequired = "Quận/huyện là bắt buộc.";
+            public const string CityRequired = "Thành phố là bắt buộc.";
+        }
     }
 }

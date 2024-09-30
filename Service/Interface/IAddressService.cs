@@ -1,10 +1,9 @@
 ﻿using DTOs.Address;
 
-namespace Repository.Interface
+namespace Service.Interface
 {
-    public interface IAddressRepository
+    public interface IAddressService
     {
-        Task<bool> CheckAddressValid(int addressId, int accountId);
         Task<IEnumerable<AddressDto>> GetAddressesForCustomer(int customerId);
         Task CreateAddressForCustomer(int customerId, AddressRequestDto addressRequestDto);
     }
