@@ -11,6 +11,7 @@ using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
 using DTOs.Delivery;
+using DTOs.MaintenanceRequest;
 using DTOs.MembershipRank;
 using DTOs.Notification;
 using DTOs.Product;
@@ -172,7 +173,11 @@ namespace Repository.Mapper
                             : null));
 
             CreateMap<ContractAddress, ContractAddressDto>();
-
+            CreateMap<MaintenanceRequest, MaintenanceRequestDto>()
+                .ForMember(dest => dest.ContractAddress,
+                 opt => opt.MapFrom(src => src.Contract != null && src.Contract.ContractAddress != null
+                            ? src.Contract.ContractAddress
+                            : null));
 
         }
     }

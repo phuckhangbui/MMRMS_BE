@@ -250,5 +250,16 @@
 
             //Repository
         }
+
+        public static class MaintenanceRequest
+        {
+            //Service
+            public const string RequestNotFound = "Mã yêu cầu này không tồn tại";
+            public const string StatusCannotSet = "Tình trạng yêu cầu này không thể được cài đặt";
+            public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+
+
+            //Repository
+        }
     }
 }
