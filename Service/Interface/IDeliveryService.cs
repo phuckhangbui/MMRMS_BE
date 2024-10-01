@@ -6,6 +6,6 @@ namespace Service.Interface
     {
         Task<IEnumerable<DeliveryDto>> GetDeliveries();
         Task<IEnumerable<DeliveryDto>> GetDeliveries(int staffId);
-        Task UpdateDeliveryStatus(int deliveryId, string status);
+        Task UpdateDeliveryStatus(int deliveryId, string status, int accountId);
     }
 }

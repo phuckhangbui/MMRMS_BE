@@ -64,9 +64,14 @@ namespace API.Controllers
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateEmployeeTaskStatus([FromRoute] int employeeTaskId, [FromQuery] string status)
         {
+            int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
             try
             {
-                await _employeeTaskService.UpdateEmployeeTaskStatus(employeeTaskId, status);
+                await _employeeTaskService.UpdateEmployeeTaskStatus(employeeTaskId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
