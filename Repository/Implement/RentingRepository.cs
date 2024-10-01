@@ -3,6 +3,7 @@ using BusinessObject;
 using Common;
 using DAO;
 using DAO.Enum;
+using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
 using DTOs.RentingRequest;
@@ -85,6 +86,13 @@ namespace Repository.Implement
             if (rentingRequest != null)
             {
                 var rentingRequesteDto = _mapper.Map<RentingRequestDetailDto>(rentingRequest);
+
+                var accountBusinesses = await AccountBusinessDao.Instance.GetAccountBusinessesByAccountId((int)rentingRequest.AccountOrderId!);
+                if (accountBusinesses.Any())
+                {
+                    rentingRequesteDto.AccountBusinesses = _mapper.Map<List<AccountBusinessDto>>(accountBusinesses);
+                }
+
                 return rentingRequesteDto;
             }
 
