@@ -45,7 +45,7 @@ namespace API.Controllers
             try
             {
                 await _componentService.CreateComponent(createComponentDto);
-                return StatusCode(201);
+                return Created();
             }
             catch (ServiceException ex)
             {
@@ -69,7 +69,7 @@ namespace API.Controllers
             try
             {
                 await _componentService.UpdateComponent(updateComponentDto);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -88,7 +88,7 @@ namespace API.Controllers
             try
             {
                 await _componentService.UpdateComponentStatus(componentId, status);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -106,7 +106,7 @@ namespace API.Controllers
             try
             {
                 await _componentService.DeleteComponent(componentId);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {

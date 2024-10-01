@@ -14,8 +14,6 @@ public partial class MaintenanceRequest
 
     public DateTime? DateCreate { get; set; }
 
-    public bool? IsDelete { get; set; }
-
     public virtual Contract? Contract { get; set; }
 
     public virtual ICollection<RequestDateResponse> RequestDateResponses { get; set; } = new List<RequestDateResponse>();
