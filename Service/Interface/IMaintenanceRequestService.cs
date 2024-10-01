@@ -8,5 +8,6 @@ namespace Service.Interface
         Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests();
         Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests(int customerId);
         Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsOfContract(string contractId);
+        Task UpdateRequestStatus(int maintenanceRequestId, string status);
     }
 }

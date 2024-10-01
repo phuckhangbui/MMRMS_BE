@@ -12,9 +12,15 @@ public partial class Delivery
 
     public DateTime? DateCreate { get; set; }
 
+    public DateTime? DateCompleted { get; set; }
+
     public string? Status { get; set; }
+
+    public string? Note { get; set; }
 
     public virtual Contract? Contract { get; set; }
 
     public virtual Account? Staff { get; set; }
+
+    public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
 }

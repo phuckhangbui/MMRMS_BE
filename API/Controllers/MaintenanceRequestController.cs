@@ -105,5 +105,24 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPatch("{maintenanceRequestId}")]
+        [Authorize(Policy = "ManagerAndStaff")]
+        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] int maintenanceRequestId, [FromQuery] string status)
+        {
+            try
+            {
+                await _maintenanceRequestService.UpdateRequestStatus(maintenanceRequestId, status);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

@@ -74,4 +74,8 @@ public partial class Account
 
     public virtual ICollection<Contract> CreateContracts { get; set; } = new List<Contract>();
 
+    public virtual ICollection<TaskLog> TaskLogs { get; set; } = new List<TaskLog>();
+
+    public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
+
 }
