@@ -239,5 +239,16 @@
             public const string DistrictRequired = "Quận/huyện là bắt buộc.";
             public const string CityRequired = "Thành phố là bắt buộc.";
         }
+
+        public static class Delivery
+        {
+            //Service
+            public const string DeliveryNotFound = "Mã giao hàng này không tồn tại";
+            public const string StatusCannotSet = "Tình trạng giao hàng này không thể được cài đặt";
+            public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+
+
+            //Repository
+        }
     }
 }

@@ -10,6 +10,7 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
+using DTOs.Delivery;
 using DTOs.MembershipRank;
 using DTOs.Notification;
 using DTOs.Product;
@@ -159,6 +160,20 @@ namespace Repository.Mapper
 
             CreateMap<Address, AddressDto>();
             CreateMap<Address, AddressRequestDto>().ReverseMap();
+
+            CreateMap<Delivery, DeliveryDto>()
+                .ForMember(dest => dest.StaffName,
+                opt => opt.MapFrom(src => src.Staff != null
+                            ? src.Staff.Name
+                            : null))
+                .ForMember(dest => dest.ContractAddress,
+                 opt => opt.MapFrom(src => src.Contract != null && src.Contract.ContractAddress != null
+                            ? src.Contract.ContractAddress
+                            : null));
+
+            CreateMap<ContractAddress, ContractAddressDto>();
+
+
         }
     }
 }
