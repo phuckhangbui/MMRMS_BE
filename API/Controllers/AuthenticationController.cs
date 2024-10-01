@@ -74,7 +74,7 @@ namespace API.Controllers
             {
                 await _authenticationService.RegisterCustomer(newCustomerAccountDto);
 
-                return Ok();
+                return Created();
             }
             catch (ServiceException ex)
             {
@@ -93,7 +93,7 @@ namespace API.Controllers
             {
                 await _authenticationService.ActivateMemberEmailByOtp(memberConfirmEmailOtpDto);
 
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -112,7 +112,7 @@ namespace API.Controllers
             {
                 await _authenticationService.SendOtp(email);
 
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -131,7 +131,7 @@ namespace API.Controllers
             {
                 await _authenticationService.ConfirmOtpAndChangePasswordWhenForget(memberConfirmOtpWhenForgetPasswordDto);
 
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -152,7 +152,7 @@ namespace API.Controllers
             try
             {
                 await _authenticationService.ChangePasswordWithOldPassword(accountId, changePasswordDto);
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {

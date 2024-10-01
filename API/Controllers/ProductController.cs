@@ -147,7 +147,7 @@ namespace API.Controllers
             try
             {
                 await _productService.UpdateProductAttribute(productId, productAttributeDtos);
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -170,7 +170,7 @@ namespace API.Controllers
             try
             {
                 await _productService.UpdateProductComponent(productId, componentList);
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -195,7 +195,7 @@ namespace API.Controllers
             try
             {
                 await _productService.UpdateProductDetail(productId, updateProductDto);
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {

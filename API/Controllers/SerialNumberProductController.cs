@@ -27,7 +27,7 @@ namespace API.Controllers
             try
             {
                 await _serialNumberProductService.CreateSerialNumberProduct(createSerialProductNumberDto);
-                return StatusCode(201);
+                return Created();
             }
             catch (ServiceException ex)
             {
@@ -46,7 +46,7 @@ namespace API.Controllers
             try
             {
                 await _serialNumberProductService.Delete(serialNumber);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -65,7 +65,7 @@ namespace API.Controllers
             try
             {
                 await _serialNumberProductService.UpdateStatus(serialNumber, status);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -88,7 +88,7 @@ namespace API.Controllers
             try
             {
                 await _serialNumberProductService.Update(serialNumber, serialNumberProductUpdateDto);
-                return StatusCode(201);
+                return NoContent();
             }
             catch (ServiceException ex)
             {

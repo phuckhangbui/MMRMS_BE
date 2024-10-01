@@ -44,7 +44,7 @@ namespace API.Controllers
             try
             {
                 await _notificationService.MarkNotificationAsRead(key);
-                return Ok();
+                return NoContent();
             }
             catch (ServiceException ex)
             {
