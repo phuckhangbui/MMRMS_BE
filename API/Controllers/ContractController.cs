@@ -1,5 +1,4 @@
-﻿using DTOs.Content;
-using DTOs.Contract;
+﻿using DTOs.Contract;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -18,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetContracts()
+        public async Task<ActionResult<List<ContractDto>>> GetContracts()
         {
             try
             {
@@ -36,7 +35,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{contractId}")]
-        public async Task<ActionResult<ContentDto>> GetContentDetailById(string contractId)
+        public async Task<ActionResult<ContractDetailDto>> GetContractDetailById(string contractId)
         {
             try
             {

@@ -1,10 +1,12 @@
-﻿namespace DTOs.RentingRequest
+﻿using DTOs.AccountAddressDto;
+using DTOs.Address;
+
+namespace DTOs.RentingRequest
 {
     public class RentingRequestDetailDto
     {
         public string RentingRequestId { get; set; }
         public int? AccountOrderId { get; set; }
-        public int? AddressId { get; set; }
         public string? ContractId { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateStart { get; set; }
@@ -21,6 +23,8 @@
         public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
+        public AddressDto Address { get; set; }
+        public List<AccountBusinessDto> AccountBusinesses { get; set; }
     }
 
     public class RentingRequestProductDetailDto

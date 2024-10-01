@@ -2,10 +2,9 @@
 {
     public enum ContractStatusEnum
     {
-        Pending,
+        NotSigned,
         Signed,
         Expired,
-        Completed,
         Terminated,
     }
 }

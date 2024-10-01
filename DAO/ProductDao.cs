@@ -43,7 +43,9 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                return await context.Products
+                    .Include(p => p.Category)
+                    .FirstOrDefaultAsync(p => p.ProductId == productId);
 
             }
         }

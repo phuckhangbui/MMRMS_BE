@@ -35,6 +35,7 @@ namespace DAO
                     .Include(rr => rr.ServiceRentingRequests)
                         .ThenInclude(rr => rr.RentingService)
                     .Include(rr => rr.AccountOrder)
+                        .ThenInclude(rr => rr.Addresses)
                     .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
         }

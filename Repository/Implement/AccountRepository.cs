@@ -42,7 +42,7 @@ namespace Repository.Implement
             account.DateCreate = DateTime.Now;
             account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
-            account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
+            account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
             account.OtpNumber = otp;
 
             account.RoleId = (int)AccountRoleEnum.Customer;
@@ -69,12 +69,12 @@ namespace Repository.Implement
             var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
 
             using var hmac = new HMACSHA512();
-            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GlobalConstants.DefaultPassword));
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GlobalConstant.DefaultPassword));
             account.PasswordSalt = hmac.Key;
             account.DateCreate = DateTime.Now;
             account.Status = AccountStatusEnum.Inactive.ToString();
             account.IsDelete = false;
-            account.AvatarImg = GlobalConstants.DefaultAvatarUrl;
+            account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
 
             await AccountDao.Instance.CreateAsync(account);
         }

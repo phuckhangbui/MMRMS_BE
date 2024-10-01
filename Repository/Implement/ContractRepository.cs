@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using DAO;
 using DAO.Enum;
 using DTOs.Contract;
@@ -87,7 +88,7 @@ namespace Repository.Implement
 
                 var invoice = new Invoice
                 {
-                    InvoiceId = Guid.NewGuid().ToString(),
+                    InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
                     AccountPaidId = rentingRequest.AccountOrderId,
                     Amount = contractPayment.Price,
                     PaymentMethod = string.Empty,
@@ -129,9 +130,9 @@ namespace Repository.Implement
             //Contract
             var contract = new Contract()
             {
-                ContractId = Guid.NewGuid().ToString(),
+                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
                 DateCreate = DateTime.Now,
-                Status = ContractStatusEnum.Pending.ToString(),
+                Status = ContractStatusEnum.NotSigned.ToString(),
 
                 ContractName = contractRequestDto.ContractName,
                 DateStart = contractRequestDto.DateStart,

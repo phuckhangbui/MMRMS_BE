@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
@@ -21,6 +22,16 @@ namespace DAO
                     instance = new AccountBusinessDao();
                 }
                 return instance;
+            }
+        }
+
+        public async Task<IEnumerable<AccountBusiness>> GetAccountBusinessesByAccountId(int accountId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.AccountBusinesses
+                    .Where(a => a.AccountId == accountId)
+                    .ToListAsync();
             }
         }
     }
