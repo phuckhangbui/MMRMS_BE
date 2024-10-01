@@ -11,6 +11,7 @@ using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
 using DTOs.Delivery;
+using DTOs.EmployeeTask;
 using DTOs.MaintenanceRequest;
 using DTOs.MembershipRank;
 using DTOs.Notification;
@@ -178,6 +179,17 @@ namespace Repository.Mapper
                  opt => opt.MapFrom(src => src.Contract != null && src.Contract.ContractAddress != null
                             ? src.Contract.ContractAddress
                             : null));
+
+            CreateMap<EmployeeTask, EmployeeTaskDto>()
+                .ForMember(dest => dest.StaffName,
+                opt => opt.MapFrom(src => src.Staff != null
+                            ? src.Staff.Name
+                            : null))
+                .ForMember(dest => dest.ManagerName,
+                opt => opt.MapFrom(src => src.Manager != null
+                            ? src.Manager.Name
+                            : null));
+
 
         }
     }

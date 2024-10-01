@@ -248,7 +248,7 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
 
-            //Repository
+            //DTO
         }
 
         public static class MaintenanceRequest
@@ -259,7 +259,28 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
 
-            //Repository
+            //DTO
+        }
+
+        public static class EmployeeTask
+        {
+            //Service
+            public const string TaskNotFound = "Mã công việc này không tồn tại";
+            public const string StatusCannotSet = "Tình trạng công việc này không thể được cài đặt";
+            public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+            public const string CannotDeleted = "Trạng thái này không tồn tại";
+
+            //DTO
+        }
+
+        public static class MaintanningTicket
+        {
+            //Service
+            public const string TicketNotFound = "Mã yêu cầu thay thế này không tồn tại";
+            public const string StatusCannotSet = "Tình trạng yêu cầu thay thế này không thể được cài đặt";
+            public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+
+            //DTO
         }
     }
 }

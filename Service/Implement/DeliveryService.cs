@@ -26,7 +26,7 @@ namespace Service.Implement
             return await _deliveryRepository.GetDeliveriesForStaff(staffId);
         }
 
-        public async Task UpdateDeliveryStatus(int deliveryId, string status)
+        public async Task UpdateDeliveryStatus(int deliveryId, string status, int accountId)
         {
             DeliveryDto deliveryDto = await _deliveryRepository.GetDelivery(deliveryId);
 
@@ -42,7 +42,7 @@ namespace Service.Implement
 
             //business logic here, fix later
 
-            await _deliveryRepository.UpdateDeliveryStatus(deliveryId, status);
+            await _deliveryRepository.UpdateDeliveryStatus(deliveryId, status, accountId);
         }
     }
 }
