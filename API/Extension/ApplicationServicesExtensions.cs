@@ -29,11 +29,14 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IRentingServiceRepository, RentingServiceRepository>();
         services.AddScoped<IAccountPromotionRepository, AccountPromotionRepository>();
+        services.AddScoped<IDeliveryRepository, DeliveryRepository>();
+        services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
+        services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+        services.AddScoped<IMaintenanceTicketRepository, MaintenanceTicketRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ITokenService, TokenService>();
-        //services.AddScoped<IFirebaseMessagingService, FirebaseMessagingService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
@@ -51,6 +54,10 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAddressService, AddressServiceImpl>();
         services.AddScoped<IRentingServiceService, RentingServiceServiceImpl>();
         services.AddScoped<IAccountPromotionService, AccountPromotionServiceImpl>();
+        services.AddScoped<IDeliveryService, DeliveryService>();
+        services.AddScoped<IEmployeeTaskService, EmployeeTaskService>();
+        services.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
+        services.AddScoped<IMaintenanceTicketService, MaintenanceTicketService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
