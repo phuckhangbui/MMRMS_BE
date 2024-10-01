@@ -121,7 +121,7 @@ namespace Repository.Implement
             await SerialNumberProductDao.Instance.Delete(serialNumber);
         }
 
-        public async Task<IEnumerable<SerialNumberProductDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
+        public async Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
 
@@ -130,12 +130,12 @@ namespace Repository.Implement
             foreach (var rentingRequestProductDetail in rentingRequest.RentingRequestProductDetails)
             {
                 var serialNumberProducts = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductsByProductIdAndStatus((int)rentingRequestProductDetail.ProductId, SerialNumberProductStatusEnum.Available.ToString());
+                    .GetSerialNumberProductsByProductIdAndStatus((int)rentingRequestProductDetail.ProductId!, SerialNumberProductStatusEnum.Available.ToString());
 
                 allSerialNumberProducts.AddRange(serialNumberProducts);
             }
 
-            return _mapper.Map<IEnumerable<SerialNumberProductDto>>(allSerialNumberProducts);
+            return _mapper.Map<IEnumerable<SerialNumberProductOptionDto>>(allSerialNumberProducts);
         }
 
         public async Task<bool> IsSerialNumberExist(string serialNumber)

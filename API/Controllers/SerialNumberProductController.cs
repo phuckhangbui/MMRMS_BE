@@ -99,5 +99,23 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("renting-requests/{rentingRequestId}")]
+        public async Task<IActionResult> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
+        {
+            try
+            {
+                var serialNumberProducts = await _serialNumberProductService.GetSerialProductNumbersAvailableForRenting(rentingRequestId);
+                return Ok(serialNumberProducts);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

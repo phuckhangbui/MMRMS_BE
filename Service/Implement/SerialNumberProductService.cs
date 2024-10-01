@@ -67,6 +67,18 @@ namespace Service.Implement
 
         }
 
+        public async Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
+        {
+            var serialNumberProducts = await _serialNumberProductRepository.GetSerialProductNumbersAvailableForRenting(rentingRequestId);
+
+            if (serialNumberProducts.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.NoAvailableSerailNumberProductForRenting);
+            }
+
+            return serialNumberProducts;
+        }
+
         public async Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto)
         {
             if (string.IsNullOrEmpty(serialNumber))

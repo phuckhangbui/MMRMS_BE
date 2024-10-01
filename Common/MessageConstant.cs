@@ -162,7 +162,7 @@
             public const string SerialNumberProductNotFound = "Mã máy không tồn tại";
             public const string SerialNumberProductHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
-
+            public const string NoAvailableSerailNumberProductForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
 
             //DTO
             public const string ProductIdRequired = "ID máy là bắt buộc";
