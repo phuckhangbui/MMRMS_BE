@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using DAO;
 using DAO.Enum;
 using DTOs.AccountPromotion;
@@ -30,7 +31,7 @@ namespace Repository.Implement
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
 
             //TODO
-            rentingRequest.RentingRequestId = Guid.NewGuid().ToString();
+            rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             rentingRequest.DateCreate = DateTime.Now;
             rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
 
