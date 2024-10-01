@@ -7,6 +7,7 @@ using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
 using DTOs.RentingRequest;
+using DTOs.RentingService;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -129,7 +130,7 @@ namespace Repository.Implement
             var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
             if (!promotions.IsNullOrEmpty())
             {
-                rentingRequestInitDataDto.AccountPromotions = (List<AccountPromotionDto>)_mapper.Map<IEnumerable<AccountPromotionDto>>(promotions);
+                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(promotions);
             }
 
             //Membership data
@@ -137,6 +138,13 @@ namespace Repository.Implement
             if (membershipRank != null)
             {
                 rentingRequestInitDataDto.MembershipRank = _mapper.Map<MembershipRankDto>(membershipRank);
+            }
+
+            //Renting service data
+            var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
+            if (!rentingServices.IsNullOrEmpty())
+            {
+                rentingRequestInitDataDto.RentingServices = _mapper.Map<List<RentingServiceDto>>(rentingServices);
             }
 
             return rentingRequestInitDataDto;
