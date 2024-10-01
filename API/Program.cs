@@ -3,12 +3,15 @@ using Hangfire;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Service;
 using Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
+Log.Information("Hello, {Name}!", Environment.UserName);
 
 builder.Services.AddControllers();
 
@@ -71,6 +74,7 @@ builder.Services.ApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseSerilogRequestLogging();
 
 app.UseSwagger();
 app.UseSwaggerUI();

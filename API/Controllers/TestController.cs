@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
+using Serilog;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -44,6 +45,8 @@ namespace API.Controllers
         [HttpGet("datetime")]
         public async Task<ActionResult> GetDatetime()
         {
+            Log.Information("Datetime endpoint hit at {Time}", DateTime.Now);
+
             return Ok(DateTime.Now);
         }
 

@@ -22,6 +22,16 @@ services:
     networks:
       - backend
 
+  seq:
+    image: datalust/seq:latest
+    container_name: seq-container
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - '8081:80'
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge
