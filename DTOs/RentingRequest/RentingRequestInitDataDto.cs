@@ -1,5 +1,6 @@
 ﻿using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
+using DTOs.RentingService;
 
 namespace DTOs.RentingRequest
 {
@@ -8,6 +9,7 @@ namespace DTOs.RentingRequest
         public List<AccountPromotionDto> AccountPromotions { get; set; }
         public MembershipRankDto MembershipRank { get; set; }
         public List<RentingRequestProductDataDto> RentingRequestProductDatas { get; set; }
+        public List<RentingServiceDto> RentingServices { get; set; }
     }
 
     public class RentingRequestProductDataDto
