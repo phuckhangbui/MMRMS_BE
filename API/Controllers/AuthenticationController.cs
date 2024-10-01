@@ -22,6 +22,11 @@ namespace API.Controllers
         [HttpPost("username/login")]
         public async Task<ActionResult<LoginAccountDto>> LoginUsername(LoginUsernameDto loginDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
 
             try
             {
@@ -46,6 +51,11 @@ namespace API.Controllers
         [HttpPost("email/login")]
         public async Task<ActionResult<LoginAccountDto>> LoginEmail(LoginEmailDto loginDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
 
             try
             {
@@ -70,6 +80,12 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(NewCustomerAccountDto newCustomerAccountDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 await _authenticationService.RegisterCustomer(newCustomerAccountDto);
@@ -127,6 +143,12 @@ namespace API.Controllers
         [HttpPost("change-password/otp")]
         public async Task<ActionResult> ChangePasswordWithOtp(ChangePasswordWithOtpDto memberConfirmOtpWhenForgetPasswordDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 await _authenticationService.ConfirmOtpAndChangePasswordWhenForget(memberConfirmOtpWhenForgetPasswordDto);
@@ -147,7 +169,17 @@ namespace API.Controllers
         [Authorize]
         public async Task<ActionResult> ChangePasswordWithOldPassword(ChangePasswordDto changePasswordDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
 
             try
             {
