@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObject;
 using DAO;
 using DTOs.Delivery;
 using Repository.Interface;
@@ -35,13 +36,27 @@ namespace Repository.Implement
             return _mapper.Map<DeliveryDto>(delivery);
         }
 
-        public async Task UpdateDeliveryStatus(int deliveryId, string status)
+        public async Task UpdateDeliveryStatus(int deliveryId, string status, int accountId)
         {
             var delivery = await DeliveryDao.Instance.GetDelivery(deliveryId);
+
+            string oldStatus = delivery.Status;
 
             delivery.Status = status;
 
             await DeliveryDao.Instance.UpdateAsync(delivery);
+
+            string action = $"Change status from {oldStatus} to {status}";
+
+            var deliveryLog = new DeliveryLog
+            {
+                DeliveryId = deliveryId,
+                AccountId = accountId,
+                DateCreate = DateTime.Now,
+                Action = action,
+            };
+
+            await DeliveryLogDao.Instance.CreateAsync(deliveryLog);
         }
     }
 }

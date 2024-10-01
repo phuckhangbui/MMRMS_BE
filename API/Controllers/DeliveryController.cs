@@ -66,9 +66,16 @@ namespace API.Controllers
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateDeliveryStatus([FromRoute] int deliveryId, [FromQuery] string status)
         {
+            int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
+
+
             try
             {
-                await _deliveryService.UpdateDeliveryStatus(deliveryId, status);
+                await _deliveryService.UpdateDeliveryStatus(deliveryId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
