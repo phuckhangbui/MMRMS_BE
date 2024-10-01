@@ -22,8 +22,14 @@
 
         public DateTime? DateCreate { get; set; }
 
+        public DateTime? DateCompleted { get; set; }
+
         public string? Status { get; set; }
 
         public string? Type { get; set; }
+
+        public string? Note { get; set; }
+
+
     }
 }

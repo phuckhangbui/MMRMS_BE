@@ -91,6 +91,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ServiceContract> ServiceContracts { get; set; }
 
+    public virtual DbSet<DeliveryLog> DeliveryLogs { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -709,6 +711,29 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.EmployeeTask).WithMany(p => p.TaskLogs)
                 .HasForeignKey(d => d.EmployeeTaskId)
                 .HasConstraintName("FK_TaskLog_TaskID");
+
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.TaskLogs)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_TaskLog_AccountID");
+        });
+
+        modelBuilder.Entity<DeliveryLog>(entity =>
+        {
+            entity.HasKey(e => e.DeliveryLogId);
+
+            entity.ToTable("DeliveryLog");
+
+            entity.Property(e => e.DeliveryLogId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.Delivery).WithMany(p => p.DeliveryLogs)
+                .HasForeignKey(d => d.DeliveryId)
+                .HasConstraintName("FK_DeliveryLog_DeliveryID");
+
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.DeliveryLogs)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_DeliveryLog_AccountID");
         });
 
         modelBuilder.Entity<RentingService>(entity =>
