@@ -105,8 +105,8 @@ namespace Repository.Mapper
             CreateMap<UpdateComponentDto, Component>();
             CreateMap<CreateComponentDto, Component>();
 
-
             CreateMap<SerialNumberProduct, SerialNumberProductDto>();
+            CreateMap<SerialNumberProduct, SerialNumberProductOptionDto>();
 
             CreateMap<Content, ContentDto>();
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();

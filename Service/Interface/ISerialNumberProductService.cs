@@ -8,5 +8,6 @@ namespace Service.Interface
         Task Delete(string serialNumber);
         Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto);
         Task UpdateStatus(string serialNumber, string status);
+        Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId);
     }
 }
