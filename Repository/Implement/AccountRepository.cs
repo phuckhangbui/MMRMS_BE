@@ -4,6 +4,7 @@ using Common;
 using DAO;
 using DAO.Enum;
 using DTOs.Account;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using System.Security.Cryptography;
 using System.Text;
@@ -56,9 +57,26 @@ namespace Repository.Implement
 
             account.AccountBusinesses.Add(accountBusiness);
 
+            //Init promotion
+            var promotions = await PromotionDao.Instance.GetAllAsync();
+            var activePromotions = promotions.Where(p => p.Status!.Equals(PromotionStatusEnum.Active.ToString()));
+            if (!activePromotions.IsNullOrEmpty())
+            {
+                foreach (var activePromotion in activePromotions)
+                {
+                    var accountPromotion = new AccountPromotion
+                    {
+                        Account = account,
+                        DateReceive = DateTime.Now,
+                        Status = 1,
+                        PromotionId = activePromotion.PromotionId,
+                    };
+
+                    account.AccountPromotions.Add(accountPromotion);
+                }
+            }
+
             await AccountDao.Instance.CreateAsync(account);
-
-
 
             return _mapper.Map<AccountDto>(account);
         }

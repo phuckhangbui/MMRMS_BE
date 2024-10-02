@@ -120,7 +120,12 @@ namespace Repository.Implement
                     Quantity = availableSerialNumberProducts.Count(),
                     RentPrice = product.RentPrice ?? 0,
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
+                    ThumbnailUrl = string.Empty,
                 };
+                if (!product.ProductImages.IsNullOrEmpty())
+                {
+                    rentingRequestProductDataDto.ThumbnailUrl = product.ProductImages.First(p => p.IsThumbnail == true).ProductImageUrl ?? string.Empty;
+                }
 
                 rentingRequestProductDatas.Add(rentingRequestProductDataDto);
             }
@@ -130,7 +135,8 @@ namespace Repository.Implement
             var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
             if (!promotions.IsNullOrEmpty())
             {
-                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(promotions);
+                var shippingTypePromotions = promotions.Where(p => p.Promotion!.DiscountTypeName!.Equals(DiscountTypeNameEnum.Shipping.ToString()));
+                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(shippingTypePromotions);
             }
 
             //Membership data
