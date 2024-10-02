@@ -27,8 +27,6 @@
 
     public class NewRentingRequestDto
     {
-        public int AccountOrderId { get; set; }
-
         public int AddressId { get; set; }
 
         public DateTime DateStart { get; set; }
@@ -59,7 +57,8 @@
     public class NewRentingRequestProductDetailDto
     {
         public int ProductId { get; set; }
-
         public int Quantity { get; set; }
+        public double RentPrice { get; set; }
+        public double DepositPrice { get; set; }
     }
 }

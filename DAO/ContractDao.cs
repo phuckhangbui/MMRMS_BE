@@ -94,6 +94,10 @@ namespace DAO
                             context.SerialNumberProducts.Update(serialNumberProduct);
                         }
 
+                        var rentingRequest = await context.RentingRequests.FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(contract.RentingRequestId));
+                        rentingRequest!.Contract = contract;
+                        context.RentingRequests.Update(rentingRequest);
+
                         //TODO
                         contract.TotalDepositPrice = totalDepositPrice;
                         contract.TotalRentPricePerMonth = 0;

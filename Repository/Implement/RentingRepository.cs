@@ -28,9 +28,10 @@ namespace Repository.Implement
             return rentingRequest != null;
         }
 
-        public async Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto)
+        public async Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
+            rentingRequest.AccountOrderId = customerId;
 
             //TODO
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
@@ -46,11 +47,11 @@ namespace Repository.Implement
                 //TODO
                 var serviceRentingRequest = new ServiceRentingRequest()
                 {
-                    ServicePrice = 0,
+                    ServicePrice = requiredRentingService.Price,
                     DiscountPrice = 0,
-                    FinalPrice = 0,
                     RentingServiceId = requiredRentingService.RentingServiceId,
                 };
+                serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
             }
@@ -68,11 +69,11 @@ namespace Repository.Implement
                     //TODO
                     var serviceRentingRequest = new ServiceRentingRequest()
                     {
-                        ServicePrice = 0,
+                        ServicePrice = optionalRentingService.Price,
                         DiscountPrice = 0,
-                        FinalPrice = 0,
                         RentingServiceId = optionalRentingService.RentingServiceId,
                     };
+                    serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
                 }
@@ -120,7 +121,12 @@ namespace Repository.Implement
                     Quantity = availableSerialNumberProducts.Count(),
                     RentPrice = product.RentPrice ?? 0,
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
+                    ThumbnailUrl = string.Empty,
                 };
+                if (!product.ProductImages.IsNullOrEmpty())
+                {
+                    rentingRequestProductDataDto.ThumbnailUrl = product.ProductImages.First(p => p.IsThumbnail == true).ProductImageUrl ?? string.Empty;
+                }
 
                 rentingRequestProductDatas.Add(rentingRequestProductDataDto);
             }
@@ -130,7 +136,8 @@ namespace Repository.Implement
             var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
             if (!promotions.IsNullOrEmpty())
             {
-                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(promotions);
+                var shippingTypePromotions = promotions.Where(p => p.Promotion!.DiscountTypeName!.Equals(DiscountTypeNameEnum.Shipping.ToString()));
+                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(shippingTypePromotions);
             }
 
             //Membership data

@@ -6,7 +6,7 @@ namespace Repository.Interface
     {
         Task<bool> CheckRentingRequestValidToRent(string rentingRequestId);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequests();
-        Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto);
+        Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto);
         Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId);
         Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId, List<int> productIds);
     }

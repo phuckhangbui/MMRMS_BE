@@ -70,6 +70,7 @@ namespace DTOs.Account
         public int Position { get; set; }
         public string DateExpire { get; set; }
         public string DateBirth { get; set; }
+        public string AvatarImg { get; set; }
     }
 
     public class CustomerAccountDto : AccountBaseDto

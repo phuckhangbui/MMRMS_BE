@@ -45,6 +45,7 @@ namespace DAO
             {
                 return await context.Products
                     .Include(p => p.Category)
+                    .Include(p => p.ProductImages)
                     .FirstOrDefaultAsync(p => p.ProductId == productId);
 
             }

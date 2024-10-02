@@ -1,4 +1,5 @@
 ﻿using DTOs.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -6,8 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/contracts")]
-    [ApiController]
-    public class ContractController : ControllerBase
+    public class ContractController : BaseApiController
     {
         private readonly IContractService _contractService;
 
@@ -71,6 +71,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> CreateContract([FromBody] ContractRequestDto contractRequestDto)
         {
             if (!ModelState.IsValid)
@@ -81,7 +82,8 @@ namespace API.Controllers
 
             try
             {
-                await _contractService.CreateContract(contractRequestDto);
+                int managerId = GetLoginAccountId();
+                await _contractService.CreateContract(managerId, contractRequestDto);
                 return Created("", contractRequestDto);
             }
             catch (ServiceException ex)
