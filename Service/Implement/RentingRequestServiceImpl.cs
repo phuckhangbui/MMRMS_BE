@@ -26,7 +26,7 @@ namespace Service.Implement
             _addressRepository = addressRepository;
         }
 
-        public async Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto)
+        public async Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
             var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto.RentingRequestProductDetails);
@@ -36,20 +36,20 @@ namespace Service.Implement
             }
 
             //Check account rent valid
-            var rentAccount = await _accountRepository.GetAccounById(newRentingRequestDto.AccountOrderId);
+            var rentAccount = await _accountRepository.GetAccounById(customerId);
             if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestAccountInvalid);
             }
 
             //Check address valid
-            var isAddressValid = await _addressRepository.CheckAddressValid(newRentingRequestDto.AddressId, newRentingRequestDto.AccountOrderId);
+            var isAddressValid = await _addressRepository.CheckAddressValid(newRentingRequestDto.AddressId, customerId);
             if (!isAddressValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
             }
 
-            await _rentingRepository.CreateRentingRequest(newRentingRequestDto);
+            await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetAll()

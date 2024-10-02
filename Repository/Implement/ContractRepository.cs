@@ -55,12 +55,12 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task CreateContract(ContractRequestDto contractRequestDto)
+        public async Task CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
 
             //Contract
-            var contract = InitContract(contractRequestDto, rentingRequest);
+            var contract = InitContract(managerId, contractRequestDto, rentingRequest);
 
             //Contract Address
             var address = await AddressDao.Instance.GetAddressById((int)rentingRequest.AddressId!);
@@ -122,11 +122,13 @@ namespace Repository.Implement
             }
 
             await ContractDao.Instance.CreateContract(contract, contractRequestDto);
+
+            rentingRequest.ContractId = contract.ContractId;
+            await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
         }
 
-        private Contract InitContract(ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
+        private Contract InitContract(int managerId, ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
         {
-            //TODO: AccountCreateId
             //Contract
             var contract = new Contract()
             {
@@ -139,7 +141,7 @@ namespace Repository.Implement
                 DateEnd = contractRequestDto.DateEnd,
                 Content = contractRequestDto.Content,
                 RentingRequestId = contractRequestDto.RentingRequestId,
-                AccountCreateId = 1,
+                AccountCreateId = managerId,
                 AccountSignId = rentingRequest.AccountOrderId,
             };
 

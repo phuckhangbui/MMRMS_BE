@@ -28,9 +28,10 @@ namespace Repository.Implement
             return rentingRequest != null;
         }
 
-        public async Task CreateRentingRequest(NewRentingRequestDto newRentingRequestDto)
+        public async Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
+            rentingRequest.AccountOrderId = customerId;
 
             //TODO
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
@@ -46,11 +47,11 @@ namespace Repository.Implement
                 //TODO
                 var serviceRentingRequest = new ServiceRentingRequest()
                 {
-                    ServicePrice = 0,
+                    ServicePrice = requiredRentingService.Price,
                     DiscountPrice = 0,
-                    FinalPrice = 0,
                     RentingServiceId = requiredRentingService.RentingServiceId,
                 };
+                serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
             }
@@ -68,11 +69,11 @@ namespace Repository.Implement
                     //TODO
                     var serviceRentingRequest = new ServiceRentingRequest()
                     {
-                        ServicePrice = 0,
+                        ServicePrice = optionalRentingService.Price,
                         DiscountPrice = 0,
-                        FinalPrice = 0,
                         RentingServiceId = optionalRentingService.RentingServiceId,
                     };
+                    serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
                 }

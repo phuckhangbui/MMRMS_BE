@@ -53,6 +53,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: "Customer")]
         public async Task<ActionResult> CreateRentingRequest([FromBody] NewRentingRequestDto newRentingRequestDto)
         {
             if (!ModelState.IsValid)
@@ -63,7 +64,8 @@ namespace API.Controllers
 
             try
             {
-                await _rentingService.CreateRentingRequest(newRentingRequestDto);
+                int customerId = GetLoginAccountId();
+                await _rentingService.CreateRentingRequest(customerId, newRentingRequestDto);
                 return Created("", newRentingRequestDto);
             }
             catch (ServiceException ex)
