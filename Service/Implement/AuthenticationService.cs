@@ -90,9 +90,11 @@ namespace Service.Implement
 
             loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
 
+            DateTime expiredDate = DateTime.UtcNow.AddDays(7);
+
             var refreshToken = _tokenService.GenerateRefreshToken();
             loginAccountDto.RefreshToken = refreshToken;
-            loginAccountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            loginAccountDto.RefreshTokenExpiryTime = expiredDate;
 
             if (string.IsNullOrEmpty(firebaseMessagingToken))
             {
@@ -108,6 +110,10 @@ namespace Service.Implement
                 }
                 accountDto.FirebaseMessageToken = firebaseMessagingToken;
             }
+
+            accountDto.TokenRefresh = refreshToken;
+            accountDto.TokenDateExpire = expiredDate;
+
             await _accountRepository.UpdateAccount(accountDto);
 
             return loginAccountDto;
