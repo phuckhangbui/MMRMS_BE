@@ -28,6 +28,7 @@ public static class IdentityServiceExtension
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
             };
         });
 
