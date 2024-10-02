@@ -53,6 +53,10 @@ namespace Repository.Implement
 
             var productDetail = _mapper.Map<DisplayProductDetailDto>(product);
 
+            //Quantity availble
+            var serialNumberProducts = await SerialNumberProductDao.Instance.GetSerialNumberProductsByProductIdAndStatus(productId, SerialNumberProductStatusEnum.Available.ToString());
+            productDetail.Quantity = serialNumberProducts.Count();
+
             return productDetail;
         }
 
