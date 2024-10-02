@@ -76,12 +76,12 @@ namespace Service.Implement
                 }
             }
 
-            if (accountDto.Status?.Equals(AccountStatusEnum.Inactive) ?? false)
+            if (accountDto.Status?.Equals(AccountStatusEnum.Inactive.ToString()) ?? false)
             {
                 throw new ServiceException(MessageConstant.Account.AccountInactive);
             }
 
-            if (accountDto.Status?.Equals(AccountStatusEnum.Locked) ?? false)
+            if (accountDto.Status?.Equals(AccountStatusEnum.Locked.ToString()) ?? false)
             {
                 throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
