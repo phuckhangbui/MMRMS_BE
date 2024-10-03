@@ -103,5 +103,21 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("customer/requests")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequestsForCustomer()
+        {
+            try
+            {
+                int customerId = GetLoginAccountId();
+                var rentingRequests = await _rentingService.GetRentingRequestsForCustomer(customerId);
+                return Ok(rentingRequests);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

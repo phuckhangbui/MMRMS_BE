@@ -22,7 +22,7 @@ namespace DAO
             return list;
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             try
             {
@@ -30,6 +30,7 @@ namespace DAO
                 DbSet<T> _dbSet = _context.Set<T>();
                 _dbSet.Add(entity);
                 await _context.SaveChangesAsync();
+                return entity;
             }
             catch (Exception ex)
             {
@@ -37,7 +38,7 @@ namespace DAO
             }
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             try
             {
@@ -46,6 +47,7 @@ namespace DAO
                 var tracker = _context.Attach(entity);
                 tracker.State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                return entity;
             }
             catch (Exception ex)
             {

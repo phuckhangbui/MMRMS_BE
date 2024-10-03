@@ -15,11 +15,11 @@ namespace DTOs.Contract
 
         public int? AccountSignId { get; set; }
 
-        public int? AddressId { get; set; }
+        public int? ContractAddressId { get; set; }
 
         public string? RentingRequestId { get; set; }
 
-        public double? TotalRentPrice { get; set; }
+        public double? TotalRentPricePerMonth { get; set; }
 
         public double? ShippingPrice { get; set; }
 

@@ -163,5 +163,11 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
         }
+
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
+        {
+            var rentingRequests = await RentingRequestDao.Instance.GetRentingRequestsForCustomer(customerId);
+            return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
+        }
     }
 }

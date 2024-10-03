@@ -66,5 +66,10 @@ namespace Service.Implement
         {
             return await _rentingRepository.GetRentingRequestInitData(customerId, productIds);
         }
+
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
+        {
+            return await _rentingRepository.GetRentingRequestsForCustomer(customerId);
+        }
     }
 }

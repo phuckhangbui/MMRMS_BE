@@ -120,8 +120,8 @@ namespace API.Controllers.Tests
                 ImageUrl = Mock.Of<IFormFile>()
             };
 
-            _contentServiceMock.Setup(service => service.CreateContent(mockContentRequest))
-                               .Returns(Task.CompletedTask);
+            //_contentServiceMock.Setup(service => service.CreateContent(mockContentRequest))
+            //                   .Returns(await Task.CompletedTask);
 
             // Act
             var result = await _contentController.CreateContent(mockContentRequest);

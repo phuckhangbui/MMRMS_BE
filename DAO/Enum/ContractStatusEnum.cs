@@ -4,7 +4,8 @@
     {
         NotSigned,
         Signed,
-        Expired,
+        Active,
+        Completed,
         Terminated,
     }
 }

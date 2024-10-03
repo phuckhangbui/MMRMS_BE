@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ContractDto>>> GetContracts()
+        public async Task<ActionResult<IEnumerable<ContractDto>>> GetContracts()
         {
             try
             {
@@ -52,12 +52,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("customers/{accountId}")]
-        public async Task<ActionResult> GetContractsForCustomer(int accountId)
+        [HttpGet("customers")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult<IEnumerable<ContractDto>>> GetContractsForCustomer()
         {
             try
             {
-                var contracts = await _contractService.GetContractsForCustomer(accountId);
+                int customerId = GetLoginAccountId();
+                var contracts = await _contractService.GetContractsForCustomer(customerId);
                 return Ok(contracts);
             }
             catch (ServiceException ex)
