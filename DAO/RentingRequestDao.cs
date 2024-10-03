@@ -57,5 +57,16 @@ namespace DAO
                         && h.Status.Equals(status));
             }
         }
+
+        public async Task<IEnumerable<RentingRequest>> GetRentingRequestsForCustomer(int customerId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.RentingRequests
+                    .Where(rr => rr.AccountOrderId == customerId)
+                    .Include(h => h.AccountOrder)
+                    .ToListAsync();
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DTOs.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;
@@ -91,6 +92,7 @@ namespace API.Controllers
         }
 
         [HttpPost("staff-manager")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult> CreateStaffOrManagerAccount([FromBody] NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
             if (!ModelState.IsValid)
@@ -101,8 +103,8 @@ namespace API.Controllers
 
             try
             {
-                await _accountService.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
-                return Created("", newStaffAndManagerAccountDto);
+                var result = await _accountService.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
+                return Created("", result);
             }
             catch (ServiceException ex)
             {

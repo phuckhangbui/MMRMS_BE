@@ -44,6 +44,8 @@ public static class IdentityServiceExtension
                         policy.RequireClaim("RoleId", MANAGER_ID, STAFF_ID));
             options.AddPolicy("Customer", policy =>
                         policy.RequireClaim("RoleId", CUSTOMER_ID));
+            options.AddPolicy("AdminAndManager", policy =>
+                        policy.RequireClaim("RoleId", ADMIN_ID, MANAGER_ID));
         });
         return services;
     }

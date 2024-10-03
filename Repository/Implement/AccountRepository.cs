@@ -81,7 +81,7 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<AccountBaseDto> CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
 
             var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
@@ -94,7 +94,9 @@ namespace Repository.Implement
             account.IsDelete = false;
             account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
 
-            await AccountDao.Instance.CreateAsync(account);
+            account = await AccountDao.Instance.CreateAsync(account);
+
+            return _mapper.Map<AccountBaseDto>(account);
         }
 
         public async Task<AccountBaseDto> GetAccountBaseById(int accountId)

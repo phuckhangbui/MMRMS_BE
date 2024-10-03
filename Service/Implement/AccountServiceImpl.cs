@@ -76,7 +76,7 @@ namespace Service.Implement
             return account;
         }
 
-        public async Task CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<AccountBaseDto> CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newStaffAndManagerAccountDto.Email);
 
@@ -91,7 +91,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.UsernameAlreadyExists);
             }
 
-            await _accountRepository.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
+            return await _accountRepository.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
         }
 
         public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)

@@ -8,5 +8,6 @@ namespace Service.Interface
         Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto);
         Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId);
         Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId, List<int> productIds);
+        Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
     }
 }
