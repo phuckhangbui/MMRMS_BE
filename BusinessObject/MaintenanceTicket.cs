@@ -8,7 +8,7 @@ public partial class MaintenanceTicket
 
     public int? EmployeeCreateId { get; set; }
 
-    public int? ContractId { get; set; }
+    public string? ContractId { get; set; }
 
     public int? ComponentId { get; set; }
 

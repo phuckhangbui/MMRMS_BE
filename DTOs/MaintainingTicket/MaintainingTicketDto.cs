@@ -6,7 +6,7 @@
 
         public int? EmployeeTaskId { get; set; }
 
-        public int? ContractId { get; set; }
+        public string? ContractId { get; set; }
 
         public int? EmployeeCreateId { get; set; }
 
