@@ -9,5 +9,6 @@
         public const string InvoiceIdPrefixPattern = "INV";
         public const string TaskIdPrefixPattern = "TK";
         public const string DateTimeFormatPattern = "yyyyMMddHHmmss";
+        public const int MaxTaskLimitADayContract = 3;
     }
 }
