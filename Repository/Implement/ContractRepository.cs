@@ -166,8 +166,8 @@ namespace Repository.Implement
                 {
                     RentingServiceId = serviceRentingRequest.RentingServiceId,
                     ServicePrice = serviceRentingRequest.ServicePrice,
-                    DiscountPrice = serviceRentingRequest.DiscountPrice,
-                    FinalPrice = serviceRentingRequest.FinalPrice,
+                    //DiscountPrice = serviceRentingRequest.DiscountPrice,
+                    //FinalPrice = serviceRentingRequest.FinalPrice,
                 };
 
                 contract.ServiceContracts.Add(serviceContract);

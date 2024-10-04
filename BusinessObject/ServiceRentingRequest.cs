@@ -10,10 +10,6 @@
 
         public double? ServicePrice { get; set; }
 
-        public double? DiscountPrice { get; set; }
-
-        public double? FinalPrice { get; set; }
-
         public virtual RentingRequest? RentingRequest { get; set; }
 
         public virtual RentingService? RentingService { get; set; }
