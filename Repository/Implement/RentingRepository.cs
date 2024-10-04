@@ -85,9 +85,9 @@ namespace Repository.Implement
                 var rentingRequesteDto = _mapper.Map<RentingRequestDetailDto>(rentingRequest);
 
                 var accountBusinesses = await AccountBusinessDao.Instance.GetAccountBusinessesByAccountId((int)rentingRequest.AccountOrderId!);
-                if (accountBusinesses.Any())
+                if (accountBusinesses != null)
                 {
-                    rentingRequesteDto.AccountBusinesses = _mapper.Map<List<AccountBusinessDto>>(accountBusinesses);
+                    rentingRequesteDto.AccountBusiness = _mapper.Map<AccountBusinessDto>(accountBusinesses);
                 }
 
                 return rentingRequesteDto;

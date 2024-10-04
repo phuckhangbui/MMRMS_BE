@@ -35,7 +35,7 @@ namespace DAO
             {
                 return await context.Contracts
                      .Include(c => c.AccountSign)
-                        .ThenInclude(a => a.AccountBusinesses)
+                        .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
@@ -57,7 +57,7 @@ namespace DAO
             {
                 return await context.Contracts
                     .Include(c => c.AccountSign)
-                        .ThenInclude(a => a.AccountBusinesses)
+                        .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
                     .ToListAsync();
             }

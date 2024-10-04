@@ -32,6 +32,8 @@ public partial class Account
 
     public int? MembershipRankId { get; set; }
 
+    public int? AccountBusinessId { get; set; }
+
     public int? LogId { get; set; }
 
     public double? MoneySpent { get; set; }
@@ -50,7 +52,7 @@ public partial class Account
 
     public virtual Log? Log { get; set; }
 
-    public virtual ICollection<AccountBusiness> AccountBusinesses { get; set; } = new List<AccountBusiness>();
+    public virtual AccountBusiness? AccountBusiness { get; set; }
 
     public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
 

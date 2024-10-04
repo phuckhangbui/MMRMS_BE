@@ -4,6 +4,7 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Contract;
+using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -37,6 +38,24 @@ namespace Repository.Implement
             if (contract != null)
             {
                 var contractDetailDto = _mapper.Map<ContractDetailDto>(contract);
+
+                var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contract.RentingRequestId!);
+                contractDetailDto.IsOnetimePayment = (bool)rentingRequest.IsOnetimePayment!;
+                contractDetailDto.Name = rentingRequest.AccountOrder!.Name!;
+                contractDetailDto.AccountOrder = _mapper.Map<AccountOrderDto>(rentingRequest.AccountOrder);
+                contractDetailDto.ServiceRentingRequests = _mapper.Map<List<ServiceRentingRequestDto>>(rentingRequest.ServiceRentingRequests);
+                contractDetailDto.ContractProductDetails = _mapper.Map<List<ContractProductDetailDto>>(rentingRequest.RentingRequestProductDetails);
+
+                var contractSerailNumberProducts = await ContractSerialNumberProductDao.Instance.GetContractSerialNumberProductsByContractId(contractId);
+                foreach (var product in contractSerailNumberProducts)
+                {
+                    var productId = product.SerialNumberProduct!.ProductId;
+                    var contractProduct = contractDetailDto.ContractProductDetails.Find(x => x.ProductId == productId);
+
+                    var contractSerialNumberProduct = _mapper.Map<ContractSerialNumberProductDto>(product);
+                    contractProduct!.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+                }
+
                 return contractDetailDto;
             }
 

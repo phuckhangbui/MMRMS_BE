@@ -127,6 +127,11 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.MembershipRankId)
                 .HasConstraintName("FK_Account_MembershipRank");
 
+            entity.HasOne(d => d.AccountBusiness)
+                .WithOne(p => p.Account)
+                .HasForeignKey<AccountBusiness>(d => d.AccountBusinessId)
+                .HasConstraintName("FK_Account_AccountBusiness");
+
             entity.HasOne(d => d.Log)
                .WithOne(p => p.AccountLog)
                .HasForeignKey<Account>(d => d.LogId)
@@ -166,8 +171,10 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Account).WithMany(p => p.AccountBusinesses)
-                .HasForeignKey(d => d.AccountId)
+            entity.HasOne(d => d.Account)
+                .WithOne(p => p.AccountBusiness)
+                .HasForeignKey<AccountBusiness>(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_AccountBusiness_Account");
         });
 

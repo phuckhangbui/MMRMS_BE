@@ -41,26 +41,15 @@ namespace DTOs.Contract
 
         public string? Status { get; set; }
 
-        public List<AccountBusinessDto> AccountBusinesses { get; set; }
+        public AccountBusinessDto AccountBusiness { get; set; }
 
         public string Name { get; set; }
-    }
-
-    public class ContractDetailDto : ContractDto
-    {
-        public List<ContractTermDto> ContractTerms { get; set; }
     }
 
     public class ContractRequestDto
     {
         [Required(ErrorMessage = MessageConstant.Contract.ContractNameRequired)]
         public string ContractName { get; set; }
-
-        //[Required(ErrorMessage = MessageConstant.Contract.AccountSignIdRequired)]
-        //public int AccountSignId { get; set; }
-
-        //[Required(ErrorMessage = MessageConstant.Contract.AddressIdRequired)]
-        //public int AddressId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Contract.RentingRequestIdRequired)]
         public string RentingRequestId { get; set; }

@@ -24,7 +24,7 @@ namespace DTOs.RentingRequest
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
         public AddressDto Address { get; set; }
-        public List<AccountBusinessDto> AccountBusinesses { get; set; }
+        public AccountBusinessDto AccountBusiness { get; set; }
     }
 
     public class RentingRequestProductDetailDto
@@ -36,11 +36,8 @@ namespace DTOs.RentingRequest
 
     public class ServiceRentingRequestDto
     {
-        public int ServiceRentingRequestId { get; set; }
         public int RentingServiceId { get; set; }
         public double ServicePrice { get; set; }
-        public double DiscountPrice { get; set; }
-        public double FinalPrice { get; set; }
         public string RentingServiceName { get; set; }
     }
 

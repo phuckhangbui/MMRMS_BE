@@ -36,20 +36,20 @@ namespace Repository.Mapper
             CreateMap<Account, StaffAndManagerAccountDto>();
             CreateMap<Account, CustomerAccountDto>()
                         .ForMember(dest => dest.Company,
-                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
-                                ? src.AccountBusinesses.FirstOrDefault().Company
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Company
                                 : null))
                         .ForMember(dest => dest.Address,
-                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
-                                ? src.AccountBusinesses.FirstOrDefault().Address
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Address
                                 : null))
                         .ForMember(dest => dest.Position,
-                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
-                                ? src.AccountBusinesses.FirstOrDefault().Position
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Position
                                 : null))
                         .ForMember(dest => dest.TaxNumber,
-                            opt => opt.MapFrom(src => src.AccountBusinesses != null && src.AccountBusinesses.Any()
-                                ? src.AccountBusinesses.FirstOrDefault().TaxNumber
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.TaxNumber
                                 : null));
 
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
@@ -120,14 +120,15 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
             CreateMap<Contract, ContractDto>()
-                .ForMember(dest => dest.AccountBusinesses, opt => opt.MapFrom(src => src.AccountSign.AccountBusinesses))
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountSign.Name));
             CreateMap<Contract, ContractDetailDto>()
-                .ForMember(dest => dest.AccountBusinesses, opt => opt.MapFrom(src => src.AccountSign.AccountBusinesses))
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
+            CreateMap<ContractSerialNumberProduct, ContractSerialNumberProductDto>();
 
             CreateMap<AccountBusiness, AccountBusinessDto>();
 
@@ -152,6 +153,8 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName));
             CreateMap<ServiceRentingRequest, ServiceRentingRequestDto>()
                 .ForMember(dest => dest.RentingServiceName, opt => opt.MapFrom(src => src.RentingService.RentingServiceName));
+            CreateMap<RentingRequestProductDetail, ContractProductDetailDto>()
+                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductName : string.Empty));
 
             CreateMap<Notification, NotificationDto>().ReverseMap();
             CreateMap<CreateNotificationDto, Notification>();

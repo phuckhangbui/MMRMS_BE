@@ -25,13 +25,12 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<AccountBusiness>> GetAccountBusinessesByAccountId(int accountId)
+        public async Task<AccountBusiness?> GetAccountBusinessesByAccountId(int accountId)
         {
             using (var context = new MmrmsContext())
             {
                 return await context.AccountBusinesses
-                    .Where(a => a.AccountId == accountId)
-                    .ToListAsync();
+                    .FirstOrDefaultAsync(a => a.AccountId == accountId);
             }
         }
     }
