@@ -60,6 +60,30 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Policy = "Manager")]
+        public async Task<IActionResult> CreateEmployeeTask([FromBody] CreateEmployeeTaskDto createEmployeeTaskDto)
+        {
+            int managerId = GetLoginAccountId();
+            if (managerId == 0)
+            {
+                return Unauthorized();
+            }
+            try
+            {
+                await _employeeTaskService.CreateEmployeeTask(managerId, createEmployeeTaskDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPatch("{employeeTaskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateEmployeeTaskStatus([FromRoute] int employeeTaskId, [FromQuery] string status)

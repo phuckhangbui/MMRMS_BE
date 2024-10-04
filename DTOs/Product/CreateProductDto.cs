@@ -34,6 +34,9 @@ namespace DTOs.Product
         public IEnumerable<AddExistedComponentToProduct>? ExistedComponentList { get; set; }
 
         public IEnumerable<CreateComponentEmbeddedDto>? NewComponentList { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Product.ImageIsRequired)]
+        public IEnumerable<ImageList>? ImageUrls { get; set; }
     }
 
     public class CreateProductAttributeDto
@@ -61,6 +64,12 @@ namespace DTOs.Product
     {
         public IEnumerable<AddExistedComponentToProduct>? ExistedComponentList { get; set; }
         public IEnumerable<CreateComponentEmbeddedDto>? NewComponentList { get; set; }
+    }
+
+    public class ImageList
+    {
+        [Required(ErrorMessage = MessageConstant.Product.ImageIsRequired)]
+        public string Url { get; set; }
     }
 
 }

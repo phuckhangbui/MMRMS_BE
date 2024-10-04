@@ -3,7 +3,6 @@ using Common;
 using Common.Enum;
 using DTOs.Product;
 using DTOs.SerialNumberProduct;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -121,6 +120,16 @@ namespace Service.Implement
             if (!flag)
             {
                 throw new ServiceException(MessageConstant.Component.ComponetNameDuplicated);
+            }
+
+            if (createProductDto.ImageUrls.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.Product.ImageIsRequired);
+            }
+
+            if (createProductDto.ImageUrls.Count() < 1)
+            {
+                throw new ServiceException(MessageConstant.Product.ImageIsRequired);
             }
 
             var productDto = await _productRepository.CreateProduct(createProductDto);
@@ -256,7 +265,8 @@ namespace Service.Implement
             await _productRepository.UpdateProductComponent(productId, componentList);
         }
 
-        public async Task ChangeProductThumbnail(int productId, IFormFile imageUrl)
+
+        public async Task ChangeProductImages(int productId, List<ImageList> imageList)
         {
             var product = await _productRepository.GetProduct(productId);
 
@@ -265,35 +275,14 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Product.ProductNotFound);
             }
 
-            string imageUrlStr = await _cloudinaryService.UploadImageToCloudinary(imageUrl);
 
-            await _productRepository.ChangeProductThumbnail(productId, imageUrlStr);
-        }
-
-        public async Task ChangeProductImages(int productId, List<IFormFile> imageFiles)
-        {
-            var product = await _productRepository.GetProduct(productId);
-
-            if (product == null)
+            if (imageList.IsNullOrEmpty())
             {
-                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+                throw new ServiceException(MessageConstant.Product.ImageIsRequired);
             }
 
-            var uploadedImageUrls = new List<string>();
+            await _productRepository.UpdateProductImage(productId, imageList);
 
-            foreach (var imageFile in imageFiles)
-            {
-                if (imageFile.Length > 0)
-                {
-                    // Upload each image to Cloudinary
-                    string imageUrl = await _cloudinaryService.UploadImageToCloudinary(imageFile);
-                    uploadedImageUrls.Add(imageUrl);
-                }
-            }
-
-            // Assuming you have a repository method to save multiple image URLs
-            await _productRepository.AddProductImages(productId, uploadedImageUrls);
         }
-
     }
 }
