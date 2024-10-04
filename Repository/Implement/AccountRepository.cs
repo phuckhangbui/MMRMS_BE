@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using Common;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Account;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -206,6 +206,11 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-
+        public async Task<IEnumerable<AccountDto>> GetManagerAccounts()
+        {
+            var list = await AccountDao.Instance.GetAllAsync();
+            var managerAccounts = list.Where(x => x.RoleId == (int)AccountRoleEnum.Manager).ToList();
+            return _mapper.Map<IEnumerable<AccountDto>>(managerAccounts);
+        }
     }
 }

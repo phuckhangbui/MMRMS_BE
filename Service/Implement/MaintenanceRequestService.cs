@@ -11,14 +11,42 @@ namespace Service.Implement
     {
         private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
 
-        public MaintenanceRequestService(IMaintenanceRequestRepository maintenanceRequestRepository)
+        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
+
+        private readonly IContractRepository _contractRepository;
+
+        private readonly INotificationService _notificationService;
+
+        public MaintenanceRequestService(IMaintenanceRequestRepository maintenanceRequestRepository, ISerialNumberProductRepository serialNumberProductRepository, IContractRepository contractRepository, INotificationService notificationService)
         {
             _maintenanceRequestRepository = maintenanceRequestRepository;
+            _serialNumberProductRepository = serialNumberProductRepository;
+            _contractRepository = contractRepository;
+            _notificationService = notificationService;
         }
 
         public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
         {
+            if (!await _serialNumberProductRepository.IsSerialNumberExist(createMaintenanceRequestDto.SerialNumber))
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            var contract = await _contractRepository.GetContractDetailById(createMaintenanceRequestDto.ContractId);
+
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (DateTime.Today < contract.DateStart || DateTime.Today > contract.DateEnd)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
+            }
+
             await _maintenanceRequestRepository.CreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
+
+            await _notificationService.SendToManagerWhenCustomerCreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
         }
 
         public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()

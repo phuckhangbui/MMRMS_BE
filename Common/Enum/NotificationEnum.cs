@@ -12,7 +12,8 @@
         Task,
         Billing,
         Delivery,
-        RequestMaintenance
+        RequestMaintenance,
+        MaintenanceTicket
     }
 
 }

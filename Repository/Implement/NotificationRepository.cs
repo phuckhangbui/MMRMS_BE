@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Notification;
 using Repository.Interface;
 
@@ -16,14 +16,16 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateNotification(CreateNotificationDto createNotificationDto)
+        public async Task<NotificationDto> CreateNotification(CreateNotificationDto createNotificationDto)
         {
             var notification = _mapper.Map<Notification>(createNotificationDto);
 
             notification.DateCreate = DateTime.Now;
             notification.Status = NotificationStatusEnum.Send.ToString();
 
-            await NotificationDao.Instance.CreateAsync(notification);
+            notification = await NotificationDao.Instance.CreateAsync(notification);
+
+            return _mapper.Map<NotificationDto>(notification);
         }
 
         public async Task<IEnumerable<NotificationDto>> GetNotificationsForReceiver(int accountId)
