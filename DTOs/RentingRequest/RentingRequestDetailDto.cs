@@ -10,7 +10,7 @@ namespace DTOs.RentingRequest
         public string? ContractId { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateStart { get; set; }
-        public double? TotalRentPricePerMonth { get; set; }
+        public double? TotalRentPrice { get; set; }
         public double? TotalDepositPrice { get; set; }
         public double? ShippingPrice { get; set; }
         public double? DiscountShip { get; set; }
@@ -24,7 +24,7 @@ namespace DTOs.RentingRequest
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
         public AddressDto Address { get; set; }
-        public List<AccountBusinessDto> AccountBusinesses { get; set; }
+        public AccountBusinessDto AccountBusiness { get; set; }
     }
 
     public class RentingRequestProductDetailDto
@@ -36,11 +36,8 @@ namespace DTOs.RentingRequest
 
     public class ServiceRentingRequestDto
     {
-        public int ServiceRentingRequestId { get; set; }
         public int RentingServiceId { get; set; }
         public double ServicePrice { get; set; }
-        public double DiscountPrice { get; set; }
-        public double FinalPrice { get; set; }
         public string RentingServiceName { get; set; }
     }
 

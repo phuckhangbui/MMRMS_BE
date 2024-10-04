@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using Common;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Component;
 using DTOs.Product;
 using Repository.Exceptions;

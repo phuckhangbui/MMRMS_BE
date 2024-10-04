@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241004100358_removeServiceContractTable")]
+    partial class removeServiceContractTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
-
-                    b.Property<int?>("AccountBusinessId")
-                        .HasColumnType("int");
 
                     b.Property<string>("AvatarImg")
                         .HasColumnType("nvarchar(max)");
@@ -128,9 +128,7 @@ namespace DAO.Migrations
 
                     b.HasKey("AccountBusinessId");
 
-                    b.HasIndex("AccountId")
-                        .IsUnique()
-                        .HasFilter("[AccountId] IS NOT NULL");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("AccountBusiness", (string)null);
                 });
@@ -1373,9 +1371,8 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.AccountBusiness", b =>
                 {
                     b.HasOne("BusinessObject.Account", "Account")
-                        .WithOne("AccountBusiness")
-                        .HasForeignKey("BusinessObject.AccountBusiness", "AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany("AccountBusinesses")
+                        .HasForeignKey("AccountId")
                         .HasConstraintName("FK_AccountBusiness_Account");
 
                     b.Navigation("Account");
@@ -1843,7 +1840,7 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Account", b =>
                 {
-                    b.Navigation("AccountBusiness");
+                    b.Navigation("AccountBusinesses");
 
                     b.Navigation("AccountPromotions");
 

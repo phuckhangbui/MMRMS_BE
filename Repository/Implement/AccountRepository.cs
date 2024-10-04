@@ -55,7 +55,7 @@ namespace Repository.Implement
                 Address = newCustomerAccountDto.Address,
             };
 
-            account.AccountBusinesses.Add(accountBusiness);
+            account.AccountBusiness = accountBusiness;
 
             //Init promotion
             var promotions = await PromotionDao.Instance.GetAllAsync();

@@ -13,9 +13,5 @@
         public bool? IsOptional { get; set; }
 
         public virtual ICollection<ServiceRentingRequest> ServiceRentingRequests { get; set; } = new List<ServiceRentingRequest>();
-
-        public virtual ICollection<ServiceContract> ServiceContracts { get; set; } = new List<ServiceContract>();
-
-
     }
 }

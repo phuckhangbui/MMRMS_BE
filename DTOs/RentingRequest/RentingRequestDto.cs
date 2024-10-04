@@ -31,7 +31,7 @@
 
         public DateTime DateStart { get; set; }
 
-        public double TotalRentPricePerMonth { get; set; }
+        public double TotalRentPrice { get; set; }
 
         public double TotalDepositPrice { get; set; }
 
