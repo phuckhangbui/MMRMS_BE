@@ -16,6 +16,11 @@ namespace Service.Implement
             _employeeTaskRepository = employeeTaskRepository;
         }
 
+        public Task CreateEmployeeTask(int managerId, CreateEmployeeTaskDto createEmployeeTaskDto)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task DeleteEmployeeTask(int taskId)
         {
             var employeeTask = await _employeeTaskRepository.GetEmployeeTask(taskId);

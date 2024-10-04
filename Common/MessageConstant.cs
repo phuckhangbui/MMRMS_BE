@@ -282,6 +282,18 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
             //DTO
+            public const string ComponentIdRequired = "Mã bộ phận máy là bắt buộc";
+            public const string ProductSerialNumberRequired = "Mã máy là bắt buộc";
+            public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
+            public const string PriceRequired = "Giá tiền là bắt buộc";
+            public const string PricePositiveNumberRequired = "Giá tiền phải là số dương";
+            public const string QuantityRequired = "Số lượng là bắt buộc";
+            public const string QuantityPositiveNumberRequired = "Số lượng phải là số dương";
+            public const string AdditionFeeRequired = "Chi phí phụ thu là bắt buộc";
+            public const string TypeRequired = "Loại là bắt buộc";
+            public const string NoteRequired = "Ghi chú là bắt buộc";
+
+
         }
     }
 }
