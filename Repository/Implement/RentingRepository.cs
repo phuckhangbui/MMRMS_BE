@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using Common;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
@@ -28,7 +28,7 @@ namespace Repository.Implement
             return rentingRequest != null;
         }
 
-        public async Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
+        public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
             rentingRequest.AccountOrderId = customerId;
@@ -44,14 +44,11 @@ namespace Repository.Implement
             var requiredRentingServices = rentingServices.Where(rs => rs.IsOptional == false).ToList();
             foreach (var requiredRentingService in requiredRentingServices)
             {
-                //TODO
                 var serviceRentingRequest = new ServiceRentingRequest()
                 {
                     ServicePrice = requiredRentingService.Price,
-                    //DiscountPrice = 0,
                     RentingServiceId = requiredRentingService.RentingServiceId,
                 };
-                //serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
             }
@@ -66,20 +63,18 @@ namespace Repository.Implement
 
                 foreach (var optionalRentingService in optionalServiceRentingRequests)
                 {
-                    //TODO
                     var serviceRentingRequest = new ServiceRentingRequest()
                     {
                         ServicePrice = optionalRentingService.Price,
-                        //DiscountPrice = 0,
                         RentingServiceId = optionalRentingService.RentingServiceId,
                     };
-                    //serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
                 }
             }
 
-            await RentingRequestDao.Instance.CreateAsync(rentingRequest);
+            rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
+            return rentingRequest.RentingRequestId;
         }
 
         public async Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId)

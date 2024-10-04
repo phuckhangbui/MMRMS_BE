@@ -65,8 +65,8 @@ namespace API.Controllers
             try
             {
                 int customerId = GetLoginAccountId();
-                await _rentingService.CreateRentingRequest(customerId, newRentingRequestDto);
-                return Created("", newRentingRequestDto);
+                var rentingRequestId = await _rentingService.CreateRentingRequest(customerId, newRentingRequestDto);
+                return Created("", new { rentingRequest = rentingRequestId });
             }
             catch (ServiceException ex)
             {

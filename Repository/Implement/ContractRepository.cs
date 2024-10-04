@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using Common;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Contract;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;

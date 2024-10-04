@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;

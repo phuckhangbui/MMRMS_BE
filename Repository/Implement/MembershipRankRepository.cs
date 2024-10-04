@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.MembershipRank;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;

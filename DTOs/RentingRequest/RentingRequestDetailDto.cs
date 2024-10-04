@@ -10,7 +10,7 @@ namespace DTOs.RentingRequest
         public string? ContractId { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateStart { get; set; }
-        public double? TotalRentPricePerMonth { get; set; }
+        public double? TotalRentPrice { get; set; }
         public double? TotalDepositPrice { get; set; }
         public double? ShippingPrice { get; set; }
         public double? DiscountShip { get; set; }

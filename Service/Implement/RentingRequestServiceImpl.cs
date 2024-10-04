@@ -1,5 +1,4 @@
 ﻿using Common;
-using Common.Enum;
 using DTOs.RentingRequest;
 using Repository.Interface;
 using Service.Exceptions;
@@ -26,20 +25,13 @@ namespace Service.Implement
             _addressRepository = addressRepository;
         }
 
-        public async Task CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
+        public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
             var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto.RentingRequestProductDetails);
             if (!isProductsValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestProductsInvalid);
-            }
-
-            //Check account rent valid
-            var rentAccount = await _accountRepository.GetAccounById(customerId);
-            if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
-            {
-                throw new ServiceException(MessageConstant.RentingRequest.RequestAccountInvalid);
             }
 
             //Check address valid
@@ -49,7 +41,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
             }
 
-            await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
+            return await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetAll()
