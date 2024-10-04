@@ -1,4 +1,4 @@
-﻿namespace DAO.Enum
+﻿namespace Common.Enum
 {
     public enum MembershipRankStatusEnum
     {

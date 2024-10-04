@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.MaintenanceTicket;
 using Repository.Interface;
 

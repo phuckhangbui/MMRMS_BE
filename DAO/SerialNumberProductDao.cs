@@ -1,4 +1,4 @@
-﻿using DAO.Enum;
+﻿using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 using SerialNumberProduct = BusinessObject.SerialNumberProduct;
 

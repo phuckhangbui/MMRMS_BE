@@ -1,5 +1,5 @@
 ﻿using BusinessObject;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
 using Contract = BusinessObject.Contract;

@@ -1,5 +1,5 @@
 ﻿using Common;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;

@@ -1,5 +1,5 @@
 ﻿using Common;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Account;
 using Repository.Interface;
 using Service.Exceptions;

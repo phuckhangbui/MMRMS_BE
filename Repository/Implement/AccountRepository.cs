@@ -2,7 +2,7 @@
 using BusinessObject;
 using Common;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Account;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;

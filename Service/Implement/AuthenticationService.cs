@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Common;
-using DAO.Enum;
+using Common.Enum;
 using DTOs;
 using DTOs.Account;
 using DTOs.Authentication;

@@ -2,7 +2,7 @@
 using BusinessObject;
 using Common;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
 using DTOs.MembershipRank;

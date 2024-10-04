@@ -72,7 +72,7 @@ namespace API.Controllers
 
             try
             {
-                await _maintenanceTicketService.CreateMaintenanceRequest(staffId, createMaintenanceTicketDto);
+                await _maintenanceTicketService.CreateMaintenanceTicket(staffId, createMaintenanceTicketDto);
                 return NoContent();
             }
             catch (ServiceException ex)

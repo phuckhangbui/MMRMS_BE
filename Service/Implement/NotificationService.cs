@@ -19,8 +19,6 @@ namespace Service.Implement
             await _notificationRepository.CreateNotification(createNotificationDto);
         }
 
-
-
         public Task<IEnumerable<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId)
         {
             return _notificationRepository.GetNotificationsForReceiver(accountId);
