@@ -33,6 +33,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
         services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
         services.AddScoped<IMaintenanceTicketRepository, MaintenanceTicketRepository>();
+        services.AddScoped<IAccountLogRepository, AccountLogRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();

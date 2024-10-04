@@ -201,7 +201,7 @@ namespace Repository.Mapper
                            ? src.Component.ComponentName
                            : null));
 
-
+            CreateMap<Log, AccountLogDto>();
         }
     }
 }

@@ -16,16 +16,18 @@ namespace Service.Implement
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IAccountLogRepository _accountLogRepository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
 
-        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
+        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService, IAccountLogRepository accountLogRepository)
         {
             _accountRepository = accountRepository;
             _tokenService = tokenService;
             _mapper = mapper;
             _mailService = mailService;
+            _accountLogRepository = accountLogRepository;
         }
 
         private LoginAccountDto AdminLogin(LoginUsernameDto loginUsernameDto)
@@ -115,6 +117,17 @@ namespace Service.Implement
             accountDto.TokenDateExpire = expiredDate;
 
             await _accountRepository.UpdateAccount(accountDto);
+
+            AccountLogDto accountLogDto = await _accountLogRepository.GetAccountLogByAccountId(accountDto.AccountId);
+
+            if (accountLogDto == null)
+            {
+                await _accountLogRepository.CreateFirstAccountLog(accountDto.AccountId);
+            }
+            else
+            {
+                await _accountLogRepository.WriteNewAccountLogDetail(accountDto.AccountId);
+            }
 
             return loginAccountDto;
         }
