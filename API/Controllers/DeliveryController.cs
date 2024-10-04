@@ -62,6 +62,31 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("assign")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult> AssignDelivery([FromBody] AssignDeliveryDto assignDeliveryDto)
+        {
+            int managerId = GetLoginAccountId();
+            if (managerId == 0)
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+                await _deliveryService.AssignDelivery(managerId, assignDeliveryDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPatch("{deliveryId}")]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateDeliveryStatus([FromRoute] int deliveryId, [FromQuery] string status)
