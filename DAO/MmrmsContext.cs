@@ -128,6 +128,34 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.MembershipRank).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.MembershipRankId)
                 .HasConstraintName("FK_Account_MembershipRank");
+
+            entity.HasOne(d => d.Log)
+               .WithOne(p => p.AccountLog)
+               .HasForeignKey<Account>(d => d.LogId)
+               .HasConstraintName("FK_Account_Log");
+
+            entity.HasOne(d => d.Log)
+       .WithOne(p => p.AccountLog)
+       .HasForeignKey<Log>(d => d.AccountLogId)
+       .HasConstraintName("FK_Account_Log");
+        });
+
+
+        modelBuilder.Entity<Log>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.ToTable("Log");
+
+            entity.Property(e => e.LogId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.AccountLog)
+       .WithOne(p => p.Log)
+       .HasForeignKey<Log>(d => d.AccountLogId)
+       .OnDelete(DeleteBehavior.Cascade)
+       .HasConstraintName("FK_Log_Account");
         });
 
         modelBuilder.Entity<AccountBusiness>(entity =>
@@ -431,20 +459,6 @@ public partial class MmrmsContext : DbContext
 
 
 
-        modelBuilder.Entity<Log>(entity =>
-        {
-            entity.HasKey(e => e.LogId);
-
-            entity.ToTable("Log");
-
-            entity.Property(e => e.LogId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.AccountLog).WithMany(p => p.Logs)
-                .HasForeignKey(d => d.AccountLogId)
-                .HasConstraintName("FK_Log_AccountLogID");
-        });
 
         modelBuilder.Entity<LogDetail>(entity =>
         {

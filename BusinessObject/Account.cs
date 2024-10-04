@@ -30,9 +30,9 @@ public partial class Account
 
     public DateTime? TokenDateExpire { get; set; }
 
-    public int? AccountPromotionId { get; set; }
-
     public int? MembershipRankId { get; set; }
+
+    public int? LogId { get; set; }
 
     public double? MoneySpent { get; set; }
 
@@ -48,6 +48,8 @@ public partial class Account
 
     public virtual MembershipRank? MembershipRank { get; set; }
 
+    public virtual Log? Log { get; set; }
+
     public virtual ICollection<AccountBusiness> AccountBusinesses { get; set; } = new List<AccountBusiness>();
 
     public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
@@ -61,8 +63,6 @@ public partial class Account
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     public virtual ICollection<RentingRequest> RentingRequests { get; set; } = new List<RentingRequest>();
-
-    public virtual ICollection<Log> Logs { get; set; } = new List<Log>();
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
