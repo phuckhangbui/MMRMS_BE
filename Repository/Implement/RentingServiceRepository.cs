@@ -43,7 +43,7 @@ namespace Repository.Implement
                 rentingService.RentingServiceName = rentingServiceRequestDto.RentingServiceName;
                 rentingService.Description = rentingServiceRequestDto.Description;
                 rentingService.Price = rentingServiceRequestDto.Price;
-                rentingService.PayType = rentingServiceRequestDto.PayType;
+                //rentingService.PayType = rentingServiceRequestDto.PayType;
                 rentingService.IsOptional = rentingServiceRequestDto.IsOptional;
 
                 await RentingServiceDao.Instance.UpdateAsync(rentingService);

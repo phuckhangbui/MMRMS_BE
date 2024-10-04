@@ -10,7 +10,7 @@ public partial class ContractSerialNumberProduct
 
     public double? DepositPrice { get; set; }
 
-    public double? DiscountPrice { get; set; }
+    public double? RentPrice { get; set; }
 
     public virtual Contract? Contract { get; set; }
 

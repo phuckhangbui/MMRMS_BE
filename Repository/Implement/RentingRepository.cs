@@ -48,10 +48,10 @@ namespace Repository.Implement
                 var serviceRentingRequest = new ServiceRentingRequest()
                 {
                     ServicePrice = requiredRentingService.Price,
-                    DiscountPrice = 0,
+                    //DiscountPrice = 0,
                     RentingServiceId = requiredRentingService.RentingServiceId,
                 };
-                serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
+                //serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
             }
@@ -70,10 +70,10 @@ namespace Repository.Implement
                     var serviceRentingRequest = new ServiceRentingRequest()
                     {
                         ServicePrice = optionalRentingService.Price,
-                        DiscountPrice = 0,
+                        //DiscountPrice = 0,
                         RentingServiceId = optionalRentingService.RentingServiceId,
                     };
-                    serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
+                    //serviceRentingRequest.FinalPrice = serviceRentingRequest.ServicePrice + serviceRentingRequest.DiscountPrice;
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
                 }

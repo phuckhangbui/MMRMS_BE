@@ -82,7 +82,7 @@ namespace DAO
                             {
                                 SerialNumber = rentSerialNumberProduct.SerialNumber,
                                 DepositPrice = 0,
-                                DiscountPrice = 0,
+                                RentPrice = 0,
                                 //RentPrice
                             };
                             contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
@@ -100,10 +100,10 @@ namespace DAO
 
                         //TODO
                         contract.TotalDepositPrice = totalDepositPrice;
-                        contract.TotalRentPricePerMonth = 0;
+                        //contract.TotalRentPricePerMonth = 0;
                         contract.ShippingPrice = 0;
                         contract.DiscountPrice = 0;
-                        contract.FinalAmount = contract.TotalDepositPrice + contract.TotalRentPricePerMonth + contract.ShippingPrice - contract.DiscountPrice;
+                        //contract.FinalAmount = contract.TotalDepositPrice + contract.TotalRentPricePerMonth + contract.ShippingPrice - contract.DiscountPrice;
 
                         DbSet<Contract> _dbSet = context.Set<Contract>();
                         _dbSet.Add(contract);
