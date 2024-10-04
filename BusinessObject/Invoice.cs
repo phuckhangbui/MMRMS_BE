@@ -28,6 +28,6 @@ public partial class Invoice
 
     public virtual Account? AccountPaid { get; set; }
 
-    public virtual MaintainingTicket? MaintainingTicket { get; set; }
+    public virtual MaintenanceTicket? MaintenanceTicket { get; set; }
 
 }

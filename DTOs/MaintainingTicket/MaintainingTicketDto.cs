@@ -1,8 +1,8 @@
-﻿namespace DTOs.MaintainingTicket
+﻿namespace DTOs.MaintenanceTicket
 {
-    public class MaintaningTicketDto
+    public class MaintenanceTicketDto
     {
-        public int MaintainingTicketId { get; set; }
+        public int MaintenanceTicketId { get; set; }
 
         public int? EmployeeTaskId { get; set; }
 

@@ -1,6 +1,6 @@
-﻿namespace DTOs.MaintainingTicket
+﻿namespace DTOs.MaintenanceTicket
 {
-    public class CreateMaintaningTicketDto
+    public class CreateMaintenanceTicketDto
     {
         public int ComponentId { get; set; }
 

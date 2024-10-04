@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject;
 
-public partial class MaintainingTicket
+public partial class MaintenanceTicket
 {
-    public int MaintainingTicketId { get; set; }
+    public int MaintenanceTicketId { get; set; }
 
     public int? EmployeeTaskId { get; set; }
 
