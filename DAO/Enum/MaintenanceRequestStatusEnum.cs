@@ -4,7 +4,7 @@
     {
         Processing,
         Assigned,
-        Finished,
-        Cancelled,
+        Completed,
+        Canceled,
     }
 }

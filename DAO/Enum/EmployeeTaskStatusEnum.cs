@@ -6,6 +6,6 @@
         Assigned,
         InProcess,
         Success,
-        Fail
+        Failed
     }
 }

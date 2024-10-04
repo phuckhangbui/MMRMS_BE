@@ -483,6 +483,10 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ProductSerialNumber)
                 .HasConstraintName("FK_MaintenanceTicket_SerialNumberProduct");
 
+            entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceTickets)
+                .HasForeignKey(d => d.ContractId)
+                .HasConstraintName("FK_MaintenanceTicket_ContractID");
+
             entity.HasOne(d => d.Invoice)
                 .WithOne(p => p.MaintenanceTicket)
                 .HasForeignKey<MaintenanceTicket>(d => d.InvoiceId)

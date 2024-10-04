@@ -8,6 +8,8 @@
 
         public double ComponentPrice { get; set; }
 
+        public int? Quantity { get; set; }
+
         public double AdditionalFee { get; set; }
 
         public int Type { get; set; }

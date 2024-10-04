@@ -10,17 +10,17 @@ namespace Service.Implement
 
         public async Task CreateMaintenanceRequest(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto)
         {
-
+            await _maintenanceTicketRepository.CreateTicket(staffId, createMaintenanceTicketDto);
         }
 
-        public Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets()
+        public async Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets()
         {
-            throw new NotImplementedException();
+            return await _maintenanceTicketRepository.GetTickets();
         }
 
-        public Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets(int customerId)
+        public async Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets(int customerId)
         {
-            throw new NotImplementedException();
+            return await _maintenanceTicketRepository.GetTicketsByCustomerId(customerId);
         }
     }
 }

@@ -8,6 +8,8 @@ public partial class MaintenanceTicket
 
     public int? EmployeeCreateId { get; set; }
 
+    public int? ContractId { get; set; }
+
     public int? ComponentId { get; set; }
 
     public string? InvoiceId { get; set; }
@@ -39,6 +41,8 @@ public partial class MaintenanceTicket
     public virtual Account? EmployeeCreate { get; set; }
 
     public virtual Invoice? Invoice { get; set; }
+
+    public virtual Contract? Contract { get; set; }
 
     public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
 
