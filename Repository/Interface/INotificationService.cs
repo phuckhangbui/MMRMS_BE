@@ -1,4 +1,5 @@
-﻿using DTOs.Notification;
+﻿using DTOs.MaintenanceRequest;
+using DTOs.Notification;
 
 namespace Service.Interface
 {
@@ -7,5 +8,6 @@ namespace Service.Interface
         Task CreateNotification(CreateNotificationDto createNotificationDto);
         Task MarkNotificationAsRead(int id);
         Task<IEnumerable<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId);
+        Task SendToManagerWhenCustomerCreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto);
     }
 }

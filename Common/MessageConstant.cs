@@ -182,6 +182,7 @@
             public const string RentingRequestInvalid = "Yêu cầu thuê không hợp lệ.";
             public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
             public const string SerialNumberProductsInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
+            public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";

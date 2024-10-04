@@ -1,4 +1,4 @@
-﻿namespace DAO.Enum
+﻿namespace Common.Enum
 {
     public enum EmployeeTaskStatusEnum
     {
@@ -6,6 +6,6 @@
         Assigned,
         InProcess,
         Success,
-        Fail
+        Failed
     }
 }

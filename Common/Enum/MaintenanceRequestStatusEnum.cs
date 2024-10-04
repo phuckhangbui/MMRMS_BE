@@ -1,10 +1,10 @@
-﻿namespace DAO.Enum
+﻿namespace Common.Enum
 {
     public enum MaintenanceRequestStatusEnum
     {
         Processing,
         Assigned,
-        Finished,
-        Cancelled,
+        Completed,
+        Canceled,
     }
 }

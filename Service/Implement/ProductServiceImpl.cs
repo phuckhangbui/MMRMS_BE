@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Common;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Product;
 using DTOs.SerialNumberProduct;
 using Microsoft.AspNetCore.Http;

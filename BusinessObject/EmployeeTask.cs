@@ -32,7 +32,7 @@ public partial class EmployeeTask
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual ICollection<MaintainingTicket> MaintainingTickets { get; set; } = new List<MaintainingTicket>();
+    public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 

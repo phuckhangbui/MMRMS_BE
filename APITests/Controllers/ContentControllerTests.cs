@@ -1,5 +1,5 @@
 ﻿using Common;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Content;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

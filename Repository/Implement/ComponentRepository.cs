@@ -2,7 +2,7 @@
 using BusinessObject;
 using Common;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Component;
 using DTOs.Product;
 using Repository.Exceptions;

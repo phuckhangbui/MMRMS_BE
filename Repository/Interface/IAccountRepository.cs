@@ -13,6 +13,7 @@ namespace Repository.Interface
         Task ChangeAccountStatus(int acocuntId, string status);
         Task<AccountBaseDto> GetAccountBaseById(int accountId);
         Task<AccountDto> GetAccounById(int accountId);
+        Task<IEnumerable<AccountDto>> GetManagerAccounts();
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
         Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId);
         Task<bool> IsAccountExistWithUsername(string username);

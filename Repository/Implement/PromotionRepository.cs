@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Promotion;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;

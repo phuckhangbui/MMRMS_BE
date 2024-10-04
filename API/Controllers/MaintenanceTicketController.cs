@@ -1,4 +1,4 @@
-﻿using DTOs.MaintainingTicket;
+﻿using DTOs.MaintenanceTicket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -18,11 +18,11 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult<IEnumerable<MaintaningTicketDto>>> GetMaintenanceRequests()
+        public async Task<ActionResult<IEnumerable<MaintenanceTicketDto>>> GetMaintenanceRequests()
         {
             try
             {
-                IEnumerable<MaintaningTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets();
+                IEnumerable<MaintenanceTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -37,7 +37,7 @@ namespace API.Controllers
 
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult<IEnumerable<MaintaningTicketDto>>> GetMaintenanceRequestsForCustomer()
+        public async Task<ActionResult<IEnumerable<MaintenanceTicketDto>>> GetMaintenanceRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
             if (customerId == 0)
@@ -47,7 +47,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MaintaningTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets(customerId);
+                IEnumerable<MaintenanceTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -62,7 +62,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Staff")]
-        public async Task<ActionResult> CreateMaintenanceTicket(CreateMaintaningTicketDto createMaintaningTicketDto)
+        public async Task<ActionResult> CreateMaintenanceTicket(CreateMaintenanceTicketDto createMaintenanceTicketDto)
         {
             int staffId = GetLoginAccountId();
             if (staffId == 0)
@@ -72,7 +72,7 @@ namespace API.Controllers
 
             try
             {
-                await _maintenanceTicketService.CreateMaintenanceRequest(staffId, createMaintaningTicketDto);
+                await _maintenanceTicketService.CreateMaintenanceTicket(staffId, createMaintenanceTicketDto);
                 return NoContent();
             }
             catch (ServiceException ex)

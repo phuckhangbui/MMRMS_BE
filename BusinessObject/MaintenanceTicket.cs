@@ -1,12 +1,14 @@
 ﻿namespace BusinessObject;
 
-public partial class MaintainingTicket
+public partial class MaintenanceTicket
 {
-    public int MaintainingTicketId { get; set; }
+    public int MaintenanceTicketId { get; set; }
 
     public int? EmployeeTaskId { get; set; }
 
     public int? EmployeeCreateId { get; set; }
+
+    public string? ContractId { get; set; }
 
     public int? ComponentId { get; set; }
 
@@ -39,6 +41,8 @@ public partial class MaintainingTicket
     public virtual Account? EmployeeCreate { get; set; }
 
     public virtual Invoice? Invoice { get; set; }
+
+    public virtual Contract? Contract { get; set; }
 
     public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
 

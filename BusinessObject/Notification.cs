@@ -8,6 +8,8 @@ public partial class Notification
 
     public string? NotificationType { get; set; }
 
+    public string? NotificationTitle { get; set; }
+
     public string? MessageNotification { get; set; }
 
     public string? LinkForward { get; set; }

@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241004021118_addRelationshipOfMaintennaceTicketToContract")]
+    partial class addRelationshipOfMaintennaceTicketToContract
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
+
+                    b.Property<int?>("AccountPromotionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AvatarImg")
                         .HasColumnType("nvarchar(max)");
@@ -53,9 +59,6 @@ namespace DAO.Migrations
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("LogId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("MembershipRankId")
                         .HasColumnType("int");
@@ -708,9 +711,7 @@ namespace DAO.Migrations
 
                     b.HasKey("LogId");
 
-                    b.HasIndex("AccountLogId")
-                        .IsUnique()
-                        .HasFilter("[AccountLogId] IS NOT NULL");
+                    b.HasIndex("AccountLogId");
 
                     b.ToTable("Log", (string)null);
                 });
@@ -896,9 +897,6 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageNotification")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NotificationTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NotificationType")
@@ -1628,10 +1626,9 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.Log", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountLog")
-                        .WithOne("Log")
-                        .HasForeignKey("BusinessObject.Log", "AccountLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_Log_Account");
+                        .WithMany("Logs")
+                        .HasForeignKey("AccountLogId")
+                        .HasConstraintName("FK_Log_AccountLogID");
 
                     b.Navigation("AccountLog");
                 });
@@ -1913,7 +1910,7 @@ namespace DAO.Migrations
 
                     b.Navigation("Invoices");
 
-                    b.Navigation("Log");
+                    b.Navigation("Logs");
 
                     b.Navigation("Notifications");
 

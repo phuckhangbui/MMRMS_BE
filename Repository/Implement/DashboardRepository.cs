@@ -1,6 +1,6 @@
 ﻿using BusinessObject;
 using DAO;
-using DAO.Enum;
+using Common.Enum;
 using DTOs.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interface;

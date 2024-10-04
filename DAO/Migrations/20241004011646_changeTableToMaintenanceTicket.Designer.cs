@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241004011646_changeTableToMaintenanceTicket")]
+    partial class changeTableToMaintenanceTicket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
+
+                    b.Property<int?>("AccountPromotionId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AvatarImg")
                         .HasColumnType("nvarchar(max)");
@@ -53,9 +59,6 @@ namespace DAO.Migrations
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("LogId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("MembershipRankId")
                         .HasColumnType("int");
@@ -708,9 +711,7 @@ namespace DAO.Migrations
 
                     b.HasKey("LogId");
 
-                    b.HasIndex("AccountLogId")
-                        .IsUnique()
-                        .HasFilter("[AccountLogId] IS NOT NULL");
+                    b.HasIndex("AccountLogId");
 
                     b.ToTable("Log", (string)null);
                 });
@@ -788,9 +789,6 @@ namespace DAO.Migrations
                     b.Property<double?>("ComponentPrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("ContractId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
@@ -828,8 +826,6 @@ namespace DAO.Migrations
                         .HasName("PK__Maintain__76F8D53F2FA1A432");
 
                     b.HasIndex("ComponentId");
-
-                    b.HasIndex("ContractId");
 
                     b.HasIndex("EmployeeCreateId");
 
@@ -896,9 +892,6 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageNotification")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NotificationTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NotificationType")
@@ -1628,10 +1621,9 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.Log", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountLog")
-                        .WithOne("Log")
-                        .HasForeignKey("BusinessObject.Log", "AccountLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_Log_Account");
+                        .WithMany("Logs")
+                        .HasForeignKey("AccountLogId")
+                        .HasConstraintName("FK_Log_AccountLogID");
 
                     b.Navigation("AccountLog");
                 });
@@ -1670,11 +1662,6 @@ namespace DAO.Migrations
                         .HasForeignKey("ComponentId")
                         .HasConstraintName("FK_MaintenanceTicket_ComponentID");
 
-                    b.HasOne("BusinessObject.Contract", "Contract")
-                        .WithMany("MaintenanceTickets")
-                        .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_MaintenanceTicket_ContractID");
-
                     b.HasOne("BusinessObject.Account", "EmployeeCreate")
                         .WithMany()
                         .HasForeignKey("EmployeeCreateId");
@@ -1695,8 +1682,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_MaintenanceTicket_SerialNumberProduct");
 
                     b.Navigation("Component");
-
-                    b.Navigation("Contract");
 
                     b.Navigation("EmployeeCreate");
 
@@ -1913,7 +1898,7 @@ namespace DAO.Migrations
 
                     b.Navigation("Invoices");
 
-                    b.Navigation("Log");
+                    b.Navigation("Logs");
 
                     b.Navigation("Notifications");
 
@@ -1963,8 +1948,6 @@ namespace DAO.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("MaintenanceRequests");
-
-                    b.Navigation("MaintenanceTickets");
 
                     b.Navigation("ServiceContracts");
                 });

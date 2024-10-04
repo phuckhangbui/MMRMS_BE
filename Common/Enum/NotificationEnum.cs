@@ -1,4 +1,4 @@
-﻿namespace DAO.Enum
+﻿namespace Common.Enum
 {
     public enum NotificationStatusEnum
     {
@@ -12,7 +12,8 @@
         Task,
         Billing,
         Delivery,
-        RequestMaintenance
+        RequestMaintenance,
+        MaintenanceTicket
     }
 
 }

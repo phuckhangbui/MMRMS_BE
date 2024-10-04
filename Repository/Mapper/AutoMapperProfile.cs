@@ -13,6 +13,7 @@ using DTOs.Contract;
 using DTOs.Delivery;
 using DTOs.EmployeeTask;
 using DTOs.MaintenanceRequest;
+using DTOs.MaintenanceTicket;
 using DTOs.MembershipRank;
 using DTOs.Notification;
 using DTOs.Product;
@@ -190,7 +191,17 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
+            CreateMap<MaintenanceTicket, MaintenanceTicketDto>()
+               .ForMember(dest => dest.EmployeeCreateName,
+               opt => opt.MapFrom(src => src.EmployeeCreate != null
+                           ? src.EmployeeCreate.Name
+                           : null))
+               .ForMember(dest => dest.ComponentName,
+               opt => opt.MapFrom(src => src.Component != null
+                           ? src.Component.ComponentName
+                           : null));
 
+            CreateMap<Log, AccountLogDto>();
         }
     }
 }
