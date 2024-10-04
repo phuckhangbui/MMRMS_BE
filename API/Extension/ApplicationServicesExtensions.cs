@@ -68,6 +68,7 @@ public static class ApplicationServicesExtensions
             {
                 policy
                 .WithOrigins("http://localhost:5173")
+                .WithOrigins("http://localhost:5174")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
