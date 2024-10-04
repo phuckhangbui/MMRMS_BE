@@ -118,6 +118,7 @@
 
             public const string ProductPricePositiveNumber = "Giá máy phải là số dương";
             public const string RentPricePositiveNumber = "Giá thuê phải là số dương";
+            public const string ImageIsRequired = "Hình ảnh của sản phẩm là bắt buộc";
 
         }
 

@@ -207,42 +207,18 @@ namespace API.Controllers
             }
         }
 
-
-        [HttpPut("{productId}/thumbnail")]
-        public async Task<ActionResult> ChangeContentImage(int productId, IFormFile imageUrl)
-        {
-            if (imageUrl == null || imageUrl.Length == 0)
-            {
-                return BadRequest("Chưa có hình ảnh nào được chọn");
-            }
-
-            try
-            {
-                await _productService.ChangeProductThumbnail(productId, imageUrl);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpPut("{productId}/images")]
-        public async Task<ActionResult> ChangeContentImages(int productId, List<IFormFile> imageFiles)
+        public async Task<ActionResult> ChangeProductImages(int productId, [FromBody] List<ImageList> imageList)
         {
-            if (imageFiles == null || !imageFiles.Any())
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Chưa có hình ảnh nào được chọn");
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
             }
 
             try
             {
-                // Pass the list of image files to the service to handle the thumbnails change
-                await _productService.ChangeProductImages(productId, imageFiles);
+                await _productService.ChangeProductImages(productId, imageList);
                 return NoContent();
             }
             catch (ServiceException ex)

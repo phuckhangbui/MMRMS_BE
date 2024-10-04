@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DAO;
 using Common.Enum;
+using DAO;
 using DTOs.Product;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
+using Component = BusinessObject.Component;
+using Product = BusinessObject.Product;
+using ProductAttribute = BusinessObject.ProductAttribute;
 
 namespace Repository.Implement
 {
@@ -101,6 +104,7 @@ namespace Repository.Implement
             List<Tuple<Component, int>> componentsTuple = new List<Tuple<Component, int>>();
 
             if (!createProductDto.NewComponentList.IsNullOrEmpty())
+            {
                 foreach (var component in createProductDto.NewComponentList)
                 {
                     Component Component = new Component
@@ -115,6 +119,27 @@ namespace Repository.Implement
                     componentsTuple.Add(new Tuple<Component, int>(Component, component.Quantity));
 
                 }
+            }
+            var productImages = new List<ProductImage>();
+
+            if (!createProductDto.ImageUrls.IsNullOrEmpty())
+            {
+                bool isFirstImage = true;
+
+                foreach (var imageUrl in createProductDto.ImageUrls)
+                {
+                    var productImage = new ProductImage
+                    {
+                        ProductImageUrl = imageUrl.Url,
+                        IsThumbnail = isFirstImage
+                    };
+
+                    productImages.Add(productImage);
+                    isFirstImage = false;
+                }
+            }
+
+            product.ProductImages = productImages;
 
             product = await ProductDao.Instance.CreateProduct(product, componentsTuple);
 
@@ -221,22 +246,27 @@ namespace Repository.Implement
             await ProductDao.Instance.ChangeProductThumbnail(productImage);
         }
 
-        public async Task AddProductImages(int productId, List<string> uploadedImageUrls)
+        public async Task UpdateProductImage(int productId, List<ImageList> imageList)
         {
+            var product = await ProductDao.Instance.GetProduct(productId);
+            bool isFirstImage = true;
+
             var productImages = new List<ProductImage>();
 
-            foreach (var imageUrl in uploadedImageUrls)
+            foreach (var imageUrl in imageList)
             {
                 var productImage = new ProductImage
                 {
-                    ProductImageUrl = imageUrl,
                     ProductId = productId,
-                    IsThumbnail = false // Set all images to non-thumbnail initially
+                    ProductImageUrl = imageUrl.Url,
+                    IsThumbnail = isFirstImage
                 };
+
                 productImages.Add(productImage);
+                isFirstImage = false;
             }
+
             await ProductDao.Instance.AddProductImages(productId, productImages);
         }
-
     }
 }

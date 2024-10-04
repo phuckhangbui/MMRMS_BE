@@ -192,7 +192,6 @@ namespace DAO
                             }
                         }
 
-
                         DbSet<Product> _dbSet = context.Set<Product>();
                         _dbSet.Add(product);
                         await context.SaveChangesAsync();
@@ -334,7 +333,7 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 var oldNonThumbnailImages = context.ProductImages
-                    .Where(i => i.ProductId == productId && i.IsThumbnail == false);
+                    .Where(i => i.ProductId == productId);
 
                 context.ProductImages.RemoveRange(oldNonThumbnailImages);
                 await context.SaveChangesAsync();
