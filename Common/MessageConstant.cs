@@ -251,6 +251,10 @@
 
 
             //DTO
+            public const string DeliveryIdRequired = "Mã giao hàng là bắt buộc";
+            public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
+            public const string DateshipIsRequired = "Ngày giao là bắt buộc";
+
         }
 
         public static class MaintenanceRequest
@@ -271,6 +275,7 @@
             public const string StatusCannotSet = "Tình trạng công việc này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string CannotDeleted = "Trạng thái này không tồn tại";
+            public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
 
             //DTO
         }

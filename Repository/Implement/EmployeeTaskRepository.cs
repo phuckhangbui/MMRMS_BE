@@ -39,6 +39,17 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<EmployeeTaskDto>>(list);
         }
 
+        public async Task<IEnumerable<EmployeeTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime dateShip)
+        {
+            var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
+
+            var staffList = list.Where(t => t.StaffId == staffId).ToList();
+
+            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateCreate.Value.Date == dateShip.Date);
+
+            return _mapper.Map<IEnumerable<EmployeeTaskDto>>(filteredList);
+        }
+
         public async Task UpdateTaskStatus(int employeeTaskId, string status, int accountId)
         {
             var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTask(employeeTaskId);
