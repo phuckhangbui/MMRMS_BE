@@ -89,8 +89,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ServiceRentingRequest> ServiceRentingRequests { get; set; }
 
-    public virtual DbSet<ServiceContract> ServiceContracts { get; set; }
-
     public virtual DbSet<DeliveryLog> DeliveryLogs { get; set; }
 
 
@@ -785,25 +783,6 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.RentingRequest).WithMany(p => p.ServiceRentingRequests)
                .HasForeignKey(d => d.RentingRequestId)
                .HasConstraintName("FK_servicerequest_rentingrequest");
-        });
-
-        modelBuilder.Entity<ServiceContract>(entity =>
-        {
-            entity.HasKey(e => e.ServiceContractId);
-
-            entity.ToTable("ServiceContract");
-
-            entity.Property(e => e.ServiceContractId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.RentingService).WithMany(p => p.ServiceContracts)
-             .HasForeignKey(d => d.RentingServiceId)
-             .HasConstraintName("FK_rentingservice_servicecontract");
-
-            entity.HasOne(d => d.Contract).WithMany(p => p.ServiceContracts)
-               .HasForeignKey(d => d.ContractId)
-               .HasConstraintName("FK_servicecontract_contract");
         });
 
         OnModelCreatingPartial(modelBuilder);

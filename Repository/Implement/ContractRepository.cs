@@ -55,7 +55,7 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task CreateContract(int managerId, ContractRequestDto contractRequestDto)
+        public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
 
@@ -123,8 +123,12 @@ namespace Repository.Implement
 
             await ContractDao.Instance.CreateContract(contract, contractRequestDto);
 
+            //Update renting request
             rentingRequest.ContractId = contract.ContractId;
+            rentingRequest.Status = RentingRequestStatusEnum.Approved.ToString();
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
+
+            return contract.ContractId;
         }
 
         private Contract InitContract(int managerId, ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
@@ -156,21 +160,6 @@ namespace Repository.Implement
                 };
 
                 contract.ContractTerms.Add(term);
-            }
-
-            //Service Contract
-            var serviceRentingRequests = rentingRequest.ServiceRentingRequests;
-            foreach (var serviceRentingRequest in serviceRentingRequests)
-            {
-                var serviceContract = new ServiceContract
-                {
-                    RentingServiceId = serviceRentingRequest.RentingServiceId,
-                    ServicePrice = serviceRentingRequest.ServicePrice,
-                    //DiscountPrice = serviceRentingRequest.DiscountPrice,
-                    //FinalPrice = serviceRentingRequest.FinalPrice,
-                };
-
-                contract.ServiceContracts.Add(serviceContract);
             }
 
             return contract;

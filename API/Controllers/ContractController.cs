@@ -85,8 +85,8 @@ namespace API.Controllers
             try
             {
                 int managerId = GetLoginAccountId();
-                await _contractService.CreateContract(managerId, contractRequestDto);
-                return Created("", contractRequestDto);
+                var contractId = await _contractService.CreateContract(managerId, contractRequestDto);
+                return Created("", new { contract = contractId });
             }
             catch (ServiceException ex)
             {

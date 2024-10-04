@@ -26,7 +26,7 @@ namespace Service.Implement
             _serialNumberProductRepository = serialNumberProductRepository;
         }
 
-        public async Task CreateContract(int managerId, ContractRequestDto contractRequestDto)
+        public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
             //TODO
             //Check renting request valid
@@ -50,7 +50,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.SerialNumberProductsInvalid);
             }
 
-            await _contractRepository.CreateContract(managerId, contractRequestDto);
+            return await _contractRepository.CreateContract(managerId, contractRequestDto);
         }
 
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
