@@ -1,4 +1,5 @@
 ﻿using DTOs.RentingService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -6,8 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/renting-services")]
-    [ApiController]
-    public class RentingServiceController : ControllerBase
+    public class RentingServiceController : BaseApiController
     {
         private readonly IRentingServiceService _rentingServiceService;
 
@@ -35,6 +35,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> CreateRentingService([FromBody] RentingServiceRequestDto rentingServiceRequestDto)
         {
             if (!ModelState.IsValid)
@@ -59,6 +60,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{rentingServiceId}")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdateRentingService(int rentingServiceId, [FromBody] RentingServiceRequestDto rentingServiceRequestDto)
         {
             if (!ModelState.IsValid)

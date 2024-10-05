@@ -81,7 +81,7 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
 
             var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
@@ -140,13 +140,13 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<CustomerAccountDto>>(accounts);
         }
 
-        public async Task<IEnumerable<EmployeeAccountDto>> GetManagerAndStaffAccountsByRole()
+        public async Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts()
         {
-            var accounts = await AccountDao.Instance.GetManagerAndStaffAccountsAsync();
+            var accounts = await AccountDao.Instance.GetEmployeeAccountsAsync();
             return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
         }
 
-        public async Task<EmployeeAccountDto> GetStaffAndManagerAccountById(int accountId)
+        public async Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
             return _mapper.Map<EmployeeAccountDto>(account);

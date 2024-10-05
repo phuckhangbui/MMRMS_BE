@@ -54,6 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> CreateMembershipRank([FromBody] MembershipRankRequestDto membershipRankRequestDto)
         {
             if (!ModelState.IsValid)
@@ -78,6 +79,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{membershipRankId}")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdateMembershipRank(int membershipRankId, [FromBody] MembershipRankRequestDto membershipRankRequestDto)
         {
             if (!ModelState.IsValid)
@@ -102,6 +104,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{membershipRankId}")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> DeleteMembershipRank(int membershipRankId)
         {
             try
@@ -120,6 +123,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{membershipRankId}/status")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ChangeMembershipRankStatus(int membershipRankId, [FromQuery, BindRequired] string status)
         {
             try

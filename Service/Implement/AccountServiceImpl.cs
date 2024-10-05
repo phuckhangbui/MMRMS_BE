@@ -41,9 +41,9 @@ namespace Service.Implement
             return await _accountRepository.GetAccountsByRole(role);
         }
 
-        public async Task<IEnumerable<EmployeeAccountDto>> GetManagerAndStaffAccountsByRole()
+        public async Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts()
         {
-            return await _accountRepository.GetManagerAndStaffAccountsByRole();
+            return await _accountRepository.GetEmployeeAccounts();
         }
 
         public async Task<CustomerAccountDto> GetCustomerAccountById(int accountId)
@@ -57,7 +57,7 @@ namespace Service.Implement
             return await _accountRepository.GetCustomerAccountById(accountId);
         }
 
-        public async Task<EmployeeAccountDto> GetStaffAndManagerAccountById(int accountId)
+        public async Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId)
         {
             var account = await CheckAccountExist(accountId);
             if (account.RoleId == (int)AccountRoleEnum.Customer)
@@ -65,7 +65,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.NotStaffOrManagerRole);
             }
 
-            return await _accountRepository.GetStaffAndManagerAccountById(accountId);
+            return await _accountRepository.GetEmployeeAccountById(accountId);
         }
 
         private async Task<AccountBaseDto> CheckAccountExist(int accountId)
@@ -79,7 +79,7 @@ namespace Service.Implement
             return account;
         }
 
-        public async Task<int> CreateEmployeeAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newStaffAndManagerAccountDto.Email);
 
