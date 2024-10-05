@@ -8,7 +8,7 @@ namespace DTOs.AccountPromotion
         public int? PromotionId { get; set; }
         public int? AccountId { get; set; }
         public DateTime? DateReceive { get; set; }
-        public int? Status { get; set; }
+        public string? Status { get; set; }
         public PromotionDto Promotion { get; set; }
     }
 }

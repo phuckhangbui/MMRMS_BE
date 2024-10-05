@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -66,6 +67,43 @@ namespace DAO
                     .Where(rr => rr.AccountOrderId == customerId)
                     .Include(h => h.AccountOrder)
                     .ToListAsync();
+            }
+        }
+
+        public async Task<RentingRequest> CreateRentingRequest(RentingRequest rentingRequest, int accountPromotionId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (accountPromotionId != 0)
+                        {
+                            var accountPromotion = await context.AccountPromotions
+                                .FirstOrDefaultAsync(ap => ap.AccountPromotionId == accountPromotionId);
+
+                            if (accountPromotion != null && accountPromotion.Status!.Equals(AccountPromotionStatusEnum.Active.ToString()))
+                            {
+                                accountPromotion.Status = AccountPromotionStatusEnum.Redeemed.ToString();
+                                context.AccountPromotions.Update(accountPromotion);
+                            }
+                        }
+
+                        DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
+                        _dbSet.Add(rentingRequest);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                        return rentingRequest;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
             }
         }
     }

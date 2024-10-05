@@ -1,4 +1,5 @@
 ﻿using DTOs.Account;
+using DTOs.Log;
 
 namespace Repository.Interface
 {
@@ -7,5 +8,7 @@ namespace Repository.Interface
         Task CreateFirstAccountLog(int accountId);
         Task<AccountLogDto> GetAccountLogByAccountId(int accountId);
         Task WriteNewAccountLogDetail(int accountId);
+        Task<IEnumerable<LogDto>> GetLogs();
+        Task<IEnumerable<LogDetailDto>> GetLogDetailsByLogId(int logId);
     }
 }

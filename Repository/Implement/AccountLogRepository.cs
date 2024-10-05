@@ -2,6 +2,8 @@
 using BusinessObject;
 using DAO;
 using DTOs.Account;
+using DTOs.Log;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -44,6 +46,29 @@ namespace Repository.Implement
             var accountLog = await AccountLogDao.Instance.GetAccountLogByAccountId(accountId);
 
             return _mapper.Map<AccountLogDto>(accountLog);
+        }
+
+        public async Task<IEnumerable<LogDetailDto>> GetLogDetailsByLogId(int logId)
+        {
+            var logDetails = await AccountLogDao.Instance.GetLogDetailsByLogId(logId);
+            if (logDetails != null)
+            {
+                return _mapper.Map<IEnumerable<LogDetailDto>>(logDetails);
+            }
+
+            return [];
+        }
+
+        public async Task<IEnumerable<LogDto>> GetLogs()
+        {
+            var logs = await AccountLogDao.Instance.GetLogs();
+
+            if (!logs.IsNullOrEmpty())
+            {
+                return _mapper.Map<IEnumerable<LogDto>>(logs);
+            }
+
+            return [];
         }
 
         public async Task WriteNewAccountLogDetail(int accountId)
