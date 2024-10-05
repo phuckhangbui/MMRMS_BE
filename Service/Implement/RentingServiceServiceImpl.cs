@@ -21,6 +21,26 @@ namespace Service.Implement
             await _rentingServiceRepository.CreateRentingService(rentingServiceRequestDto);
         }
 
+        public async Task DeleteRentingService(int rentingServiceId)
+        {
+            await CheckRentingServiceExist(rentingServiceId);
+
+            var canDelete = await _rentingServiceRepository.CanDeleteRentingService(rentingServiceId);
+            if (!canDelete)
+            {
+                throw new ServiceException(MessageConstant.RentingService.RentingServiceCanNotDelete);
+            }
+
+            await _rentingServiceRepository.DeleteRentingService(rentingServiceId);
+        }
+
+        public async Task<RentingServiceDto> GetRentingServiceById(int rentingServiceId)
+        {
+            var rentingService = await CheckRentingServiceExist(rentingServiceId);
+
+            return rentingService;
+        }
+
         public async Task<IEnumerable<RentingServiceDto>> GetRentingServices()
         {
             var rentingServices = await _rentingServiceRepository.GetRentingServices();
@@ -35,7 +55,20 @@ namespace Service.Implement
 
         public async Task UpdateRentingService(int rentingServiceId, RentingServiceRequestDto rentingServiceRequestDto)
         {
+            await CheckRentingServiceExist(rentingServiceId);
+
             await _rentingServiceRepository.UpdateRentingService(rentingServiceId, rentingServiceRequestDto);
+        }
+
+        public async Task<RentingServiceDto> CheckRentingServiceExist(int rentingServiceId)
+        {
+            var rentingService = await _rentingServiceRepository.GetRentingServiceById(rentingServiceId);
+            if (rentingService == null)
+            {
+                throw new ServiceException(MessageConstant.RentingService.RentingServiceNotFound);
+            }
+
+            return rentingService;
         }
     }
 }

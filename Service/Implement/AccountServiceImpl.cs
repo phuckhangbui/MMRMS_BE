@@ -79,22 +79,22 @@ namespace Service.Implement
             return account;
         }
 
-        public async Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto)
+        public async Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto)
         {
-            bool isExist = await _accountRepository.IsAccountExistWithEmail(newStaffAndManagerAccountDto.Email);
+            bool isExist = await _accountRepository.IsAccountExistWithEmail(newEmployeeAccountDto.Email);
 
             if (isExist)
             {
                 throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
-            bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newStaffAndManagerAccountDto.Username);
+            bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newEmployeeAccountDto.Username);
             if (isUsernameExist)
             {
                 throw new ServiceException(MessageConstant.Account.UsernameAlreadyExists);
             }
 
-            var accountDto = await _accountRepository.CreateEmployeeAccount(newStaffAndManagerAccountDto);
+            var accountDto = await _accountRepository.CreateEmployeeAccount(newEmployeeAccountDto);
 
             //Send mail
             _mailService.SendMail(AuthenticationMail.SendWelcomeAndCredentialsToEmployee(accountDto.Email, accountDto.Name, accountDto.Username, GlobalConstant.DefaultPassword));

@@ -30,5 +30,15 @@ namespace DAO
             using var context = new MmrmsContext();
             return await context.RentingServices.FirstOrDefaultAsync(rs => rs.RentingServiceId == rentingServiceId);
         }
+
+        public async Task<bool> CanDeleteRentingService(int rentingServiceId)
+        {
+            using var context = new MmrmsContext();
+
+            var isUsedInRequests = await context.ServiceRentingRequests
+                                                .AnyAsync(srr => srr.RentingServiceId == rentingServiceId);
+
+            return !isUsedInRequests;
+        }
     }
 }
