@@ -1,4 +1,5 @@
 ﻿using DTOs.Category;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -6,7 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/categories")]
-    public class CategoryController : ControllerBase
+    public class CategoryController : BaseApiController
     {
         private readonly ICategoryService _categoryService;
 
@@ -34,6 +35,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: "Manager")]
         public async Task<ActionResult> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto)
         {
             if (!ModelState.IsValid)
@@ -58,6 +60,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{categoryId}")]
+        [Authorize(policy: "Manager")]
         public async Task<ActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequestDto categoryRequestDto)
         {
             if (!ModelState.IsValid)

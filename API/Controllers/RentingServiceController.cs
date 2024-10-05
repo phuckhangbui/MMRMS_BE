@@ -34,6 +34,24 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("{rentingServiceId}")]
+        public async Task<ActionResult<RentingServiceDto>> GetRentingServiceById(int rentingServiceId)
+        {
+            try
+            {
+                var rentingService = await _rentingServiceService.GetRentingServiceById(rentingServiceId);
+                return Ok(rentingService);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult> CreateRentingService([FromBody] RentingServiceRequestDto rentingServiceRequestDto)
@@ -72,6 +90,25 @@ namespace API.Controllers
             try
             {
                 await _rentingServiceService.UpdateRentingService(rentingServiceId, rentingServiceRequestDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{rentingServiceId}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<ActionResult> DeleteRentingService(int rentingServiceId)
+        {
+            try
+            {
+                await _rentingServiceService.DeleteRentingService(rentingServiceId);
                 return NoContent();
             }
             catch (ServiceException ex)

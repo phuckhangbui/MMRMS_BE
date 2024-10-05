@@ -231,12 +231,12 @@
         {
             //Service
             public const string RentingServiceListEmpty = "Danh sách dịch vụ thuê trống";
+            public const string RentingServiceNotFound = "Dịch vụ thuê không tồn tại";
+            public const string RentingServiceCanNotDelete = "Dịch vụ thuê này đã được sử dụng và không thể xóa.";
 
             //DTO
             public const string RentingServiceNameRequired = "Tên dịch vụ thuê là bắt buộc.";
             public const string DescriptionRequired = "Mô tả là bắt buộc.";
-            public const string PriceRequired = "Giá dịch vụ phải lớn hơn 0.";
-            public const string PayTypeRequired = "Loại thanh toán là bắt buộc.";
         }
 
         public static class AccountPromotion
