@@ -34,7 +34,7 @@ namespace Repository.Mapper
             CreateMap<AccountDto, LoginAccountDto>();
 
             CreateMap<Account, AccountBaseDto>();
-            CreateMap<Account, StaffAndManagerAccountDto>();
+            CreateMap<Account, EmployeeAccountDto>();
             CreateMap<Account, CustomerAccountDto>()
                         .ForMember(dest => dest.Company,
                             opt => opt.MapFrom(src => src.AccountBusiness != null

@@ -6,11 +6,11 @@ namespace Service.Interface
     {
         Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role);
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
-        Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole();
-        Task<AccountBaseDto> CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto);
+        Task<IEnumerable<EmployeeAccountDto>> GetManagerAndStaffAccountsByRole();
+        Task<int> CreateEmployeeAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto);
         Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task ChangeAccountStatus(int accountId, string status);
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
-        Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId);
+        Task<EmployeeAccountDto> GetStaffAndManagerAccountById(int accountId);
     }
 }

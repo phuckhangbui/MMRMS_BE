@@ -64,7 +64,7 @@ namespace DTOs.Account
         public int Gender { get; set; }
     }
 
-    public class StaffAndManagerAccountDto : AccountBaseDto
+    public class EmployeeAccountDto : AccountBaseDto
     {
         public string Username { get; set; }
         public int Position { get; set; }
