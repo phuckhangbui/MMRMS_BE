@@ -33,5 +33,25 @@ namespace DAO
                     .FirstOrDefaultAsync(ap => ap.AccountLogId == accountId);
             }
         }
+
+        public async Task<IEnumerable<LogDetail>> GetLogDetailsByLogId(int logId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.LogDetails
+                    .Where(l => l.LogId == logId)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Log>> GetLogs()
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Logs
+                    .Include(l => l.AccountLog)
+                    .ToListAsync();
+            }
+        }
     }
 }
