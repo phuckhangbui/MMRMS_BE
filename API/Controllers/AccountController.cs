@@ -54,11 +54,12 @@ namespace API.Controllers
         }
 
         [HttpGet("managers-staff")]
-        public async Task<ActionResult> GetManagerAndStaffAccounts()
+        [Authorize(Policy = "Admin")]
+        public async Task<ActionResult> GetEmployeeAccounts()
         {
             try
             {
-                var accounts = await _accountService.GetManagerAndStaffAccountsByRole();
+                var accounts = await _accountService.GetEmployeeAccounts();
                 return Ok(accounts);
             }
             catch (Exception ex)
@@ -93,7 +94,7 @@ namespace API.Controllers
 
         [HttpPost("staff-manager")]
         [Authorize(policy: "AdminAndManager")]
-        public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
             if (!ModelState.IsValid)
             {
@@ -153,11 +154,12 @@ namespace API.Controllers
         }
 
         [HttpGet("staff-manager/{accountId}")]
-        public async Task<ActionResult<EmployeeAccountDto>> GetStaffOrManagerAccountById(int accountId)
+        [Authorize(policy: "AdminAndManager")]
+        public async Task<ActionResult<EmployeeAccountDto>> GetEmployeeAccountById(int accountId)
         {
             try
             {
-                var staffOrManagerAccount = await _accountService.GetStaffAndManagerAccountById(accountId);
+                var staffOrManagerAccount = await _accountService.GetEmployeeAccountById(accountId);
                 return Ok(staffOrManagerAccount);
             }
             catch (ServiceException ex)

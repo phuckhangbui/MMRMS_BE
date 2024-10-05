@@ -54,7 +54,7 @@ namespace Repository.Mapper
                                 : null));
 
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
-            CreateMap<Account, NewStaffAndManagerAccountDto>().ReverseMap();
+            CreateMap<Account, NewEmployeeAccountDto>().ReverseMap();
             CreateMap<Account, AccountOrderDto>();
 
             CreateMap<Category, CategoryDto>();

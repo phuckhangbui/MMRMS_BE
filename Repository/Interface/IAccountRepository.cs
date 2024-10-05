@@ -6,8 +6,8 @@ namespace Repository.Interface
     {
         Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role);
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
-        Task<IEnumerable<EmployeeAccountDto>> GetManagerAndStaffAccountsByRole();
-        Task<EmployeeAccountDto> CreateEmployeeAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto);
+        Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
+        Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto);
         Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> IsAccountExistWithEmail(string email);
         Task ChangeAccountStatus(int acocuntId, string status);
@@ -15,7 +15,7 @@ namespace Repository.Interface
         Task<AccountDto> GetAccounById(int accountId);
         Task<IEnumerable<AccountDto>> GetManagerAccounts();
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
-        Task<EmployeeAccountDto> GetStaffAndManagerAccountById(int accountId);
+        Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId);
         Task<bool> IsAccountExistWithUsername(string username);
         Task<AccountDto> GetCustomerAccountWithEmail(string email);
         Task<AccountDto> GetStaffAndManagerAccountWithUsername(string username);

@@ -1,4 +1,5 @@
 ﻿using DTOs.Promotion;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -6,8 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/promotions")]
-    [ApiController]
-    public class PromotionController : ControllerBase
+    public class PromotionController : BaseApiController
     {
         private readonly IPromotionService _promotionService;
 
@@ -53,6 +53,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> CreatePromotion([FromBody] PromotionRequestDto promotionRequestDto)
         {
             if (!ModelState.IsValid)
@@ -82,6 +83,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{promotionId}")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdatePromotion(int promotionId, [FromBody] PromotionRequestDto promotionRequestDto)
         {
             if (!ModelState.IsValid)
@@ -111,6 +113,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{promotionId}")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> DeletePromotion(int promotionId)
         {
             try

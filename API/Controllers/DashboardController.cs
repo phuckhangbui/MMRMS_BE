@@ -1,4 +1,5 @@
 ﻿using DTOs.Dashboard;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -6,8 +7,7 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/dashboard")]
-    [ApiController]
-    public class DashboardController : ControllerBase
+    public class DashboardController : BaseApiController
     {
         private readonly IDashboardService _dashboardService;
 
@@ -17,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult> GetDataTotalAdminDashboard([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             try
@@ -35,6 +36,7 @@ namespace API.Controllers
         }
 
         [HttpGet("/monthly")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<List<DataUserAdminDto>>> GetMonthlyCustomerData([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             try

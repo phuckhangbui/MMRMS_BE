@@ -41,7 +41,7 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<Account>> GetManagerAndStaffAccountsAsync()
+        public async Task<IEnumerable<Account>> GetEmployeeAccountsAsync()
         {
             using (var context = new MmrmsContext())
             {
@@ -119,7 +119,7 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<Account>> GetManagerAndStaffAccountsInRangeAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<Account>> GetEmployeeAccountsInRangeAsync(DateTime? startDate, DateTime? endDate)
         {
             using (var context = new MmrmsContext())
             {

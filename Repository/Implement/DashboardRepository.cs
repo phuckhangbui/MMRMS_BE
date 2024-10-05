@@ -19,13 +19,13 @@ namespace Repository.Implement
             if (startDate.HasValue && endDate.HasValue)
             {
                 totalCustomers = await AccountDao.Instance.GetAccountsByRoleInRangeAsync((int)AccountRoleEnum.Customer, startDate, endDate);
-                totalStaffs = await AccountDao.Instance.GetManagerAndStaffAccountsInRangeAsync(startDate, endDate);
+                totalStaffs = await AccountDao.Instance.GetEmployeeAccountsInRangeAsync(startDate, endDate);
                 totalContents = await ContentDao.Instance.GetAllInRangeAsync(startDate, endDate);
             }
             else
             {
                 totalCustomers = await AccountDao.Instance.GetAccountsByRoleAsync((int)AccountRoleEnum.Customer);
-                totalStaffs = await AccountDao.Instance.GetManagerAndStaffAccountsAsync();
+                totalStaffs = await AccountDao.Instance.GetEmployeeAccountsAsync();
                 totalContents = await ContentDao.Instance.GetAllAsync();
             }
 

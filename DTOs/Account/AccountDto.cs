@@ -119,7 +119,7 @@ namespace DTOs.Account
         public string Address { get; set; }
     }
 
-    public class NewStaffAndManagerAccountDto : NewBaseAccountDto
+    public class NewEmployeeAccountDto : NewBaseAccountDto
     {
         [Required(ErrorMessage = MessageConstant.Account.UsernameRequired)]
         public string Username { get; set; }
