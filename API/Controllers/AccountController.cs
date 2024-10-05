@@ -93,7 +93,7 @@ namespace API.Controllers
 
         [HttpPost("staff-manager")]
         [Authorize(policy: "AdminAndManager")]
-        public async Task<ActionResult> CreateStaffOrManagerAccount([FromBody] NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
             if (!ModelState.IsValid)
             {
@@ -103,8 +103,8 @@ namespace API.Controllers
 
             try
             {
-                var result = await _accountService.CreateStaffOrManagerAccount(newStaffAndManagerAccountDto);
-                return Created("", result);
+                var accountId = await _accountService.CreateEmployeeAccount(newStaffAndManagerAccountDto);
+                return Created("", new { account = accountId });
             }
             catch (ServiceException ex)
             {
@@ -153,7 +153,7 @@ namespace API.Controllers
         }
 
         [HttpGet("staff-manager/{accountId}")]
-        public async Task<ActionResult<StaffAndManagerAccountDto>> GetStaffOrManagerAccountById(int accountId)
+        public async Task<ActionResult<EmployeeAccountDto>> GetStaffOrManagerAccountById(int accountId)
         {
             try
             {

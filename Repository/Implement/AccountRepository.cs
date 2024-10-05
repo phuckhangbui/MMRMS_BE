@@ -81,7 +81,7 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<AccountBaseDto> CreateStaffOrManagerAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
+        public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewStaffAndManagerAccountDto newStaffAndManagerAccountDto)
         {
 
             var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
@@ -90,13 +90,13 @@ namespace Repository.Implement
             account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GlobalConstant.DefaultPassword));
             account.PasswordSalt = hmac.Key;
             account.DateCreate = DateTime.Now;
-            account.Status = AccountStatusEnum.Inactive.ToString();
+            account.Status = AccountStatusEnum.Active.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
 
             account = await AccountDao.Instance.CreateAsync(account);
 
-            return _mapper.Map<AccountBaseDto>(account);
+            return _mapper.Map<EmployeeAccountDto>(account);
         }
 
         public async Task<AccountBaseDto> GetAccountBaseById(int accountId)
@@ -123,7 +123,7 @@ namespace Repository.Implement
             }
             else
             {
-                return _mapper.Map<IEnumerable<StaffAndManagerAccountDto>>(accounts);
+                return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
             }
         }
 
@@ -140,16 +140,16 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<CustomerAccountDto>>(accounts);
         }
 
-        public async Task<IEnumerable<StaffAndManagerAccountDto>> GetManagerAndStaffAccountsByRole()
+        public async Task<IEnumerable<EmployeeAccountDto>> GetManagerAndStaffAccountsByRole()
         {
             var accounts = await AccountDao.Instance.GetManagerAndStaffAccountsAsync();
-            return _mapper.Map<IEnumerable<StaffAndManagerAccountDto>>(accounts);
+            return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
         }
 
-        public async Task<StaffAndManagerAccountDto> GetStaffAndManagerAccountById(int accountId)
+        public async Task<EmployeeAccountDto> GetStaffAndManagerAccountById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
-            return _mapper.Map<StaffAndManagerAccountDto>(account);
+            return _mapper.Map<EmployeeAccountDto>(account);
         }
 
         public async Task<bool> IsAccountExistWithEmail(string email)

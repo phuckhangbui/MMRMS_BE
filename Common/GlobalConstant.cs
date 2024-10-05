@@ -3,7 +3,7 @@
     public static class GlobalConstant
     {
         public const string DefaultPassword = "12345";
-        public const string DefaultAvatarUrl = "https://randomuser.me/api/portraits/lego/1.jpg";
+        public const string DefaultAvatarUrl = "https://res.cloudinary.com/dfdwupiah/image/upload/v1728103743/MMRMS/qbjsfiyperlviohymsmv.png";
         public const string ContractIdPrefixPattern = "CON";
         public const string RentingRequestIdPrefixPattern = "REH";
         public const string InvoiceIdPrefixPattern = "INV";
