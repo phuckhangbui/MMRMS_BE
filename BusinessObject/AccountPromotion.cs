@@ -10,7 +10,7 @@ public partial class AccountPromotion
 
     public DateTime? DateReceive { get; set; }
 
-    public int? Status { get; set; }
+    public string? Status { get; set; }
 
     public virtual Account? Account { get; set; }
 

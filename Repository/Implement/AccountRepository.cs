@@ -68,7 +68,7 @@ namespace Repository.Implement
                     {
                         Account = account,
                         DateReceive = DateTime.Now,
-                        Status = 1,
+                        Status = AccountPromotionStatusEnum.Active.ToString(),
                         PromotionId = activePromotion.PromotionId,
                     };
 

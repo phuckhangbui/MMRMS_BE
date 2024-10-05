@@ -208,9 +208,23 @@
 
         public static class RentingRequest
         {
+            //Service
             public const string RequestProductsInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
             public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
+
+            //DTO
+            public const string AddressIdRequired = "Địa chỉ là bắt buộc.";
+            public const string DateStartRequired = "Ngày bắt đầu là bắt buộc.";
+            public const string DateStartFutureOrPresent = "Ngày bắt đầu phải là hôm nay hoặc trong tương lai.";
+            public const string TotalRentPriceRequired = "Tổng giá thuê là bắt buộc.";
+            public const string TotalDepositPriceRequired = "Tổng tiền đặt cọc là bắt buộc.";
+            public const string ShippingPriceRequired = "Phí vận chuyển là bắt buộc.";
+            public const string NumberOfMonthRequired = "Số tháng thuê là bắt buộc.";
+            public const string TotalAmountRequired = "Tổng tiền là bắt buộc.";
+            public const string IsOnetimePaymentRequired = "Hình thức thanh toán một lần là bắt buộc.";
+            public const string RequestProductsRequired = "Danh sách máy yêu cầu thuê là bắt buộc.";
+            public const string ServiceRentingRequestsRequired = "Danh sách dịch vụ thuê là bắt buộc.";
         }
 
         public static class RentingService

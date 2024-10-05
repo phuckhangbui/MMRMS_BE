@@ -73,7 +73,7 @@ namespace Repository.Implement
                 }
             }
 
-            rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
+            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto.AccountPromotionId);
             return rentingRequest.RentingRequestId;
         }
 
