@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241006075351_DeleteLogTable")]
+    partial class DeleteLogTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -735,12 +738,17 @@ namespace DAO.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RequestId");
 
                     b.HasIndex("ContractId");
+
+                    b.HasIndex("SerialNumber");
 
                     b.ToTable("MaintenanceRequest", (string)null);
                 });
@@ -1041,30 +1049,6 @@ namespace DAO.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImage", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductTerm", b =>
-                {
-                    b.Property<int>("ProductTermId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductTermId"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductTermId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductTerm", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Promotion", b =>
@@ -1600,7 +1584,14 @@ namespace DAO.Migrations
                         .HasForeignKey("ContractId")
                         .HasConstraintName("FK_MaintenanceRequest_Contract");
 
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
+                        .WithMany("MaintenanceRequests")
+                        .HasForeignKey("SerialNumber")
+                        .HasConstraintName("FK_MaintenanceRequest_SerialNumberProduct");
+
                     b.Navigation("Contract");
+
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
@@ -1713,16 +1704,6 @@ namespace DAO.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_ProductImage_Product");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductTerm", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductTerms")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Term_Product");
 
                     b.Navigation("Product");
                 });
@@ -1947,8 +1928,6 @@ namespace DAO.Migrations
 
                     b.Navigation("ProductImages");
 
-                    b.Navigation("ProductTerms");
-
                     b.Navigation("RentingRequestProductDetails");
 
                     b.Navigation("SerialNumberProducts");
@@ -1981,6 +1960,8 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
                 {
                     b.Navigation("ContractSerialNumberProducts");
+
+                    b.Navigation("MaintenanceRequests");
 
                     b.Navigation("MaintenanceTickets");
 

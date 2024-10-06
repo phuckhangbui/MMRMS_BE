@@ -28,11 +28,10 @@ public partial class Product
 
     public virtual ICollection<RentingRequestProductDetail> RentingRequestProductDetails { get; set; } = new List<RentingRequestProductDetail>();
 
-
     public virtual ICollection<SerialNumberProduct> SerialNumberProducts { get; set; } = new List<SerialNumberProduct>();
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     public virtual ICollection<ComponentProduct> ComponentProducts { get; set; } = new List<ComponentProduct>();
-
+    public virtual ICollection<ProductTerm> ProductTerms { get; set; } = new List<ProductTerm>();
 
 
 }

@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
-using DTOs.Account;
 using DTOs.Log;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -17,78 +15,24 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateFirstAccountLog(int accountId)
+
+        public async Task<LogDetailDto> GetAccountLogByAccountId(int accountId)
         {
-            var now = DateTime.Now;
-            var log = new Log
-            {
-                AccountLogId = accountId,
-                DateCreate = now,
-                DateUpdate = now,
-            };
+            var accountLog = await AccountLogDetailDao.Instance.GetLogDetails(accountId);
 
-            var logDetail = new LogDetail
-            {
-                LogId = log.LogId,
-                Action = "First Login",
-                DateCreate = now,
-            };
-
-            List<LogDetail> details = [logDetail];
-
-            log.LogDetails = details;
-
-            await AccountLogDao.Instance.CreateAsync(log);
-        }
-
-        public async Task<AccountLogDto> GetAccountLogByAccountId(int accountId)
-        {
-            var accountLog = await AccountLogDao.Instance.GetAccountLogByAccountId(accountId);
-
-            return _mapper.Map<AccountLogDto>(accountLog);
-        }
-
-        public async Task<IEnumerable<LogDetailDto>> GetLogDetailsByLogId(int logId)
-        {
-            var logDetails = await AccountLogDao.Instance.GetLogDetailsByLogId(logId);
-            if (logDetails != null)
-            {
-                return _mapper.Map<IEnumerable<LogDetailDto>>(logDetails);
-            }
-
-            return [];
-        }
-
-        public async Task<IEnumerable<LogDto>> GetLogs()
-        {
-            var logs = await AccountLogDao.Instance.GetLogs();
-
-            if (!logs.IsNullOrEmpty())
-            {
-                return _mapper.Map<IEnumerable<LogDto>>(logs);
-            }
-
-            return [];
+            return _mapper.Map<LogDetailDto>(accountLog);
         }
 
         public async Task WriteNewAccountLogDetail(int accountId)
         {
-            var accountLog = await AccountLogDao.Instance.GetAccountLogByAccountId(accountId);
-
-            var now = DateTime.Now;
-
-            accountLog.DateUpdate = now;
-
             var detail = new LogDetail
             {
-                LogId = accountLog.LogId,
+                AccountId = accountId,
                 Action = "Login",
-                DateCreate = now,
+                DateCreate = DateTime.Now,
             };
 
-            accountLog.LogDetails.Add(detail);
-
-            await AccountLogDao.Instance.UpdateAsync(accountLog);
+            await AccountLogDetailDao.Instance.UpdateAsync(detail);
         }
     }
 }

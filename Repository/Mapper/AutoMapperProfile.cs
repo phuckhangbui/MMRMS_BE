@@ -89,11 +89,16 @@ namespace Repository.Mapper
                     .ForMember(dest => dest.ComponentProductList,
                         opt => opt.MapFrom(src => src.ComponentProducts != null && src.ComponentProducts.Any()
                             ? src.ComponentProducts
+                            : null))
+                    .ForMember(dest => dest.ProductTermList,
+                        opt => opt.MapFrom(src => src.ProductTerms != null && src.ProductTerms.Any()
+                            ? src.ProductTerms
                             : null));
 
 
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();
+            CreateMap<ProductTerm, ProductTermDto>();
             CreateMap<ComponentProduct, ComponentProductDto>()
                  .ForMember(dest => dest.ComponentName,
                         opt => opt.MapFrom(src => src.Component != null
@@ -102,6 +107,7 @@ namespace Repository.Mapper
 
             CreateMap<CreateProductDto, Product>();
             CreateMap<CreateProductAttributeDto, ProductAttribute>();
+            CreateMap<CreateProductTermDto, ProductTerm>();
             CreateMap<AddExistedComponentToProduct, ComponentProduct>();
 
             CreateMap<Component, ComponentDto>();
@@ -205,10 +211,6 @@ namespace Repository.Mapper
                            ? src.Component.ComponentName
                            : null));
 
-            CreateMap<Log, AccountLogDto>();
-            CreateMap<Log, LogDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountLog != null ? src.AccountLog.Name : string.Empty))
-                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.AccountLog != null ? src.AccountLog.Phone : string.Empty));
             CreateMap<LogDetail, LogDetailDto>();
         }
     }

@@ -132,6 +132,18 @@
             public const string SpecsRequired = "Chi tiết máy là bắt buộc";
         }
 
+        public static class ProductTerm
+        {
+            //Service
+
+
+            //DTO
+            public const string TitleRequired = "Tiêu đề là bắt buộc";
+            public const string ContentRequired = "Nội dung là bắt buộc";
+        }
+
+
+
         public static class Component
         {
             //Service

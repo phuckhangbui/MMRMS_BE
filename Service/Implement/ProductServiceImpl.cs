@@ -15,16 +15,14 @@ namespace Service.Implement
         private readonly IProductRepository _productRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
 
-        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ICloudinaryService cloudinaryService)
+        public ProductServiceImpl(IProductRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
-            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductList()
@@ -283,6 +281,18 @@ namespace Service.Implement
 
             await _productRepository.UpdateProductImage(productId, imageList);
 
+        }
+
+        public async Task UpdateProductTerm(int productId, IEnumerable<CreateProductTermDto> productTermDtos)
+        {
+            var product = await _productRepository.GetProduct(productId);
+
+            if (product == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            await _productRepository.UpdateProductTerm(productId, productTermDtos);
         }
     }
 }

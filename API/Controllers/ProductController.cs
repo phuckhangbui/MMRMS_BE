@@ -159,6 +159,29 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{productId}/term/update")]
+        public async Task<ActionResult> UpdateProductTerm([FromRoute] int productId, [FromBody] IEnumerable<CreateProductTermDto> productTermDtos)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+            try
+            {
+                await _productService.UpdateProductTerm(productId, productTermDtos);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPatch("{productId}/component/update")]
         public async Task<ActionResult> UpdateProductComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
         {

@@ -85,6 +85,7 @@ namespace DAO
                 return await context.Products.Include(p => p.Category)
                                              .Include(p => p.ProductImages)
                                              .Include(p => p.ProductAttributes)
+                                             .Include(p => p.ProductTerms)
                                              .Include(p => p.ComponentProducts)
                                              .ThenInclude(c => c.Component)
                                              .FirstOrDefaultAsync(p => p.ProductId == productId);
@@ -343,5 +344,37 @@ namespace DAO
             }
         }
 
+        public async Task UpdateProductTerm(Product product, List<ProductTerm> productTerms)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        var oldTermProducts = context.ProductTerms
+                       .Where(cp => cp.ProductId == product.ProductId);
+
+                        context.ProductTerms.RemoveRange(oldTermProducts);
+                        await context.SaveChangesAsync();
+
+                        product.ProductTerms = productTerms;
+
+
+                        context.Products.Update(product);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
     }
 }

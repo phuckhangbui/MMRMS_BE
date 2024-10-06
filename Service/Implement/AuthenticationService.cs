@@ -118,16 +118,8 @@ namespace Service.Implement
 
             await _accountRepository.UpdateAccount(accountDto);
 
-            AccountLogDto accountLogDto = await _accountLogRepository.GetAccountLogByAccountId(accountDto.AccountId);
 
-            if (accountLogDto == null)
-            {
-                await _accountLogRepository.CreateFirstAccountLog(accountDto.AccountId);
-            }
-            else
-            {
-                await _accountLogRepository.WriteNewAccountLogDetail(accountDto.AccountId);
-            }
+            await _accountLogRepository.WriteNewAccountLogDetail(accountDto.AccountId);
 
             return loginAccountDto;
         }

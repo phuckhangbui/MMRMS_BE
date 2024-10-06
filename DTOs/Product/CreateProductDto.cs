@@ -37,6 +37,9 @@ namespace DTOs.Product
 
         [Required(ErrorMessage = MessageConstant.Product.ImageIsRequired)]
         public IEnumerable<ImageList>? ImageUrls { get; set; }
+
+        public IEnumerable<CreateProductTermDto>? ProductTerms { get; set; }
+
     }
 
     public class CreateProductAttributeDto
@@ -48,6 +51,15 @@ namespace DTOs.Product
         public string Specifications { get; set; }
 
         public string? Unit { get; set; }
+    }
+
+    public class CreateProductTermDto
+    {
+        [Required(ErrorMessage = MessageConstant.ProductTerm.TitleRequired)]
+        public string Title { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.ProductTerm.ContentRequired)]
+        public string Content { get; set; }
     }
 
     public class AddExistedComponentToProduct

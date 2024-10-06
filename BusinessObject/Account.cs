@@ -50,13 +50,13 @@ public partial class Account
 
     public virtual MembershipRank? MembershipRank { get; set; }
 
-    public virtual Log? Log { get; set; }
-
     public virtual AccountBusiness? AccountBusiness { get; set; }
 
     public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
 
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
+
+    public virtual ICollection<LogDetail> LogDetails { get; set; } = new List<LogDetail>();
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 

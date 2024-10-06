@@ -47,7 +47,7 @@ namespace Service.Implement
         public async Task SendToManagerWhenCustomerCreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
         {
             string title = "Yêu cầu kiểm tra máy";
-            string body = $"Có một yêu cầu kiểm tra ở máy {createMaintenanceRequestDto.SerialNumber} của hợp đồng {createMaintenanceRequestDto.ContractId}";
+            string body = $"Có một yêu cầu kiểm tra máy của hợp đồng {createMaintenanceRequestDto.ContractId}";
 
             var managerList = await _accountRepository.GetManagerAccounts();
 
