@@ -25,6 +25,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
 
+    public virtual DbSet<ProductTerm> ProductTerms { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Component> Components { get; set; }
@@ -200,6 +202,23 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_Attribute_Product");
         });
+
+        modelBuilder.Entity<ProductTerm>(entity =>
+        {
+            entity.HasKey(e => e.ProductTermId);
+
+            entity.ToTable("ProductTerm");
+
+            entity.Property(e => e.ProductTermId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductTerms)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_Term_Product");
+        });
+
+
 
         modelBuilder.Entity<Category>(entity =>
         {

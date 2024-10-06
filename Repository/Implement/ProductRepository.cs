@@ -268,5 +268,26 @@ namespace Repository.Implement
 
             await ProductDao.Instance.AddProductImages(productId, productImages);
         }
+
+        public async Task UpdateProductTerm(int productId, IEnumerable<CreateProductTermDto> productTermDtos)
+        {
+            var product = await ProductDao.Instance.GetProductDetail(productId);
+
+            var productTerms = new List<ProductTerm>();
+
+            foreach (var termDto in productTermDtos)
+            {
+                var term = new ProductTerm
+                {
+                    ProductId = product.ProductId,
+                    Title = termDto.Title,
+                    Content = termDto.Content
+                };
+
+                productTerms.Add(term);
+            }
+
+            await ProductDao.Instance.UpdateProductTerm(product, productTerms);
+        }
     }
 }

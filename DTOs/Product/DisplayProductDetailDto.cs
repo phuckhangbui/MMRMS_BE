@@ -33,6 +33,8 @@
 
         public IEnumerable<ComponentProductDto>? ComponentProductList { get; set; }
 
+        public IEnumerable<ProductTermDto>? ProductTermList { get; set; }
+
     }
 
     public class ProductAttributeDto
@@ -46,6 +48,18 @@
         public string? Specifications { get; set; }
 
         public string? Unit { get; set; }
+
+    }
+
+    public class ProductTermDto
+    {
+        public int ProductTermId { get; set; }
+
+        public int? ProductId { get; set; }
+
+        public string? Title { get; set; }
+
+        public string? Content { get; set; }
 
     }
 }
