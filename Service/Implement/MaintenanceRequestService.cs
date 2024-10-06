@@ -27,11 +27,6 @@ namespace Service.Implement
 
         public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
         {
-            if (!await _serialNumberProductRepository.IsSerialNumberExist(createMaintenanceRequestDto.SerialNumber))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
-            }
-
             var contract = await _contractRepository.GetContractDetailById(createMaintenanceRequestDto.ContractId);
 
             if (contract == null)

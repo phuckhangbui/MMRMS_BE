@@ -14,8 +14,6 @@ public partial class SerialNumberProduct
 
     public int? RentTimeCounter { get; set; }
 
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
-
     public virtual Product? Product { get; set; }
 
     public virtual ICollection<ProductComponentStatus> ProductComponentStatuses { get; set; } = new List<ProductComponentStatus>();

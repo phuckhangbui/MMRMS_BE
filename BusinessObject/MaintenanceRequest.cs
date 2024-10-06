@@ -6,8 +6,6 @@ public partial class MaintenanceRequest
 
     public string? ContractId { get; set; }
 
-    public string? SerialNumber { get; set; }
-
     public string? Note { get; set; }
 
     public string? Status { get; set; }
@@ -18,5 +16,4 @@ public partial class MaintenanceRequest
 
     public virtual ICollection<RequestDateResponse> RequestDateResponses { get; set; } = new List<RequestDateResponse>();
 
-    public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
 }

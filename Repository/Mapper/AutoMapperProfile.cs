@@ -205,10 +205,6 @@ namespace Repository.Mapper
                            ? src.Component.ComponentName
                            : null));
 
-            CreateMap<Log, AccountLogDto>();
-            CreateMap<Log, LogDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountLog != null ? src.AccountLog.Name : string.Empty))
-                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.AccountLog != null ? src.AccountLog.Phone : string.Empty));
             CreateMap<LogDetail, LogDetailDto>();
         }
     }

@@ -51,8 +51,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
-    public virtual DbSet<Log> Logs { get; set; }
-
     public virtual DbSet<LogDetail> LogDetails { get; set; }
 
     public virtual DbSet<MaintenanceTicket> MaintenanceTickets { get; set; }
@@ -132,34 +130,10 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey<AccountBusiness>(d => d.AccountBusinessId)
                 .HasConstraintName("FK_Account_AccountBusiness");
 
-            entity.HasOne(d => d.Log)
-               .WithOne(p => p.AccountLog)
-               .HasForeignKey<Account>(d => d.LogId)
-               .HasConstraintName("FK_Account_Log");
-
-            entity.HasOne(d => d.Log)
-       .WithOne(p => p.AccountLog)
-       .HasForeignKey<Log>(d => d.AccountLogId)
-       .HasConstraintName("FK_Account_Log");
         });
 
 
-        modelBuilder.Entity<Log>(entity =>
-        {
-            entity.HasKey(e => e.LogId);
 
-            entity.ToTable("Log");
-
-            entity.Property(e => e.LogId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.AccountLog)
-       .WithOne(p => p.Log)
-       .HasForeignKey<Log>(d => d.AccountLogId)
-       .OnDelete(DeleteBehavior.Cascade)
-       .HasConstraintName("FK_Log_Account");
-        });
 
         modelBuilder.Entity<AccountBusiness>(entity =>
         {
@@ -475,9 +449,9 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Log).WithMany(p => p.LogDetails)
-                .HasForeignKey(d => d.LogId)
-                .HasConstraintName("FK_LogDetail_LogID");
+            entity.HasOne(d => d.Account).WithMany(p => p.LogDetails)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_LogDetail_AccountID");
         });
 
         modelBuilder.Entity<MaintenanceTicket>(entity =>
@@ -526,10 +500,6 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceRequests)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_MaintenanceRequest_Contract");
-
-            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintenanceRequests)
-                .HasForeignKey(d => d.SerialNumber)
-                .HasConstraintName("FK_MaintenanceRequest_SerialNumberProduct");
         });
 
         modelBuilder.Entity<Notification>(entity =>
