@@ -33,6 +33,24 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("latest")]
+        public async Task<ActionResult<IEnumerable<ProductReviewDto>>> GetTop8LatestProducts()
+        {
+            try
+            {
+                var products = await _productService.GetTop8LatestProductList();
+                return Ok(products);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{productId}")]
         public async Task<ActionResult<DisplayProductDetailDto>> GetProductDetail([FromRoute] int productId)
         {

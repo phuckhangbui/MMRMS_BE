@@ -6,13 +6,10 @@ namespace Service.Interface
     public interface IProductService
     {
         Task<IEnumerable<ProductDto>> GetProductList();
-
+        Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList();
         Task<DisplayProductDetailDto> GetProductDetailDto(int productId);
-
         Task<IEnumerable<SerialNumberProductDto>> GetSerialProductList(int productId);
-
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
-
         Task DeleteProduct(int productId);
         Task UpdateProductStatus(int productId, string status);
         Task UpdateProductAttribute(int productId, IEnumerable<CreateProductAttributeDto> productAttributeDtos);

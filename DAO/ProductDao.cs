@@ -376,5 +376,18 @@ namespace DAO
                 }
             }
         }
+
+        public async Task<IEnumerable<Product>> GetTop8LatestProducts()
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Products
+                    .Where(p => p.Status!.Equals(ProductStatusEnum.Active.ToString()))
+                    .Include(p => p.ProductImages)
+                    .OrderByDescending(p => p.DateCreate)
+                    .Take(8)
+                    .ToListAsync();
+            }
+        }
     }
 }
