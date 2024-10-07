@@ -108,23 +108,23 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{taskId}")]
-        [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> DeleteEmployeeTask([FromRoute] int taskId)
-        {
-            try
-            {
-                await _employeeTaskService.DeleteEmployeeTask(taskId);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //[HttpDelete("{taskId}")]
+        //[Authorize(Policy = "Manager")]
+        //public async Task<IActionResult> DeleteEmployeeTask([FromRoute] int taskId)
+        //{
+        //    try
+        //    {
+        //        await _employeeTaskService.DeleteEmployeeTask(taskId);
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
     }
 }

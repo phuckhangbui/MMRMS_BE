@@ -32,7 +32,7 @@ namespace Repository.Implement
                 DateCreate = DateTime.Now,
             };
 
-            await AccountLogDetailDao.Instance.UpdateAsync(detail);
+            await AccountLogDetailDao.Instance.CreateAsync(detail);
         }
     }
 }

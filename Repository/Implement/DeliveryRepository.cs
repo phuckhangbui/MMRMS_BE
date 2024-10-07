@@ -34,7 +34,7 @@ namespace Repository.Implement
             var deliveryLog = new DeliveryLog
             {
                 DeliveryId = delivery.DeliveryId,
-                AccountId = managerId,
+                AccountTriggerId = managerId,
                 DateCreate = DateTime.Now,
                 Action = action,
             };
@@ -87,7 +87,7 @@ namespace Repository.Implement
             var deliveryLog = new DeliveryLog
             {
                 DeliveryId = deliveryId,
-                AccountId = accountId,
+                AccountTriggerId = accountId,
                 DateCreate = DateTime.Now,
                 Action = action,
             };

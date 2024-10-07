@@ -44,7 +44,7 @@ namespace Service.Implement
             var deliveryList = await _deliveryRepository.GetDeliveriesOfStaffInADay(assignDeliveryDto.StaffId, assignDeliveryDto.DateShip)
                                ?? Enumerable.Empty<DeliveryDto>();
 
-            var taskCounter = taskList.Count() + deliveryList.Count();
+            int taskCounter = taskList.Count() + deliveryList.Count();
 
 
             if (taskCounter >= GlobalConstant.MaxTaskLimitADayContract)

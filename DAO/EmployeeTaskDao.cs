@@ -1,5 +1,5 @@
-﻿using BusinessObject;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using EmployeeTask = BusinessObject.EmployeeTask;
 
 namespace DAO
 {
@@ -41,6 +41,12 @@ namespace DAO
             }
         }
 
+        //public async Task CreateTaskWithRequest(EmployeeTask task, RequestResponse requestResponse)
+        //{
+        //    using (var context = new MmrmsContext())
+        //    {
 
+        //    }
+        //}
     }
 }

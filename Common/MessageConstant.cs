@@ -300,10 +300,16 @@
             public const string TaskNotFound = "Mã công việc này không tồn tại";
             public const string StatusCannotSet = "Tình trạng công việc này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
-            public const string CannotDeleted = "Trạng thái này không tồn tại";
+            public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
 
             //DTO
+            public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
+            public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
+            public const string TaskContentRequired = "Nội dung công việc là bắt buộc";
+            public const string TitleRequired = "Tên công việc là bắt buộc";
+            public const string DateStartRequired = "Ngày làm việc là bắt buộc";
+
         }
 
         public static class MaintanningTicket

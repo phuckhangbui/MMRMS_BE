@@ -12,5 +12,7 @@ namespace Service.Interface
         Task ChangeAccountStatus(int accountId, string status);
         Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
         Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId);
+
+        Task<AccountDto> GetAccount(int accountId);
     }
 }

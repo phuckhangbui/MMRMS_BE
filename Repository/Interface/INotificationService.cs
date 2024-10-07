@@ -9,5 +9,7 @@ namespace Service.Interface
         Task MarkNotificationAsRead(int id);
         Task<IEnumerable<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId);
         Task SendToManagerWhenCustomerCreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto);
+        Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status);
+        Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status);
     }
 }

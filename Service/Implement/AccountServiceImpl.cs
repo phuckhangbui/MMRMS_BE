@@ -118,5 +118,12 @@ namespace Service.Implement
         {
             return await _accountRepository.GetCustomerAccounts();
         }
+
+        public async Task<AccountDto> GetAccount(int accountId)
+        {
+            var account = await _accountRepository.GetAccounById(accountId);
+
+            return account;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common.Enum;
 using DAO;
 using DTOs.EmployeeTask;
 using Repository.Interface;
@@ -8,7 +9,65 @@ namespace Repository.Implement
 {
     public class EmployeeTaskRepository : IEmployeeTaskRepository
     {
+        private readonly IAccountRepository _accountRepository;
+        private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
         private readonly IMapper _mapper;
+
+        public EmployeeTaskRepository(IMapper mapper, IAccountRepository accountRepository, IMaintenanceRequestRepository maintenanceRequestRepository)
+        {
+            _mapper = mapper;
+            _accountRepository = accountRepository;
+            _maintenanceRequestRepository = maintenanceRequestRepository;
+        }
+
+        public async Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskDto createEmployeeTaskDto)
+        {
+            var staffAccount = await _accountRepository.GetAccounById(createEmployeeTaskDto.StaffId);
+
+            var request = await _maintenanceRequestRepository.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
+
+            var now = DateTime.Now;
+            var requestResponse = new RequestResponse
+            {
+                RequestId = createEmployeeTaskDto.RequestId,
+                DateCreate = now,
+                DateResponse = createEmployeeTaskDto.DateStart,
+                Action = $"Create new employee task"
+            };
+
+            requestResponse = await RequestResponseDao.Instance.CreateAsync(requestResponse);
+
+            var task = new EmployeeTask
+            {
+                TaskTitle = createEmployeeTaskDto.TaskTitle,
+                Content = createEmployeeTaskDto.TaskContent,
+                StaffId = createEmployeeTaskDto.StaffId,
+                ManagerId = managerId,
+                Type = EmployeeTaskTypeEnum.MaintenanceRequest.ToString(),
+                DateCreate = now,
+                DateStart = createEmployeeTaskDto.DateStart,
+                Status = EmployeeTaskStatusEnum.Assigned.ToString(),
+                Note = createEmployeeTaskDto.Note,
+                RequestResponseId = requestResponse.RequestId,
+            };
+
+            var taskLog = new TaskLog
+            {
+                EmployeeTaskId = task.EmployeeTaskId,
+                Action = $"Create and assign task to staff name {staffAccount.Name}",
+                DateCreate = now,
+                AccountTriggerId = managerId,
+            };
+
+            task.TaskLogs.Add(taskLog);
+
+            task = await EmployeeTaskDao.Instance.CreateAsync(task);
+
+            requestResponse.EmployeeTaskId = task.EmployeeTaskId;
+
+            await RequestResponseDao.Instance.UpdateAsync(requestResponse);
+        }
+
         public async Task Delete(int taskId)
         {
             var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTask(taskId);
@@ -65,7 +124,7 @@ namespace Repository.Implement
             var taskLog = new TaskLog
             {
                 EmployeeTaskId = employeeTaskId,
-                AccountId = accountId,
+                AccountTriggerId = accountId,
                 DateCreate = DateTime.Now,
                 Action = action,
             };
