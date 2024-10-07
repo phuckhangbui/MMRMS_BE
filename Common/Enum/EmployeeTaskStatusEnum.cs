@@ -8,4 +8,10 @@
         Success,
         Failed
     }
+
+    public enum EmployeeTaskTypeEnum
+    {
+        MaintenanceRequest,
+        MaintenaceTicket
+    }
 }

@@ -6,7 +6,7 @@
 
         public int? DeliveryId { get; set; }
 
-        public int? AccountId { get; set; }
+        public int? AccountTriggerId { get; set; }
 
         public string? Action { get; set; }
 

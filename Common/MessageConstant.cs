@@ -304,6 +304,12 @@
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
 
             //DTO
+            public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
+            public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
+            public const string TaskContentRequired = "Nội dung công việc là bắt buộc";
+            public const string TitleRequired = "Tên công việc là bắt buộc";
+            public const string DateStartRequired = "Ngày làm việc là bắt buộc";
+
         }
 
         public static class MaintanningTicket

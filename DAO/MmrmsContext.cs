@@ -738,7 +738,7 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_TaskLog_TaskID");
 
             entity.HasOne(d => d.AccountTrigger).WithMany(p => p.TaskLogs)
-                .HasForeignKey(d => d.AccountId)
+                .HasForeignKey(d => d.AccountTriggerId)
 
                 .HasConstraintName("FK_TaskLog_AccountID");
         });
@@ -758,7 +758,7 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_DeliveryLog_DeliveryID");
 
             entity.HasOne(d => d.AccountTrigger).WithMany(p => p.DeliveryLogs)
-                .HasForeignKey(d => d.AccountId)
+                .HasForeignKey(d => d.AccountTriggerId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_DeliveryLog_AccountID");
         });

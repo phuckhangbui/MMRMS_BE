@@ -5,6 +5,7 @@ namespace Repository.Interface
 {
     public interface IEmployeeTaskRepository
     {
+        Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskDto createEmployeeTaskDto);
         Task Delete(int taskId);
         Task<EmployeeTaskDto> GetEmployeeTask(int taskId);
         Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTaskByStaff(int staffId);
