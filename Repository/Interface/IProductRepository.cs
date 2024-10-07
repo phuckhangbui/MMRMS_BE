@@ -6,13 +6,12 @@ namespace Repository.Interface
     public interface IProductRepository
     {
         Task<IEnumerable<ProductDto>> GetProductList();
+        Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList();
         Task<bool> IsProductExisted(int productId);
         Task<bool> IsProductExisted(string name);
         Task<bool> IsProductModelExisted(string model);
         Task<DisplayProductDetailDto> GetProductDetail(int productId);
-
         Task<IEnumerable<SerialNumberProductDto>> GetProductNumberList(int productId);
-
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
         Task<ProductDto> GetProduct(int productId);
         Task UpdateProduct(ProductDto productDto);

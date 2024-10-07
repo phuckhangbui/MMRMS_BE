@@ -294,5 +294,10 @@ namespace Service.Implement
 
             await _productRepository.UpdateProductTerm(productId, productTermDtos);
         }
+
+        public async Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList()
+        {
+            return await _productRepository.GetTop8LatestProductList();
+        }
     }
 }
