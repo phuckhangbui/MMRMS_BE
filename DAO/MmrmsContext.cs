@@ -661,11 +661,11 @@ public partial class MmrmsContext : DbContext
 
         modelBuilder.Entity<RequestResponse>(entity =>
         {
-            entity.HasKey(e => e.ResponseDateId);
+            entity.HasKey(e => e.RequestResponseId);
 
             entity.ToTable("RequestResponse");
 
-            entity.Property(e => e.ResponseDateId)
+            entity.Property(e => e.RequestResponseId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
