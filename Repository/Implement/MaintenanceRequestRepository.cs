@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BusinessObject;
+using Common.Enum;
 using DAO;
 using DTOs.MaintenanceRequest;
 using Repository.Interface;
@@ -14,9 +16,17 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
+        public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
         {
-            throw new NotImplementedException();
+            var request = new MaintenanceRequest
+            {
+                ContractId = createMaintenanceRequestDto.ContractId,
+                Note = createMaintenanceRequestDto.Note,
+                Status = MaintenanceRequestStatusEnum.Processing.ToString(),
+                DateCreate = DateTime.Now
+            };
+
+            await MaintenanceRequestDao.Instance.CreateAsync(request);
         }
 
         public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()
