@@ -2,7 +2,7 @@
 
 public partial class RequestResponse
 {
-    public int ResponseDateId { get; set; }
+    public int RequestResponseId { get; set; }
 
     public int? RequestId { get; set; }
 

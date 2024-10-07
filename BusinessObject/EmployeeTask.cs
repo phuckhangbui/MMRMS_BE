@@ -34,7 +34,7 @@ public partial class EmployeeTask
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual RequestResponse RequestResponse { get; set; }
+    public virtual RequestResponse? RequestResponse { get; set; }
 
     public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
 
