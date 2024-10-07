@@ -14,9 +14,9 @@ public partial class Contract
 
     public string? RentingRequestId { get; set; }
 
-    public double? TotalRentPrice { get; set; }
+    public double? RentPrice { get; set; }
 
-    public double? TotalDepositPrice { get; set; }
+    public double? DepositPrice { get; set; }
 
     public double? ShippingPrice { get; set; }
 
@@ -38,6 +38,10 @@ public partial class Contract
 
     public string? Status { get; set; }
 
+    public string? SerialNumber { get; set; }
+
+    public virtual SerialNumberProduct? ContractSerialNumberProduct { get; set; }
+
     public virtual Account? AccountSign { get; set; }
 
     public virtual Account? AccountCreate { get; set; }
@@ -58,7 +62,7 @@ public partial class Contract
 
     public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
 
-    public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
+    //public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
 
     public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 }

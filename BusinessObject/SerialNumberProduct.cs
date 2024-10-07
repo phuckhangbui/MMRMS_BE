@@ -18,7 +18,7 @@ public partial class SerialNumberProduct
 
     public virtual ICollection<ProductComponentStatus> ProductComponentStatuses { get; set; } = new List<ProductComponentStatus>();
 
-    public virtual ICollection<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; } = new List<ContractSerialNumberProduct>();
+    public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
     public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
 
 }

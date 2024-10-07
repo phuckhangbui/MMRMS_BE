@@ -1,5 +1,5 @@
 ﻿using DTOs.AccountAddressDto;
-using DTOs.Address;
+using DTOs.Contract;
 
 namespace DTOs.RentingRequest
 {
@@ -20,11 +20,12 @@ namespace DTOs.RentingRequest
         public bool? IsOnetimePayment { get; set; }
         public string? Note { get; set; }
         public string? Status { get; set; }
-        public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
+        //public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
-        public AddressDto Address { get; set; }
+        //public AddressDto Address { get; set; }
         public AccountBusinessDto AccountBusiness { get; set; }
+        public List<ContractDto> Contracts { get; set; }
     }
 
     public class RentingRequestProductDetailDto

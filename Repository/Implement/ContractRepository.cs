@@ -32,6 +32,7 @@ namespace Repository.Implement
             return [];
         }
 
+        //TODO: Remove not use properties
         public async Task<ContractDetailDto?> GetContractDetailById(string contractId)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
@@ -41,20 +42,20 @@ namespace Repository.Implement
 
                 var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contract.RentingRequestId!);
                 contractDetailDto.IsOnetimePayment = (bool)rentingRequest.IsOnetimePayment!;
-                contractDetailDto.Name = rentingRequest.AccountOrder!.Name!;
+                //contractDetailDto.Name = rentingRequest.AccountOrder!.Name!;
                 contractDetailDto.AccountOrder = _mapper.Map<AccountOrderDto>(rentingRequest.AccountOrder);
-                contractDetailDto.ServiceRentingRequests = _mapper.Map<List<ServiceRentingRequestDto>>(rentingRequest.ServiceRentingRequests);
-                contractDetailDto.ContractProductDetails = _mapper.Map<List<ContractProductDetailDto>>(rentingRequest.RentingRequestProductDetails);
+                //contractDetailDto.ServiceRentingRequests = _mapper.Map<List<ServiceRentingRequestDto>>(rentingRequest.ServiceRentingRequests);
+                //contractDetailDto.ContractProductDetails = _mapper.Map<List<ContractProductDetailDto>>(rentingRequest.RentingRequestProductDetails);
 
-                var contractSerailNumberProducts = await ContractSerialNumberProductDao.Instance.GetContractSerialNumberProductsByContractId(contractId);
-                foreach (var product in contractSerailNumberProducts)
-                {
-                    var productId = product.SerialNumberProduct!.ProductId;
-                    var contractProduct = contractDetailDto.ContractProductDetails.Find(x => x.ProductId == productId);
+                //var contractSerailNumberProducts = await ContractSerialNumberProductDao.Instance.GetContractSerialNumberProductsByContractId(contractId);
+                //foreach (var product in contractSerailNumberProducts)
+                //{
+                //    var productId = product.SerialNumberProduct!.ProductId;
+                //    var contractProduct = contractDetailDto.ContractProductDetails.Find(x => x.ProductId == productId);
 
-                    var contractSerialNumberProduct = _mapper.Map<ContractSerialNumberProductDto>(product);
-                    contractProduct!.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
-                }
+                //    var contractSerialNumberProduct = _mapper.Map<ContractSerialNumberProductDto>(product);
+                //    contractProduct!.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+                //}
 
                 return contractDetailDto;
             }
@@ -74,6 +75,7 @@ namespace Repository.Implement
             return [];
         }
 
+        //TODO: Remove
         public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
@@ -91,7 +93,6 @@ namespace Repository.Implement
             };
             contract.ContractAddress = contractAddress;
 
-            //TODO
             var isOneTimePayment = rentingRequest.IsOnetimePayment;
             if ((bool)isOneTimePayment!)
             {
@@ -143,7 +144,7 @@ namespace Repository.Implement
             await ContractDao.Instance.CreateContract(contract, contractRequestDto);
 
             //Update renting request
-            rentingRequest.ContractId = contract.ContractId;
+            //rentingRequest.ContractId = contract.ContractId;
             rentingRequest.Status = RentingRequestStatusEnum.Approved.ToString();
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
 

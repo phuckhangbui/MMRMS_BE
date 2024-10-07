@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241006122915_removeContractSerialNumberProductTable")]
+    partial class removeContractSerialNumberProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,7 +360,9 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SerialNumber")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumberProductSerialNumber")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<double?>("ShippingPrice")
@@ -375,9 +380,10 @@ namespace DAO.Migrations
                     b.HasIndex("ContractAddressId")
                         .IsUnique();
 
-                    b.HasIndex("RentingRequestId");
+                    b.HasIndex("RentingRequestId")
+                        .IsUnique();
 
-                    b.HasIndex("SerialNumber");
+                    b.HasIndex("SerialNumberProductSerialNumber");
 
                     b.ToTable("Contract", (string)null);
                 });
@@ -1091,6 +1097,9 @@ namespace DAO.Migrations
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
@@ -1411,18 +1420,15 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_ContractAddress_Contract");
 
                     b.HasOne("BusinessObject.RentingRequest", "RentingRequest")
-                        .WithMany("Contracts")
-                        .HasForeignKey("RentingRequestId")
+                        .WithOne("Contract")
+                        .HasForeignKey("BusinessObject.Contract", "RentingRequestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_RentingRequest_Contract");
 
-                    b.HasOne("BusinessObject.SerialNumberProduct", "ContractSerialNumberProduct")
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
                         .WithMany("Contracts")
-                        .HasForeignKey("SerialNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Contract_SerialNumberProduct");
+                        .HasForeignKey("SerialNumberProductSerialNumber");
 
                     b.Navigation("AccountCreate");
 
@@ -1430,9 +1436,9 @@ namespace DAO.Migrations
 
                     b.Navigation("ContractAddress");
 
-                    b.Navigation("ContractSerialNumberProduct");
-
                     b.Navigation("RentingRequest");
+
+                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.ContractPayment", b =>
@@ -1929,7 +1935,7 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.RentingRequest", b =>
                 {
-                    b.Navigation("Contracts");
+                    b.Navigation("Contract");
 
                     b.Navigation("RentingRequestProductDetails");
 

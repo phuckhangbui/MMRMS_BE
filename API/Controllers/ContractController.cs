@@ -72,30 +72,30 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
-        [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> CreateContract([FromBody] ContractRequestDto contractRequestDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
-                return BadRequest(errorMessages);
-            }
+        //[HttpPost]
+        //[Authorize(Policy = "Manager")]
+        //public async Task<ActionResult> CreateContract([FromBody] ContractRequestDto contractRequestDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+        //        return BadRequest(errorMessages);
+        //    }
 
-            try
-            {
-                int managerId = GetLoginAccountId();
-                var contractId = await _contractService.CreateContract(managerId, contractRequestDto);
-                return Created("", new { contract = contractId });
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        int managerId = GetLoginAccountId();
+        //        var contractId = await _contractService.CreateContract(managerId, contractRequestDto);
+        //        return Created("", new { contract = contractId });
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
     }
 }
