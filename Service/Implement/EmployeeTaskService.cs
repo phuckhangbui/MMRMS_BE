@@ -13,41 +13,41 @@ namespace Service.Implement
     public class EmployeeTaskService : IEmployeeTaskService
     {
         private readonly IEmployeeTaskRepository _employeeTaskRepository;
-        private readonly IAccountService _accountService;
+        private readonly IAccountRepository _accountRepository;
         private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
         private readonly IDeliveryRepository _deliveryRepository;
         private readonly INotificationService _notificationService;
         private readonly IHubContext<EmployeeTaskHub> _employeeTaskHub;
 
-        public EmployeeTaskService(IEmployeeTaskRepository employeeTaskRepository, IHubContext<EmployeeTaskHub> employeeTaskHub, INotificationService notificationService, IAccountService accountService, IMaintenanceRequestRepository maintenanceRequestRepository, IDeliveryRepository deliveryRepository)
+        public EmployeeTaskService(IEmployeeTaskRepository employeeTaskRepository, IHubContext<EmployeeTaskHub> employeeTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMaintenanceRequestRepository maintenanceRequestRepository, IDeliveryRepository deliveryRepository)
         {
             _employeeTaskRepository = employeeTaskRepository;
             _employeeTaskHub = employeeTaskHub;
             _notificationService = notificationService;
-            _accountService = accountService;
+            _accountRepository = accountRepository;
             _maintenanceRequestRepository = maintenanceRequestRepository;
             _deliveryRepository = deliveryRepository;
         }
 
         public async Task CreateEmployeeTask(int managerId, CreateEmployeeTaskDto createEmployeeTaskDto)
         {
-            var staff = await _accountService.GetAccount(createEmployeeTaskDto.StaffId);
+            var staff = await _accountRepository.GetAccounById(createEmployeeTaskDto.StaffId);
 
             if (staff == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
-            var request = await _maintenanceRequestRepository.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
+            var requestDto = await _maintenanceRequestRepository.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
 
-            if (request == null)
+            if (requestDto == null)
             {
                 throw new ServiceException(MessageConstant.MaintenanceRequest.RequestNotFound);
             }
             var staffTaskList = await _employeeTaskRepository.GetTaskOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
-            ?? Enumerable.Empty<EmployeeTaskDto>();
+                                        ?? Enumerable.Empty<EmployeeTaskDto>();
             var staffDeliveryList = await _deliveryRepository.GetDeliveriesOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
-            ?? Enumerable.Empty<DeliveryDto>();
+                                        ?? Enumerable.Empty<DeliveryDto>();
 
             int taskCounter = staffDeliveryList.Count() + staffTaskList.Count();
 
@@ -58,8 +58,7 @@ namespace Service.Implement
 
             await _employeeTaskRepository.CreateEmployeeTaskWithRequest(managerId, createEmployeeTaskDto);
 
-            //send notif
-
+            await _notificationService.SendNotificationToStaffWhenAssignTaskToMaintenance(createEmployeeTaskDto.StaffId, requestDto.ContractAddress, createEmployeeTaskDto.DateStart);
 
             await _employeeTaskHub.Clients.All.SendAsync("OnCreateEmployeeTask");
         }
@@ -104,7 +103,7 @@ namespace Service.Implement
         {
             var employeeTask = await _employeeTaskRepository.GetEmployeeTask(employeeTaskId);
 
-            var account = await _accountService.GetAccount(accountId);
+            var account = await _accountRepository.GetAccounById(accountId);
 
             if (employeeTask == null)
             {
