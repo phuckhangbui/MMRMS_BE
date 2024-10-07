@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241006125306_updateRelationshipBetweenContractAndSerialNumberProduct")]
+    partial class updateRelationshipBetweenContractAndSerialNumberProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,7 +378,8 @@ namespace DAO.Migrations
                     b.HasIndex("ContractAddressId")
                         .IsUnique();
 
-                    b.HasIndex("RentingRequestId");
+                    b.HasIndex("RentingRequestId")
+                        .IsUnique();
 
                     b.HasIndex("SerialNumber");
 
@@ -566,10 +570,6 @@ namespace DAO.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RequestResponseId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<int?>("StaffId")
                         .HasColumnType("int");
 
@@ -587,9 +587,6 @@ namespace DAO.Migrations
                     b.HasIndex("ContractId");
 
                     b.HasIndex("ManagerId");
-
-                    b.HasIndex("RequestResponseId")
-                        .IsUnique();
 
                     b.HasIndex("StaffId");
 
@@ -1098,6 +1095,9 @@ namespace DAO.Migrations
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
@@ -1224,7 +1224,7 @@ namespace DAO.Migrations
                     b.ToTable("Report", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.RequestResponse", b =>
+            modelBuilder.Entity("BusinessObject.RequestDateResponse", b =>
                 {
                     b.Property<int>("ResponseDateId")
                         .ValueGeneratedOnAdd()
@@ -1232,26 +1232,23 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseDateId"));
 
-                    b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateResponse")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeTaskId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("RequestId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ResponseDateId");
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("RequestResponse", (string)null);
+                    b.ToTable("RequestDateResponse", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
@@ -1421,8 +1418,8 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_ContractAddress_Contract");
 
                     b.HasOne("BusinessObject.RentingRequest", "RentingRequest")
-                        .WithMany("Contracts")
-                        .HasForeignKey("RentingRequestId")
+                        .WithOne("Contract")
+                        .HasForeignKey("BusinessObject.Contract", "RentingRequestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_RentingRequest_Contract");
@@ -1512,13 +1509,6 @@ namespace DAO.Migrations
                         .HasForeignKey("ManagerId")
                         .HasConstraintName("FK_Task_Manager");
 
-                    b.HasOne("BusinessObject.RequestResponse", "RequestResponse")
-                        .WithOne("EmployeeTask")
-                        .HasForeignKey("BusinessObject.EmployeeTask", "RequestResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Task_Response");
-
                     b.HasOne("BusinessObject.Account", "Staff")
                         .WithMany("TaskReceivedList")
                         .HasForeignKey("StaffId")
@@ -1527,8 +1517,6 @@ namespace DAO.Migrations
                     b.Navigation("Contract");
 
                     b.Navigation("Manager");
-
-                    b.Navigation("RequestResponse");
 
                     b.Navigation("Staff");
                 });
@@ -1755,12 +1743,12 @@ namespace DAO.Migrations
                     b.Navigation("EmployeeTask");
                 });
 
-            modelBuilder.Entity("BusinessObject.RequestResponse", b =>
+            modelBuilder.Entity("BusinessObject.RequestDateResponse", b =>
                 {
                     b.HasOne("BusinessObject.MaintenanceRequest", "Request")
-                        .WithMany("RequestResponses")
+                        .WithMany("RequestDateResponses")
                         .HasForeignKey("RequestId")
-                        .HasConstraintName("FK_RequestResponse_MaintenanceRequest");
+                        .HasConstraintName("FK_RequestDateResponse_MaintenanceRequest");
 
                     b.Navigation("Request");
                 });
@@ -1913,7 +1901,7 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
                 {
-                    b.Navigation("RequestResponses");
+                    b.Navigation("RequestDateResponses");
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
@@ -1948,7 +1936,7 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.RentingRequest", b =>
                 {
-                    b.Navigation("Contracts");
+                    b.Navigation("Contract");
 
                     b.Navigation("RentingRequestProductDetails");
 
@@ -1958,11 +1946,6 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.RentingService", b =>
                 {
                     b.Navigation("ServiceRentingRequests");
-                });
-
-            modelBuilder.Entity("BusinessObject.RequestResponse", b =>
-                {
-                    b.Navigation("EmployeeTask");
                 });
 
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>

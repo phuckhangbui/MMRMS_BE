@@ -1,6 +1,4 @@
-﻿using BusinessObject;
-using Common;
-using Common.Enum;
+﻿using Common.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
 using Contract = BusinessObject.Contract;
@@ -63,6 +61,7 @@ namespace DAO
             }
         }
 
+        //TODO: Remove
         public async Task CreateContract(Contract contract, ContractRequestDto contractRequestDto)
         {
             using (var context = new MmrmsContext())
@@ -80,16 +79,15 @@ namespace DAO
                                 .Include(s => s.Product)
                                 .FirstOrDefaultAsync(s => s.ProductId == rentSerialNumberProduct.ProductId && s.SerialNumber.Equals(rentSerialNumberProduct.SerialNumber));
 
-                            //TODO
-                            var contractSerialNumberProduct = new ContractSerialNumberProduct()
-                            {
-                                SerialNumber = rentSerialNumberProduct.SerialNumber,
-                                DepositPrice = serialNumberProduct!.Product!.ProductPrice * GlobalConstant.DepositValue,
-                                RentPrice = serialNumberProduct!.ActualRentPrice ?? 0,
-                            };
-                            contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
-                            totalDepositPrice += (double)contractSerialNumberProduct.DepositPrice!;
-                            totalRentPrice += (double)contractSerialNumberProduct.RentPrice;
+                            //var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                            //{
+                            //    SerialNumber = rentSerialNumberProduct.SerialNumber,
+                            //    DepositPrice = serialNumberProduct!.Product!.ProductPrice * GlobalConstant.DepositValue,
+                            //    RentPrice = serialNumberProduct!.ActualRentPrice ?? 0,
+                            //};
+                            //contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
+                            //totalDepositPrice += (double)contractSerialNumberProduct.DepositPrice!;
+                            //totalRentPrice += (double)contractSerialNumberProduct.RentPrice;
 
                             serialNumberProduct!.Status = SerialNumberProductStatusEnum.Rented.ToString();
                             serialNumberProduct.RentTimeCounter++;
@@ -99,13 +97,12 @@ namespace DAO
 
                         var rentingRequest = await context.RentingRequests.FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(contract.RentingRequestId));
 
-                        //TODO
-                        contract.TotalDepositPrice = totalDepositPrice;
-                        contract.TotalRentPrice = totalRentPrice;
+                        contract.DepositPrice = totalDepositPrice;
+                        contract.RentPrice = totalRentPrice;
                         contract.ShippingPrice = rentingRequest!.ShippingPrice;
                         contract.DiscountPrice = rentingRequest.DiscountPrice;
                         contract.DiscountShip = rentingRequest!.DiscountShip;
-                        contract.FinalAmount = contract.TotalDepositPrice + contract.TotalRentPrice + contract.ShippingPrice
+                        contract.FinalAmount = contract.DepositPrice + contract.RentPrice + contract.ShippingPrice
                             - contract.DiscountPrice - contract.DiscountShip;
 
                         DbSet<Contract> _dbSet = context.Set<Contract>();

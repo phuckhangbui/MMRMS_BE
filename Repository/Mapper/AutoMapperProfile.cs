@@ -126,16 +126,16 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
-            CreateMap<Contract, ContractDto>()
-                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountSign.Name));
+            CreateMap<Contract, ContractDto>();
+            //.ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
+            //.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountSign.Name));
             CreateMap<Contract, ContractDetailDto>()
-                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
+                //.ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
-            CreateMap<ContractSerialNumberProduct, ContractSerialNumberProductDto>();
+            //CreateMap<ContractSerialNumberProduct, ContractSerialNumberProductDto>();
 
             CreateMap<AccountBusiness, AccountBusinessDto>();
 

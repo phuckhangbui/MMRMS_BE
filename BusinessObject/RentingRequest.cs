@@ -8,7 +8,7 @@ public partial class RentingRequest
 
     public int? AddressId { get; set; }
 
-    public string? ContractId { get; set; }
+    //public string? ContractId { get; set; }
 
     public DateTime? DateCreate { get; set; }
 
@@ -38,7 +38,7 @@ public partial class RentingRequest
 
     public virtual Address? Address { get; set; }
 
-    public virtual Contract? Contract { get; set; }
+    public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
     public virtual ICollection<RentingRequestProductDetail> RentingRequestProductDetails { get; set; } = new List<RentingRequestProductDetail>();
 

@@ -10,6 +10,7 @@ using DTOs.RentingRequest;
 using DTOs.RentingService;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
+using RentingRequest = BusinessObject.RentingRequest;
 
 namespace Repository.Implement
 {
@@ -26,55 +27,6 @@ namespace Repository.Implement
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByIdAndStatus(rentingRequestId, RentingRequestStatusEnum.Approved.ToString());
             return rentingRequest != null;
-        }
-
-        public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
-        {
-            var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
-            rentingRequest.AccountOrderId = customerId;
-
-            //TODO
-            rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
-            rentingRequest.DateCreate = DateTime.Now;
-            rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
-
-            var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
-
-            //Required renting services
-            var requiredRentingServices = rentingServices.Where(rs => rs.IsOptional == false).ToList();
-            foreach (var requiredRentingService in requiredRentingServices)
-            {
-                var serviceRentingRequest = new ServiceRentingRequest()
-                {
-                    ServicePrice = requiredRentingService.Price,
-                    RentingServiceId = requiredRentingService.RentingServiceId,
-                };
-
-                rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-            }
-
-            //Optional renting services
-            if (newRentingRequestDto.ServiceRentingRequests.Count != 0)
-            {
-                var optionalRentingServices = rentingServices.Where(rs => rs.IsOptional == true).ToList();
-                var optionalServiceRentingRequests = rentingServices
-                    .Where(srr => newRentingRequestDto.ServiceRentingRequests.Contains(srr.RentingServiceId))
-                    .ToList();
-
-                foreach (var optionalRentingService in optionalServiceRentingRequests)
-                {
-                    var serviceRentingRequest = new ServiceRentingRequest()
-                    {
-                        ServicePrice = optionalRentingService.Price,
-                        RentingServiceId = optionalRentingService.RentingServiceId,
-                    };
-
-                    rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-                }
-            }
-
-            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto.AccountPromotionId);
-            return rentingRequest.RentingRequestId;
         }
 
         public async Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId)
@@ -163,6 +115,60 @@ namespace Repository.Implement
         {
             var rentingRequests = await RentingRequestDao.Instance.GetRentingRequestsForCustomer(customerId);
             return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
+        }
+
+        //TODO
+        public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
+        {
+            var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
+            rentingRequest.AccountOrderId = customerId;
+
+            rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            rentingRequest.DateCreate = DateTime.Now;
+            rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
+            rentingRequest.TotalAmount = 0;
+
+            var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
+            double totalRentingServicePrice = 0;
+            //Required renting services
+            var requiredRentingServices = rentingServices.Where(rs => rs.IsOptional == false).ToList();
+            foreach (var requiredRentingService in requiredRentingServices)
+            {
+                var serviceRentingRequest = new ServiceRentingRequest()
+                {
+                    ServicePrice = requiredRentingService.Price,
+                    RentingServiceId = requiredRentingService.RentingServiceId,
+                };
+
+                rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
+                totalRentingServicePrice += (double)requiredRentingService.Price!;
+            }
+
+            //Optional renting services
+            if (newRentingRequestDto.ServiceRentingRequests.Count != 0)
+            {
+                var optionalRentingServices = rentingServices.Where(rs => rs.IsOptional == true).ToList();
+                var optionalServiceRentingRequests = rentingServices
+                    .Where(srr => newRentingRequestDto.ServiceRentingRequests.Contains(srr.RentingServiceId))
+                    .ToList();
+
+                foreach (var optionalRentingService in optionalServiceRentingRequests)
+                {
+                    var serviceRentingRequest = new ServiceRentingRequest()
+                    {
+                        ServicePrice = optionalRentingService.Price,
+                        RentingServiceId = optionalRentingService.RentingServiceId,
+                    };
+
+                    rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
+                    totalRentingServicePrice += (double)optionalRentingService.Price!;
+                }
+            }
+
+            rentingRequest.TotalAmount += totalRentingServicePrice;
+
+            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto.AccountPromotionId, newRentingRequestDto);
+            return rentingRequest.RentingRequestId;
         }
     }
 }

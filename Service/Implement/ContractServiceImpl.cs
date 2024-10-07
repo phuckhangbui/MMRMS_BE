@@ -26,9 +26,9 @@ namespace Service.Implement
             _serialNumberProductRepository = serialNumberProductRepository;
         }
 
+        //TODO: Remove
         public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
-            //TODO
             //Check renting request valid
             //var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
             //if (!isRentingRequestValid)

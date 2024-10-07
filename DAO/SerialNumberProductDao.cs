@@ -61,6 +61,7 @@ namespace DAO
             {
                 return await context.SerialNumberProducts
                     .Where(s => s.ProductId == productId && s.Status.Equals(status))
+                    .OrderByDescending(s => s.DateCreate)
                     .ToListAsync();
             }
         }
@@ -69,7 +70,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.ContractSerialNumberProducts
+                return await context.Contracts
                     .AnyAsync(s => s.SerialNumber.Equals(serialNumber));
             }
         }
