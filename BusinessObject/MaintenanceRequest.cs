@@ -14,6 +14,6 @@ public partial class MaintenanceRequest
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual ICollection<RequestDateResponse> RequestDateResponses { get; set; } = new List<RequestDateResponse>();
+    public virtual ICollection<RequestResponse> RequestResponses { get; set; } = new List<RequestResponse>();
 
 }
