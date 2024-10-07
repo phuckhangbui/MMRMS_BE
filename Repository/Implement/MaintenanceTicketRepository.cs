@@ -16,7 +16,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateTicket(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto)
+        public async Task<MaintenanceTicketDto> CreateTicket(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto)
         {
             var maintenanceTicket = new MaintenanceTicket
             {
@@ -34,7 +34,9 @@ namespace Repository.Implement
             maintenanceTicket.TotalAmount = maintenanceTicket.ComponentPrice + maintenanceTicket.AdditionalFee;
             maintenanceTicket.Status = MaintenanceTicketStatusEnum.Created.ToString();
 
-            await MaintenanceTicketDao.Instance.CreateAsync(maintenanceTicket);
+            maintenanceTicket = await MaintenanceTicketDao.Instance.CreateAsync(maintenanceTicket);
+
+            return _mapper.Map<MaintenanceTicketDto>(maintenanceTicket);
         }
 
         public async Task<IEnumerable<MaintenanceTicketDto>> GetTickets()

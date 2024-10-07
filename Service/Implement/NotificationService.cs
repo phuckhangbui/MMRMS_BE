@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs.Contract;
 using DTOs.MaintenanceRequest;
 using DTOs.Notification;
 using Microsoft.IdentityModel.Tokens;
@@ -86,6 +87,8 @@ namespace Service.Implement
             }
         }
 
+
+
         public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status)
         {
             string title = "Cập nhật trạng thái công việc";
@@ -93,6 +96,132 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.Task.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(staffId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = staffId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", staffId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToStaffWhenAssignTaskToMaintenance(int staffId, ContractAddressDto contractAddress, DateTime dateStart)
+        {
+            string title = "Bạn có thêm một nhiệm vụ kiểm tra máy vào bảo trì mới";
+            string body = $"Kiểm tra máy tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateStart.Date}";
+
+
+            string type = NotificationTypeEnum.Task.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(staffId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = staffId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", staffId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToStaffWhenDeliveryStatusUpdated(int staffId, ContractAddressDto contractAddress, string status)
+        {
+            string title = "Cập nhật trạng thái giao hàng";
+            string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
+
+
+            string type = NotificationTypeEnum.Delivery.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(staffId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = staffId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", staffId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToStaffWhenAssignDelivery(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
+        {
+            string title = "Bạn có thêm một nhiệm vụ giao hàng mới";
+            string body = $"Giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateShip.Date}";
+
+
+            string type = NotificationTypeEnum.Delivery.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
 
             var account = await _accountRepository.GetAccounById(staffId);
@@ -177,6 +306,48 @@ namespace Service.Implement
             }
 
 
+        }
+
+        public async Task SendNotificationToCustomerWhenCreateMaintenanceTicket(int customerId, double totalAmount, string componentName)
+        {
+            string title = "Bạn có ticket thay sửa bộ phận cần được thanh toán";
+            string body = $"Bộ phận {componentName} cần được thay/sửa với tổng giá tiền là {totalAmount}";
+
+
+            string type = NotificationTypeEnum.MaintenanceTicket.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(customerId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = customerId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", customerId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
         }
     }
 }
