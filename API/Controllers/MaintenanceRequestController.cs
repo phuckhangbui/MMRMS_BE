@@ -110,9 +110,15 @@ namespace API.Controllers
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] int maintenanceRequestId, [FromQuery] string status)
         {
+            int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
+
             try
             {
-                await _maintenanceRequestService.UpdateRequestStatus(maintenanceRequestId, status);
+                await _maintenanceRequestService.UpdateRequestStatus(maintenanceRequestId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

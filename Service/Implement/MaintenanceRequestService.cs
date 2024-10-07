@@ -1,9 +1,11 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.MaintenanceRequest;
+using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using Service.SignalRHub;
 
 namespace Service.Implement
 {
@@ -11,18 +13,18 @@ namespace Service.Implement
     {
         private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
 
-        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
-
         private readonly IContractRepository _contractRepository;
 
         private readonly INotificationService _notificationService;
 
-        public MaintenanceRequestService(IMaintenanceRequestRepository maintenanceRequestRepository, ISerialNumberProductRepository serialNumberProductRepository, IContractRepository contractRepository, INotificationService notificationService)
+        private readonly IHubContext<MaintenanceRequestHub> _maintenanceRequestHub;
+
+        public MaintenanceRequestService(IMaintenanceRequestRepository maintenanceRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MaintenanceRequestHub> maintenanceRequestHub)
         {
             _maintenanceRequestRepository = maintenanceRequestRepository;
-            _serialNumberProductRepository = serialNumberProductRepository;
             _contractRepository = contractRepository;
             _notificationService = notificationService;
+            _maintenanceRequestHub = maintenanceRequestHub;
         }
 
         public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
@@ -42,6 +44,8 @@ namespace Service.Implement
             await _maintenanceRequestRepository.CreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
 
             await _notificationService.SendToManagerWhenCustomerCreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
+
+            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequest");
         }
 
         public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()
@@ -59,7 +63,7 @@ namespace Service.Implement
             return await _maintenanceRequestRepository.GetMaintenanceRequestsByContractId(contractId);
         }
 
-        public async Task UpdateRequestStatus(int maintenanceRequestId, string status)
+        public async Task UpdateRequestStatus(int maintenanceRequestId, string status, int accountId)
         {
             var maintenanceDto = await _maintenanceRequestRepository.GetMaintenanceRequest(maintenanceRequestId);
 
@@ -76,6 +80,9 @@ namespace Service.Implement
             //business logic here, fix later
 
             await _maintenanceRequestRepository.UpdateRequestStatus(maintenanceRequestId, status);
+
+
+            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequest");
         }
     }
 }

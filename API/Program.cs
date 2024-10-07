@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Service;
 using Service.Interface;
+using Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,7 @@ builder.Services.AddScoped<IBackgroundService, Service.Implement.BackgroundServi
 
 builder.Services.IdentityServices(builder.Configuration);
 builder.Services.ApplicationServices(builder.Configuration);
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -121,5 +123,11 @@ using (var scope = app.Services.CreateScope())
     //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at TimeZone" + TimeZoneInfo.GetSystemTimeZones(), TimeZoneInfo.Local), "* * * * *");
     //RecurringJob.AddOrUpdate("TestSchedule", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
 }
+
+app.MapHub<DeliveryHub>("/delivery");
+app.MapHub<EmployeeTaskHub>("/employee-task");
+app.MapHub<InvoiceHub>("/invoice");
+app.MapHub<MaintenanceRequestHub>("/maintenance-request");
+app.MapHub<MaintenanceTicketHub>("/maintenance-ticket");
 
 app.Run();
