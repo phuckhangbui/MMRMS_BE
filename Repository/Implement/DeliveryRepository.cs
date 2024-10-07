@@ -60,7 +60,7 @@ namespace Repository.Implement
         {
             var list = await DeliveryDao.Instance.GetDeliveriesForStaff(staffId);
 
-            var filteredList = list.Where(d => d.DateShip.HasValue && d.DateShip.Value.Date == dateShip.Date);
+            var filteredList = list.Where(d => d.DateShip.HasValue && d.DateShip.Value.Date == dateShip.Date).ToList();
 
             return _mapper.Map<IEnumerable<DeliveryDto>>(filteredList);
         }

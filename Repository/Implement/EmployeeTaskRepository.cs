@@ -48,7 +48,8 @@ namespace Repository.Implement
                 DateStart = createEmployeeTaskDto.DateStart,
                 Status = EmployeeTaskStatusEnum.Assigned.ToString(),
                 Note = createEmployeeTaskDto.Note,
-                RequestResponseId = requestResponse.RequestId,
+                RequestResponseId = requestResponse.RequestResponseId,
+                ContractId = request.ContractId
             };
 
             var taskLog = new TaskLog
@@ -98,13 +99,13 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<EmployeeTaskDto>>(list);
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime dateShip)
+        public async Task<IEnumerable<EmployeeTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date)
         {
             var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
 
             var staffList = list.Where(t => t.StaffId == staffId).ToList();
 
-            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateCreate.Value.Date == dateShip.Date);
+            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date).ToList();
 
             return _mapper.Map<IEnumerable<EmployeeTaskDto>>(filteredList);
         }

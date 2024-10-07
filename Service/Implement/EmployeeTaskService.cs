@@ -44,9 +44,9 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.MaintenanceRequest.RequestNotFound);
             }
-            var staffDeliveryList = await _employeeTaskRepository.GetTaskOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
+            var staffTaskList = await _employeeTaskRepository.GetTaskOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
             ?? Enumerable.Empty<EmployeeTaskDto>();
-            var staffTaskList = await _deliveryRepository.GetDeliveriesOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
+            var staffDeliveryList = await _deliveryRepository.GetDeliveriesOfStaffInADay(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart)
             ?? Enumerable.Empty<DeliveryDto>();
 
             int taskCounter = staffDeliveryList.Count() + staffTaskList.Count();
@@ -57,6 +57,11 @@ namespace Service.Implement
             }
 
             await _employeeTaskRepository.CreateEmployeeTaskWithRequest(managerId, createEmployeeTaskDto);
+
+            //send notif
+
+
+            await _employeeTaskHub.Clients.All.SendAsync("OnCreateEmployeeTask");
         }
 
 
