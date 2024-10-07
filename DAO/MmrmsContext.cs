@@ -75,7 +75,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Report> Reports { get; set; }
 
-    public virtual DbSet<RequestDateResponse> RequestDateResponses { get; set; }
+    public virtual DbSet<RequestResponse> RequestResponses { get; set; }
 
     public virtual DbSet<ContractSerialNumberProduct> ContractSerialNumberProducts { get; set; }
 
@@ -653,19 +653,26 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Report_TaskID");
         });
 
-        modelBuilder.Entity<RequestDateResponse>(entity =>
+        modelBuilder.Entity<RequestResponse>(entity =>
         {
             entity.HasKey(e => e.ResponseDateId);
 
-            entity.ToTable("RequestDateResponse");
+            entity.ToTable("RequestResponse");
 
             entity.Property(e => e.ResponseDateId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Request).WithMany(p => p.RequestDateResponses)
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestResponses)
                 .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("FK_RequestDateResponse_MaintenanceRequest");
+                .HasConstraintName("FK_RequestResponse_MaintenanceRequest");
+
+            entity.HasOne(d => d.EmployeeTask)
+                  .WithOne(t => t.RequestResponse)
+                  .HasForeignKey<EmployeeTask>(t => t.RequestResponseId)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .HasConstraintName("FK_Response_Task");
         });
 
         modelBuilder.Entity<ContractSerialNumberProduct>(entity =>
@@ -708,6 +715,11 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Manager).WithMany(p => p.TaskGaveList)
                 .HasForeignKey(d => d.ManagerId)
                 .HasConstraintName("FK_Task_Manager");
+
+            entity.HasOne(d => d.RequestResponse)
+                  .WithOne(t => t.EmployeeTask)
+                  .HasForeignKey<EmployeeTask>(t => t.RequestResponseId)
+                  .HasConstraintName("FK_Task_Response");
         });
 
         modelBuilder.Entity<TaskLog>(entity =>
