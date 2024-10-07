@@ -300,7 +300,7 @@
             public const string TaskNotFound = "Mã công việc này không tồn tại";
             public const string StatusCannotSet = "Tình trạng công việc này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
-            public const string CannotDeleted = "Trạng thái này không tồn tại";
+            public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
 
             //DTO

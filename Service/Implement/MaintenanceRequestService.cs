@@ -45,7 +45,7 @@ namespace Service.Implement
 
             await _notificationService.SendToManagerWhenCustomerCreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
 
-            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequest");
+            await _maintenanceRequestHub.Clients.All.SendAsync("OnCreateMaintenanceRequest");
         }
 
         public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()
@@ -81,8 +81,7 @@ namespace Service.Implement
 
             await _maintenanceRequestRepository.UpdateRequestStatus(maintenanceRequestId, status);
 
-
-            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequest");
+            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequestStatus", maintenanceRequestId);
         }
     }
 }
