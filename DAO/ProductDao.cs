@@ -384,6 +384,7 @@ namespace DAO
                 return await context.Products
                     .Where(p => p.Status!.Equals(ProductStatusEnum.Active.ToString()))
                     .Include(p => p.ProductImages)
+                    .Include(p => p.Category)
                     .OrderByDescending(p => p.DateCreate)
                     .Take(8)
                     .ToListAsync();

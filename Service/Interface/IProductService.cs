@@ -6,7 +6,7 @@ namespace Service.Interface
     public interface IProductService
     {
         Task<IEnumerable<ProductDto>> GetProductList();
-        Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList();
+        Task<IEnumerable<ProductDto>> GetTop8LatestProductList();
         Task<DisplayProductDetailDto> GetProductDetailDto(int productId);
         Task<IEnumerable<SerialNumberProductDto>> GetSerialProductList(int productId);
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);

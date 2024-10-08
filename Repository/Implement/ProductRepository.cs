@@ -290,12 +290,12 @@ namespace Repository.Implement
             await ProductDao.Instance.UpdateProductTerm(product, productTerms);
         }
 
-        public async Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList()
+        public async Task<IEnumerable<ProductDto>> GetTop8LatestProductList()
         {
             var products = await ProductDao.Instance.GetTop8LatestProducts();
             if (!products.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ProductReviewDto>>(products);
+                return _mapper.Map<IEnumerable<ProductDto>>(products);
             }
 
             return [];

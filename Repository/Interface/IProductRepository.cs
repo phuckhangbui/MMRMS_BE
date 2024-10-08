@@ -6,7 +6,7 @@ namespace Repository.Interface
     public interface IProductRepository
     {
         Task<IEnumerable<ProductDto>> GetProductList();
-        Task<IEnumerable<ProductReviewDto>> GetTop8LatestProductList();
+        Task<IEnumerable<ProductDto>> GetTop8LatestProductList();
         Task<bool> IsProductExisted(int productId);
         Task<bool> IsProductExisted(string name);
         Task<bool> IsProductModelExisted(string model);

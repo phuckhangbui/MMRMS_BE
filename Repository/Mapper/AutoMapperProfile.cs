@@ -69,11 +69,6 @@ namespace Repository.Mapper
                          opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
                              ? src.ProductImages
                              : null));
-            CreateMap<Product, ProductReviewDto>()
-                .ForMember(dest => dest.Thumbnail,
-                    opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
-                        ? src.ProductImages.FirstOrDefault(i => i.IsThumbnail == true)!.ProductImageUrl
-                        : null));
             CreateMap<ProductDto, Product>();
 
             CreateMap<UpdateProductDto, ProductDto>();

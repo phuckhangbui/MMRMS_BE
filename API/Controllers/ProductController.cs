@@ -34,7 +34,7 @@ namespace API.Controllers
         }
 
         [HttpGet("latest")]
-        public async Task<ActionResult<IEnumerable<ProductReviewDto>>> GetTop8LatestProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetTop8LatestProducts()
         {
             try
             {
