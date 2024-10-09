@@ -89,6 +89,10 @@ namespace DTOs.Product
 
         [Required(ErrorMessage = MessageConstant.Component.IsRequiredMoneyRequire)]
         public bool IsRequiredMoney { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
+        [Range(1, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
+        public double Price { get; set; }
     }
 
     public class ComponentList

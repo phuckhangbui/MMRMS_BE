@@ -37,28 +37,28 @@ namespace Repository.Implement
             await ComponentDao.Instance.CreateAsync(component);
         }
 
-        public async Task<ComponentDto> Create(string name)
-        {
-            var isExisted = await ComponentDao.Instance.IsComponentNameExisted(name.Trim());
+        //public async Task<ComponentDto> Create(string name)
+        //{
+        //    var isExisted = await ComponentDao.Instance.IsComponentNameExisted(name.Trim());
 
-            if (isExisted)
-            {
-                throw new RepositoryException(MessageConstant.Component.ComponetNameDuplicated);
-            }
+        //    if (isExisted)
+        //    {
+        //        throw new RepositoryException(MessageConstant.Component.ComponetNameDuplicated);
+        //    }
 
-            var component = new Component
-            {
-                ComponentName = name.Trim(),
-                Price = null,
-                Quantity = null,
-                DateCreate = DateTime.Now,
-                Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
-            };
+        //    var component = new Component
+        //    {
+        //        ComponentName = name.Trim(),
+        //        Price = null,
+        //        Quantity = null,
+        //        DateCreate = DateTime.Now,
+        //        Status = ComponentStatusEnum.NoQuantity.ToString(),
+        //    };
 
-            component = await ComponentDao.Instance.CreateComponent(component);
+        //    component = await ComponentDao.Instance.CreateComponent(component);
 
-            return _mapper.Map<ComponentDto>(component);
-        }
+        //    return _mapper.Map<ComponentDto>(component);
+        //}
 
         public async Task Delete(int componentId)
         {

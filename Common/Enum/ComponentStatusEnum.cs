@@ -4,7 +4,7 @@
     {
         Active,
         Locked,
-        NoPriceAndQuantity,
+        NoQuantity,
         OutOfStock
     }
 }
