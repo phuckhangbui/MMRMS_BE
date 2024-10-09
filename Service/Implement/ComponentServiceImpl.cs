@@ -54,7 +54,7 @@ namespace Service.Implement
             }
 
 
-            if (component.Quantity == null && component.Status.Equals(ComponentStatusEnum.NoPriceAndQuantity.ToString()))
+            if (component.Quantity == null && component.Status.Equals(ComponentStatusEnum.NoQuantity.ToString()))
             {
                 component.Status = ComponentStatusEnum.Active.ToString();
             }

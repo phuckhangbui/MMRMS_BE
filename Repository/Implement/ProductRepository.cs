@@ -101,7 +101,7 @@ namespace Repository.Implement
             product.DateCreate = DateTime.Now;
             product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
-            List<Tuple<Component, int>> componentsTuple = new List<Tuple<Component, int>>();
+            List<Tuple<Component, int, bool>> componentsTuple = new List<Tuple<Component, int, bool>>();
 
             if (!createProductDto.NewComponentList.IsNullOrEmpty())
             {
@@ -111,12 +111,12 @@ namespace Repository.Implement
                     {
                         ComponentName = component.ComponentName.Trim(),
                         Quantity = null,
-                        Price = null,
-                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        Price = component.Price,
+                        Status = ComponentStatusEnum.NoQuantity.ToString(),
                         DateCreate = DateTime.Now,
                     };
 
-                    componentsTuple.Add(new Tuple<Component, int>(Component, component.Quantity));
+                    componentsTuple.Add(new Tuple<Component, int, bool>(Component, component.Quantity, component.IsRequiredMoney));
 
                 }
             }
@@ -215,7 +215,7 @@ namespace Repository.Implement
 
             product.ComponentProducts = componentProducts;
 
-            List<Tuple<Component, int>> components = new List<Tuple<Component, int>>();
+            List<Tuple<Component, int, bool>> components = new List<Tuple<Component, int, bool>>();
             if (!componentList.NewComponentList.IsNullOrEmpty())
                 foreach (var component in componentList.NewComponentList)
                 {
@@ -223,12 +223,12 @@ namespace Repository.Implement
                     {
                         ComponentName = component.ComponentName.Trim(),
                         Quantity = null,
-                        Price = null,
-                        Status = ComponentStatusEnum.NoPriceAndQuantity.ToString(),
+                        Price = component.Price,
+                        Status = ComponentStatusEnum.NoQuantity.ToString(),
                         DateCreate = DateTime.Now,
                     };
 
-                    components.Add(new Tuple<Component, int>(Component, component.Quantity));
+                    components.Add(new Tuple<Component, int, bool>(Component, component.Quantity, component.IsRequiredMoney));
                 }
 
             await ProductDao.Instance.UpdateProductComponent(product, components, componentProducts);

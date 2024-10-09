@@ -5,8 +5,7 @@
         Created,
         Assigned,
         Delivering,
-        Success,
-        Returning,
+        Completed,
         Fail
     }
 }

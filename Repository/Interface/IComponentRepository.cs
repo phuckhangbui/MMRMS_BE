@@ -14,7 +14,7 @@ namespace Repository.Interface
         Task Delete(int componentId);
 
         Task<bool> IsComponentIdExisted(int componentId);
-        Task<ComponentDto> Create(string name);
+        //Task<ComponentDto> Create(string name);
 
         Task<bool> IsComponentNameExisted(string componentName);
         Task<ComponentDto> GetComponent(int componentId);

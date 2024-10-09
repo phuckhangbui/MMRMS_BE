@@ -162,7 +162,7 @@ namespace DAO
             }
         }
 
-        public async Task<Product> CreateProduct(Product product, List<Tuple<Component, int>>? newComponentList)
+        public async Task<Product> CreateProduct(Product product, List<Tuple<Component, int, bool>>? newComponentList)
         {
             using (var context = new MmrmsContext())
             {
@@ -176,6 +176,7 @@ namespace DAO
                             {
                                 var component = tuple.Item1;
                                 var quantity = tuple.Item2;
+                                var isRequireMoney = tuple.Item3;
 
                                 context.Components.Add(component);
                                 await context.SaveChangesAsync();
@@ -186,6 +187,7 @@ namespace DAO
                                     ProductId = product.ProductId,
                                     Quantity = quantity,
                                     Status = ProductComponentStatusEnum.Normal.ToString(),
+                                    IsRequiredMoney = isRequireMoney,
                                 };
 
                                 // Add the ComponentProduct to the product's ComponentProducts
@@ -210,7 +212,7 @@ namespace DAO
             }
         }
 
-        public async Task UpdateProductComponent(Product product, List<Tuple<Component, int>>? newComponentList, IEnumerable<ComponentProduct>? componentProducts)
+        public async Task UpdateProductComponent(Product product, List<Tuple<Component, int, bool>>? newComponentList, IEnumerable<ComponentProduct>? componentProducts)
         {
             using (var context = new MmrmsContext())
             {
@@ -231,6 +233,7 @@ namespace DAO
                             {
                                 var component = tuple.Item1;
                                 var quantity = tuple.Item2;
+                                var isRequiredMoney = tuple.Item3;
 
                                 context.Components.Add(component);
                                 await context.SaveChangesAsync();
@@ -241,6 +244,7 @@ namespace DAO
                                     ProductId = product.ProductId,
                                     Quantity = quantity,
                                     Status = ProductComponentStatusEnum.Normal.ToString(),
+                                    IsRequiredMoney = isRequiredMoney
                                 };
 
                                 // Add the ComponentProduct to the product's ComponentProducts

@@ -2,11 +2,10 @@
 {
     public enum EmployeeTaskStatusEnum
     {
-        Created,
         Assigned,
-        InProcess,
-        Success,
-        Failed
+        Completed,
+        Failed,
+        Canceled
     }
 
     public enum EmployeeTaskTypeEnum

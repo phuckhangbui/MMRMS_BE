@@ -1,5 +1,4 @@
 ﻿using Common;
-using DTOs.Component;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Product
@@ -50,7 +49,11 @@ namespace DTOs.Product
         [Required(ErrorMessage = MessageConstant.ProductAttribute.SpecsRequired)]
         public string Specifications { get; set; }
 
+
+
         public string? Unit { get; set; }
+
+
     }
 
     public class CreateProductTermDto
@@ -70,6 +73,26 @@ namespace DTOs.Product
         [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
         [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
         public int Quantity { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.IsRequiredMoneyRequire)]
+        public bool IsRequiredMoney { get; set; }
+    }
+
+    public class CreateComponentEmbeddedDto
+    {
+        [Required(ErrorMessage = MessageConstant.Component.ComponentNameRequired)]
+        public string ComponentName { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
+        [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
+        public int Quantity { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.IsRequiredMoneyRequire)]
+        public bool IsRequiredMoney { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
+        [Range(1, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
+        public double Price { get; set; }
     }
 
     public class ComponentList
