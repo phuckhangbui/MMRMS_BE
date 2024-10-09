@@ -101,7 +101,7 @@ namespace Repository.Implement
             product.DateCreate = DateTime.Now;
             product.Status = ProductStatusEnum.NoSerialMachine.ToString();
 
-            List<Tuple<Component, int>> componentsTuple = new List<Tuple<Component, int>>();
+            List<Tuple<Component, int, bool>> componentsTuple = new List<Tuple<Component, int, bool>>();
 
             if (!createProductDto.NewComponentList.IsNullOrEmpty())
             {
@@ -116,7 +116,7 @@ namespace Repository.Implement
                         DateCreate = DateTime.Now,
                     };
 
-                    componentsTuple.Add(new Tuple<Component, int>(Component, component.Quantity));
+                    componentsTuple.Add(new Tuple<Component, int, bool>(Component, component.Quantity, component.IsRequiredMoney));
 
                 }
             }

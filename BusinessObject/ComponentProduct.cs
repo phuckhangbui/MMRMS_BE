@@ -12,6 +12,8 @@ public partial class ComponentProduct
 
     public string? Status { get; set; }
 
+    public bool? IsRequiredMoney { get; set; }
+
     public Component? Component { get; set; }
     public Product? Product { get; set; }
 

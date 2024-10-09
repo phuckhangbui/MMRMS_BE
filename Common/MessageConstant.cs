@@ -162,6 +162,7 @@
             public const string QuantityPositiveNumber = "Số lượng phải là số dương";
             public const string PriceRequired = "Giá bộ phận máy là bắt buộc";
             public const string PricePositiveNumber = "Giá bộ phận máy phải là số dương";
+            public const string IsRequiredMoneyRequire = "Bộ phận máy này cần phải trả tiền khi thay thế hay không là cần thiết";
 
 
 
