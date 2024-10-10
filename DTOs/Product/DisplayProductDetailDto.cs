@@ -35,6 +35,7 @@
 
         public IEnumerable<ProductTermDto>? ProductTermList { get; set; }
 
+        public List<double> RentPrices { get; set; }
     }
 
     public class ProductAttributeDto

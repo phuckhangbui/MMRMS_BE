@@ -299,5 +299,10 @@ namespace Service.Implement
         {
             return await _productRepository.GetTop8LatestProductList();
         }
+
+        public async Task<IEnumerable<ProductReviewDto>> GetProductReviews(List<int> productIds)
+        {
+            return await _productRepository.GetProductReviews(productIds);
+        }
     }
 }

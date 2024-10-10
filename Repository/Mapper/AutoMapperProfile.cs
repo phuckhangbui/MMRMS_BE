@@ -70,6 +70,7 @@ namespace Repository.Mapper
                              ? src.ProductImages
                              : null));
             CreateMap<ProductDto, Product>();
+            CreateMap<Product, ProductReviewDto>();
 
             CreateMap<UpdateProductDto, ProductDto>();
 

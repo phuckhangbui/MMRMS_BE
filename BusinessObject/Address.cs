@@ -14,6 +14,8 @@ public partial class Address
 
     public bool? IsDelete { get; set; }
 
+    public string? Coordinates { get; set; }
+
     public virtual Account? Account { get; set; }
 
     public virtual ICollection<RentingRequest> RentingRequests { get; set; } = new List<RentingRequest>();

@@ -7,6 +7,7 @@ namespace Service.Interface
     {
         Task<IEnumerable<ProductDto>> GetProductList();
         Task<IEnumerable<ProductDto>> GetTop8LatestProductList();
+        Task<IEnumerable<ProductReviewDto>> GetProductReviews(List<int> productIds);
         Task<DisplayProductDetailDto> GetProductDetailDto(int productId);
         Task<IEnumerable<SerialNumberProductDto>> GetSerialProductList(int productId);
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);

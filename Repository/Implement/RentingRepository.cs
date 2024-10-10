@@ -74,7 +74,7 @@ namespace Repository.Implement
                     ProductId = productId,
                     ProductName = product.ProductName,
                     ProductPrice = product.ProductPrice ?? 0,
-                    Quantity = availableSerialNumberProducts.Count(),
+                    Quantity = availableSerialNumberProducts.Count,
                     RentPrice = product.RentPrice ?? 0,
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
                     ThumbnailUrl = string.Empty,

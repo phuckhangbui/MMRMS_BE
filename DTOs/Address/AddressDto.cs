@@ -6,15 +6,11 @@ namespace DTOs.Address
     public class AddressDto
     {
         public int AddressId { get; set; }
-
         public int AccountId { get; set; }
-
         public string AddressBody { get; set; }
-
         public string District { get; set; }
-
         public string City { get; set; }
-
+        public string Coordinates { get; set; }
         public bool IsDelete { get; set; }
     }
 
@@ -28,5 +24,7 @@ namespace DTOs.Address
 
         [Required(ErrorMessage = MessageConstant.Address.CityRequired)]
         public string City { get; set; }
+
+        public string Coordinates { get; set; }
     }
 }

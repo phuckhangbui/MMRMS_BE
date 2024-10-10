@@ -394,5 +394,16 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task<Product?> GetProductWithSerialProductNumberAndProductImages(int productId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Products
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.SerialNumberProducts)
+                    .FirstOrDefaultAsync(p => p.ProductId == productId);
+            }
+        }
     }
 }

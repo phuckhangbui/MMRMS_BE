@@ -6,9 +6,6 @@ using DTOs.Product;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
-using Component = BusinessObject.Component;
-using Product = BusinessObject.Product;
-using ProductAttribute = BusinessObject.ProductAttribute;
 
 namespace Repository.Implement
 {
@@ -59,6 +56,12 @@ namespace Repository.Implement
             //Quantity availble
             var serialNumberProducts = await SerialNumberProductDao.Instance.GetSerialNumberProductsByProductIdAndStatus(productId, SerialNumberProductStatusEnum.Available.ToString());
             productDetail.Quantity = serialNumberProducts.Count();
+
+            var prices = serialNumberProducts
+                .Select(s => s.ActualRentPrice ?? 0)
+                .OrderBy(s => s)
+                .ToList();
+            productDetail.RentPrices = prices;
 
             return productDetail;
         }
@@ -299,6 +302,37 @@ namespace Repository.Implement
             }
 
             return [];
+        }
+
+        public async Task<IEnumerable<ProductReviewDto>> GetProductReviews(List<int> productIds)
+        {
+            var productReviewList = new List<ProductReviewDto>();
+
+            foreach (var productId in productIds)
+            {
+                var product = await ProductDao.Instance.GetProductWithSerialProductNumberAndProductImages(productId);
+
+                if (product != null)
+                {
+                    var productReview = _mapper.Map<ProductReviewDto>(product);
+
+                    var thumbnailUrl = product.ProductImages
+                        .FirstOrDefault(p => p.IsThumbnail == true)?.ProductImageUrl ?? string.Empty;
+                    productReview.ThumbnailUrl = thumbnailUrl;
+
+                    var serialNumberProducts = await SerialNumberProductDao.Instance.GetSerialNumberProductsByProductIdAndStatus(productReview.ProductId, SerialNumberProductStatusEnum.Available.ToString());
+
+                    var prices = serialNumberProducts
+                        .Select(s => s.ActualRentPrice ?? 0)
+                        .OrderBy(s => s)
+                        .ToList();
+                    productReview.RentPrices = prices;
+
+                    productReviewList.Add(productReview);
+                }
+            }
+
+            return productReviewList;
         }
     }
 }
