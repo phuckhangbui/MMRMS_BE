@@ -146,14 +146,55 @@ namespace DAO
         //    }
         //}
 
-        public async Task<bool> IsSerialNumberProductValidToRequest(int productId, int quantity)
+        public async Task<bool> IsSerialNumberProductValidToRent(int productId, int quantity, DateTime startDate, int numberOfMonth)
         {
             using var context = new MmrmsContext();
-            var availableSerialNumberCount = await context.SerialNumberProducts
-                .Where(s => s.ProductId == productId
-                        && s.Status == SerialNumberProductStatusEnum.Available.ToString()).CountAsync();
 
-            return availableSerialNumberCount >= quantity;
+            var requestedEndDate = startDate.AddMonths(numberOfMonth);
+
+            var availableSerialNumbers = await context.SerialNumberProducts
+                .Where(s => s.ProductId == productId
+                        && s.Status == SerialNumberProductStatusEnum.Available.ToString())
+                .Select(s => s.SerialNumber)
+                .ToListAsync();
+
+            var serialNumbersInFutureContracts = await context.Contracts
+                .Where(c => availableSerialNumbers.Contains(c.SerialNumber!)
+                        && (c.Status == ContractStatusEnum.Active.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                        && (c.DateStart < requestedEndDate && c.DateEnd > startDate))
+                .Select(c => c.SerialNumber)
+                .ToListAsync();
+
+            var suitableAvailableSerialNumbers = availableSerialNumbers
+                .Except(serialNumbersInFutureContracts)
+                .ToList();
+
+            return suitableAvailableSerialNumbers.Count >= quantity;
+        }
+
+        public async Task<List<SerialNumberProduct>> GetSerialNumberProductValidToRent(int productId, DateTime startDate, int numberOfMonth)
+        {
+            using var context = new MmrmsContext();
+
+            var requestedEndDate = startDate.AddMonths(numberOfMonth);
+
+            var availableSerialNumbers = await context.SerialNumberProducts
+                .Where(s => s.ProductId == productId
+                        && s.Status == SerialNumberProductStatusEnum.Available.ToString())
+                .ToListAsync();
+
+            var serialNumbersInFutureContracts = await context.Contracts
+                .Where(c => availableSerialNumbers.Contains(c.ContractSerialNumberProduct)
+                        && (c.Status == ContractStatusEnum.Active.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                        && (c.DateStart < requestedEndDate && c.DateEnd > startDate))
+                .Select(c => c.ContractSerialNumberProduct)
+                .ToListAsync();
+
+            var suitableAvailableSerialNumbers = availableSerialNumbers
+                .Except(serialNumbersInFutureContracts)
+                .ToList();
+
+            return suitableAvailableSerialNumbers;
         }
     }
 }

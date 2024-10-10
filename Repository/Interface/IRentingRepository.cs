@@ -8,7 +8,7 @@ namespace Repository.Interface
         Task<IEnumerable<RentingRequestDto>> GetRentingRequests();
         Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto);
         Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId);
-        Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId, List<int> productIds);
+        Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
     }
 }

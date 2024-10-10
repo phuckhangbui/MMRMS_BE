@@ -10,10 +10,6 @@ public partial class RentingRequestProductDetail
 
     public int? Quantity { get; set; }
 
-    public double? RentPrice { get; set; }
-
-    public double? DepositPrice { get; set; }
-
     public virtual RentingRequest? RentingRequest { get; set; }
 
     public virtual Product? Product { get; set; }

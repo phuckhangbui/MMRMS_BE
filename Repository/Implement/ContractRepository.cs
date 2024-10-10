@@ -165,7 +165,7 @@ namespace Repository.Implement
                 DateEnd = contractRequestDto.DateEnd,
                 Content = contractRequestDto.Content,
                 RentingRequestId = contractRequestDto.RentingRequestId,
-                AccountCreateId = managerId,
+                //AccountCreateId = managerId,
                 AccountSignId = rentingRequest.AccountOrderId,
             };
 

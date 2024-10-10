@@ -21,5 +21,13 @@ namespace DTOs.RentingRequest
         public int Quantity { get; set; }
         public string CategoryName { get; set; }
         public string ThumbnailUrl { get; set; }
+        public List<double> RentPrices { get; set; }
+    }
+
+    public class RentingRequestProductInRangeDto
+    {
+        public List<int> ProductIds { get; set; }
+        public int NumberOfMonth { get; set; }
+        public DateTime DateStart { get; set; }
     }
 }

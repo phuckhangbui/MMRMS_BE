@@ -109,7 +109,20 @@ namespace DAO
                                 .OrderByDescending(s => s.DateCreate)
                                 .ToListAsync();
 
-                            var selectedSerialNumbers = availableSerialNumberProducts
+                            //Check serial number in active/signed contract
+                            var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
+                            var serialNumbersInFutureContracts = await context.Contracts
+                                .Where(c => availableSerialNumberProducts.Contains(c.ContractSerialNumberProduct)
+                                        && (c.Status == ContractStatusEnum.Active.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                                        && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
+                                .Select(c => c.ContractSerialNumberProduct)
+                                .ToListAsync();
+
+                            var suitableAvailableSerialNumbers = availableSerialNumberProducts
+                                .Except(serialNumbersInFutureContracts)
+                                .ToList();
+
+                            var selectedSerialNumbers = suitableAvailableSerialNumbers
                                 .Take(newRentingRequestProduct.Quantity)
                                 .ToList();
 
@@ -131,9 +144,9 @@ namespace DAO
                                 contractSerialNumber.ContractAddress = contractAddress;
 
                                 //Update serialNumberProduct
-                                serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
-                                serialNumberProduct.RentTimeCounter++;
-                                context.SerialNumberProducts.Update(serialNumberProduct);
+                                //serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
+                                //serialNumberProduct.RentTimeCounter++;
+                                //context.SerialNumberProducts.Update(serialNumberProduct);
 
                                 rentingRequest.Contracts.Add(contractSerialNumber);
                             }
@@ -169,7 +182,7 @@ namespace DAO
                 ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern) + serialNumberProduct.SerialNumber,
                 SerialNumber = serialNumberProduct.SerialNumber,
 
-                DateCreate = DateTime.Now,
+                DateCreate = DateTime.Now.Date,
                 Status = ContractStatusEnum.NotSigned.ToString(),
 
                 ContractName = string.Empty,
@@ -177,7 +190,7 @@ namespace DAO
                 DateEnd = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!),
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
-                AccountCreateId = rentingRequest.AccountOrderId,
+                AccountSignId = rentingRequest.AccountOrderId,
 
                 RentPrice = serialNumberProduct.ActualRentPrice,
                 DepositPrice = serialNumberProduct.Product!.ProductPrice * GlobalConstant.DepositValue,
