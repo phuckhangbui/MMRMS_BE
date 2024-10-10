@@ -296,9 +296,9 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.AccountSignId)
                 .HasConstraintName("FK_Contract_Account");
 
-            entity.HasOne(d => d.AccountCreate).WithMany(p => p.CreateContracts)
-                .HasForeignKey(d => d.AccountCreateId)
-                .HasConstraintName("FK_Contract_Account_Create");
+            //entity.HasOne(d => d.AccountCreate).WithMany(p => p.CreateContracts)
+            //    .HasForeignKey(d => d.AccountCreateId)
+            //    .HasConstraintName("FK_Contract_Account_Create");
 
             entity.HasOne(d => d.ContractAddress).WithOne(p => p.Contract)
                 .HasForeignKey<Contract>(p => p.ContractAddressId)

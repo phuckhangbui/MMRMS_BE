@@ -48,17 +48,26 @@ namespace Repository.Implement
             return null;
         }
 
-        public async Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId, List<int> productIds)
+        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
         {
             var rentingRequestInitDataDto = new RentingRequestInitDataDto();
 
             //Product data
             var rentingRequestProductDatas = new List<RentingRequestProductDataDto>();
-            foreach (var productId in productIds)
+            foreach (var productId in rentingRequestProductInRangeDto.ProductIds)
             {
                 var availableSerialNumberProducts = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductsByProductIdAndStatus(productId, SerialNumberProductStatusEnum.Available.ToString());
+                    .GetSerialNumberProductValidToRent(productId, rentingRequestProductInRangeDto.DateStart, rentingRequestProductInRangeDto.NumberOfMonth);
+
+                if (availableSerialNumberProducts.IsNullOrEmpty())
+                {
+                    continue;
+                }
+
                 var product = await ProductDao.Instance.GetProduct(productId);
+                var prices = availableSerialNumberProducts
+                    .Select(s => s.ActualRentPrice ?? 0)
+                    .ToList();
 
                 var rentingRequestProductDataDto = new RentingRequestProductDataDto()
                 {
@@ -69,6 +78,7 @@ namespace Repository.Implement
                     RentPrice = product.RentPrice ?? 0,
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
                     ThumbnailUrl = string.Empty,
+                    RentPrices = prices,
                 };
                 if (!product.ProductImages.IsNullOrEmpty())
                 {
@@ -124,7 +134,7 @@ namespace Repository.Implement
             rentingRequest.AccountOrderId = customerId;
 
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
-            rentingRequest.DateCreate = DateTime.Now;
+            rentingRequest.DateCreate = DateTime.Now.Date;
             rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
             rentingRequest.TotalAmount = 0;
 

@@ -8,8 +8,6 @@ public partial class RentingRequest
 
     public int? AddressId { get; set; }
 
-    //public string? ContractId { get; set; }
-
     public DateTime? DateCreate { get; set; }
 
     public DateTime? DateStart { get; set; }

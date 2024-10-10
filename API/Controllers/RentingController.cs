@@ -78,20 +78,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("init-data/{productIds}")]
+        [HttpPost("init-data")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult<RentingRequestInitDataDto>> GetRentingRequestInitData([FromRoute] string productIds)
+        public async Task<ActionResult<RentingRequestInitDataDto>> InitializeRentingRequest([FromBody] RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
         {
             try
             {
-                if (string.IsNullOrEmpty(productIds))
-                {
-                    return BadRequest();
-                }
-
                 int customerId = GetLoginAccountId();
-                var productIdList = productIds.Split(',').Select(int.Parse).ToList();
-                var rentingRequests = await _rentingService.GetRentingRequestInitData(customerId, productIdList);
+                var rentingRequests = await _rentingService.InitializeRentingRequestData(customerId, rentingRequestProductInRangeDto);
                 return Ok(rentingRequests);
             }
             catch (ServiceException ex)

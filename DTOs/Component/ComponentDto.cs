@@ -32,7 +32,7 @@ namespace DTOs.Component
         public double Price { get; set; }
     }
 
-   
+
 
 
     public class UpdateComponentDto

@@ -34,12 +34,19 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task<bool> CheckSerialNumberProductValidToRequest(List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos)
+        public async Task<bool> CheckSerialNumberProductValidToRequest(
+            List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos,
+            DateTime requestStartDate,
+            int numberOfMonth)
         {
             foreach (var rentingRequestProductDetailDto in rentingRequestProductDetailDtos)
             {
                 var isSerialNumberProductValid = await SerialNumberProductDao.Instance
-                    .IsSerialNumberProductValidToRequest(rentingRequestProductDetailDto.ProductId, rentingRequestProductDetailDto.Quantity);
+                    .IsSerialNumberProductValidToRent(
+                            rentingRequestProductDetailDto.ProductId,
+                            rentingRequestProductDetailDto.Quantity,
+                            requestStartDate,
+                            numberOfMonth);
 
                 if (!isSerialNumberProductValid)
                 {

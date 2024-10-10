@@ -28,7 +28,10 @@ namespace Service.Implement
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
-            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto.RentingRequestProductDetails);
+            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(
+                newRentingRequestDto.RentingRequestProductDetails,
+                newRentingRequestDto.DateStart,
+                newRentingRequestDto.NumberOfMonth);
             if (!isProductsValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestProductsInvalid);
@@ -54,9 +57,9 @@ namespace Service.Implement
             return await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
         }
 
-        public async Task<RentingRequestInitDataDto> GetRentingRequestInitData(int customerId, List<int> productIds)
+        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
         {
-            return await _rentingRepository.GetRentingRequestInitData(customerId, productIds);
+            return await _rentingRepository.InitializeRentingRequestData(customerId, rentingRequestProductInRangeDto);
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
