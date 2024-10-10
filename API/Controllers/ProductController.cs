@@ -51,6 +51,30 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("review/{productIds}")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsReview([FromRoute] string productIds)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(productIds))
+                {
+                    return BadRequest();
+                }
+
+                var productIdList = productIds.Split(',').Select(int.Parse).ToList();
+                var products = await _productService.GetProductReviews(productIdList);
+                return Ok(products);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{productId}")]
         public async Task<ActionResult<DisplayProductDetailDto>> GetProductDetail([FromRoute] int productId)
         {
