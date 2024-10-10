@@ -60,6 +60,12 @@ namespace Repository.Implement
             var serialNumberProducts = await SerialNumberProductDao.Instance.GetSerialNumberProductsByProductIdAndStatus(productId, SerialNumberProductStatusEnum.Available.ToString());
             productDetail.Quantity = serialNumberProducts.Count();
 
+            var prices = serialNumberProducts
+                .Select(s => s.ActualRentPrice ?? 0)
+                .OrderBy(s => s)
+                .ToList();
+            productDetail.RentPrices = prices;
+
             return productDetail;
         }
 
