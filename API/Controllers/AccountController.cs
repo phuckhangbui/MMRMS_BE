@@ -53,13 +53,28 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("managers-staff")]
+        [HttpGet("employees")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult> GetEmployeeAccounts()
         {
             try
             {
                 var accounts = await _accountService.GetEmployeeAccounts();
+                return Ok(accounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("employees/staffs")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult> GetStaffAccounts()
+        {
+            try
+            {
+                var accounts = await _accountService.GetStaffAccounts();
                 return Ok(accounts);
             }
             catch (Exception ex)
@@ -92,7 +107,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("staff-manager")]
+        [HttpPost("employees")]
         [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
@@ -153,7 +168,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("staff-manager/{accountId}")]
+        [HttpGet("employees/{accountId}")]
         [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult<EmployeeAccountDto>> GetEmployeeAccountById(int accountId)
         {
@@ -171,7 +186,5 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
     }
 }

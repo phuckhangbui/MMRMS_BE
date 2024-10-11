@@ -1,4 +1,5 @@
 ﻿using Common;
+using DTOs.AccountAddressDto;
 using DTOs.SerialNumberProduct;
 using DTOs.Term;
 using DTOs.Validation;
@@ -12,11 +13,11 @@ namespace DTOs.Contract
         public string? ContractName { get; set; }
         //public int? AccountSignId { get; set; }
         //public int? ContractAddressId { get; set; }
-        //public string? RentingRequestId { get; set; }
-        public double? TotalRentPrice { get; set; }
-        public double? ShippingPrice { get; set; }
-        public double? TotalDepositPrice { get; set; }
-        public double? DiscountPrice { get; set; }
+        public string? RentingRequestId { get; set; }
+        //public double? TotalRentPrice { get; set; }
+        //public double? ShippingPrice { get; set; }
+        //public double? TotalDepositPrice { get; set; }
+        //public double? DiscountPrice { get; set; }
         public double? FinalAmount { get; set; }
         //public string? Content { get; set; }
         public DateTime? DateCreate { get; set; }
@@ -24,8 +25,7 @@ namespace DTOs.Contract
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public string? Status { get; set; }
-        //public AccountBusinessDto AccountBusiness { get; set; }
-        //public string Name { get; set; }
+        public AccountBusinessDto AccountBusiness { get; set; }
     }
 
     public class ContractRequestDto

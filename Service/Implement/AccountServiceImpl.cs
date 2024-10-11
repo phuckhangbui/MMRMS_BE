@@ -125,5 +125,10 @@ namespace Service.Implement
 
             return account;
         }
+
+        public async Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts()
+        {
+            return await _accountRepository.GetStaffAccounts();
+        }
     }
 }

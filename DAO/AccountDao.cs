@@ -49,6 +49,14 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<Account>> GetStaffAccountsAsync()
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Accounts.Where(a => a.RoleId == (int)AccountRoleEnum.Staff).ToListAsync();
+            }
+        }
+
         public async Task<bool> IsAccountExistWithEmailAsync(string email)
         {
             using (var context = new MmrmsContext())
