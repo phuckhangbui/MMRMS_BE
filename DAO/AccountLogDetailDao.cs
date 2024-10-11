@@ -26,12 +26,12 @@ namespace DAO
         }
 
 
-        public async Task<IEnumerable<LogDetail>> GetLogDetails(int accountId)
+        public async Task<IEnumerable<LogDetail>> GetLogs()
         {
             using (var context = new MmrmsContext())
             {
                 return await context.LogDetails
-                    .Where(l => l.AccountId == accountId)
+                    .Include(l => l.Account)
                     .ToListAsync();
             }
         }

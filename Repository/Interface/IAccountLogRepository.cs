@@ -4,7 +4,7 @@ namespace Repository.Interface
 {
     public interface IAccountLogRepository
     {
-        Task<LogDetailDto> GetAccountLogByAccountId(int accountId);
+        Task<IEnumerable<LogDetailDto>> GetLogs();
         Task WriteNewAccountLogDetail(int accountId);
     }
 }

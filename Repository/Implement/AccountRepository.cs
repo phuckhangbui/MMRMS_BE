@@ -212,5 +212,11 @@ namespace Repository.Implement
             var managerAccounts = list.Where(x => x.RoleId == (int)AccountRoleEnum.Manager).ToList();
             return _mapper.Map<IEnumerable<AccountDto>>(managerAccounts);
         }
+
+        public async Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts()
+        {
+            var accounts = await AccountDao.Instance.GetStaffAccountsAsync();
+            return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
+        }
     }
 }

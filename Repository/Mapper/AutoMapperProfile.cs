@@ -127,11 +127,10 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
-            CreateMap<Contract, ContractDto>();
-            //.ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
-            //.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountSign.Name));
+            CreateMap<Contract, ContractDto>()
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness));
             CreateMap<Contract, ContractDetailDto>()
-                //.ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
@@ -212,7 +211,15 @@ namespace Repository.Mapper
                            ? src.Component.ComponentName
                            : null));
 
-            CreateMap<LogDetail, LogDetailDto>();
+            CreateMap<LogDetail, LogDetailDto>()
+               .ForMember(dest => dest.Name,
+               opt => opt.MapFrom(src => src.Account != null
+                           ? src.Account.Name
+                           : string.Empty))
+               .ForMember(dest => dest.Phone,
+               opt => opt.MapFrom(src => src.Account != null
+                           ? src.Account.Phone
+                           : string.Empty));
         }
     }
 }

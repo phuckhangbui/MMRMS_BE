@@ -17,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(policy: "Manager")]
         public async Task<ActionResult<IEnumerable<ContractDto>>> GetContracts()
         {
             try

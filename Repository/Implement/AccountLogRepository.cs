@@ -15,12 +15,11 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-
-        public async Task<LogDetailDto> GetAccountLogByAccountId(int accountId)
+        public async Task<IEnumerable<LogDetailDto>> GetLogs()
         {
-            var accountLog = await AccountLogDetailDao.Instance.GetLogDetails(accountId);
+            var logs = await AccountLogDetailDao.Instance.GetLogs();
 
-            return _mapper.Map<LogDetailDto>(accountLog);
+            return _mapper.Map<IEnumerable<LogDetailDto>>(logs);
         }
 
         public async Task WriteNewAccountLogDetail(int accountId)

@@ -7,6 +7,7 @@ namespace Repository.Interface
         Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role);
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
+        Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts();
         Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto);
         Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> IsAccountExistWithEmail(string email);

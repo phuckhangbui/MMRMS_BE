@@ -59,7 +59,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEmployeeTaskService, EmployeeTaskService>();
         services.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
         services.AddScoped<IMaintenanceTicketService, MaintenanceTicketService>();
-        //services.AddScoped<ILogSerevice, LogSereviceImpl>();
+        services.AddScoped<ILogSerevice, LogSereviceImpl>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
