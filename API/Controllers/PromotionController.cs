@@ -53,7 +53,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> CreatePromotion([FromBody] PromotionRequestDto promotionRequestDto)
         {
             if (!ModelState.IsValid)
@@ -83,7 +83,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{promotionId}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> UpdatePromotion(int promotionId, [FromBody] PromotionRequestDto promotionRequestDto)
         {
             if (!ModelState.IsValid)
@@ -113,7 +113,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{promotionId}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> DeletePromotion(int promotionId)
         {
             try

@@ -131,7 +131,7 @@ namespace DAO
                                 //Assign serial number to the contract
                                 var contractSerialNumber = InitContract(serialNumberProduct, rentingRequest);
                                 totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
-                                totalRentPrice += (double)contractSerialNumber.RentPrice!;
+                                totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
 
                                 //TODO: Need or not ?
                                 var address = await AddressDao.Instance.GetAddressById((int)rentingRequest.AddressId!);
@@ -154,8 +154,10 @@ namespace DAO
 
                         rentingRequest.TotalRentPrice = totalRentPrice;
                         rentingRequest.TotalDepositPrice = totalDepositPrice;
-                        rentingRequest.TotalAmount = rentingRequest.TotalAmount + rentingRequest.TotalDepositPrice + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
-                                                    - rentingRequest.DiscountPrice - rentingRequest.DiscountShip;
+                        rentingRequest.TotalAmount =
+                            rentingRequest.TotalAmount + rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
+                            + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
+                            - rentingRequest.DiscountPrice - rentingRequest.DiscountShip;
 
                         DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
                         _dbSet.Add(rentingRequest);
@@ -174,7 +176,7 @@ namespace DAO
             }
         }
 
-        //TODO: ContractName, Content, ShippingPrice, DiscountPrice
+        //TODO: ContractName
         private Contract InitContract(SerialNumberProduct serialNumberProduct, RentingRequest rentingRequest)
         {
             var contractSerialNumber = new Contract
@@ -191,14 +193,12 @@ namespace DAO
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
+                NumberOfMonth = rentingRequest.NumberOfMonth,
 
                 RentPrice = serialNumberProduct.ActualRentPrice,
                 DepositPrice = serialNumberProduct.Product!.ProductPrice * GlobalConstant.DepositValue,
-                ShippingPrice = 0,
-                DiscountPrice = 0,
+                TotalRentPrice = serialNumberProduct.ActualRentPrice * rentingRequest.NumberOfMonth,
             };
-
-            contractSerialNumber.FinalAmount = contractSerialNumber.RentPrice + contractSerialNumber.DepositPrice;
 
             //Contract Term
             foreach (var productTerm in serialNumberProduct.Product.ProductTerms)

@@ -99,11 +99,11 @@ namespace DAO
 
                         contract.DepositPrice = totalDepositPrice;
                         contract.RentPrice = totalRentPrice;
-                        contract.ShippingPrice = rentingRequest!.ShippingPrice;
-                        contract.DiscountPrice = rentingRequest.DiscountPrice;
-                        contract.DiscountShip = rentingRequest!.DiscountShip;
-                        contract.FinalAmount = contract.DepositPrice + contract.RentPrice + contract.ShippingPrice
-                            - contract.DiscountPrice - contract.DiscountShip;
+                        //contract.ShippingPrice = rentingRequest!.ShippingPrice;
+                        //contract.DiscountPrice = rentingRequest.DiscountPrice;
+                        //contract.DiscountShip = rentingRequest!.DiscountShip;
+                        //contract.TotalRentPrice = contract.DepositPrice + contract.RentPrice + contract.ShippingPrice
+                        //    - contract.DiscountPrice - contract.DiscountShip;
 
                         DbSet<Contract> _dbSet = context.Set<Contract>();
                         _dbSet.Add(contract);

@@ -16,13 +16,9 @@ public partial class Contract
 
     public double? DepositPrice { get; set; }
 
-    public double? ShippingPrice { get; set; }
+    public int? NumberOfMonth { get; set; }
 
-    public double? DiscountPrice { get; set; }
-
-    public double? DiscountShip { get; set; }
-
-    public double? FinalAmount { get; set; }
+    public double? TotalRentPrice { get; set; }
 
     public string? Content { get; set; }
 

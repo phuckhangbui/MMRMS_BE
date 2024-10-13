@@ -175,7 +175,7 @@ namespace Repository.Implement
                 }
             }
 
-            rentingRequest.TotalAmount += totalRentingServicePrice;
+            rentingRequest.TotalServicePrice = totalRentingServicePrice;
 
             rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto.AccountPromotionId, newRentingRequestDto);
             return rentingRequest.RentingRequestId;

@@ -296,17 +296,10 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.AccountSignId)
                 .HasConstraintName("FK_Contract_Account");
 
-            //entity.HasOne(d => d.AccountCreate).WithMany(p => p.CreateContracts)
-            //    .HasForeignKey(d => d.AccountCreateId)
-            //    .HasConstraintName("FK_Contract_Account_Create");
-
             entity.HasOne(d => d.ContractAddress).WithOne(p => p.Contract)
                 .HasForeignKey<Contract>(p => p.ContractAddressId)
                 .IsRequired()
                 .HasConstraintName("FK_ContractAddress_Contract");
-
-            //entity.HasOne(d => d.RentingRequest).WithOne(d => d.Contract)
-            //    .HasConstraintName("FK_Contract_RentingRequest");
 
             entity.HasOne(d => d.RentingRequest)
                 .WithMany(p => p.Contracts)

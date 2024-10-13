@@ -16,6 +16,8 @@ public partial class RentingRequest
 
     public double? TotalDepositPrice { get; set; }
 
+    public double? TotalServicePrice { get; set; }
+
     public double? ShippingPrice { get; set; }
 
     public double? DiscountShip { get; set; }
