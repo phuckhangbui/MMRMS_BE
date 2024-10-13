@@ -321,14 +321,18 @@ namespace Repository.Implement
                     productReview.ThumbnailUrl = thumbnailUrl;
 
                     var serialNumberProducts = await SerialNumberProductDao.Instance.GetSerialNumberProductsByProductIdAndStatus(productReview.ProductId, SerialNumberProductStatusEnum.Available.ToString());
+                    if (!serialNumberProducts.IsNullOrEmpty())
+                    {
+                        productReview.Quantity = serialNumberProducts.Count();
 
-                    var prices = serialNumberProducts
-                        .Select(s => s.ActualRentPrice ?? 0)
-                        .OrderBy(s => s)
-                        .ToList();
-                    productReview.RentPrices = prices;
+                        var prices = serialNumberProducts
+                            .Select(s => s.ActualRentPrice ?? 0)
+                            .OrderBy(s => s)
+                            .ToList();
+                        productReview.RentPrices = prices;
 
-                    productReviewList.Add(productReview);
+                        productReviewList.Add(productReview);
+                    }
                 }
             }
 

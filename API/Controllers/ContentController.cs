@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> CreateContent([FromForm] ContentCreateRequestDto contentRequestDto)
         {
             if (!ModelState.IsValid)
@@ -79,7 +79,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{contentId}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> UpdateContent(int contentId, [FromForm] ContentUpdateRequestDto contentUpdateRequestDto)
         {
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{contentId}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> DeleteContent(int contentId)
         {
             try
@@ -123,7 +123,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{contentId}/status")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<IActionResult> ChangeContentStatus(int contentId, [FromQuery, BindRequired] string status)
         {
             try
@@ -142,7 +142,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{contentId}/images")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult> ChangeContentImage(int contentId, IFormFile imageUrl)
         {
             if (imageUrl == null || imageUrl.Length == 0)
