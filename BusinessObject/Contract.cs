@@ -8,8 +8,6 @@ public partial class Contract
 
     public int? AccountSignId { get; set; }
 
-    public int? ContractAddressId { get; set; }
-
     public string? RentingRequestId { get; set; }
 
     public double? RentPrice { get; set; }
@@ -37,8 +35,6 @@ public partial class Contract
     public virtual SerialNumberProduct? ContractSerialNumberProduct { get; set; }
 
     public virtual Account? AccountSign { get; set; }
-
-    public virtual ContractAddress? ContractAddress { get; set; }
 
     public virtual RentingRequest? RentingRequest { get; set; }
 

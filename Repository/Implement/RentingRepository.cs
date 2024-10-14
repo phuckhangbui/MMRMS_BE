@@ -6,6 +6,7 @@ using DAO;
 using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
+using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
 using Microsoft.IdentityModel.Tokens;
@@ -80,6 +81,10 @@ namespace Repository.Implement
                     ThumbnailUrl = string.Empty,
                     RentPrices = prices,
                 };
+
+                var productTerms = _mapper.Map<List<ProductTermDto>>(product.ProductTerms);
+                rentingRequestProductDataDto.ProductTerms = productTerms;
+
                 if (!product.ProductImages.IsNullOrEmpty())
                 {
                     rentingRequestProductDataDto.ThumbnailUrl = product.ProductImages.First(p => p.IsThumbnail == true).ProductImageUrl ?? string.Empty;
@@ -137,6 +142,21 @@ namespace Repository.Implement
             rentingRequest.DateCreate = DateTime.Now.Date;
             rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
             rentingRequest.TotalAmount = 0;
+
+            var address = await AddressDao.Instance.GetAddressById(newRentingRequestDto.AddressId);
+            if (address != null)
+            {
+                var rentingRequestAddress = new RentingRequestAddress()
+                {
+                    RentingRequestId = rentingRequest.RentingRequestId,
+                    AddressBody = address.AddressBody,
+                    City = address.City,
+                    Coordinates = address.Coordinates,
+                    District = address.District,
+                };
+
+                rentingRequest.RentingRequestAddress = rentingRequestAddress;
+            }
 
             var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
             double totalRentingServicePrice = 0;

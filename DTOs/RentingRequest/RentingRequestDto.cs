@@ -11,10 +11,6 @@ namespace DTOs.RentingRequest
 
         public string? AccountOrderName { get; set; }
 
-        public int? AddressId { get; set; }
-
-        public string? ContractId { get; set; }
-
         public DateTime? DateCreate { get; set; }
 
         public DateTime? DateStart { get; set; }

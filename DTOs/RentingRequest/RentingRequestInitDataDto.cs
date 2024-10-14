@@ -1,5 +1,6 @@
 ﻿using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
+using DTOs.Product;
 using DTOs.RentingService;
 
 namespace DTOs.RentingRequest
@@ -22,6 +23,7 @@ namespace DTOs.RentingRequest
         public string CategoryName { get; set; }
         public string ThumbnailUrl { get; set; }
         public List<double> RentPrices { get; set; }
+        public List<ProductTermDto> ProductTerms { get; set; }
     }
 
     public class RentingRequestProductInRangeDto

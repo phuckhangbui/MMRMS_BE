@@ -6,8 +6,6 @@ public partial class RentingRequest
 
     public int? AccountOrderId { get; set; }
 
-    public int? AddressId { get; set; }
-
     public DateTime? DateCreate { get; set; }
 
     public DateTime? DateStart { get; set; }
@@ -36,7 +34,7 @@ public partial class RentingRequest
 
     public virtual Account? AccountOrder { get; set; }
 
-    public virtual Address? Address { get; set; }
+    public virtual RentingRequestAddress? RentingRequestAddress { get; set; }
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 

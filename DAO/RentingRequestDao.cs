@@ -42,6 +42,7 @@ namespace DAO
                         .ThenInclude(rr => rr.RentingService)
                     .Include(rr => rr.AccountOrder)
                     .Include(rr => rr.Contracts)
+                    .Include(rr => rr.RentingRequestAddress)
                     .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
         }
@@ -132,16 +133,6 @@ namespace DAO
                                 var contractSerialNumber = InitContract(serialNumberProduct, rentingRequest);
                                 totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
                                 totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
-
-                                //TODO: Need or not ?
-                                var address = await AddressDao.Instance.GetAddressById((int)rentingRequest.AddressId!);
-                                var contractAddress = new ContractAddress()
-                                {
-                                    AddressBody = address.AddressBody,
-                                    City = address.City,
-                                    District = address.District,
-                                };
-                                contractSerialNumber.ContractAddress = contractAddress;
 
                                 //Update serialNumberProduct
                                 //serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
