@@ -221,6 +221,11 @@ namespace Repository.Mapper
                            : string.Empty));
 
             CreateMap<RentingRequestAddress, RentingRequestAddressDto>();
+
+            CreateMap<Term, TermDto>();
+            CreateMap<CreateTermDto, Term>();
+            CreateMap<UpdateTermDto, Term>();
+
         }
     }
 }
