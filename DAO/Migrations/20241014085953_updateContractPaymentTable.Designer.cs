@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241014085953_updateContractPaymentTable")]
+    partial class updateContractPaymentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1325,28 +1328,6 @@ namespace DAO.Migrations
                     b.HasIndex("EmployeeTaskId");
 
                     b.ToTable("TaskLog", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.Term", b =>
-                {
-                    b.Property<int>("TermId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TermId"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TermId");
-
-                    b.ToTable("Term", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Account", b =>

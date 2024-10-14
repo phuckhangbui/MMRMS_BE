@@ -61,6 +61,12 @@ namespace Repository.Implement
             return [];
         }
 
+        public async Task SignContract(string rentingRequestId)
+        {
+            await ContractDao.Instance.SignContract(rentingRequestId);
+        }
+
+
         //TODO: Remove
         public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
         {
@@ -85,7 +91,7 @@ namespace Repository.Implement
                 var contractPayment = new ContractPayment
                 {
                     Title = string.Empty,
-                    Price = 0,
+                    Amount = 0,
                     //CustomerPaidDate = DateTime.Now,
                     //SystemPaidDate = DateTime.Now,
                     Status = string.Empty,
@@ -96,7 +102,7 @@ namespace Repository.Implement
                 {
                     InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
                     AccountPaidId = rentingRequest.AccountOrderId,
-                    Amount = contractPayment.Price,
+                    Amount = contractPayment.Amount,
                     PaymentMethod = string.Empty,
                     Type = string.Empty,
                     Note = string.Empty,
@@ -116,7 +122,7 @@ namespace Repository.Implement
                     var contractPayment = new ContractPayment
                     {
                         Title = string.Empty,
-                        Price = 0,
+                        Amount = 0,
                         CustomerPaidDate = DateTime.Now,
                         SystemPaidDate = DateTime.Now,
                         Status = string.Empty,
@@ -170,5 +176,7 @@ namespace Repository.Implement
 
             return contract;
         }
+
+
     }
 }

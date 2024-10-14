@@ -1,7 +1,6 @@
 ﻿using DTOs.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Repository.Interface;
 using Serilog;
 using Service.Exceptions;
 using Service.Interface;
@@ -12,34 +11,14 @@ namespace API.Controllers
     public class TestController : BaseApiController
     {
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly INotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
 
-        public TestController(ICloudinaryService cloudinaryService, ISerialNumberProductRepository serialNumberProductRepository, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService)
+        public TestController(ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService)
         {
             _cloudinaryService = cloudinaryService;
-            _serialNumberProductRepository = serialNumberProductRepository;
             _firebaseMessagingService = firebaseMessagingService;
             _notificationService = notificationService;
-        }
-
-        [HttpGet("{rentingRequestId}")]
-        public async Task<ActionResult> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
-        {
-            try
-            {
-                var serialNumberProducts = await _serialNumberProductRepository.GetSerialProductNumbersAvailableForRenting(rentingRequestId);
-                return Ok(serialNumberProducts);
-            }
-            catch (ServiceException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
         [HttpGet("datetime")]

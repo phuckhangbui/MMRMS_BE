@@ -24,11 +24,11 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
-        {
-            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByIdAndStatus(rentingRequestId, RentingRequestStatusEnum.Approved.ToString());
-            return rentingRequest != null;
-        }
+        //public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
+        //{
+        //    var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByIdAndStatus(rentingRequestId, RentingRequestStatusEnum.Approved.ToString());
+        //    return rentingRequest != null;
+        //}
 
         public async Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId)
         {

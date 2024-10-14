@@ -1,4 +1,5 @@
-﻿using DTOs.RentingRequest;
+﻿using Common;
+using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -10,10 +11,12 @@ namespace API.Controllers
     public class RentingController : BaseApiController
     {
         private readonly IRentingRequestService _rentingService;
+        private readonly IContractService _contractService;
 
-        public RentingController(IRentingRequestService rentingService)
+        public RentingController(IRentingRequestService rentingService, IContractService contractService)
         {
             _rentingService = rentingService;
+            _contractService = contractService;
         }
 
         [HttpGet]
@@ -41,6 +44,24 @@ namespace API.Controllers
             {
                 var rentingRequest = await _rentingService.GetRentingRequestDetailById(rentingRequestId);
                 return Ok(rentingRequest);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{rentingRequestId}/contracts/sign")]
+        public async Task<ActionResult> SignContract(string rentingRequestId)
+        {
+            try
+            {
+                await _contractService.SignContract(rentingRequestId);
+                return Ok(MessageConstant.Contract.SignContractSuccessfully);
             }
             catch (ServiceException ex)
             {

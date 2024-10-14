@@ -190,6 +190,8 @@
 
         public static class Contract
         {
+            public const string SignContractSuccessfully = "Ký hợp đồng thành công";
+
             //Service
             public const string ContractListEmpty = "Danh sách hợp đồng trống.";
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
@@ -225,6 +227,7 @@
             public const string RequestProductsInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
             public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
+            public const string RentingRequestNotFound = "Yêu cầu thuê không tồn tại";
 
             //DTO
             public const string AddressIdRequired = "Địa chỉ là bắt buộc.";
