@@ -25,7 +25,6 @@ namespace DAO
             }
         }
 
-        //TODO:KHANG
         public async Task<IEnumerable<Delivery>> GetDeliveries()
         {
             using (var context = new MmrmsContext())
@@ -33,12 +32,12 @@ namespace DAO
                 return await context.Deliveries
                     .Include(d => d.Staff)
                     .Include(d => d.Contract)
-                    //.ThenInclude(c => c.ContractAddress)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate).ToListAsync();
             }
         }
 
-        //TODO:KHANG
         public async Task<IEnumerable<Delivery>> GetDeliveriesForStaff(int staffId)
         {
             using (var context = new MmrmsContext())
@@ -46,14 +45,14 @@ namespace DAO
                 return await context.Deliveries
                     .Include(d => d.Staff)
                     .Include(d => d.Contract)
-                    //.ThenInclude(c => c.ContractAddress)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate)
                     .Where(d => d.StaffId == staffId)
                     .ToListAsync();
             }
         }
 
-        //TODO:KHANG
         public async Task<Delivery> GetDelivery(int deliveryId)
         {
             using (var context = new MmrmsContext())
@@ -61,7 +60,8 @@ namespace DAO
                 return await context.Deliveries
                     .Include(d => d.Staff)
                     .Include(d => d.Contract)
-                    //.ThenInclude(c => c.ContractAddress)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
                     .FirstOrDefaultAsync(d => d.DeliveryId == deliveryId);
             }
         }
