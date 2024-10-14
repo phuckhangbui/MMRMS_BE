@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241013142244_addRentingRequestAddressTable")]
+    partial class addRentingRequestAddressTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,6 +327,10 @@ namespace DAO.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ContractAddressId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<string>("ContractName")
                         .HasColumnType("nvarchar(max)");
 
@@ -368,11 +375,36 @@ namespace DAO.Migrations
 
                     b.HasIndex("AccountSignId");
 
+                    b.HasIndex("ContractAddressId")
+                        .IsUnique();
+
                     b.HasIndex("RentingRequestId");
 
                     b.HasIndex("SerialNumber");
 
                     b.ToTable("Contract", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.ContractAddress", b =>
+                {
+                    b.Property<int>("ContractAddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractAddressId"));
+
+                    b.Property<string>("AddressBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ContractAddressId");
+
+                    b.ToTable("ContractAddress", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ContractPayment", b =>
@@ -1397,6 +1429,13 @@ namespace DAO.Migrations
                         .HasForeignKey("AccountSignId")
                         .HasConstraintName("FK_Contract_Account");
 
+                    b.HasOne("BusinessObject.ContractAddress", "ContractAddress")
+                        .WithOne("Contract")
+                        .HasForeignKey("BusinessObject.Contract", "ContractAddressId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ContractAddress_Contract");
+
                     b.HasOne("BusinessObject.RentingRequest", "RentingRequest")
                         .WithMany("Contracts")
                         .HasForeignKey("RentingRequestId")
@@ -1412,6 +1451,8 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_Contract_SerialNumberProduct");
 
                     b.Navigation("AccountSign");
+
+                    b.Navigation("ContractAddress");
 
                     b.Navigation("ContractSerialNumberProduct");
 
@@ -1852,6 +1893,11 @@ namespace DAO.Migrations
                     b.Navigation("MaintenanceRequests");
 
                     b.Navigation("MaintenanceTickets");
+                });
+
+            modelBuilder.Entity("BusinessObject.ContractAddress", b =>
+                {
+                    b.Navigation("Contract");
                 });
 
             modelBuilder.Entity("BusinessObject.ContractPayment", b =>

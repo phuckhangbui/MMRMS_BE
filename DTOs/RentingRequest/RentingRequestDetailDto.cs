@@ -1,5 +1,6 @@
 ﻿using DTOs.AccountAddressDto;
 using DTOs.Contract;
+using DTOs.RentingRequestAddress;
 
 namespace DTOs.RentingRequest
 {
@@ -7,11 +8,11 @@ namespace DTOs.RentingRequest
     {
         public string RentingRequestId { get; set; }
         public int? AccountOrderId { get; set; }
-        public string? ContractId { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateStart { get; set; }
         public double? TotalRentPrice { get; set; }
         public double? TotalDepositPrice { get; set; }
+        public double? TotalServicePrice { get; set; }
         public double? ShippingPrice { get; set; }
         public double? DiscountShip { get; set; }
         public double? DiscountPrice { get; set; }
@@ -23,7 +24,7 @@ namespace DTOs.RentingRequest
         //public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
-        //public AddressDto Address { get; set; }
+        public RentingRequestAddressDto RentingRequestAddress { get; set; }
         public AccountBusinessDto AccountBusiness { get; set; }
         public List<ContractDto> Contracts { get; set; }
     }
