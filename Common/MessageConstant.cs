@@ -334,5 +334,19 @@
 
 
         }
+
+        public static class Term
+        {
+            //Service
+            public const string TermNotFound = "Điều khoản này không tìm thấy";
+            public const string TermTypeNotCorrect = "Loại điều khoản này không tồn tại";
+
+
+            //DTO
+            public const string TermIdRequired = "Mã điều khoản là cần thiết";
+            public const string TypeRequired = "Loại điều khoản là cần thiết";
+            public const string TitleRequired = "Tiêu đề điều khoản là cần thiết";
+            public const string ContentRequired = "Nội dung điều khoản là cần thiết";
+        }
     }
 }

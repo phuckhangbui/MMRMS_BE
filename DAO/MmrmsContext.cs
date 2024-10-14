@@ -89,6 +89,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<DeliveryLog> DeliveryLogs { get; set; }
 
+    public virtual DbSet<Term> Terms { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -770,6 +772,17 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.RentingRequest).WithMany(p => p.ServiceRentingRequests)
                .HasForeignKey(d => d.RentingRequestId)
                .HasConstraintName("FK_servicerequest_rentingrequest");
+        });
+
+        modelBuilder.Entity<Term>(entity =>
+        {
+            entity.HasKey(e => e.TermId);
+
+            entity.ToTable("Term");
+
+            entity.Property(e => e.TermId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
         });
 
         OnModelCreatingPartial(modelBuilder);
