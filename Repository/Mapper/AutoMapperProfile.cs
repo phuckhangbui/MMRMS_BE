@@ -10,8 +10,10 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
+using DTOs.Delivery;
 using DTOs.EmployeeTask;
 using DTOs.Log;
+using DTOs.MaintenanceRequest;
 using DTOs.MaintenanceTicket;
 using DTOs.MembershipRank;
 using DTOs.Notification;
@@ -172,23 +174,22 @@ namespace Repository.Mapper
             CreateMap<Address, AddressDto>();
             CreateMap<Address, AddressRequestDto>().ReverseMap();
 
-            //TODO:KHANG
-            //CreateMap<Delivery, DeliveryDto>()
-            //    .ForMember(dest => dest.StaffName,
-            //    opt => opt.MapFrom(src => src.Staff != null
-            //                ? src.Staff.Name
-            //                : null))
-            //    .ForMember(dest => dest.ContractAddress,
-            //     opt => opt.MapFrom(src => src.Contract != null && src.Contract.ContractAddress != null
-            //                ? src.Contract.ContractAddress
-            //                : null));
+            CreateMap<Delivery, DeliveryDto>()
+                .ForMember(dest => dest.StaffName,
+                opt => opt.MapFrom(src => src.Staff != null
+                            ? src.Staff.Name
+                            : null))
+                .ForMember(dest => dest.ContractAddress,
+                 opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
+                            ? src.Contract.RentingRequest.RentingRequestAddress
+                            : null));
 
-            //CreateMap<ContractAddress, ContractAddressDto>();
-            //CreateMap<MaintenanceRequest, MaintenanceRequestDto>()
-            //    .ForMember(dest => dest.ContractAddress,
-            //     opt => opt.MapFrom(src => src.Contract != null && src.Contract.ContractAddress != null
-            //                ? src.Contract.ContractAddress
-            //                : null));
+            CreateMap<RentingRequestAddress, ContractAddressDto>();
+            CreateMap<MaintenanceRequest, MaintenanceRequestDto>()
+                .ForMember(dest => dest.ContractAddress,
+                 opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
+                            ? src.Contract.RentingRequest.RentingRequestAddress
+                            : null)); ;
 
             CreateMap<EmployeeTask, EmployeeTaskDto>()
                 .ForMember(dest => dest.StaffName,

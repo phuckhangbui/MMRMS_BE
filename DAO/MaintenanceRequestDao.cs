@@ -25,26 +25,26 @@ namespace DAO
             }
         }
 
-        //TODO:KHANG
         public async Task<IEnumerable<MaintenanceRequest>> GetMaintenanceRequests()
         {
             using (var context = new MmrmsContext())
             {
                 return await context.MaintenanceRequests
                     .Include(c => c.Contract)
-                    //.ThenInclude(c => c.ContractAddress)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
                     .ToListAsync();
             }
         }
 
-        //TODO:KHANG
         public async Task<MaintenanceRequest> GetMaintenanceRequest(int maintenanceRequestId)
         {
             using (var context = new MmrmsContext())
             {
                 return await context.MaintenanceRequests
                     .Include(c => c.Contract)
-                    //.ThenInclude(c => c.ContractAddress)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
                     .FirstOrDefaultAsync(m => m.RequestId == maintenanceRequestId);
             }
         }
