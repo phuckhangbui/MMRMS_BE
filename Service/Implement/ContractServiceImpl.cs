@@ -84,6 +84,17 @@ namespace Service.Implement
             return contracts;
         }
 
+        public async Task SignContract(string rentingRequestId)
+        {
+            var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+            if (rentingRequest == null)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
+            }
+
+            await _contractRepository.SignContract(rentingRequestId);
+        }
+
         private async Task<ContractDetailDto> CheckContractExist(string contractId)
         {
             var contract = await _contractRepository.GetContractDetailById(contractId);

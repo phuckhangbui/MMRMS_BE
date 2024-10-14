@@ -10,7 +10,7 @@ public partial class ContractPayment
 
     public string? Title { get; set; }
 
-    public double? Price { get; set; }
+    public double? Amount { get; set; }
 
     public DateTime? CustomerPaidDate { get; set; }
 
@@ -18,7 +18,11 @@ public partial class ContractPayment
 
     public string? Status { get; set; }
 
+    public string? Type { get; set; }
+
     public DateTime? DateCreate { get; set; }
+
+    public DateTime? DueDate { get; set; }
 
     public virtual Contract? Contract { get; set; }
 

@@ -55,15 +55,15 @@ namespace DAO
             }
         }
 
-        public async Task<RentingRequest> GetRentingRequestByIdAndStatus(string rentingRequestId, string status)
-        {
-            using (var context = new MmrmsContext())
-            {
-                return await context.RentingRequests
-                    .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId)
-                        && h.Status.Equals(status));
-            }
-        }
+        //public async Task<RentingRequest> GetRentingRequestByIdAndStatus(string rentingRequestId, string status)
+        //{
+        //    using (var context = new MmrmsContext())
+        //    {
+        //        return await context.RentingRequests
+        //            .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId)
+        //                && h.Status.Equals(status));
+        //    }
+        //}
 
         public async Task<IEnumerable<RentingRequest>> GetRentingRequestsForCustomer(int customerId)
         {
