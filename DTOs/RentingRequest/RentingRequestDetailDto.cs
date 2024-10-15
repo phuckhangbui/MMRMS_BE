@@ -14,7 +14,7 @@ namespace DTOs.RentingRequest
         public double? TotalDepositPrice { get; set; }
         public double? TotalServicePrice { get; set; }
         public double? ShippingPrice { get; set; }
-        public double? DiscountShip { get; set; }
+        //public double? DiscountShip { get; set; }
         public double? DiscountPrice { get; set; }
         public int? NumberOfMonth { get; set; }
         public double? TotalAmount { get; set; }

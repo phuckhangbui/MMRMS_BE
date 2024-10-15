@@ -1,16 +1,17 @@
-﻿using DTOs.AccountPromotion;
-using DTOs.MembershipRank;
+﻿using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.RentingService;
+using DTOs.Term;
 
 namespace DTOs.RentingRequest
 {
     public class RentingRequestInitDataDto
     {
-        public List<AccountPromotionDto> AccountPromotions { get; set; }
+        //public List<AccountPromotionDto> AccountPromotions { get; set; }
         public MembershipRankDto MembershipRank { get; set; }
         public List<RentingRequestProductDataDto> RentingRequestProductDatas { get; set; }
         public List<RentingServiceDto> RentingServices { get; set; }
+        public List<TermDto> Terms { get; set; }
     }
 
     public class RentingRequestProductDataDto

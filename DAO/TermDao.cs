@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -30,6 +31,16 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Terms.FirstOrDefaultAsync(t => t.TermId == termId);
+            }
+        }
+
+        public async Task<IEnumerable<Term>> GetTermsByTermType(TermTypeEnum termType)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Terms
+                    .Where(t => t.Type.Equals(termType.ToString()))
+                    .ToListAsync();
             }
         }
     }
