@@ -4,11 +4,11 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.AccountAddressDto;
-using DTOs.AccountPromotion;
 using DTOs.MembershipRank;
 using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
+using DTOs.Term;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using RentingRequest = BusinessObject.RentingRequest;
@@ -95,12 +95,12 @@ namespace Repository.Implement
             rentingRequestInitDataDto.RentingRequestProductDatas = rentingRequestProductDatas;
 
             //Promotion data
-            var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
-            if (!promotions.IsNullOrEmpty())
-            {
-                var shippingTypePromotions = promotions.Where(p => p.Promotion!.DiscountTypeName!.Equals(DiscountTypeNameEnum.Shipping.ToString()));
-                rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(shippingTypePromotions);
-            }
+            //var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
+            //if (!promotions.IsNullOrEmpty())
+            //{
+            //    var shippingTypePromotions = promotions.Where(p => p.Promotion!.DiscountTypeName!.Equals(DiscountTypeNameEnum.Shipping.ToString()));
+            //    rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(shippingTypePromotions);
+            //}
 
             //Membership data
             var membershipRank = await MembershipRankDao.Instance.GetMembershipRanksForCustomer(customerId);
@@ -114,6 +114,13 @@ namespace Repository.Implement
             if (!rentingServices.IsNullOrEmpty())
             {
                 rentingRequestInitDataDto.RentingServices = _mapper.Map<List<RentingServiceDto>>(rentingServices);
+            }
+
+            //Contract term data
+            var contractTerms = await TermDao.Instance.GetTermsByTermType(TermTypeEnum.Contract);
+            if (!contractTerms.IsNullOrEmpty())
+            {
+                rentingRequestInitDataDto.Terms = _mapper.Map<List<TermDto>>(contractTerms);
             }
 
             return rentingRequestInitDataDto;
@@ -197,7 +204,7 @@ namespace Repository.Implement
 
             rentingRequest.TotalServicePrice = totalRentingServicePrice;
 
-            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto.AccountPromotionId, newRentingRequestDto);
+            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             return rentingRequest.RentingRequestId;
         }
     }

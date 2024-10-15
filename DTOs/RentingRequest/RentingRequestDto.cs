@@ -36,7 +36,7 @@ namespace DTOs.RentingRequest
         [Required(ErrorMessage = MessageConstant.RentingRequest.ShippingPriceRequired)]
         public double ShippingPrice { get; set; }
 
-        public double DiscountShip { get; set; }
+        //public double DiscountShip { get; set; }
 
         public double DiscountPrice { get; set; }
 
@@ -53,8 +53,7 @@ namespace DTOs.RentingRequest
 
         [Required(ErrorMessage = MessageConstant.RentingRequest.ServiceRentingRequestsRequired)]
         public List<int> ServiceRentingRequests { get; set; } = new List<int>();
-
-        public int AccountPromotionId { get; set; }
+        //public int AccountPromotionId { get; set; }
     }
 
     public class NewRentingRequestProductDetailDto

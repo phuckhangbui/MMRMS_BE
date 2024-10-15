@@ -76,8 +76,7 @@ namespace DAO
             }
         }
 
-        public async Task<RentingRequest> CreateRentingRequest(RentingRequest rentingRequest,
-            int accountPromotionId, NewRentingRequestDto newRentingRequestDto)
+        public async Task<RentingRequest> CreateRentingRequest(RentingRequest rentingRequest, NewRentingRequestDto newRentingRequestDto)
         {
             using (var context = new MmrmsContext())
             {
@@ -86,17 +85,17 @@ namespace DAO
                     try
                     {
                         //Promotion
-                        if (accountPromotionId != 0)
-                        {
-                            var accountPromotion = await context.AccountPromotions
-                                .FirstOrDefaultAsync(ap => ap.AccountPromotionId == accountPromotionId);
+                        //if (accountPromotionId != 0)
+                        //{
+                        //    var accountPromotion = await context.AccountPromotions
+                        //        .FirstOrDefaultAsync(ap => ap.AccountPromotionId == accountPromotionId);
 
-                            if (accountPromotion != null && accountPromotion.Status!.Equals(AccountPromotionStatusEnum.Active.ToString()))
-                            {
-                                accountPromotion.Status = AccountPromotionStatusEnum.Redeemed.ToString();
-                                context.AccountPromotions.Update(accountPromotion);
-                            }
-                        }
+                        //    if (accountPromotion != null && accountPromotion.Status!.Equals(AccountPromotionStatusEnum.Active.ToString()))
+                        //    {
+                        //        accountPromotion.Status = AccountPromotionStatusEnum.Redeemed.ToString();
+                        //        context.AccountPromotions.Update(accountPromotion);
+                        //    }
+                        //}
 
                         double totalDepositPrice = 0;
                         double totalRentPrice = 0;
@@ -127,10 +126,14 @@ namespace DAO
                                 .Take(newRentingRequestProduct.Quantity)
                                 .ToList();
 
+                            var contractTerms = await context.Terms
+                                .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
+                                .ToListAsync();
+
                             foreach (var serialNumberProduct in selectedSerialNumbers)
                             {
                                 //Assign serial number to the contract
-                                var contractSerialNumber = InitContract(serialNumberProduct, rentingRequest);
+                                var contractSerialNumber = InitContract(serialNumberProduct, rentingRequest, contractTerms);
                                 totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
                                 totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
 
@@ -167,18 +170,19 @@ namespace DAO
             }
         }
 
-        //TODO: ContractName
-        private Contract InitContract(SerialNumberProduct serialNumberProduct, RentingRequest rentingRequest)
+        private Contract InitContract(SerialNumberProduct serialNumberProduct, RentingRequest rentingRequest, List<Term> contractTerms)
         {
+            var dateCreate = DateTime.Now.Date;
+
             var contractSerialNumber = new Contract
             {
                 ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern) + serialNumberProduct.SerialNumber,
                 SerialNumber = serialNumberProduct.SerialNumber,
 
-                DateCreate = DateTime.Now.Date,
+                DateCreate = dateCreate,
                 Status = ContractStatusEnum.NotSigned.ToString(),
 
-                ContractName = string.Empty,
+                ContractName = GlobalConstant.ContractName + serialNumberProduct.SerialNumber,
                 DateStart = rentingRequest.DateStart,
                 DateEnd = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!),
                 Content = string.Empty,
@@ -200,7 +204,22 @@ namespace DAO
                     {
                         Content = productTerm.Content,
                         Title = productTerm.Title,
-                        DateCreate = DateTime.Now,
+                        DateCreate = dateCreate,
+                    };
+
+                    contractSerialNumber.ContractTerms.Add(term);
+                }
+            }
+
+            foreach (var contractTerm in contractTerms)
+            {
+                if (contractTerm != null)
+                {
+                    var term = new ContractTerm()
+                    {
+                        Content = contractTerm.Content,
+                        Title = contractTerm.Title,
+                        DateCreate = dateCreate,
                     };
 
                     contractSerialNumber.ContractTerms.Add(term);
