@@ -24,6 +24,8 @@ public partial class Invoice
 
     public string? Note { get; set; }
 
+    public string? InvoiceTimeStamp { get; set; }
+
     public virtual ContractPayment? ContractPayment { get; set; }
 
     public virtual Account? AccountPaid { get; set; }

@@ -1,20 +1,21 @@
-﻿using DTOs;
+﻿using Common;
+using DTOs;
 using Net.payOS.Errors;
 using Net.payOS.Types;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Service.Exceptions;
+using Service.Interface;
 using Service.PayOS;
 
 namespace Service.Implement
 {
-    public class PayOSService
+    public class PayOSService : IPayOSService
     {
         private const string PAYMENT_REQUEST_URL = "https://api-merchant.payos.vn/v2/payment-requests/";
 
-
-
-        public async Task<string> CreatePaymentLink(string invoiceId, int amount, string urlCancel, string urlReturn)
+        public async Task<string> CreatePaymentLink(string invoiceId, string invoiceTimeStamp, int amount, string urlCancel, string urlReturn)
         {
             var client = ConfigurationHelper.config.GetSection("PayOS:ClientID").Value;
             var apiKey = ConfigurationHelper.config.GetSection("PayOS:APIKey").Value;
@@ -25,14 +26,14 @@ namespace Service.Implement
             var item = new ItemData(invoiceId, 1, amount);
             List<ItemData> items = [item];
 
-            PaymentData paymentData = new PaymentData(int.Parse(invoiceId), amount, "Thanh toan hoa don",
+        PaymentData paymentData = new PaymentData(int.Parse(invoiceTimeStamp), amount, "Thanh toan hoa don",
                                                                                         items, urlCancel, urlReturn);
 
             CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
             return createPayment.checkoutUrl;
         }
 
-        public async Task<TransactionReturn> HandleCodeAfterPaymentQR(int code)
+        public async Task<TransactionReturn> HandleCodeAfterPaymentQR(string code)
         {
             try
             {
@@ -43,17 +44,22 @@ namespace Service.Implement
                 Net.payOS.PayOS payOS = new Net.payOS.PayOS(client, apiKey, checkSumKey);
                 PaymentLinkInformation paymentLinkInformation = await GetPaymentLinkInformation(code);
                 var inf = paymentLinkInformation.transactions.FirstOrDefault();
+                if (paymentLinkInformation.status != "PAID")
+                {
+                    throw new ServiceException(MessageConstant.PayOS.PaymentReferenceError + paymentLinkInformation.status);
+                }
+
                 var bankAccounts = GetBankAccount();
                 var bank = bankAccounts.Result.FirstOrDefault(x => x.bin == inf.counterAccountBankId);
                 var transaction = new TransactionReturn()
                 {
-                    AccountName = inf.counterAccountName,
-                    AccountNumber = inf.counterAccountNumber,
+                    AccountName = inf?.counterAccountName,
+                    AccountNumber = inf?.counterAccountNumber,
                     Amount = inf.amount,
-                    BankCode = bank.code,
-                    BankName = bank.shortName,
-                    Reference = inf.reference,
-                    Description = inf.description,
+                    BankCode = bank?.code,
+                    BankName = bank?.shortName,
+                    Reference = inf?.reference,
+                    Description = inf?.description,
                     TransactionDate = DateTime.Parse(inf.transactionDateTime)
                 };
                 return transaction;
@@ -62,7 +68,6 @@ namespace Service.Implement
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
         public async Task<IEnumerable<BankAccount>> GetBankAccount()
@@ -73,7 +78,7 @@ namespace Service.Implement
             return banks;
         }
 
-        public async Task<PaymentLinkInformation> GetPaymentLinkInformation(long orderId)
+        public async Task<PaymentLinkInformation> GetPaymentLinkInformation(string orderId)
         {
             var client = ConfigurationHelper.config.GetSection("PayOS:ClientID").Value;
             var apiKey = ConfigurationHelper.config.GetSection("PayOS:APIKey").Value;

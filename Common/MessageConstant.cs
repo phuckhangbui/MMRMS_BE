@@ -351,5 +351,11 @@
             public const string TitleRequired = "Tiêu đề điều khoản là cần thiết";
             public const string ContentRequired = "Nội dung điều khoản là cần thiết";
         }
+
+        public static class PayOS
+        {
+            //Service
+            public const string PaymentReferenceError = "Đã có lỗi xảy ra trong quá trình thực hiện thanh toán. Hiện tại trạng thái của mã này đang là: ";
+        }
     }
 }

@@ -39,6 +39,7 @@ public static class ApplicationServicesExtensions
         //Service
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPayOSService, PayOSService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IAccountService, AccountServiceImpl>();
         services.AddScoped<IProductService, ProductServiceImpl>();
