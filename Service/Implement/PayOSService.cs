@@ -26,8 +26,8 @@ namespace Service.Implement
             var item = new ItemData(invoiceId, 1, amount);
             List<ItemData> items = [item];
 
-        PaymentData paymentData = new PaymentData(int.Parse(invoiceTimeStamp), amount, "Thanh toan hoa don",
-                                                                                        items, urlCancel, urlReturn);
+            PaymentData paymentData = new PaymentData(int.Parse(invoiceTimeStamp), amount, "Thanh toan hoa don",
+                                                                                            items, urlCancel, urlReturn);
 
             CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
             return createPayment.checkoutUrl;
@@ -114,5 +114,7 @@ namespace Service.Implement
 
             throw new PayOSError(code, desc);
         }
+
+
     }
 }

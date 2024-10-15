@@ -91,6 +91,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Term> Terms { get; set; }
 
+    public virtual DbSet<DigitalTransaction> DigitalTransactions { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -381,6 +383,21 @@ public partial class MmrmsContext : DbContext
                 .WithOne(p => p.Invoice)
                 .HasForeignKey<Invoice>(d => d.MaintainTicketId)
                 .HasConstraintName("FK_Invoice_MaintainTicket");
+
+            entity.HasOne(d => d.DigitalTransaction)
+               .WithOne(p => p.Invoice)
+               .HasForeignKey<DigitalTransaction>(d => d.InvoiceId)
+               .HasConstraintName("FK_Invoice_DigitalTransaction");
+        });
+
+        modelBuilder.Entity<DigitalTransaction>(entity =>
+        {
+            entity.HasKey(e => e.DigitalTransactionId);
+
+            entity.HasOne(d => d.Invoice)
+                .WithOne(p => p.DigitalTransaction)
+                .HasForeignKey<DigitalTransaction>(d => d.InvoiceId)
+                .HasConstraintName("FK_DigitalTransaction_Invoice");
         });
 
 

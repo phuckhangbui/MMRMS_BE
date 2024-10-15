@@ -24,9 +24,9 @@ namespace Service.Implement
         {
 
 
+            string timestamp = DateTime.Now.ToString();
 
-
-            string url = await _payOSService.CreatePaymentLink(invoiceId, 10000, urlDto.UrlCancel, urlDto.UrlReturn);
+            string url = await _payOSService.CreatePaymentLink(invoiceId, timestamp, 10000, urlDto.UrlCancel, urlDto.UrlReturn);
 
             return url;
         }
