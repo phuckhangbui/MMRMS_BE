@@ -20,5 +20,6 @@ public partial class SerialNumberProduct
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
     public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
+    public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
 
 }

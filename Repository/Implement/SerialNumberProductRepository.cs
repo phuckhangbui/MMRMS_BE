@@ -81,21 +81,6 @@ namespace Repository.Implement
                     Status = ProductComponentStatusEnum.Normal.ToString()
                 };
 
-                var logs = new List<ProductComponentStatusLog>();
-
-                var productComponentStatusLog = new ProductComponentStatusLog
-                {
-                    ProductComponentStatusId = productComponentStatus.ProductComponentStatusId,
-                    DateCreate = DateTime.Now,
-                    Status = ProductComponentStatusEnum.Normal.ToString(),
-                    Note = "Initial status created.",
-                    Type = ProductComponentStatusLogTypeEnum.System.ToString()
-                };
-
-                logs.Add(productComponentStatusLog);
-
-                productComponentStatus.ProductComponentStatusLogs = logs;
-
                 productComponentStatuses.Add(productComponentStatus);
             }
 
