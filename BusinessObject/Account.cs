@@ -80,4 +80,7 @@ public partial class Account
 
     public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
 
+    public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
+
+
 }
