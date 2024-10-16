@@ -148,10 +148,9 @@ namespace DAO
 
                         rentingRequest.TotalRentPrice = totalRentPrice;
                         rentingRequest.TotalDepositPrice = totalDepositPrice;
-                        rentingRequest.TotalAmount =
-                            rentingRequest.TotalAmount + rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
+                        rentingRequest.TotalAmount = rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
                             + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
-                            - rentingRequest.DiscountPrice - rentingRequest.DiscountShip;
+                            - rentingRequest.DiscountPrice;
 
                         DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
                         _dbSet.Add(rentingRequest);

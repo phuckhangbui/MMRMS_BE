@@ -352,10 +352,9 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_ContractPayment_ContractID");
 
-            // One-to-one with Invoice, using ContractPaymentId as foreign key in Invoice
             entity.HasOne(d => d.Invoice)
-                .WithOne(p => p.ContractPayment)
-                .HasForeignKey<Invoice>(d => d.ContractPaymentId)  // Use ContractPaymentId as the foreign key
+                .WithMany(p => p.ContractPayments)
+                .HasForeignKey(d => d.InvoiceId)
                 .HasConstraintName("FK_Invoice_ContractPayment");
         });
 
@@ -365,9 +364,9 @@ public partial class MmrmsContext : DbContext
             entity.HasKey(e => e.InvoiceId);
 
             // One-to-one relationship with ContractPayment
-            entity.HasOne(d => d.ContractPayment)
+            entity.HasMany(d => d.ContractPayments)
                 .WithOne(p => p.Invoice)
-                .HasForeignKey<Invoice>(d => d.ContractPaymentId)  // Use ContractPaymentId
+                .HasForeignKey(d => d.InvoiceId)  // Use ContractPaymentId
                 .HasConstraintName("FK_Invoice_ContractPayment");
 
             // One-to-many relationship with AccountPaid

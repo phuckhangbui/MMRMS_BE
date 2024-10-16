@@ -22,6 +22,7 @@ namespace DTOs.Contract
         public double? TotalRentPrice { get; set; }
         //public AddressDto Address { get; set; }
         public AccountBusinessDto AccountBusiness { get; set; }
+        public string ProductName { get; set; }
     }
 
     public class ContractProductDetailDto : RentingRequestProductDetailDto
