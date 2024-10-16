@@ -2,7 +2,7 @@
 
 namespace Repository.Interface
 {
-    public interface IRentingRepository
+    public interface IRentingRequestRepository
     {
         //Task<bool> CheckRentingRequestValidToRent(string rentingRequestId);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequests();
@@ -10,5 +10,7 @@ namespace Repository.Interface
         Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId);
         Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
+        Task<bool> IsRentingRequestValidToCancel(string rentingRequestId);
+        Task<bool> CancelRentingRequest(string rentingRequestId);
     }
 }

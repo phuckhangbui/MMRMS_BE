@@ -10,13 +10,13 @@ namespace Service.Implement
     public class ContractServiceImpl : IContractService
     {
         private readonly IContractRepository _contractRepository;
-        private readonly IRentingRepository _rentingRepository;
+        private readonly IRentingRequestRepository _rentingRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
-            IRentingRepository rentingRepository,
+            IRentingRequestRepository rentingRepository,
             IAccountRepository accountRepository,
             ISerialNumberProductRepository serialNumberProductRepository)
         {

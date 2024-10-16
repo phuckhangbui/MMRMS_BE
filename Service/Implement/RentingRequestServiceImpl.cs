@@ -8,13 +8,13 @@ namespace Service.Implement
 {
     public class RentingRequestServiceImpl : IRentingRequestService
     {
-        private readonly IRentingRepository _rentingRepository;
+        private readonly IRentingRequestRepository _rentingRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IAddressRepository _addressRepository;
 
         public RentingRequestServiceImpl(
-            IRentingRepository rentingRepository,
+            IRentingRequestRepository rentingRepository,
             ISerialNumberProductRepository serialNumberProductRepository,
             IAccountRepository accountRepository,
             IAddressRepository addressRepository)
@@ -54,7 +54,13 @@ namespace Service.Implement
 
         public async Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId)
         {
-            return await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+            var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+            if (rentingRequest == null)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
+            }
+
+            return rentingRequest;
         }
 
         public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
@@ -65,6 +71,17 @@ namespace Service.Implement
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
         {
             return await _rentingRepository.GetRentingRequestsForCustomer(customerId);
+        }
+
+        public async Task<bool> CancelRentingRequest(string rentingRequestId)
+        {
+            var isValid = await _rentingRepository.IsRentingRequestValidToCancel(rentingRequestId);
+            if (!isValid)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestCanNotCancel);
+            }
+
+            return await _rentingRepository.CancelRentingRequest(rentingRequestId);
         }
     }
 }

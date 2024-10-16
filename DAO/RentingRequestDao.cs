@@ -113,7 +113,7 @@ namespace DAO
                             var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableSerialNumberProducts.Contains(c.ContractSerialNumberProduct)
-                                        && (c.Status == ContractStatusEnum.Active.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                                        && (c.Status == ContractStatusEnum.Shipped.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
                                         && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractSerialNumberProduct)
                                 .ToListAsync();
@@ -226,6 +226,46 @@ namespace DAO
             }
 
             return contractSerialNumber;
+        }
+
+        public async Task<RentingRequest?> CancelRentingRequest(string rentingRequestId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var rentingRequest = await context.RentingRequests
+                            .Include(rr => rr.Contracts)
+                            .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
+
+                        if (rentingRequest != null)
+                        {
+                            rentingRequest.Status = RentingRequestStatusEnum.Canceled.ToString();
+
+                            foreach (var contract in rentingRequest.Contracts)
+                            {
+                                contract.Status = ContractStatusEnum.Canceled.ToString();
+                                context.Contracts.Update(contract);
+                            }
+
+                            context.RentingRequests.Update(rentingRequest);
+
+                            await context.SaveChangesAsync();
+
+                            await transaction.CommitAsync();
+                        }
+
+                        return rentingRequest;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
         }
     }
 }

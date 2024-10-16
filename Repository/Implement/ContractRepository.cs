@@ -137,7 +137,7 @@ namespace Repository.Implement
 
             //Update renting request
             //rentingRequest.ContractId = contract.ContractId;
-            rentingRequest.Status = RentingRequestStatusEnum.Approved.ToString();
+            //rentingRequest.Status = RentingRequestStatusEnum.Approved.ToString();
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
 
             return contract.ContractId;
