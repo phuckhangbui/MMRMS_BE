@@ -31,7 +31,7 @@ namespace Repository.Implement
             digitalTransaction.DigitalTransactionId = transactionReturn.Reference;
 
 
-            invoice.Status = "Paid";
+            invoice.Status = ;
             invoice.DigitalTransactionId = transactionReturn.Reference;
             invoice.DigitalTransaction = digitalTransaction;
 

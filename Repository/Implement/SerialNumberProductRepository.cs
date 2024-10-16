@@ -60,11 +60,13 @@ namespace Repository.Implement
 
         public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price, int accountId)
         {
+            var now = DateTime.Now;
+
             var serialProduct = new SerialNumberProduct
             {
                 SerialNumber = createSerialProductNumberDto.SerialNumber,
                 ProductId = createSerialProductNumberDto.ProductId,
-                DateCreate = DateTime.Now,
+                DateCreate = now,
                 RentTimeCounter = 0,
                 ActualRentPrice = price,
                 Status = SerialNumberProductStatusEnum.Available.ToString()
@@ -99,7 +101,8 @@ namespace Repository.Implement
                 SerialNumber = serialProduct.SerialNumber,
                 AccountTriggerId = accountId,
                 Action = "Create",
-                Type = SerialNumberProductLogTypeEnum.System.ToString()
+                Type = SerialNumberProductLogTypeEnum.System.ToString(),
+                DateCreate = now
             };
 
             serialProduct.SerialNumberProductLogs = [log];
