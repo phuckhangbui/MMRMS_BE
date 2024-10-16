@@ -121,6 +121,16 @@ namespace DAO
             }
         }
 
+        public async Task<SerialNumberProduct> GetSerialNumberProductDetail(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var serialNumberProduct = await context.SerialNumberProducts.Include(c => c.SerialNumberProductLogs).Include(c => c.ProductComponentStatuses).FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+
+                return serialNumberProduct;
+            }
+        }
+
         //public async Task CreateSerialProduct(SerialNumberProduct serialProduct)
         //{
         //    using (var context = new MmrmsContext())
