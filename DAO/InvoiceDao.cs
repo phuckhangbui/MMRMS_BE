@@ -34,5 +34,13 @@ namespace DAO
             }
         }
 
+        public async Task<Invoice> GetInvoice(string invoiceId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Invoices.Include(i => i.AccountPaid)
+                    .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BusinessObject;
-using DTOs;
 using DTOs.Account;
 using DTOs.AccountAddressDto;
 using DTOs.AccountPromotion;
@@ -12,6 +11,7 @@ using DTOs.Content;
 using DTOs.Contract;
 using DTOs.Delivery;
 using DTOs.EmployeeTask;
+using DTOs.Invoice;
 using DTOs.Log;
 using DTOs.MaintenanceRequest;
 using DTOs.MaintenanceTicket;
@@ -144,6 +144,10 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountPaid != null
                             ? src.AccountPaid.Name
                             : null));
+
+            CreateMap<InvoiceDto, Invoice>();
+
+            CreateMap<DigitalTransaction, TransactionReturn>().ReverseMap();
 
             CreateMap<RentingRequest, RentingRequestDto>()
                  .ForMember(dest => dest.AccountOrderName,

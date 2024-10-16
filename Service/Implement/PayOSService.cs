@@ -1,5 +1,5 @@
 ﻿using Common;
-using DTOs;
+using DTOs.Invoice;
 using Net.payOS.Errors;
 using Net.payOS.Types;
 

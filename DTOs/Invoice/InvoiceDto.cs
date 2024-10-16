@@ -1,4 +1,4 @@
-﻿namespace DTOs
+﻿namespace DTOs.Invoice
 {
     public class InvoiceDto
     {
@@ -10,7 +10,11 @@
 
         public string? AccountPaidName { get; set; }
 
-        public string? ContractId { get; set; }
+        public string? ContractPaymentId { get; set; }
+
+        public string? MaintainTicketId { get; set; }
+
+        public string? DigitalTransactionId { get; set; }
 
         public string? PaymentMethod { get; set; }
 
@@ -23,5 +27,8 @@
         public string? Type { get; set; }
 
         public string? Note { get; set; }
+
+        public string? PayOsOrderId { get; set; }
+
     }
 }

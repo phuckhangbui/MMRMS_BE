@@ -1,4 +1,4 @@
-﻿using DTOs;
+﻿using DTOs.Invoice;
 
 namespace Service.Interface
 {
