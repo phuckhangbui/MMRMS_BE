@@ -108,7 +108,7 @@ namespace Repository.Implement
                     Note = string.Empty,
                     DateCreate = contractPayment.DateCreate,
                     Status = string.Empty,
-                    ContractPayment = contractPayment
+                    //ContractPayment = contractPayment
                 };
 
                 contractPayment.InvoiceId = invoice.InvoiceId;

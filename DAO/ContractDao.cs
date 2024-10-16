@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common;
 using Common.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,8 @@ namespace DAO
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
+                    .Include(c => c.ContractSerialNumberProduct)
+                        .ThenInclude(a => a.Product)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
         }
@@ -75,69 +78,105 @@ namespace DAO
 
                 if (rentingRequest != null && !rentingRequest.Contracts.IsNullOrEmpty())
                 {
-                    foreach (var contract in rentingRequest.Contracts)
-                    {
-                        var contractPayments = new List<ContractPayment>();
+                    //var additionalInvoice = InitAdditionalInvoice(rentingRequest);
+                    //DbSet<Invoice> _dbSet = context.Set<Invoice>();
+                    //_dbSet.Add(additionalInvoice);
 
-                        //IsOnetimePayment: true
-                        if ((bool)rentingRequest.IsOnetimePayment!)
+                    var depositInvoice = InitDepositInvoiceV2(rentingRequest);
+                    //var rentalInvoice = InitRentalInvoiceV2(rentingRequest);
+                    DbSet<Invoice> _dbSet = context.Set<Invoice>();
+                    _dbSet.Add(depositInvoice);
+
+                    //IsOnetimePayment: true
+                    if ((bool)rentingRequest.IsOnetimePayment!)
+                    {
+                        var rentalInvoice = InitRentalInvoiceV2(rentingRequest);
+
+                        foreach (var contract in rentingRequest.Contracts)
                         {
+                            var contractPayments = new List<ContractPayment>();
+
                             //ContractPayment(Deposit)
-                            var contractPaymentDeposit = InitContractPaymentDeposit(contract);
+                            var depositContractPayment = InitDepositContractPayment(contract);
 
                             //ContractPayment(Rental)
-                            var contractPaymentRental = new ContractPayment
+                            var rentalContractPayment = new ContractPayment
                             {
                                 ContractId = contract.ContractId,
                                 DateCreate = DateTime.Now.Date,
                                 Status = ContractPaymentStatusEnum.Pending.ToString(),
                                 Type = ContractPaymentTypeEnum.Rental.ToString(),
                                 Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
-                                Amount = (contract.RentPrice * contract.NumberOfMonth) +
-                                    rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
-                                    rentingRequest.TotalServicePrice,
+                                Amount = contract.RentPrice * contract.NumberOfMonth,
                                 DueDate = contract.DateStart,
                             };
 
-                            contractPayments.Add(contractPaymentDeposit);
-                            contractPayments.Add(contractPaymentRental);
+                            contractPayments.Add(depositContractPayment);
+                            contractPayments.Add(rentalContractPayment);
 
                             contract.ContractPayments = contractPayments;
+
+                            //Deposit Invoice
+                            //var depositInvoice = InitDepositInvoice(contract);
+                            depositContractPayment.Invoice = depositInvoice;
+
+                            //Rental Invoice
+                            //var rentalInvoice = InitRentalInvoice(contract, rentingRequest);
+                            rentalContractPayment.Invoice = rentalInvoice;
+
+                            contract.Status = ContractStatusEnum.Signed.ToString();
+                            contract.DateSign = DateTime.Now.Date;
+
+                            context.Contracts.Update(contract);
                         }
-                        //IsOnetimePayment: false
-                        else
+                    }
+                    //IsOnetimePayment: false
+                    else
+                    {
+                        var firstRentalInvoiceAmount = rentingRequest.Contracts.Select(c => c.RentPrice).Sum() * 3;
+                        firstRentalInvoiceAmount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice +
+                                                rentingRequest.TotalServicePrice;
+                        var dateCreate = DateTime.Now.Date;
+
+                        var invoice = new Invoice
                         {
+                            InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + rentingRequest.RentingRequestId,
+                            Amount = firstRentalInvoiceAmount,
+                            Type = InvoiceTypeEnum.Rental.ToString(),
+                            Status = InvoiceStatusEnum.Pending.ToString(),
+                            DateCreate = dateCreate,
+                        };
+
+                        //
+                        foreach (var contract in rentingRequest.Contracts)
+                        {
+                            var contractPayments = new List<ContractPayment>();
+
                             //ContractPayment(Deposit)
-                            var contractPaymentDeposit = InitContractPaymentDeposit(contract);
+                            var depositContractPayment = InitDepositContractPayment(contract);
+                            contractPayments.Add(depositContractPayment);
 
-                            var contractPaymentRental = new ContractPayment
-                            {
-                                ContractId = contract.ContractId,
-                                DateCreate = DateTime.Now.Date,
-                                Status = ContractPaymentStatusEnum.Pending.ToString(),
-                                Type = ContractPaymentTypeEnum.Rental.ToString(),
-                                Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId + " lần 1",
-                                Amount = (contract.RentPrice * 3) +
-                                    rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
-                                    rentingRequest.TotalServicePrice,
-                                DueDate = contract.DateStart,
-                            };
-
-                            contractPayments.Add(contractPaymentDeposit);
-                            contractPayments.Add(contractPaymentRental);
-
-                            var time = (contract.NumberOfMonth / 3) - 1;
+                            var time = contract.NumberOfMonth / 3;
                             if (time > 0)
                             {
-                                contractPayments.AddRange(InitContractPaymentRentalByTime(contract, (int)time!));
+                                contractPayments.AddRange(InitRentalContractPaymentByTime(contract, (int)time!, rentingRequest, invoice));
                             }
 
                             contract.ContractPayments = contractPayments;
+
+                            //Deposit Invoice
+                            //var depositInvoice = InitDepositInvoice(contract);
+                            depositContractPayment.Invoice = depositInvoice;
+
+                            //Rental Invoice
+                            //var rentalInvoice = InitRentalInvoice(contract, rentingRequest);
+                            //rentalContractPayment.Invoice = rentalInvoice;
+
+                            contract.Status = ContractStatusEnum.Signed.ToString();
+                            contract.DateSign = DateTime.Now.Date;
+
+                            context.Contracts.Update(contract);
                         }
-
-                        contract.Status = ContractStatusEnum.Signed.ToString();
-
-                        context.Contracts.Update(contract);
                     }
 
                     await context.SaveChangesAsync();
@@ -151,14 +190,114 @@ namespace DAO
             }
         }
 
-        private List<ContractPayment> InitContractPaymentRentalByTime(Contract contract, int time)
+        private Invoice InitAdditionalInvoice(RentingRequest rentingRequest)
+        {
+            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
+                                rentingRequest.TotalServicePrice;
+            var dateCreate = DateTime.Now.Date;
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + rentingRequest.RentingRequestId,
+                Amount = additionalAmount,
+                Type = InvoiceTypeEnum.Additional.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = dateCreate,
+            };
+
+            return invoice;
+        }
+
+        private Invoice InitRentalInvoice(Contract contract, RentingRequest rentingRequest)
+        {
+            var totalRentalAmount = contract.ContractPayments
+                .Where(cp => cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()))
+                .Select(cp => cp.Amount)
+                .Sum();
+            var dateCreate = DateTime.Now.Date;
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + 1 + contract.ContractId,
+                Amount = totalRentalAmount,
+                Type = InvoiceTypeEnum.Rental.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = dateCreate,
+            };
+
+            return invoice;
+        }
+
+        private Invoice InitRentalInvoiceV2(RentingRequest rentingRequest)
+        {
+            var totalRentalAmount = rentingRequest.Contracts
+                .Select(cp => cp.TotalRentPrice)
+                .Sum();
+            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
+                                rentingRequest.TotalServicePrice;
+            totalRentalAmount += additionalAmount;
+
+            var dateCreate = DateTime.Now.Date;
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + rentingRequest.RentingRequestId,
+                Amount = totalRentalAmount,
+                Type = InvoiceTypeEnum.Rental.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = dateCreate,
+            };
+
+            return invoice;
+        }
+
+        private Invoice InitDepositInvoice(Contract contract)
+        {
+            var totalDepositAmount = contract.ContractPayments
+                .Where(cp => cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()))
+                .Select(cp => cp.Amount)
+                .Sum();
+            var dateCreate = DateTime.Now.Date;
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + contract.ContractId,
+                Amount = totalDepositAmount,
+                Type = InvoiceTypeEnum.Deposit.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = dateCreate,
+            };
+
+            return invoice;
+        }
+
+        private Invoice InitDepositInvoiceV2(RentingRequest rentingRequest)
+        {
+            var totalDepositAmount = rentingRequest.Contracts
+                .Select(cp => cp.DepositPrice)
+                .Sum();
+            var dateCreate = DateTime.Now.Date;
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "DEPOSIT" + rentingRequest.RentingRequestId,
+                Amount = totalDepositAmount,
+                Type = InvoiceTypeEnum.Deposit.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = dateCreate,
+            };
+
+            return invoice;
+        }
+
+        private List<ContractPayment> InitRentalContractPaymentByTime(Contract contract, int time, RentingRequest rentingRequest, Invoice invoice)
         {
             var list = new List<ContractPayment>();
             for (int i = 0; i < time; i++)
             {
                 int monthsToAdd = (i + 1) * 3;
 
-                var contractPaymentRental = new ContractPayment
+                var rentalContractPayment = new ContractPayment
                 {
                     ContractId = contract.ContractId,
                     DateCreate = DateTime.Now.Date,
@@ -169,13 +308,22 @@ namespace DAO
                     DueDate = contract.DateStart!.Value.AddMonths(monthsToAdd),
                 };
 
-                list.Add(contractPaymentRental);
+                //Rental Invoice
+                //var rentalInvoice = InitRentalInvoice(contract, rentingRequest);
+                //rentalContractPayment.Invoice = rentalInvoice;
+
+                if (i == 0)
+                {
+                    rentalContractPayment.Invoice = invoice;
+                }
+
+                list.Add(rentalContractPayment);
             }
 
             return list;
         }
 
-        private ContractPayment InitContractPaymentDeposit(Contract contract)
+        private ContractPayment InitDepositContractPayment(Contract contract)
         {
             var contractPaymentDeposit = new ContractPayment
             {
