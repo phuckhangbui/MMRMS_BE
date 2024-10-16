@@ -1,5 +1,7 @@
-﻿using Common;
+﻿using AutoMapper;
+using Common;
 using Common.Enum;
+using DTOs.Product;
 using DTOs.SerialNumberProduct;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -12,14 +14,16 @@ namespace Service.Implement
     {
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
 
-        public SerialNumberProductService(ISerialNumberProductRepository serialNumberProductRepository, IProductRepository productRepository)
+        public SerialNumberProductService(ISerialNumberProductRepository serialNumberProductRepository, IProductRepository productRepository, IMapper mapper)
         {
             _serialNumberProductRepository = serialNumberProductRepository;
             _productRepository = productRepository;
+            _mapper = mapper;
         }
 
-        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto dto)
+        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto dto, int accountId)
         {
             var productDetail = await _productRepository.GetProductDetail(dto.ProductId);
 
@@ -43,19 +47,30 @@ namespace Service.Implement
                 }
             }
 
-            await _serialNumberProductRepository.CreateSerialNumberProduct(dto, productDetail.ComponentProductList, (double)productDetail.RentPrice);
+            await _serialNumberProductRepository.CreateSerialNumberProduct(dto, productDetail.ComponentProductList, (double)productDetail.RentPrice, accountId);
+
+            var product = _mapper.Map<ProductDto>(productDetail);
+
+            if (product.Status == ProductStatusEnum.NoSerialMachine.ToString())
+            {
+                product.Status = ProductStatusEnum.Active.ToString();
+            }
+
+            await _productRepository.UpdateProduct(product);
         }
 
         public async Task Delete(string serialNumber)
         {
+            var serialNumberProduct = await _serialNumberProductRepository.GetSerialNumberProduct(serialNumber);
+
+            if (serialNumberProduct != null)
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+
+            }
             if (string.IsNullOrEmpty(serialNumber))
             {
                 throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
-            }
-
-            if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
             }
 
             if (await _serialNumberProductRepository.IsSerialNumberProductHasContract(serialNumber))
@@ -65,6 +80,32 @@ namespace Service.Implement
 
             await _serialNumberProductRepository.Delete(serialNumber);
 
+
+            //var serialProductList = await _productRepository.GetProductNumberList()
+        }
+
+        public async Task<IEnumerable<SerialNumberProductLogDto>> GetDetailLog(string serialNumber)
+        {
+            var serialNumberProduct = await _serialNumberProductRepository.GetSerialNumberProduct(serialNumber);
+
+            if (serialNumberProduct == null)
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            return await _serialNumberProductRepository.GetSerialNumberProductLog(serialNumber);
+        }
+
+        public async Task<IEnumerable<ProductComponentStatusDto>> GetSerialNumberComponentStatus(string serialNumber)
+        {
+            var serialNumberProduct = await _serialNumberProductRepository.GetSerialNumberProduct(serialNumber);
+
+            if (serialNumberProduct == null)
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            return await _serialNumberProductRepository.GetProductComponentStatus(serialNumber);
         }
 
         public async Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)

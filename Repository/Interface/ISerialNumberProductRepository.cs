@@ -7,7 +7,7 @@ namespace Repository.Interface
     public interface ISerialNumberProductRepository
     {
         Task<bool> CheckSerialNumberProductsValidToRent(List<SerialNumberProductRentRequestDto> serialNumberProductRentRequestDtos);
-        Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price);
+        Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price, int accountId);
         Task Delete(string serialNumber);
         Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId);
         Task<bool> IsSerialNumberExist(string serialNumber);
@@ -18,5 +18,8 @@ namespace Repository.Interface
             List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos,
             DateTime requestStartDate,
             int numberOfMonth);
+        Task<SerialNumberProductDto> GetSerialNumberProduct(string serialNumber);
+        Task<IEnumerable<SerialNumberProductLogDto>> GetSerialNumberProductLog(string serialNumber);
+        Task<IEnumerable<ProductComponentStatusDto>> GetProductComponentStatus(string serialNumber);
     }
 }

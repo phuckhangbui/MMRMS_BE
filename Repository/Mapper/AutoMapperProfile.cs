@@ -97,6 +97,8 @@ namespace Repository.Mapper
                             ? src.ProductTerms
                             : null));
 
+            CreateMap<DisplayProductDetailDto, ProductDto>();
+
 
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>();

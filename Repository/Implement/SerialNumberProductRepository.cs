@@ -5,6 +5,7 @@ using DAO;
 using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.SerialNumberProduct;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -57,7 +58,7 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price)
+        public async Task CreateSerialNumberProduct(SerialNumberProductCreateRequestDto createSerialProductNumberDto, IEnumerable<ComponentProductDto> componentProductList, double price, int accountId)
         {
             var serialProduct = new SerialNumberProduct
             {
@@ -89,28 +90,58 @@ namespace Repository.Implement
                 serialProduct.ProductComponentStatuses = null;
             }
             else
+            {
                 serialProduct.ProductComponentStatuses = productComponentStatuses;
+            }
 
+            SerialNumberProductLog log = new SerialNumberProductLog
+            {
+                SerialNumber = serialProduct.SerialNumber,
+                AccountTriggerId = accountId,
+                Action = "Create",
+                Type = SerialNumberProductLogTypeEnum.System.ToString()
+            };
+
+            serialProduct.SerialNumberProductLogs = [log];
 
             await SerialNumberProductDao.Instance.CreateAsync(serialProduct);
 
-
-
-
-            var product = await ProductDao.Instance.GetProduct((int)serialProduct.ProductId);
-
-            if (product.Status.Equals(ProductStatusEnum.NoSerialMachine))
-            {
-                product.Status = ProductStatusEnum.Active.ToString();
-            }
-
-
-            await ProductDao.Instance.UpdateAsync(product);
         }
 
         public async Task Delete(string serialNumber)
         {
             await SerialNumberProductDao.Instance.Delete(serialNumber);
+        }
+
+        public async Task<IEnumerable<ProductComponentStatusDto>> GetProductComponentStatus(string serialNumber)
+        {
+            var serialNumberProduct = await SerialNumberProductDao.Instance.GetSerialNumberProductDetail(serialNumber);
+
+            if (serialNumberProduct.ProductComponentStatuses.IsNullOrEmpty())
+            {
+                return new List<ProductComponentStatusDto>();
+            }
+
+            return _mapper.Map<IEnumerable<ProductComponentStatusDto>>(serialNumberProduct.ProductComponentStatuses);
+        }
+
+        public async Task<SerialNumberProductDto> GetSerialNumberProduct(string serialNumber)
+        {
+            var serialNumberProduct = await SerialNumberProductDao.Instance.GetSerialNumberProduct(serialNumber);
+
+            return _mapper.Map<SerialNumberProductDto>(serialNumberProduct);
+        }
+
+        public async Task<IEnumerable<SerialNumberProductLogDto>> GetSerialNumberProductLog(string serialNumber)
+        {
+            var serialNumberProduct = await SerialNumberProductDao.Instance.GetSerialNumberProductDetail(serialNumber);
+
+            if (serialNumberProduct.SerialNumberProductLogs.IsNullOrEmpty())
+            {
+                return new List<SerialNumberProductLogDto>();
+            }
+
+            return _mapper.Map<IEnumerable<SerialNumberProductLogDto>>(serialNumberProduct.SerialNumberProductLogs);
         }
 
         public async Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
