@@ -22,7 +22,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMembershipRankRepository, MembershipRankRepository>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
-        services.AddScoped<IRentingRepository, RentingRepository>();
+        services.AddScoped<IRentingRequestRepository, RentingRequestRepository>();
         services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();

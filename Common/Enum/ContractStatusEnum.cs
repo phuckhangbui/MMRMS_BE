@@ -4,8 +4,10 @@
     {
         NotSigned,
         Signed,
-        Active,
+        Shipping,
+        Shipped,
         Completed,
         Terminated,
+        Canceled
     }
 }

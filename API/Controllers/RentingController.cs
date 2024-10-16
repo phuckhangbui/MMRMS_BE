@@ -134,5 +134,24 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPut("{rentingRequestId}/cancel")]
+        public async Task<ActionResult> CancelRentingRequest(string rentingRequestId)
+        {
+            try
+            {
+                var result = await _rentingService.CancelRentingRequest(rentingRequestId);
+                if (!result) return Ok(MessageConstant.RentingRequest.RentingRequestCancelFail);
+                return BadRequest(MessageConstant.RentingRequest.RentingRequestCancelSuccessfully);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

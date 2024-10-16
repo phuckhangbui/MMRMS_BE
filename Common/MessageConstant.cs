@@ -228,6 +228,9 @@
             public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
             public const string RentingRequestNotFound = "Yêu cầu thuê không tồn tại";
+            public const string RentingRequestCanNotCancel = "Yêu cầu thuê không tồn tại hoặc không thể hủy";
+            public const string RentingRequestCancelSuccessfully = "Hủy yêu cầu thuê thành công";
+            public const string RentingRequestCancelFail = "Hủy yêu cầu thuê thất bại";
 
             //DTO
             public const string AddressIdRequired = "Địa chỉ là bắt buộc.";
