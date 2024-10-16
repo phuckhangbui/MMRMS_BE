@@ -1,4 +1,5 @@
-﻿using DTOs.Account;
+﻿using Common.Enum;
+using DTOs.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -24,6 +25,61 @@ namespace API.Controllers
             {
                 var accounts = await _accountService.GetAccountsByRole(role);
                 return Ok(accounts);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("login-user-detail")]
+        [Authorize]
+        public async Task<ActionResult> GetLoginUserAccount()
+        {
+            int accountRole = GetLoginAccounRole();
+            if (accountRole == -1)
+            {
+                return Unauthorized();
+            }
+
+            int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+
+                if (accountRole == (int)AccountRoleEnum.Admin)
+                {
+                    return Ok("You are admin role");
+                }
+
+                if (accountRole == (int)AccountRoleEnum.Manager)
+                {
+                    var account = await _accountService.GetEmployeeAccount(accountId);
+                    return Ok(account);
+                }
+
+                if (accountRole == (int)AccountRoleEnum.Staff)
+                {
+                    var account = await _accountService.GetEmployeeAccount(accountId);
+                    return Ok(account);
+                }
+
+                if (accountRole == (int)AccountRoleEnum.Customer)
+                {
+                    var account = await _accountService.GetCustomerAccount(accountId);
+                    return Ok(account);
+                }
+
+                return NoContent();
+
             }
             catch (ServiceException ex)
             {

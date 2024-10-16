@@ -130,5 +130,20 @@ namespace Service.Implement
         {
             return await _accountRepository.GetStaffAccounts();
         }
+
+        public async Task<CustomerAccountDto> GetCustomerAccount(int accountId)
+        {
+            var list = await _accountRepository.GetCustomerAccounts();
+            return list.FirstOrDefault(a => a.AccountId == accountId);
+
+        }
+
+        public async Task<EmployeeAccountDto> GetEmployeeAccount(int accountId)
+        {
+            var list = await _accountRepository.GetEmployeeAccounts();
+            return list.FirstOrDefault(a => a.AccountId == accountId);
+        }
+
+
     }
 }
