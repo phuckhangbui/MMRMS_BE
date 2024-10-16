@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using Common;
+using Common.Enum;
 using DAO;
 using DTOs.Invoice;
 using Repository.Interface;
@@ -31,7 +32,7 @@ namespace Repository.Implement
             digitalTransaction.DigitalTransactionId = transactionReturn.Reference;
 
 
-            invoice.Status = "Paid";
+            invoice.Status = InvoiceStatusEnum.Paid.ToString();
             invoice.DigitalTransactionId = transactionReturn.Reference;
             invoice.DigitalTransaction = digitalTransaction;
 

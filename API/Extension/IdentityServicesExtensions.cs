@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Common.Enum;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -6,11 +7,6 @@ namespace HostelManagementWebAPI.Extensions;
 
 public static class IdentityServiceExtension
 {
-
-    const string ADMIN_ID = "0";
-    const string MANAGER_ID = "1";
-    const string STAFF_ID = "2";
-    const string CUSTOMER_ID = "3";
     public static IServiceCollection IdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -35,17 +31,22 @@ public static class IdentityServiceExtension
         services.AddAuthorization(options =>
         {
             options.AddPolicy("Admin", policy =>
-                      policy.RequireClaim("RoleId", ADMIN_ID));
+         policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Admin).ToString()));
+
             options.AddPolicy("Manager", policy =>
-                      policy.RequireClaim("RoleId", MANAGER_ID));
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Manager).ToString()));
+
             options.AddPolicy("Staff", policy =>
-                      policy.RequireClaim("RoleId", STAFF_ID));
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Staff).ToString()));
+
             options.AddPolicy("ManagerAndStaff", policy =>
-                        policy.RequireClaim("RoleId", MANAGER_ID, STAFF_ID));
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Manager).ToString(), ((int)AccountRoleEnum.Staff).ToString()));
+
             options.AddPolicy("Customer", policy =>
-                        policy.RequireClaim("RoleId", CUSTOMER_ID));
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Customer).ToString()));
+
             options.AddPolicy("AdminAndManager", policy =>
-                        policy.RequireClaim("RoleId", ADMIN_ID, MANAGER_ID));
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Admin).ToString(), ((int)AccountRoleEnum.Manager).ToString()));
         });
         return services;
     }

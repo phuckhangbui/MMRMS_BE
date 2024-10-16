@@ -1,5 +1,6 @@
 ﻿using DTOs;
 using DTOs.Invoice;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -35,16 +36,41 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpGet("my-invoice")]
+        [Authorize(Policy = "Customer")]
+        public async Task<ActionResult<IEnumerable<InvoiceDto>>> GetCustomerInvoice()
+        {
+            int customerId = GetLoginAccountId();
+            if (customerId == 0)
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+                var list = await _invoiceService.GetCustomerInvoice(customerId);
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPost("{invoiceId}/pay")]
+        [Authorize(Policy = "Customer")]
         public async Task<ActionResult<string>> GetPaymentUrl([FromRoute] string invoiceId, [FromBody] UrlDto urlDto)
         {
-            //int customerId = GetLoginAccountId();
-            //if (customerId == 0)
-            //{
-            //    return Unauthorized();
-            //}
-
-            int customerId = 0;
+            int customerId = GetLoginAccountId();
+            if (customerId == 0)
+            {
+                return Unauthorized();
+            }
 
             try
             {
@@ -62,15 +88,14 @@ namespace API.Controllers
         }
 
         [HttpPost("{invoiceId}/post-transaction-check")]
+        [Authorize(Policy = "Customer")]
         public async Task<ActionResult<string>> CheckPostTransaction([FromRoute] string invoiceId)
         {
-            //int customerId = GetLoginAccountId();
-            //if (customerId == 0)
-            //{
-            //    return Unauthorized();
-            //}
-
-            int customerId = 0;
+            int customerId = GetLoginAccountId();
+            if (customerId == 0)
+            {
+                return Unauthorized();
+            }
 
             try
             {
@@ -86,6 +111,7 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
 
 
     }

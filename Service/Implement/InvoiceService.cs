@@ -23,6 +23,13 @@ namespace Service.Implement
             return await _invoiceRepository.GetAllInvoices();
         }
 
+        public async Task<IEnumerable<InvoiceDto>> GetCustomerInvoice(int customerId)
+        {
+            var list = await _invoiceRepository.GetAllInvoices();
+
+            return list.Where(i => i.AccountPaidId == customerId).ToList();
+        }
+
         public async Task<string> GetPaymentUrl(int customerId, string invoiceId, UrlDto urlDto)
         {
             InvoiceDto invoice = await _invoiceRepository.GetInvoice(invoiceId);
