@@ -1,4 +1,5 @@
 ﻿using DTOs;
+using DTOs.Invoice;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -33,5 +34,59 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("{invoiceId}/pay")]
+        public async Task<ActionResult<string>> GetPaymentUrl([FromRoute] string invoiceId, [FromBody] UrlDto urlDto)
+        {
+            //int customerId = GetLoginAccountId();
+            //if (customerId == 0)
+            //{
+            //    return Unauthorized();
+            //}
+
+            int customerId = 0;
+
+            try
+            {
+                string paymentUrl = await _invoiceService.GetPaymentUrl(customerId, invoiceId, urlDto);
+                return Ok(paymentUrl);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("{invoiceId}/post-transaction-check")]
+        public async Task<ActionResult<string>> CheckPostTransaction([FromRoute] string invoiceId)
+        {
+            //int customerId = GetLoginAccountId();
+            //if (customerId == 0)
+            //{
+            //    return Unauthorized();
+            //}
+
+            int customerId = 0;
+
+            try
+            {
+                await _invoiceService.PostTransactionProcess(customerId, invoiceId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }

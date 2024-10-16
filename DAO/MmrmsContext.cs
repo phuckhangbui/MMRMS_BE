@@ -81,7 +81,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<TaskLog> TaskLogs { get; set; }
 
-    public virtual DbSet<ProductComponentStatusLog> ProductComponentStatusLogs { get; set; }
+    public virtual DbSet<SerialNumberProductLog> SerialNumberProductLogs { get; set; }
 
     public virtual DbSet<RentingService> RentingServices { get; set; }
 
@@ -90,6 +90,8 @@ public partial class MmrmsContext : DbContext
     public virtual DbSet<DeliveryLog> DeliveryLogs { get; set; }
 
     public virtual DbSet<Term> Terms { get; set; }
+
+    public virtual DbSet<DigitalTransaction> DigitalTransactions { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -380,6 +382,21 @@ public partial class MmrmsContext : DbContext
                 .WithOne(p => p.Invoice)
                 .HasForeignKey<Invoice>(d => d.MaintainTicketId)
                 .HasConstraintName("FK_Invoice_MaintainTicket");
+
+            entity.HasOne(d => d.DigitalTransaction)
+               .WithOne(p => p.Invoice)
+               .HasForeignKey<DigitalTransaction>(d => d.InvoiceId)
+               .HasConstraintName("FK_Invoice_DigitalTransaction");
+        });
+
+        modelBuilder.Entity<DigitalTransaction>(entity =>
+        {
+            entity.HasKey(e => e.DigitalTransactionId);
+
+            entity.HasOne(d => d.Invoice)
+                .WithOne(p => p.DigitalTransaction)
+                .HasForeignKey<DigitalTransaction>(d => d.InvoiceId)
+                .HasConstraintName("FK_DigitalTransaction_Invoice");
         });
 
 
@@ -586,20 +603,24 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
         });
 
-        modelBuilder.Entity<ProductComponentStatusLog>(entity =>
+        modelBuilder.Entity<SerialNumberProductLog>(entity =>
         {
-            entity.HasKey(e => e.ProductComponentStatusLogId);
+            entity.HasKey(e => e.SerialNumberProductLogId);
 
-            entity.ToTable("ProductComponentStatusLog");
+            entity.ToTable("SerialNumberProductLog");
 
-            entity.Property(e => e.ProductComponentStatusLogId)
+            entity.Property(e => e.SerialNumberProductLogId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.ProductComponentStatus).WithMany(p => p.ProductComponentStatusLogs)
-                .HasForeignKey(d => d.ProductComponentStatusId)
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.SerialNumberProductLogs)
+                .HasForeignKey(d => d.SerialNumber)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_ProductComponentStatus_Log");
+                .HasConstraintName("FK_SerialNumberProduct_Log");
+
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.SerialNumberProductLogs)
+                .HasForeignKey(d => d.AccountTriggerId)
+                .HasConstraintName("FK_SerialNumberProductLog_AccountID");
         });
 
         modelBuilder.Entity<SerialNumberProduct>(entity =>
@@ -719,7 +740,6 @@ public partial class MmrmsContext : DbContext
 
             entity.HasOne(d => d.AccountTrigger).WithMany(p => p.TaskLogs)
                 .HasForeignKey(d => d.AccountTriggerId)
-
                 .HasConstraintName("FK_TaskLog_AccountID");
         });
 

@@ -162,7 +162,7 @@
             public const string QuantityPositiveNumber = "Số lượng phải là số dương";
             public const string PriceRequired = "Giá bộ phận máy là bắt buộc";
             public const string PricePositiveNumber = "Giá bộ phận máy phải là số dương";
-            public const string IsRequiredMoneyRequire = "Bộ phận máy này cần phải trả tiền khi thay thế hay không là cần thiết";
+            public const string IsRequiredMoneyRequire = "Bộ phận máy này cần phải trả tiền khi thay thế hay không là bắt buộc";
 
 
 
@@ -346,10 +346,28 @@
 
 
             //DTO
-            public const string TermIdRequired = "Mã điều khoản là cần thiết";
-            public const string TypeRequired = "Loại điều khoản là cần thiết";
-            public const string TitleRequired = "Tiêu đề điều khoản là cần thiết";
-            public const string ContentRequired = "Nội dung điều khoản là cần thiết";
+            public const string TermIdRequired = "Mã điều khoản là bắt buộc";
+            public const string TypeRequired = "Loại điều khoản là bắt buộc";
+            public const string TitleRequired = "Tiêu đề điều khoản là bắt buộc";
+            public const string ContentRequired = "Nội dung điều khoản là bắt buộc";
+        }
+
+        public static class Invoice
+        {
+            //Service
+            public const string InvoiceNotFound = "Hóa đơn này không tồn tại";
+            public const string IncorrectAccountIdForInvoice = "Hóa đơn này không thể được trả bởi bạn";
+
+
+            //DTO
+            public const string ReturnUrlRequired = "Đường dẫn trả về là bắt buộc";
+            public const string CancelUrlRequired = "Đường dẫn hủy đơn thanh toán là bắt buộc";
+        }
+
+        public static class PayOS
+        {
+            //Service
+            public const string PaymentReferenceError = "Đã có lỗi xảy ra trong quá trình thực hiện thanh toán. Hiện tại trạng thái của mã này đang là: ";
         }
     }
 }

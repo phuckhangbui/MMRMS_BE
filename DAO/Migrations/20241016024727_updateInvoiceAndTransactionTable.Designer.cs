@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241016024727_updateInvoiceAndTransactionTable")]
+    partial class updateInvoiceAndTransactionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -399,7 +402,7 @@ namespace DAO.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InvoiceId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
@@ -416,8 +419,6 @@ namespace DAO.Migrations
                     b.HasKey("ContractPaymentId");
 
                     b.HasIndex("ContractId");
-
-                    b.HasIndex("InvoiceId");
 
                     b.ToTable("ContractPayment", (string)null);
                 });
@@ -662,6 +663,9 @@ namespace DAO.Migrations
                     b.Property<double?>("Amount")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ContractPaymentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
@@ -692,6 +696,10 @@ namespace DAO.Migrations
                     b.HasKey("InvoiceId");
 
                     b.HasIndex("AccountPaidId");
+
+                    b.HasIndex("ContractPaymentId")
+                        .IsUnique()
+                        .HasFilter("[ContractPaymentId] IS NOT NULL");
 
                     b.ToTable("Invoices");
                 });
@@ -1497,14 +1505,7 @@ namespace DAO.Migrations
                         .HasForeignKey("ContractId")
                         .HasConstraintName("FK_ContractPayment_ContractID");
 
-                    b.HasOne("BusinessObject.Invoice", "Invoice")
-                        .WithMany("ContractPayments")
-                        .HasForeignKey("InvoiceId")
-                        .HasConstraintName("FK_Invoice_ContractPayment");
-
                     b.Navigation("Contract");
-
-                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("BusinessObject.ContractTerm", b =>
@@ -1619,7 +1620,14 @@ namespace DAO.Migrations
                         .HasForeignKey("AccountPaidId")
                         .HasConstraintName("FK_Invoices_Account");
 
+                    b.HasOne("BusinessObject.ContractPayment", "ContractPayment")
+                        .WithOne("Invoice")
+                        .HasForeignKey("BusinessObject.Invoice", "ContractPaymentId")
+                        .HasConstraintName("FK_Invoice_ContractPayment");
+
                     b.Navigation("AccountPaid");
+
+                    b.Navigation("ContractPayment");
                 });
 
             modelBuilder.Entity("BusinessObject.LogDetail", b =>
@@ -1945,6 +1953,11 @@ namespace DAO.Migrations
                     b.Navigation("MaintenanceTickets");
                 });
 
+            modelBuilder.Entity("BusinessObject.ContractPayment", b =>
+                {
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("BusinessObject.Delivery", b =>
                 {
                     b.Navigation("DeliveryLogs");
@@ -1961,8 +1974,6 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Invoice", b =>
                 {
-                    b.Navigation("ContractPayments");
-
                     b.Navigation("DigitalTransaction");
 
                     b.Navigation("MaintenanceTicket");
