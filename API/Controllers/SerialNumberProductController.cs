@@ -1,4 +1,5 @@
 ﻿using DTOs.SerialNumberProduct;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -16,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Manager")]
         public async Task<IActionResult> CreateSerialNumberProduct([FromBody] SerialNumberProductCreateRequestDto createSerialProductNumberDto)
         {
             if (!ModelState.IsValid)
@@ -29,7 +31,6 @@ namespace API.Controllers
             {
                 return Unauthorized();
             }
-
 
             try
             {
