@@ -30,6 +30,18 @@ namespace Service.Implement
             return list.Where(i => i.AccountPaidId == customerId).ToList();
         }
 
+        public async Task<object?> GetInvoiceDetail(string invoiceId)
+        {
+            var invoice = await _invoiceRepository.GetInvoiceDetail(invoiceId);
+
+            if (invoice == null)
+            {
+                throw new ServiceException(MessageConstant.Invoice.InvoiceNotFound);
+            }
+
+            return invoice;
+        }
+
         public async Task<string> GetPaymentUrl(int customerId, string invoiceId, UrlDto urlDto)
         {
             InvoiceDto invoice = await _invoiceRepository.GetInvoice(invoiceId);

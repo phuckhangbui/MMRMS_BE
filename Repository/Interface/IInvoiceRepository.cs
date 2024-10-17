@@ -8,5 +8,6 @@ namespace Repository.Interface
         Task<IEnumerable<InvoiceDto>> GetAllInvoices();
         Task<InvoiceDto> GetInvoice(string invoiceId);
         Task UpdateInvoice(InvoiceDto invoice);
+        Task<object?> GetInvoiceDetail(string invoiceId);
     }
 }

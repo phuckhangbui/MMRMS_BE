@@ -9,6 +9,7 @@ using DTOs.Category;
 using DTOs.Component;
 using DTOs.Content;
 using DTOs.Contract;
+using DTOs.ContractPayment;
 using DTOs.Delivery;
 using DTOs.EmployeeTask;
 using DTOs.Invoice;
@@ -165,8 +166,8 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountPaid != null
                             ? src.AccountPaid.Name
                             : null));
-
             CreateMap<InvoiceDto, Invoice>();
+            CreateMap<Invoice, ContractInvoiceDto>();
 
             CreateMap<DigitalTransaction, TransactionReturn>().ReverseMap();
 
@@ -252,6 +253,7 @@ namespace Repository.Mapper
             CreateMap<CreateTermDto, Term>();
             CreateMap<UpdateTermDto, Term>();
 
+            CreateMap<ContractPayment, ContractPaymentDto>();
         }
     }
 }

@@ -112,7 +112,23 @@ namespace API.Controllers
             }
         }
 
-
+        [HttpGet("{invoiceId}")]
+        public async Task<ActionResult<object>> GetInvoiceDetail(string invoiceId)
+        {
+            try
+            {
+                var invoice = await _invoiceService.GetInvoiceDetail(invoiceId);
+                return Ok(invoice);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     }
 }

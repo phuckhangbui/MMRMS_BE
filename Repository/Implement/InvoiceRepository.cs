@@ -3,7 +3,9 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
+using DTOs.ContractPayment;
 using DTOs.Invoice;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -51,6 +53,32 @@ namespace Repository.Implement
             var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
 
             return _mapper.Map<InvoiceDto>(invoice);
+        }
+
+        public async Task<object?> GetInvoiceDetail(string invoiceId)
+        {
+            var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
+
+            if (invoice != null)
+            {
+                if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()))
+                {
+                    var contractInvoice = _mapper.Map<ContractInvoiceDto>(invoice);
+                    var contractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(invoiceId);
+                    if (!contractPayments.IsNullOrEmpty())
+                    {
+                        contractInvoice.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(contractPayments);
+                    }
+
+                    return contractInvoice;
+                }
+                else
+                {
+                    return _mapper.Map<InvoiceDto>(invoice);
+                }
+            }
+
+            return null;
         }
 
         public async Task UpdateInvoice(InvoiceDto invoiceDto)
