@@ -4,8 +4,6 @@ public partial class MaintenanceTicket
 {
     public int MaintenanceTicketId { get; set; }
 
-    public int? EmployeeTaskId { get; set; }
-
     public int? EmployeeCreateId { get; set; }
 
     public string? ContractId { get; set; }
@@ -36,7 +34,7 @@ public partial class MaintenanceTicket
 
     public virtual Component? Component { get; set; }
 
-    public virtual EmployeeTask? EmployeeTask { get; set; }
+    public virtual ICollection<EmployeeTask>? EmployeeTasks { get; set; } = new List<EmployeeTask>();
 
     public virtual Account? EmployeeCreate { get; set; }
 

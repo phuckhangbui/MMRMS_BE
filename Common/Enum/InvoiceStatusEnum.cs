@@ -5,4 +5,10 @@
         Pending,
         Paid
     }
+
+    public enum InvoicePaymentTypeEnum
+    {
+        Digital,
+        Cash
+    }
 }

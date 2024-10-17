@@ -34,7 +34,7 @@ namespace DAO
 
                 if (roleId.HasValue)
                 {
-                    query = query.Where(a => a.RoleId == roleId.Value);
+                    query = query.Include(a => a.AccountBusiness).Where(a => a.RoleId == roleId.Value);
                 }
 
                 return await query.ToListAsync();

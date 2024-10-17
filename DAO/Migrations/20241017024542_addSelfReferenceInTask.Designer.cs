@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241017024542_addSelfReferenceInTask")]
+    partial class addSelfReferenceInTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -580,9 +583,6 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MaintenanceTicketId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ManagerId")
                         .HasColumnType("int");
 
@@ -611,8 +611,6 @@ namespace DAO.Migrations
                     b.HasKey("EmployeeTaskId");
 
                     b.HasIndex("ContractId");
-
-                    b.HasIndex("MaintenanceTicketId");
 
                     b.HasIndex("ManagerId");
 
@@ -677,10 +675,10 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DatePaid")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DigitalTransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MaintainTicketId")
@@ -788,6 +786,9 @@ namespace DAO.Migrations
                     b.Property<int?>("EmployeeCreateId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EmployeeTaskId")
+                        .HasColumnType("int");
+
                     b.Property<string>("InvoiceId")
                         .HasColumnType("nvarchar(450)");
 
@@ -817,6 +818,8 @@ namespace DAO.Migrations
                     b.HasIndex("ContractId");
 
                     b.HasIndex("EmployeeCreateId");
+
+                    b.HasIndex("EmployeeTaskId");
 
                     b.HasIndex("InvoiceId")
                         .IsUnique()
@@ -1573,11 +1576,6 @@ namespace DAO.Migrations
                         .HasForeignKey("ContractId")
                         .HasConstraintName("FK_Task_Contract");
 
-                    b.HasOne("BusinessObject.MaintenanceTicket", "MaintenanceTicket")
-                        .WithMany("EmployeeTasks")
-                        .HasForeignKey("MaintenanceTicketId")
-                        .HasConstraintName("FK_MaintenanceTicketId_Task");
-
                     b.HasOne("BusinessObject.Account", "Manager")
                         .WithMany("TaskGaveList")
                         .HasForeignKey("ManagerId")
@@ -1601,8 +1599,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_Task_Staff");
 
                     b.Navigation("Contract");
-
-                    b.Navigation("MaintenanceTicket");
 
                     b.Navigation("Manager");
 
@@ -1676,6 +1672,11 @@ namespace DAO.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeeCreateId");
 
+                    b.HasOne("BusinessObject.EmployeeTask", "EmployeeTask")
+                        .WithMany("MaintenanceTickets")
+                        .HasForeignKey("EmployeeTaskId")
+                        .HasConstraintName("FK_MaintenanceTicket_TaskID");
+
                     b.HasOne("BusinessObject.Invoice", "Invoice")
                         .WithOne("MaintenanceTicket")
                         .HasForeignKey("BusinessObject.MaintenanceTicket", "InvoiceId")
@@ -1691,6 +1692,8 @@ namespace DAO.Migrations
                     b.Navigation("Contract");
 
                     b.Navigation("EmployeeCreate");
+
+                    b.Navigation("EmployeeTask");
 
                     b.Navigation("Invoice");
 
@@ -1963,6 +1966,8 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
                 {
+                    b.Navigation("MaintenanceTickets");
+
                     b.Navigation("Reports");
 
                     b.Navigation("TaskLogs");
@@ -1980,11 +1985,6 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
                 {
                     b.Navigation("RequestResponses");
-                });
-
-            modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
-                {
-                    b.Navigation("EmployeeTasks");
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>

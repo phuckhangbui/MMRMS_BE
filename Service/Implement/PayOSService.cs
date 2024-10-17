@@ -15,7 +15,7 @@ namespace Service.Implement
     {
         private const string PAYMENT_REQUEST_URL = "https://api-merchant.payos.vn/v2/payment-requests/";
 
-        public async Task<string> CreatePaymentLink(string invoiceId, string invoiceTimeStamp, int amount, string urlCancel, string urlReturn)
+        public async Task<string> CreatePaymentLink(string invoiceId, int invoiceTimeStamp, int amount, string urlCancel, string urlReturn)
         {
             var client = ConfigurationHelper.config.GetSection("PayOS:ClientID").Value;
             var apiKey = ConfigurationHelper.config.GetSection("PayOS:APIKey").Value;
@@ -26,7 +26,13 @@ namespace Service.Implement
             var item = new ItemData(invoiceId, 1, amount);
             List<ItemData> items = [item];
 
-            PaymentData paymentData = new PaymentData(int.Parse(invoiceTimeStamp), amount, "Thanh toan hoa don",
+            int testAmount = amount / 1000;
+            if (testAmount < 10000)
+            {
+                testAmount = 10000;
+            }
+
+            PaymentData paymentData = new PaymentData(invoiceTimeStamp, testAmount, $"For {amount} VND",
                                                                                             items, urlCancel, urlReturn);
 
             CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
@@ -55,7 +61,7 @@ namespace Service.Implement
                 {
                     AccountName = inf?.counterAccountName,
                     AccountNumber = inf?.counterAccountNumber,
-                    Amount = inf.amount,
+                    Amount = inf.amount * 1000,
                     BankCode = bank?.code,
                     BankName = bank?.shortName,
                     Reference = inf?.reference,
@@ -78,12 +84,12 @@ namespace Service.Implement
             return banks;
         }
 
-        public async Task<PaymentLinkInformation> GetPaymentLinkInformation(string orderId)
+        public async Task<PaymentLinkInformation> GetPaymentLinkInformation(string payOsOrderId)
         {
             var client = ConfigurationHelper.config.GetSection("PayOS:ClientID").Value;
             var apiKey = ConfigurationHelper.config.GetSection("PayOS:APIKey").Value;
 
-            string url = PAYMENT_REQUEST_URL + orderId;
+            string url = PAYMENT_REQUEST_URL + payOsOrderId;
             HttpClient httpClient = new HttpClient();
             JObject responseBodyJson = JObject.Parse(await (await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)
             {
