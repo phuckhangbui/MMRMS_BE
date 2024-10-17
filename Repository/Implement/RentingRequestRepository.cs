@@ -146,7 +146,7 @@ namespace Repository.Implement
             rentingRequest.AccountOrderId = customerId;
 
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
-            rentingRequest.DateCreate = DateTime.Now.Date;
+            rentingRequest.DateCreate = DateTime.Now;
             rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
             rentingRequest.TotalAmount = 0;
 
