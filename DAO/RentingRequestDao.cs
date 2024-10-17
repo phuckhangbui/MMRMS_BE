@@ -36,12 +36,12 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.RentingRequests
-                    .Include(rr => rr.RentingRequestProductDetails)
-                        .ThenInclude(rr => rr.Product)
                     .Include(rr => rr.ServiceRentingRequests)
                         .ThenInclude(rr => rr.RentingService)
                     .Include(rr => rr.AccountOrder)
                     .Include(rr => rr.Contracts)
+                        .ThenInclude(c => c.ContractSerialNumberProduct)
+                        .ThenInclude(s => s.Product)
                     .Include(rr => rr.RentingRequestAddress)
                     .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
@@ -72,6 +72,7 @@ namespace DAO
                 return await context.RentingRequests
                     .Where(rr => rr.AccountOrderId == customerId)
                     .Include(h => h.AccountOrder)
+                    .OrderByDescending(rr => rr.DateCreate)
                     .ToListAsync();
             }
         }
@@ -113,7 +114,7 @@ namespace DAO
                             var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableSerialNumberProducts.Contains(c.ContractSerialNumberProduct)
-                                        && (c.Status == ContractStatusEnum.Shipped.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                                        && (c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
                                         && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractSerialNumberProduct)
                                 .ToListAsync();
@@ -171,7 +172,7 @@ namespace DAO
 
         private Contract InitContract(SerialNumberProduct serialNumberProduct, RentingRequest rentingRequest, List<Term> contractTerms)
         {
-            var dateCreate = DateTime.Now.Date;
+            var dateCreate = DateTime.Now;
 
             var contractSerialNumber = new Contract
             {

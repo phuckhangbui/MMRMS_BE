@@ -4,7 +4,6 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Contract;
-using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -37,16 +36,22 @@ namespace Repository.Implement
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
             {
-                var contractDetailDto = _mapper.Map<ContractDetailDto>(contract);
-
-                var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contract.RentingRequestId!);
-                contractDetailDto.IsOnetimePayment = (bool)rentingRequest.IsOnetimePayment!;
-                contractDetailDto.AccountOrder = _mapper.Map<AccountOrderDto>(rentingRequest.AccountOrder);
-
-                return contractDetailDto;
+                return _mapper.Map<ContractDetailDto>(contract);
             }
 
             return null;
+        }
+
+        public async Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId)
+        {
+            var contracts = await ContractDao.Instance.GetContractsByRentingRequestId(rentingRequestId);
+
+            if (!contracts.IsNullOrEmpty())
+            {
+                return _mapper.Map<IEnumerable<ContractDetailDto>>(contracts);
+            }
+
+            return [];
         }
 
         public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId)
@@ -176,7 +181,5 @@ namespace Repository.Implement
 
             return contract;
         }
-
-
     }
 }

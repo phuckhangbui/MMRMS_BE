@@ -6,7 +6,7 @@ namespace DTOs.RentingRequest
 {
     public class RentingRequestDetailDto
     {
-        public string RentingRequestId { get; set; }
+        public string? RentingRequestId { get; set; }
         public int? AccountOrderId { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateStart { get; set; }
@@ -14,26 +14,17 @@ namespace DTOs.RentingRequest
         public double? TotalDepositPrice { get; set; }
         public double? TotalServicePrice { get; set; }
         public double? ShippingPrice { get; set; }
-        //public double? DiscountShip { get; set; }
         public double? DiscountPrice { get; set; }
         public int? NumberOfMonth { get; set; }
         public double? TotalAmount { get; set; }
         public bool? IsOnetimePayment { get; set; }
         public string? Note { get; set; }
         public string? Status { get; set; }
-        //public List<RentingRequestProductDetailDto> RentingRequestProductDetails { get; set; }
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
         public RentingRequestAddressDto RentingRequestAddress { get; set; }
         public AccountBusinessDto AccountBusiness { get; set; }
         public List<ContractDto> Contracts { get; set; }
-    }
-
-    public class RentingRequestProductDetailDto
-    {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public int Quantity { get; set; }
     }
 
     public class ServiceRentingRequestDto

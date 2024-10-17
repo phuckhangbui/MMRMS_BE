@@ -9,5 +9,6 @@ namespace Service.Interface
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
         Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto);
         Task SignContract(string rentingRequestId);
+        Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
     }
 }

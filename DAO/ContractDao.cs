@@ -34,12 +34,29 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Contracts
+                     .Include(c => c.RentingRequest)
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
                     .Include(c => c.ContractSerialNumberProduct)
                         .ThenInclude(a => a.Product)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
+            }
+        }
+
+        public async Task<IEnumerable<Contract>> GetContractsByRentingRequestId(string rentingRequestId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Contracts
+                    .Where(c => c.RentingRequestId.Equals(rentingRequestId))
+                     .Include(c => c.RentingRequest)
+                     .Include(c => c.AccountSign)
+                        .ThenInclude(a => a.AccountBusiness)
+                    .Include(c => c.ContractTerms)
+                    .Include(c => c.ContractSerialNumberProduct)
+                        .ThenInclude(a => a.Product)
+                    .ToListAsync();
             }
         }
 
@@ -58,9 +75,8 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Contracts
-                    .Include(c => c.AccountSign)
-                        .ThenInclude(a => a.AccountBusiness)
-                    .Include(c => c.ContractTerms)
+                    .Include(c => c.ContractSerialNumberProduct)
+                        .ThenInclude(s => s.Product)
                     .ToListAsync();
             }
         }
@@ -125,7 +141,7 @@ namespace DAO
                             rentalContractPayment.Invoice = rentalInvoice;
 
                             contract.Status = ContractStatusEnum.Signed.ToString();
-                            contract.DateSign = DateTime.Now.Date;
+                            contract.DateSign = DateTime.Now;
 
                             context.Contracts.Update(contract);
                         }
@@ -173,7 +189,7 @@ namespace DAO
                             //rentalContractPayment.Invoice = rentalInvoice;
 
                             contract.Status = ContractStatusEnum.Signed.ToString();
-                            contract.DateSign = DateTime.Now.Date;
+                            contract.DateSign = DateTime.Now;
 
                             context.Contracts.Update(contract);
                         }

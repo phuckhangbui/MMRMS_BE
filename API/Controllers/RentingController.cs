@@ -1,4 +1,5 @@
 ﻿using Common;
+using DTOs.Contract;
 using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,24 @@ namespace API.Controllers
             {
                 var rentingRequest = await _rentingService.GetRentingRequestDetailById(rentingRequestId);
                 return Ok(rentingRequest);
+            }
+            catch (ServiceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{rentingRequestId}/contracts")]
+        public async Task<ActionResult<IEnumerable<ContractDetailDto>>> GetContractDetailListByRentingRequestId(string rentingRequestId)
+        {
+            try
+            {
+                var contracts = await _contractService.GetContractDetailListByRentingRequestId(rentingRequestId);
+                return Ok(contracts);
             }
             catch (ServiceException ex)
             {

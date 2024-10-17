@@ -16,7 +16,10 @@ namespace DTOs.Contract
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public string? Status { get; set; }
-        //public AccountBusinessDto AccountBusiness { get; set; }
+        public int? ProductId { get; set; }
+        public string? ProductName { get; set; }
+        public string? SerialNumber { get; set; }
+        public double? RentPrice { get; set; }
     }
 
     public class ContractRequestDto

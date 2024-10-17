@@ -149,12 +149,20 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
-            CreateMap<Contract, ContractDto>();
-            //.ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness));
+            CreateMap<Contract, ContractDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
+                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.ProductId : null))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
+                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null));
             CreateMap<Contract, ContractDetailDto>()
+                .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
                 .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms))
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct.Product.ProductName));
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
+                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.ProductId : null))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
+                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null))
+                .ForMember(dest => dest.IsOnetimePayment, opt => opt.MapFrom(src => src.RentingRequest != null ? src.RentingRequest.IsOnetimePayment : null));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
@@ -182,13 +190,8 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore());
             CreateMap<RentingRequestProductDetail, NewRentingRequestProductDetailDto>().ReverseMap();
             CreateMap<RentingRequest, RentingRequestDetailDto>();
-            CreateMap<RentingRequestProductDetail, RentingRequestProductDetailDto>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName));
             CreateMap<ServiceRentingRequest, ServiceRentingRequestDto>()
                 .ForMember(dest => dest.RentingServiceName, opt => opt.MapFrom(src => src.RentingService.RentingServiceName));
-            CreateMap<RentingRequestProductDetail, ContractProductDetailDto>()
-                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductName : string.Empty));
-
             CreateMap<Notification, NotificationDto>().ReverseMap();
             CreateMap<CreateNotificationDto, Notification>();
 
