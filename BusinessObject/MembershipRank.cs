@@ -1,6 +1,6 @@
 ﻿namespace BusinessObject
 {
-    public class MembershipRank
+    public partial class MembershipRank
     {
         public int MembershipRankId { get; set; }
         public string? MembershipRankName { get; set; }
@@ -9,6 +9,7 @@
         public string? Content { get; set; }
         public DateTime? DateCreate { get; set; }
         public string? Status { get; set; }
-        public virtual ICollection<Account>? Accounts { get; set; }
+        public virtual ICollection<Account>? Accounts { get; set; } = new List<Account>();
+        public virtual ICollection<MembershipRankLog>? MembershipRankLogs { get; set; } = new List<MembershipRankLog>();
     }
 }
