@@ -3,7 +3,7 @@
     public enum RentingRequestStatusEnum
     {
         Pending,
-        Approved,
-        Rejected
+        Canceled,
+        Completed
     }
 }

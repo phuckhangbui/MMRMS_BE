@@ -192,7 +192,7 @@ namespace DAO
 
         private Invoice InitAdditionalInvoice(RentingRequest rentingRequest)
         {
-            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
+            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountPrice +
                                 rentingRequest.TotalServicePrice;
             var dateCreate = DateTime.Now.Date;
 
@@ -233,7 +233,7 @@ namespace DAO
             var totalRentalAmount = rentingRequest.Contracts
                 .Select(cp => cp.TotalRentPrice)
                 .Sum();
-            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountShip - rentingRequest.DiscountPrice +
+            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountPrice +
                                 rentingRequest.TotalServicePrice;
             totalRentalAmount += additionalAmount;
 

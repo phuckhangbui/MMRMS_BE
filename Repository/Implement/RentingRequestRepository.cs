@@ -15,11 +15,11 @@ using RentingRequest = BusinessObject.RentingRequest;
 
 namespace Repository.Implement
 {
-    public class RentingRepository : IRentingRepository
+    public class RentingRequestRepository : IRentingRequestRepository
     {
         private readonly IMapper _mapper;
 
-        public RentingRepository(IMapper mapper)
+        public RentingRequestRepository(IMapper mapper)
         {
             _mapper = mapper;
         }
@@ -206,6 +206,30 @@ namespace Repository.Implement
 
             rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             return rentingRequest.RentingRequestId;
+        }
+
+        public async Task<bool> CancelRentingRequest(string rentingRequestId)
+        {
+            var result = await RentingRequestDao.Instance.CancelRentingRequest(rentingRequestId);
+            if (result != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> IsRentingRequestValidToCancel(string rentingRequestId)
+        {
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
+            if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.Pending.ToString()))
+            {
+                return false;
+            }
+
+            bool areContractsNotSigned = rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.NotSigned.ToString());
+
+            return areContractsNotSigned;
         }
     }
 }

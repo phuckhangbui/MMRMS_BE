@@ -18,8 +18,6 @@ public partial class RentingRequest
 
     public double? ShippingPrice { get; set; }
 
-    public double? DiscountShip { get; set; }
-
     public double? DiscountPrice { get; set; }
 
     public int? NumberOfMonth { get; set; }
