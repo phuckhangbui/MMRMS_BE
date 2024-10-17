@@ -199,6 +199,8 @@
             public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
             public const string SerialNumberProductsInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
+            public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
+
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
@@ -296,7 +298,7 @@
             public const string RequestNotFound = "Mã yêu cầu này không tồn tại";
             public const string StatusCannotSet = "Tình trạng yêu cầu này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
-
+            public const string PendingRequestStillExist = "Bạn vẫn còn một yêu cầu chưa được xử lý, không thể tạo yêu cầu mới";
 
             //DTO
         }

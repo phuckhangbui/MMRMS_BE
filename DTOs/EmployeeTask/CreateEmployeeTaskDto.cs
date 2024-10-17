@@ -6,7 +6,7 @@ namespace DTOs.EmployeeTask
     public class CreateEmployeeTaskDto
     {
         [Required(ErrorMessage = MessageConstant.EmployeeTask.RequestIdRequired)]
-        public int RequestId { get; set; }
+        public string RequestId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.EmployeeTask.StaffIdRequired)]
         public int StaffId { get; set; }

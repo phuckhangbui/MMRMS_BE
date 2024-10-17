@@ -54,7 +54,7 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<MaintenanceRequestDto>>(list);
         }
 
-        public async Task<MaintenanceRequestDto> GetMaintenanceRequest(int maintenanceRequestId)
+        public async Task<MaintenanceRequestDto> GetMaintenanceRequest(string maintenanceRequestId)
         {
             var maintenanceRequest = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(maintenanceRequestId);
 
@@ -62,7 +62,7 @@ namespace Repository.Implement
         }
 
 
-        public async Task UpdateRequestStatus(int maintenanceRequestId, string status)
+        public async Task UpdateRequestStatus(string maintenanceRequestId, string status)
         {
             var maintenanceRequest = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(maintenanceRequestId);
 
