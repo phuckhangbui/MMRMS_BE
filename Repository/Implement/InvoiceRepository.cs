@@ -30,12 +30,13 @@ namespace Repository.Implement
 
             digitalTransaction.InvoiceId = invoiceId;
             digitalTransaction.DigitalTransactionId = transactionReturn.Reference;
-
+            digitalTransaction.PayOsOrderId = invoice.PayOsOrderId;
+            await DigitalTransactionDao.Instance.CreateAsync(digitalTransaction);
 
             invoice.Status = InvoiceStatusEnum.Paid.ToString();
+            invoice.PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString();
             invoice.DigitalTransactionId = transactionReturn.Reference;
-            invoice.DigitalTransaction = digitalTransaction;
-
+            invoice.DatePaid = transactionReturn.TransactionDate;
             await InvoiceDao.Instance.UpdateAsync(invoice);
         }
 

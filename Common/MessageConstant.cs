@@ -360,7 +360,7 @@
             //Service
             public const string InvoiceNotFound = "Hóa đơn này không tồn tại";
             public const string IncorrectAccountIdForInvoice = "Hóa đơn này không thể được trả bởi bạn";
-
+            public const string InvoiceHaveBeenPaid = "Hóa đơn này đã được thanh toán";
 
             //DTO
             public const string ReturnUrlRequired = "Đường dẫn trả về là bắt buộc";

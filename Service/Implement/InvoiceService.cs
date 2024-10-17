@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Enum;
 using DTOs;
 using DTOs.Invoice;
 using Repository.Interface;
@@ -44,13 +45,19 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Invoice.IncorrectAccountIdForInvoice);
             }
 
-            string timestamp = DateTime.Now.ToString();
+            if (invoice.Status == InvoiceStatusEnum.Paid.ToString())
+            {
+                throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenPaid);
+            }
+
+            string timestamp = $"{DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds:0}{new Random().Next(1000, 9999)}";
+            timestamp = timestamp.Substring(0, Math.Min(10, timestamp.Length));
 
             invoice.PayOsOrderId = timestamp;
 
             await _invoiceRepository.UpdateInvoice(invoice);
 
-            string url = await _payOSService.CreatePaymentLink(invoiceId, timestamp, 10000, urlDto.UrlCancel, urlDto.UrlReturn);
+            string url = await _payOSService.CreatePaymentLink(invoiceId, int.Parse(timestamp), (int)invoice?.Amount, urlDto.UrlCancel, urlDto.UrlReturn);
 
             return url;
         }
@@ -69,14 +76,17 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Invoice.IncorrectAccountIdForInvoice);
             }
 
-            var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice.PayOsOrderId);
+            if (invoice.Status == InvoiceStatusEnum.Paid.ToString())
+            {
+                throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenPaid);
+            }
+
+            var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice?.PayOsOrderId);
 
             if (transactionReturn == null)
             {
 
             }
-
-
 
 
             await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
