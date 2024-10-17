@@ -10,6 +10,8 @@ public partial class EmployeeTask
 
     public int? RequestResponseId { get; set; }
 
+    public int? PreviousTaskId { get; set; }
+
     public string? Content { get; set; }
 
     public int? StaffId { get; set; }
@@ -33,6 +35,8 @@ public partial class EmployeeTask
     public virtual Account? Manager { get; set; }
 
     public virtual Contract? Contract { get; set; }
+
+    public virtual EmployeeTask? PreviousTask { get; set; }
 
     public virtual RequestResponse? RequestResponse { get; set; }
 

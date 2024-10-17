@@ -8,6 +8,8 @@
 
         public string? ContractId { get; set; }
 
+        public int? PreviousTaskId { get; set; }
+
         public string? Content { get; set; }
 
         public int? StaffId { get; set; }

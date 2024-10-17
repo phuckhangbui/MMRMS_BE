@@ -721,6 +721,11 @@ public partial class MmrmsContext : DbContext
                   .WithOne(t => t.EmployeeTask)
                   .HasForeignKey<EmployeeTask>(t => t.RequestResponseId)
                   .HasConstraintName("FK_Task_Response");
+
+            entity.HasOne(d => d.PreviousTask)
+                .WithOne()
+                .HasForeignKey<EmployeeTask>(d => d.PreviousTaskId)
+                .HasConstraintName("FK_Task_PreviousTask");
         });
 
         modelBuilder.Entity<TaskLog>(entity =>
