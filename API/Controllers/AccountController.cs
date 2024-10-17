@@ -92,6 +92,7 @@ namespace API.Controllers
         }
 
         [HttpGet("customers")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult> GetCustomerAccounts()
         {
             try
@@ -131,6 +132,21 @@ namespace API.Controllers
             try
             {
                 var accounts = await _accountService.GetStaffAccounts();
+                return Ok(accounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("employees/staffs/active")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult> GetActiveStaffAccounts()
+        {
+            try
+            {
+                var accounts = await _accountService.GetActiveStaffAccounts();
                 return Ok(accounts);
             }
             catch (Exception ex)
@@ -189,6 +205,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{accountId}/status")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery, BindRequired] string status)
         {
             try
@@ -207,6 +224,7 @@ namespace API.Controllers
         }
 
         [HttpGet("customers/{accountId}")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult<CustomerAccountDto>> GetCustomerAccountById(int accountId)
         {
             try

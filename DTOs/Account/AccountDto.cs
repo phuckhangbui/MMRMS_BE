@@ -1,4 +1,5 @@
 ﻿using Common;
+using DTOs.MembershipRank;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.Account
@@ -52,6 +53,12 @@ namespace DTOs.Account
         public bool? IsDelete { get; set; }
     }
 
+    public class StaffAccountDto
+    {
+        public int AccountId { get; set; }
+        public string Name { get; set; }
+    }
+
     public class AccountBaseDto
     {
         public int AccountId { get; set; }
@@ -80,6 +87,11 @@ namespace DTOs.Account
         public string? Address { get; set; }
         public string? Position { get; set; }
         public string? TaxNumber { get; set; }
+    }
+
+    public class CustomerAccountDetailDto : CustomerAccountDto
+    {
+        public MembershipRankDto MembershipRank { get; set; }
     }
 
     public class NewBaseAccountDto

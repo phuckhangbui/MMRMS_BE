@@ -53,10 +53,28 @@ namespace Repository.Mapper
                             opt => opt.MapFrom(src => src.AccountBusiness != null
                                 ? src.AccountBusiness.TaxNumber
                                 : null));
+            CreateMap<Account, CustomerAccountDetailDto>()
+                         .ForMember(dest => dest.Company,
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Company
+                                : null))
+                        .ForMember(dest => dest.Address,
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Address
+                                : null))
+                        .ForMember(dest => dest.Position,
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.Position
+                                : null))
+                        .ForMember(dest => dest.TaxNumber,
+                            opt => opt.MapFrom(src => src.AccountBusiness != null
+                                ? src.AccountBusiness.TaxNumber
+                                : null));
 
             CreateMap<Account, NewCustomerAccountDto>().ReverseMap();
             CreateMap<Account, NewEmployeeAccountDto>().ReverseMap();
             CreateMap<Account, AccountOrderDto>();
+            CreateMap<Account, StaffAccountDto>();
 
             CreateMap<Category, CategoryDto>();
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
