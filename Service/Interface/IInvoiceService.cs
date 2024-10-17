@@ -9,5 +9,6 @@ namespace Service.Interface
         Task<IEnumerable<InvoiceDto>> GetCustomerInvoice(int customerId);
         Task<string> GetPaymentUrl(int customerId, string invoiceId, UrlDto urlDto);
         Task PostTransactionProcess(int customerId, string invoiceId);
+        Task<object?> GetInvoiceDetail(string invoiceId);
     }
 }

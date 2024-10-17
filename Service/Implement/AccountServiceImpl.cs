@@ -46,7 +46,7 @@ namespace Service.Implement
             return await _accountRepository.GetEmployeeAccounts();
         }
 
-        public async Task<CustomerAccountDto> GetCustomerAccountById(int accountId)
+        public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
         {
             var account = await CheckAccountExist(accountId);
             if (account.RoleId != (int)AccountRoleEnum.Customer)
@@ -144,6 +144,9 @@ namespace Service.Implement
             return list.FirstOrDefault(a => a.AccountId == accountId);
         }
 
-
+        public async Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts()
+        {
+            return await _accountRepository.GetActiveStaffAccounts();
+        }
     }
 }

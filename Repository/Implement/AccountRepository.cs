@@ -4,7 +4,7 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Account;
-using Microsoft.IdentityModel.Tokens;
+using DTOs.MembershipRank;
 using Repository.Interface;
 using System.Security.Cryptography;
 using System.Text;
@@ -58,23 +58,23 @@ namespace Repository.Implement
             account.AccountBusiness = accountBusiness;
 
             //Init promotion
-            var promotions = await PromotionDao.Instance.GetAllAsync();
-            var activePromotions = promotions.Where(p => p.Status!.Equals(PromotionStatusEnum.Active.ToString()));
-            if (!activePromotions.IsNullOrEmpty())
-            {
-                foreach (var activePromotion in activePromotions)
-                {
-                    var accountPromotion = new AccountPromotion
-                    {
-                        Account = account,
-                        DateReceive = DateTime.Now,
-                        Status = AccountPromotionStatusEnum.Active.ToString(),
-                        PromotionId = activePromotion.PromotionId,
-                    };
+            //var promotions = await PromotionDao.Instance.GetAllAsync();
+            //var activePromotions = promotions.Where(p => p.Status!.Equals(PromotionStatusEnum.Active.ToString()));
+            //if (!activePromotions.IsNullOrEmpty())
+            //{
+            //    foreach (var activePromotion in activePromotions)
+            //    {
+            //        var accountPromotion = new AccountPromotion
+            //        {
+            //            Account = account,
+            //            DateReceive = DateTime.Now,
+            //            Status = AccountPromotionStatusEnum.Active.ToString(),
+            //            PromotionId = activePromotion.PromotionId,
+            //        };
 
-                    account.AccountPromotions.Add(accountPromotion);
-                }
-            }
+            //        account.AccountPromotions.Add(accountPromotion);
+            //    }
+            //}
 
             await AccountDao.Instance.CreateAsync(account);
 
@@ -127,10 +127,18 @@ namespace Repository.Implement
             }
         }
 
-        public async Task<CustomerAccountDto> GetCustomerAccountById(int accountId)
+        public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
-            return _mapper.Map<CustomerAccountDto>(account);
+            var customerAccountDetailDto = _mapper.Map<CustomerAccountDetailDto>(account);
+
+            var membershipRank = await MembershipRankDao.Instance.GetMembershipRanksForCustomer(accountId);
+            if (membershipRank != null)
+            {
+                customerAccountDetailDto.MembershipRank = _mapper.Map<MembershipRankDto>(membershipRank);
+            }
+
+            return customerAccountDetailDto;
         }
 
         public async Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts()
@@ -217,6 +225,15 @@ namespace Repository.Implement
         {
             var accounts = await AccountDao.Instance.GetStaffAccountsAsync();
             return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
+        }
+
+        public async Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts()
+        {
+            var accounts = await AccountDao.Instance.GetStaffAccountsAsync();
+
+            accounts = accounts.Where(a => a.Status.Equals(AccountStatusEnum.Active.ToString())).ToList();
+
+            return _mapper.Map<IEnumerable<StaffAccountDto>>(accounts);
         }
     }
 }

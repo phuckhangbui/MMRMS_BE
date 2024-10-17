@@ -15,7 +15,7 @@ namespace Repository.Interface
         Task<AccountBaseDto> GetAccountBaseById(int accountId);
         Task<AccountDto> GetAccounById(int accountId);
         Task<IEnumerable<AccountDto>> GetManagerAccounts();
-        Task<CustomerAccountDto> GetCustomerAccountById(int accountId);
+        Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId);
         Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId);
         Task<bool> IsAccountExistWithUsername(string username);
         Task<AccountDto> GetCustomerAccountWithEmail(string email);
@@ -24,6 +24,6 @@ namespace Repository.Interface
         Task UpdateAccount(AccountDto accountDto);
         Task ChangeAccountPassword(AccountDto accountDto, string password);
         Task<AccountDto> FirebaseTokenExisted(string firebaseToken);
-
+        Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
     }
 }
