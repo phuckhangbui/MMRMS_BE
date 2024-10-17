@@ -37,7 +37,7 @@ namespace DAO
             }
         }
 
-        public async Task<MaintenanceRequest> GetMaintenanceRequest(int maintenanceRequestId)
+        public async Task<MaintenanceRequest> GetMaintenanceRequest(string maintenanceRequestId)
         {
             using (var context = new MmrmsContext())
             {

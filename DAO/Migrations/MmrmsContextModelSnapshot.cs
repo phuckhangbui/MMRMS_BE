@@ -734,11 +734,8 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
                 {
-                    b.Property<int>("RequestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
+                    b.Property<string>("RequestId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ContractId")
                         .HasColumnType("nvarchar(450)");
@@ -1251,8 +1248,8 @@ namespace DAO.Migrations
                     b.Property<int?>("EmployeeTaskId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequestId")
-                        .HasColumnType("int");
+                    b.Property<string>("RequestId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RequestResponseId");
 

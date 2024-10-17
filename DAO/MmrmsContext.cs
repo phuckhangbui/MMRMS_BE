@@ -526,10 +526,6 @@ public partial class MmrmsContext : DbContext
 
             entity.ToTable("MaintenanceRequest");
 
-            entity.Property(e => e.RequestId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
             entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceRequests)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_MaintenanceRequest_Contract");

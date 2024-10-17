@@ -36,6 +36,24 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("{maintenanceRequestId}")]
+        public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequest([FromRoute] string maintenanceRequestId)
+        {
+            try
+            {
+                IEnumerable<MaintenanceRequestDto> list = await _maintenanceRequestService.GetMaintenanceRequests();
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
         public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequestsForCustomer()
@@ -108,7 +126,7 @@ namespace API.Controllers
 
         [HttpPatch("{maintenanceRequestId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] int maintenanceRequestId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string maintenanceRequestId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
