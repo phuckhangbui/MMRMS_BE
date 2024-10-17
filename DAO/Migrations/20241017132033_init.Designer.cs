@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    [Migration("20241017121018_init")]
+    [Migration("20241017132033_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -318,9 +318,6 @@ namespace DAO.Migrations
                     b.Property<string>("ContractId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("AccountSignId")
                         .HasColumnType("int");
 
@@ -366,8 +363,6 @@ namespace DAO.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ContractId");
-
-                    b.HasIndex("AccountId");
 
                     b.HasIndex("AccountSignId");
 
@@ -1464,10 +1459,6 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
                 {
-                    b.HasOne("BusinessObject.Account", null)
-                        .WithMany("CreateContracts")
-                        .HasForeignKey("AccountId");
-
                     b.HasOne("BusinessObject.Account", "AccountSign")
                         .WithMany("Contracts")
                         .HasForeignKey("AccountSignId")
@@ -1896,8 +1887,6 @@ namespace DAO.Migrations
                     b.Navigation("Addresses");
 
                     b.Navigation("Contracts");
-
-                    b.Navigation("CreateContracts");
 
                     b.Navigation("Deliveries");
 

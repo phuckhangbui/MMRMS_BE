@@ -74,13 +74,11 @@ public partial class Account
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
-    public virtual ICollection<Contract> CreateContracts { get; set; } = new List<Contract>();
-
     public virtual ICollection<TaskLog> TaskLogs { get; set; } = new List<TaskLog>();
 
     public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
 
     public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
 
-
+    public virtual ICollection<MembershipRankLog> MembershipRankLogs { get; set; } = new List<MembershipRankLog>();
 }

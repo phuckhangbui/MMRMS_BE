@@ -93,6 +93,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<DigitalTransaction> DigitalTransactions { get; set; }
 
+    public virtual DbSet<MembershipRankLog> MembershipRankLogs { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -805,6 +807,25 @@ public partial class MmrmsContext : DbContext
             entity.Property(e => e.TermId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
+        });
+
+        modelBuilder.Entity<MembershipRankLog>(entity =>
+        {
+            entity.HasKey(e => e.MembershipRankLogId);
+
+            entity.ToTable("MembershipRankLog");
+
+            entity.Property(e => e.MembershipRankLogId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.Account).WithMany(p => p.MembershipRankLogs)
+              .HasForeignKey(d => d.AccountId)
+              .HasConstraintName("FK_account_membershiplog");
+
+            entity.HasOne(d => d.MembershipRank).WithMany(p => p.MembershipRankLogs)
+              .HasForeignKey(d => d.MembershipRankId)
+              .HasConstraintName("FK_MembershipRank_membershiplog");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -577,8 +577,7 @@ namespace DAO.Migrations
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AccountId = table.Column<int>(type: "int", nullable: true)
+                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -586,11 +585,6 @@ namespace DAO.Migrations
                     table.ForeignKey(
                         name: "FK_Contract_Account",
                         column: x => x.AccountSignId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                    table.ForeignKey(
-                        name: "FK_Contract_Account_AccountId",
-                        column: x => x.AccountId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
                     table.ForeignKey(
@@ -1048,11 +1042,6 @@ namespace DAO.Migrations
                 name: "IX_ComponentProduct_ProductId",
                 table: "ComponentProduct",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contract_AccountId",
-                table: "Contract",
-                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contract_AccountSignId",
