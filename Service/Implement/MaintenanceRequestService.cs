@@ -41,6 +41,20 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
             }
 
+            if (contract.Status != ContractStatusEnum.Shipped.ToString())
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractIsNotReadyForRequest);
+            }
+
+            var maintenanceRequestList = await _maintenanceRequestRepository.GetMaintenanceRequestsByContractId(createMaintenanceRequestDto.ContractId);
+
+            bool isFailToCreateNewRequest = maintenanceRequestList.Any(request => request.Status == MaintenanceRequestStatusEnum.Processing.ToString() || request.Status == MaintenanceRequestStatusEnum.Assigned.ToString());
+
+            if (isFailToCreateNewRequest)
+            {
+                throw new ServiceException(MessageConstant.MaintenanceRequest.PendingRequestStillExist);
+            }
+
             await _maintenanceRequestRepository.CreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
 
             await _notificationService.SendToManagerWhenCustomerCreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
@@ -63,7 +77,7 @@ namespace Service.Implement
             return await _maintenanceRequestRepository.GetMaintenanceRequestsByContractId(contractId);
         }
 
-        public async Task UpdateRequestStatus(int maintenanceRequestId, string status, int accountId)
+        public async Task UpdateRequestStatus(string maintenanceRequestId, string status, int accountId)
         {
             var maintenanceDto = await _maintenanceRequestRepository.GetMaintenanceRequest(maintenanceRequestId);
 

@@ -4,7 +4,7 @@ public partial class RequestResponse
 {
     public int RequestResponseId { get; set; }
 
-    public int? RequestId { get; set; }
+    public string? RequestId { get; set; }
 
     public int? EmployeeTaskId { get; set; }
 

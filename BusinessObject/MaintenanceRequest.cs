@@ -2,7 +2,7 @@
 
 public partial class MaintenanceRequest
 {
-    public int RequestId { get; set; }
+    public string RequestId { get; set; }
 
     public string? ContractId { get; set; }
 
