@@ -1,9 +1,9 @@
-﻿using DTOs.AccountPromotion;
+﻿//using DTOs.AccountPromotion;
 
-namespace Repository.Interface
-{
-    public interface IAccountPromotionRepository
-    {
-        Task<IEnumerable<AccountPromotionDto>> GetAccountPromotionsForCustomer(int customerId);
-    }
-}
+//namespace Repository.Interface
+//{
+//    public interface IAccountPromotionRepository
+//    {
+//        Task<IEnumerable<AccountPromotionDto>> GetAccountPromotionsForCustomer(int customerId);
+//    }
+//}

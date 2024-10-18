@@ -18,7 +18,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IContentRepository, ContentRepository>();
         services.AddScoped<IComponentRepository, ComponentRepository>();
-        services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IMembershipRankRepository, MembershipRankRepository>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
@@ -28,7 +27,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IRentingServiceRepository, RentingServiceRepository>();
-        services.AddScoped<IAccountPromotionRepository, AccountPromotionRepository>();
         services.AddScoped<IDeliveryRepository, DeliveryRepository>();
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
         services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
@@ -46,7 +44,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
         services.AddScoped<IContentService, ContentServiceImpl>();
         services.AddScoped<IComponentService, ComponentServiceImpl>();
-        services.AddScoped<IPromotionService, PromotionServiceImpl>();
         services.AddScoped<IMembershipRankService, MembershipRankServiceImpl>();
         services.AddScoped<IDashboardService, DashboardServiceImpl>();
         services.AddScoped<IContractService, ContractServiceImpl>();
@@ -56,7 +53,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAddressService, AddressServiceImpl>();
         services.AddScoped<IRentingServiceService, RentingServiceServiceImpl>();
-        services.AddScoped<IAccountPromotionService, AccountPromotionServiceImpl>();
         services.AddScoped<IDeliveryService, DeliveryService>();
         services.AddScoped<IEmployeeTaskService, EmployeeTaskService>();
         services.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();

@@ -19,7 +19,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<AccountBusiness> AccountBusinesses { get; set; }
 
-    public virtual DbSet<AccountPromotion> AccountPromotions { get; set; }
+    //public virtual DbSet<AccountPromotion> AccountPromotions { get; set; }
 
     public virtual DbSet<Address> Addresses { get; set; }
 
@@ -69,7 +69,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<SerialNumberProduct> SerialNumberProducts { get; set; }
 
-    public virtual DbSet<Promotion> Promotions { get; set; }
+    //public virtual DbSet<Promotion> Promotions { get; set; }
 
     public virtual DbSet<MembershipRank> MembershipRanks { get; set; }
 
@@ -160,24 +160,24 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_AccountBusiness_Account");
         });
 
-        modelBuilder.Entity<AccountPromotion>(entity =>
-        {
-            entity.HasKey(e => e.AccountPromotionId);
+        //modelBuilder.Entity<AccountPromotion>(entity =>
+        //{
+        //    entity.HasKey(e => e.AccountPromotionId);
 
-            entity.ToTable("AccountPromotion");
+        //    entity.ToTable("AccountPromotion");
 
-            entity.Property(e => e.AccountPromotionId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
+        //    entity.Property(e => e.AccountPromotionId)
+        //        .ValueGeneratedOnAdd()
+        //        .UseIdentityColumn();
 
-            entity.HasOne(d => d.Account).WithMany(p => p.AccountPromotions)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_AccountPromotion_Account");
+        //    entity.HasOne(d => d.Account).WithMany(p => p.AccountPromotions)
+        //        .HasForeignKey(d => d.AccountId)
+        //        .HasConstraintName("FK_AccountPromotion_Account");
 
-            entity.HasOne(d => d.Promotion).WithMany(p => p.AccountPromotions)
-                .HasForeignKey(d => d.PromotionId)
-                .HasConstraintName("FK_AccountPromotion_Promotion");
-        });
+        //    entity.HasOne(d => d.Promotion).WithMany(p => p.AccountPromotions)
+        //        .HasForeignKey(d => d.PromotionId)
+        //        .HasConstraintName("FK_AccountPromotion_Promotion");
+        //});
 
         modelBuilder.Entity<Address>(entity =>
         {
@@ -647,17 +647,17 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_ProductNumber_Product");
         });
 
-        modelBuilder.Entity<Promotion>(entity =>
-        {
-            entity.HasKey(e => e.PromotionId);
+        //modelBuilder.Entity<Promotion>(entity =>
+        //{
+        //    entity.HasKey(e => e.PromotionId);
 
-            entity.ToTable("Promotion");
+        //    entity.ToTable("Promotion");
 
-            entity.Property(e => e.PromotionId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
+        //    entity.Property(e => e.PromotionId)
+        //        .ValueGeneratedOnAdd()
+        //        .UseIdentityColumn();
 
-        });
+        //});
 
         modelBuilder.Entity<MembershipRank>(entity =>
         {

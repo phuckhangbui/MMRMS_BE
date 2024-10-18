@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241018034801_removewPromotionAndAccountPromotionTable")]
+    partial class removewPromotionAndAccountPromotionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,8 +549,8 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("MaintenanceTicketId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ManagerId")
                         .HasColumnType("int");
@@ -724,8 +727,11 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
                 {
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MaintenanceTicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaintenanceTicketId"));
 
                     b.Property<double?>("AdditionalFee")
                         .HasColumnType("float");
@@ -772,7 +778,8 @@ namespace DAO.Migrations
                     b.Property<int?>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("MaintenanceTicketId");
+                    b.HasKey("MaintenanceTicketId")
+                        .HasName("PK__Maintain__76F8D53F2FA1A432");
 
                     b.HasIndex("ComponentId");
 
@@ -789,35 +796,6 @@ namespace DAO.Migrations
                     b.HasIndex("ProductSerialNumber");
 
                     b.ToTable("MaintenanceTicket", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.MaintenanceTicketLog", b =>
-                {
-                    b.Property<int>("MaintenanceTicketLogId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaintenanceTicketLogId"));
-
-                    b.Property<int?>("AccountTriggerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("MaintenanceTicketLogId");
-
-                    b.HasIndex("AccountTriggerId");
-
-                    b.HasIndex("MaintenanceTicketId");
-
-                    b.ToTable("MaintenanceTicketLog", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
@@ -1668,22 +1646,6 @@ namespace DAO.Migrations
                     b.Navigation("SerialNumberProduct");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceTicketLog", b =>
-                {
-                    b.HasOne("BusinessObject.Account", "AccountTrigger")
-                        .WithMany()
-                        .HasForeignKey("AccountTriggerId");
-
-                    b.HasOne("BusinessObject.MaintenanceTicket", "MaintenanceTicket")
-                        .WithMany("MaintenanceTicketLogs")
-                        .HasForeignKey("MaintenanceTicketId")
-                        .HasConstraintName("FK_MaintenanceTicket_Log");
-
-                    b.Navigation("AccountTrigger");
-
-                    b.Navigation("MaintenanceTicket");
-                });
-
             modelBuilder.Entity("BusinessObject.MembershipRankLog", b =>
                 {
                     b.HasOne("BusinessObject.Account", "Account")
@@ -1989,8 +1951,6 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
                 {
                     b.Navigation("EmployeeTasks");
-
-                    b.Navigation("MaintenanceTicketLogs");
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
