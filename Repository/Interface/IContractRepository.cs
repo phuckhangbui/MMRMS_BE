@@ -9,5 +9,7 @@ namespace Repository.Interface
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
         Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto);
         Task SignContract(string rentingRequestId);
+
+        Task<ContractAddressDto> GetContractAddressById(string contractId);
     }
 }

@@ -41,6 +41,18 @@ namespace DAO
             }
         }
 
+        public async Task<EmployeeTask> GetEmployeeTaskDetail(int taskId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.EmployeeTasks.Include(d => d.Staff).Include(d => d.Manager)
+                                                .Include(d => d.TaskLogs)
+                                                .ThenInclude(l => l.AccountTrigger)
+                                                .Include(d => d.MaintenanceTicketsCreateFromTask)
+                                                .FirstOrDefaultAsync(d => d.EmployeeTaskId == taskId);
+            }
+        }
+
         //public async Task CreateTaskWithRequest(EmployeeTask task, RequestResponse requestResponse)
         //{
         //    using (var context = new MmrmsContext())

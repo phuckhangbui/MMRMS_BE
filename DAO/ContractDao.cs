@@ -339,6 +339,28 @@ namespace DAO
             return contractPaymentDeposit;
         }
 
+        public async Task<RentingRequestAddress?> GetRentingRequestAddressByContractId(string contractId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var contract = await context.Contracts.FirstOrDefaultAsync(c => c.ContractId == contractId);
+
+                if (contract == null)
+                {
+                    return null;
+                }
+
+                var rentingRequest = await context.RentingRequests.Include(r => r.RentingRequestAddress).FirstOrDefaultAsync(r => r.RentingRequestId == contract.RentingRequestId);
+
+                if (rentingRequest == null)
+                {
+                    return null;
+                }
+
+                return rentingRequest.RentingRequestAddress;
+            }
+        }
+
 
         //TODO: Remove
         public async Task CreateContract(Contract contract, ContractRequestDto contractRequestDto)

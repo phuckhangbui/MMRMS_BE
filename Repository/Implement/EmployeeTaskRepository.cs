@@ -92,6 +92,15 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<EmployeeTaskDto>>(resultList);
         }
 
+        public async Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId)
+        {
+            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTaskDetail(taskId);
+
+            var taskDetail = _mapper.Map<EmployeeTaskDisplayDetail>(employeeTask);
+
+            return taskDetail;
+        }
+
         public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks()
         {
             var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
