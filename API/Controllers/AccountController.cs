@@ -60,13 +60,13 @@ namespace API.Controllers
                     return Ok("You are admin role");
                 }
 
-                if (accountRole == (int)AccountRoleEnum.Manager)
-                {
-                    var account = await _accountService.GetEmployeeAccount(accountId);
-                    return Ok(account);
-                }
+                //if (accountRole == (int)AccountRoleEnum.Manager)
+                //{
+                //    var account = await _accountService.GetEmployeeAccount(accountId);
+                //    return Ok(account);
+                //}
 
-                if (accountRole == (int)AccountRoleEnum.Staff)
+                if (accountRole == (int)AccountRoleEnum.TechnicalStaff || accountRole == (int)AccountRoleEnum.WebsiteStaff || accountRole ==  (int)AccountRoleEnum.Manager)
                 {
                     var account = await _accountService.GetEmployeeAccount(accountId);
                     return Ok(account);

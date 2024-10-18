@@ -53,7 +53,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Accounts.Where(a => a.RoleId == (int)AccountRoleEnum.Staff).ToListAsync();
+                return await context.Accounts.Where(a => a.RoleId == (int)AccountRoleEnum.TechnicalStaff || a.RoleId == (int)AccountRoleEnum.WebsiteStaff).ToListAsync();
             }
         }
 

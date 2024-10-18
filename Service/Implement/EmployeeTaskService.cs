@@ -179,10 +179,11 @@ namespace Service.Implement
 
             await _employeeTaskRepository.UpdateTaskStatus(employeeTaskId, status, accountId);
 
-            if (account.RoleId == (int)AccountRoleEnum.Staff)
-            {
-                await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)employeeTask.ManagerId, employeeTask.TaskTitle, status);
-            }
+            //TODO:KHANG
+            //if (account.RoleId == (int)AccountRoleEnum.Staff)
+            //{
+            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)employeeTask.ManagerId, employeeTask.TaskTitle, status);
+            //}
 
             if (account.RoleId == (int)AccountRoleEnum.Manager)
             {
