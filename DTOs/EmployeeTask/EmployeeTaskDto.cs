@@ -10,7 +10,7 @@
 
         public int? PreviousTaskId { get; set; }
 
-        public int? MaintenanceTicketId { get; set; }
+        public string? MaintenanceTicketId { get; set; }
 
         public string? Content { get; set; }
 

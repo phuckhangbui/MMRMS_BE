@@ -55,6 +55,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<MaintenanceTicket> MaintenanceTickets { get; set; }
 
+    public virtual DbSet<MaintenanceTicketLog> MaintenanceTicketLogs { get; set; }
+
     public virtual DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
@@ -493,13 +495,9 @@ public partial class MmrmsContext : DbContext
 
         modelBuilder.Entity<MaintenanceTicket>(entity =>
         {
-            entity.HasKey(e => e.MaintenanceTicketId).HasName("PK__Maintain__76F8D53F2FA1A432");
+            entity.HasKey(e => e.MaintenanceTicketId);
 
             entity.ToTable("MaintenanceTicket");
-
-            entity.Property(e => e.MaintenanceTicketId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
 
             entity.HasOne(d => d.Component).WithMany(p => p.MaintenanceTickets)
                 .HasForeignKey(d => d.ComponentId)
@@ -522,6 +520,22 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.EmployeeTaskCreate).WithMany(p => p.MaintenanceTicketsCreateFromTask)
                 .HasForeignKey(d => d.EmployeeTaskCreateId)
                 .HasConstraintName("FK_MaintenanceTicket_EmployeeTaskCreated");
+
+        });
+
+        modelBuilder.Entity<MaintenanceTicketLog>(entity =>
+        {
+            entity.HasKey(e => e.MaintenanceTicketLogId);
+
+            entity.ToTable("MaintenanceTicketLog");
+
+            entity.Property(e => e.MaintenanceTicketLogId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.MaintenanceTicket).WithMany(p => p.MaintenanceTicketLogs)
+                .HasForeignKey(d => d.MaintenanceTicketId)
+                .HasConstraintName("FK_MaintenanceTicket_Log");
 
         });
 

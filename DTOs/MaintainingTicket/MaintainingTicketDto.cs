@@ -2,7 +2,7 @@
 {
     public class MaintenanceTicketDto
     {
-        public int MaintenanceTicketId { get; set; }
+        public string MaintenanceTicketId { get; set; }
 
         public int? EmployeeTaskId { get; set; }
 
