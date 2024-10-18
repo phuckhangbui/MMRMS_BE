@@ -2,6 +2,6 @@
 {
     public interface IBackgroundService
     {
-        Task PromotionJob();
+        //Task PromotionJob();
     }
 }

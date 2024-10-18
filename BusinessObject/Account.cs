@@ -52,8 +52,6 @@ public partial class Account
 
     public virtual AccountBusiness? AccountBusiness { get; set; }
 
-    public virtual ICollection<AccountPromotion> AccountPromotions { get; set; } = new List<AccountPromotion>();
-
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
 
     public virtual ICollection<LogDetail> LogDetails { get; set; } = new List<LogDetail>();
