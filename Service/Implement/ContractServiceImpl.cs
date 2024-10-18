@@ -60,6 +60,18 @@ namespace Service.Implement
             return contract;
         }
 
+        public async Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId)
+        {
+            var contracts = await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
+
+            if (contracts.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractListEmpty);
+            }
+
+            return contracts;
+        }
+
         public async Task<IEnumerable<ContractDto>> GetContracts()
         {
             var contracts = await _contractRepository.GetContracts();
