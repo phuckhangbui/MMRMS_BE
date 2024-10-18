@@ -1,6 +1,7 @@
 ﻿using DTOs.Notification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Interface;
 using Serilog;
 using Service.Exceptions;
 using Service.Interface;

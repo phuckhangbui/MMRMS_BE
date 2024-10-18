@@ -11,17 +11,18 @@ using DTOs.RentingService;
 using DTOs.Term;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
-using RentingRequest = BusinessObject.RentingRequest;
 
 namespace Repository.Implement
 {
     public class RentingRequestRepository : IRentingRequestRepository
     {
         private readonly IMapper _mapper;
+        private readonly IBackground _background;
 
-        public RentingRequestRepository(IMapper mapper)
+        public RentingRequestRepository(IMapper mapper, IBackground background)
         {
             _mapper = mapper;
+            _background = background;
         }
 
         //public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
@@ -205,6 +206,9 @@ namespace Repository.Implement
             rentingRequest.TotalServicePrice = totalRentingServicePrice;
 
             rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
+
+            //_background.ScheduleCancelRentingRequestJob(rentingRequest.RentingRequestId);
+
             return rentingRequest.RentingRequestId;
         }
 
@@ -230,6 +234,17 @@ namespace Repository.Implement
             bool areContractsNotSigned = rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.NotSigned.ToString());
 
             return areContractsNotSigned;
+        }
+
+        public async Task<RentingRequestDto?> GetRentingRequestById(string rentingRequestId)
+        {
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
+            if (rentingRequest == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<RentingRequestDto>(rentingRequest);
         }
     }
 }

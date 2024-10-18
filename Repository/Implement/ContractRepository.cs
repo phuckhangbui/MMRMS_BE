@@ -192,5 +192,12 @@ namespace Repository.Implement
 
             return _mapper.Map<ContractAddressDto>(address);
         }
+
+        public async Task<bool> IsContractValidToSign(string rentingRequestId)
+        {
+            var contracts = await ContractDao.Instance.GetContractsByRentingRequestId(rentingRequestId);
+
+            return contracts.All(c => c.Status.Equals(ContractStatusEnum.NotSigned.ToString()));
+        }
     }
 }
