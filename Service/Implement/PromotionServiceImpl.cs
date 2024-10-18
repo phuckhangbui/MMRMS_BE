@@ -1,69 +1,69 @@
-﻿using Common;
-using DTOs.Promotion;
-using Microsoft.IdentityModel.Tokens;
-using Repository.Interface;
-using Service.Exceptions;
-using Service.Interface;
+﻿//using Common;
+//using DTOs.Promotion;
+//using Microsoft.IdentityModel.Tokens;
+//using Repository.Interface;
+//using Service.Exceptions;
+//using Service.Interface;
 
-namespace Service.Implement
-{
-    public class PromotionServiceImpl : IPromotionService
-    {
-        private readonly IPromotionRepository _promotionRepository;
+//namespace Service.Implement
+//{
+//    public class PromotionServiceImpl : IPromotionService
+//    {
+//        private readonly IPromotionRepository _promotionRepository;
 
-        public PromotionServiceImpl(IPromotionRepository promotionRepository)
-        {
-            _promotionRepository = promotionRepository;
-        }
+//        public PromotionServiceImpl(IPromotionRepository promotionRepository)
+//        {
+//            _promotionRepository = promotionRepository;
+//        }
 
-        public async Task CreatePromotion(PromotionRequestDto promotionCreateRequestDto)
-        {
-            await _promotionRepository.CreatePromotion(promotionCreateRequestDto);
-        }
+//        public async Task CreatePromotion(PromotionRequestDto promotionCreateRequestDto)
+//        {
+//            await _promotionRepository.CreatePromotion(promotionCreateRequestDto);
+//        }
 
-        public async Task DeletePromotion(int promotionId)
-        {
-            await CheckPrmotionExist(promotionId);
+//        public async Task DeletePromotion(int promotionId)
+//        {
+//            await CheckPrmotionExist(promotionId);
 
-            await _promotionRepository.DeletePromotion(promotionId);
-        }
+//            await _promotionRepository.DeletePromotion(promotionId);
+//        }
 
-        public async Task<PromotionDto> GetPromotionById(int promotionId)
-        {
-            var promotion = await CheckPrmotionExist(promotionId);
+//        public async Task<PromotionDto> GetPromotionById(int promotionId)
+//        {
+//            var promotion = await CheckPrmotionExist(promotionId);
 
-            return promotion;
-        }
+//            return promotion;
+//        }
 
-        public async Task<IEnumerable<PromotionDto>> GetPromotions()
-        {
-            var promotions = await _promotionRepository.GetPromotions();
+//        public async Task<IEnumerable<PromotionDto>> GetPromotions()
+//        {
+//            var promotions = await _promotionRepository.GetPromotions();
 
-            if (promotions.IsNullOrEmpty())
-            {
-                throw new ServiceException(MessageConstant.Promotion.PromotionListEmpty);
-            }
+//            if (promotions.IsNullOrEmpty())
+//            {
+//                throw new ServiceException(MessageConstant.Promotion.PromotionListEmpty);
+//            }
 
-            return promotions;
-        }
+//            return promotions;
+//        }
 
-        public async Task UpdatePromotion(int promotionId, PromotionRequestDto promotionRequestDto)
-        {
-            await CheckPrmotionExist(promotionId);
+//        public async Task UpdatePromotion(int promotionId, PromotionRequestDto promotionRequestDto)
+//        {
+//            await CheckPrmotionExist(promotionId);
 
-            await _promotionRepository.UpdatePromotion(promotionId, promotionRequestDto);
-        }
+//            await _promotionRepository.UpdatePromotion(promotionId, promotionRequestDto);
+//        }
 
-        private async Task<PromotionDto> CheckPrmotionExist(int promotionId)
-        {
-            var promotion = await _promotionRepository.GetPromotionById(promotionId);
+//        private async Task<PromotionDto> CheckPrmotionExist(int promotionId)
+//        {
+//            var promotion = await _promotionRepository.GetPromotionById(promotionId);
 
-            if (promotion == null)
-            {
-                throw new ServiceException(MessageConstant.Promotion.PromotionNotFound);
-            }
+//            if (promotion == null)
+//            {
+//                throw new ServiceException(MessageConstant.Promotion.PromotionNotFound);
+//            }
 
-            return promotion;
-        }
-    }
-}
+//            return promotion;
+//        }
+//    }
+//}
