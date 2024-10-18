@@ -39,6 +39,15 @@ namespace Repository.Implement
             return _mapper.Map<MaintenanceTicketDto>(maintenanceTicket);
         }
 
+        public async Task<MaintenanceTicketDto> GetTicket(int maintenanceTicketId)
+        {
+            var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();
+
+            var result = list.FirstOrDefault(t => t.MaintenanceTicketId == maintenanceTicketId);
+
+            return _mapper.Map<MaintenanceTicketDto>(result);
+        }
+
         public async Task<IEnumerable<MaintenanceTicketDto>> GetTickets()
         {
             var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();

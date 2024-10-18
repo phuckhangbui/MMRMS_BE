@@ -14,7 +14,7 @@ namespace Service.Interface
         Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status);
         Task SendNotificationToStaffWhenDeliveryStatusUpdated(int staffId, ContractAddressDto contractAddress, string status);
         Task SendNotificationToStaffWhenAssignDelivery(int staffId, ContractAddressDto contractAddress, DateTime dateShip);
-        Task SendNotificationToStaffWhenAssignTaskToMaintenance(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
+        Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
         Task SendNotificationToCustomerWhenCreateMaintenanceTicket(int customerId, double totalAmount, string? componentName);
     }
 }
