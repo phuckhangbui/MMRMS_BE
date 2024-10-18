@@ -30,6 +30,10 @@
 
         public static class Account
         {
+            //Controller
+            public const string UpdateEmployeeAccountSuccessfully = "Cập nhật tài khoản nhân viên thành công";
+            public const string UpdateEmployeeAccountFail = "Cập nhật tài khoản nhân viên thất bại";
+
             //Service
             public const string InvalidRoleValue = "Giá trị vai trò không hợp lệ";
             public const string NotCustomerRole = "Tài khoản này không phải là vai trò khách hàng.";
@@ -42,6 +46,7 @@
             public const string AccountInactive = "Tài khoản chưa kích hoạt";
             public const string AccountLocked = "Tài khoản đã bị khóa";
             public const string WrongOtp = "Mã OTP không hợp lệ";
+            public const string EmployeeAccountNotValidToUpdate = "Tài khoản nhân viên không thể cập nhật do thông tin không hợp lệ";
 
             //DTO
             public const string NameRequired = "Tên là bắt buộc.";

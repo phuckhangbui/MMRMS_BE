@@ -235,5 +235,33 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<StaffAccountDto>>(accounts);
         }
+
+        public async Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        {
+            return await AccountDao.Instance.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
+        }
+
+        public async Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        {
+            var employeeAccount = await AccountDao.Instance.GetAccountAsyncById(accountId);
+
+            if (employeeAccount != null)
+            {
+                employeeAccount.Name = employeeAccountUpdateDto.Name;
+                employeeAccount.Email = employeeAccountUpdateDto.Email;
+                employeeAccount.Phone = employeeAccountUpdateDto.Phone;
+                employeeAccount.Username = employeeAccountUpdateDto.Username;
+                employeeAccount.RoleId = employeeAccountUpdateDto.RoleId;
+                employeeAccount.Gender = employeeAccountUpdateDto.Gender;
+                employeeAccount.DateBirth = employeeAccountUpdateDto.DateBirth;
+                employeeAccount.DateExpire = employeeAccountUpdateDto.DateExpire;
+
+                await AccountDao.Instance.UpdateAsync(employeeAccount);
+
+                return employeeAccount.AccountId;
+            }
+
+            return 0;
+        }
     }
 }

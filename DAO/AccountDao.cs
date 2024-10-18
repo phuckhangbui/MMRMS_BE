@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using Common.Enum;
+using DTOs.Account;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -147,5 +148,32 @@ namespace DAO
             }
         }
 
+        public async Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto updateDto)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var account = await context.Accounts.FindAsync(accountId);
+                if (account == null || account.IsDelete == true || account.Status.Equals(AccountStatusEnum.Active))
+                {
+                    return false;
+                }
+
+                bool emailExists = await context.Accounts
+                    .AnyAsync(a => a.Email == updateDto.Email && a.AccountId != accountId && a.IsDelete == false);
+
+                bool phoneExists = await context.Accounts
+                    .AnyAsync(a => a.Phone == updateDto.Phone && a.AccountId != accountId && a.IsDelete == false);
+
+                bool usernameExists = await context.Accounts
+                    .AnyAsync(a => a.Username == updateDto.Username && a.AccountId != accountId && a.IsDelete == false);
+
+                if (emailExists || phoneExists || usernameExists)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 }
