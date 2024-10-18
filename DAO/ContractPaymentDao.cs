@@ -31,6 +31,7 @@ namespace DAO
             {
                 return await context.ContractPayments
                     .Where(cp => cp.InvoiceId == invoiceId)
+                    .Include(cp => cp.Contract)
                     .ToListAsync();
             }
         }
