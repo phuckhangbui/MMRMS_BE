@@ -10,7 +10,7 @@ public partial class EmployeeTask
 
     public int? RequestResponseId { get; set; }
 
-    public int? MaintenanceTicketId { get; set; }
+    public string? MaintenanceTicketId { get; set; }
 
     public int? PreviousTaskId { get; set; }
 

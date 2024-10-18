@@ -2,7 +2,7 @@
 
 public partial class MaintenanceTicket
 {
-    public int MaintenanceTicketId { get; set; }
+    public string MaintenanceTicketId { get; set; }
 
     public int? EmployeeCreateId { get; set; }
 
@@ -38,6 +38,8 @@ public partial class MaintenanceTicket
 
     public virtual ICollection<EmployeeTask>? EmployeeTasks { get; set; } = new List<EmployeeTask>();
 
+    public virtual ICollection<MaintenanceTicketLog>? MaintenanceTicketLogs { get; set; } = new List<MaintenanceTicketLog>();
+
     public virtual EmployeeTask? EmployeeTaskCreate { get; set; }
 
     public virtual Account? EmployeeCreate { get; set; }
@@ -47,5 +49,6 @@ public partial class MaintenanceTicket
     public virtual Contract? Contract { get; set; }
 
     public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
+
 
 }

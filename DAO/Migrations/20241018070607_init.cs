@@ -425,6 +425,32 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MembershipRankLog",
+                columns: table => new
+                {
+                    MembershipRankLogId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MembershipRankId = table.Column<int>(type: "int", nullable: true),
+                    AccountId = table.Column<int>(type: "int", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MembershipRankLog", x => x.MembershipRankLogId);
+                    table.ForeignKey(
+                        name: "FK_MembershipRank_membershiplog",
+                        column: x => x.MembershipRankId,
+                        principalTable: "MembershipRank",
+                        principalColumn: "MembershipRankId");
+                    table.ForeignKey(
+                        name: "FK_account_membershiplog",
+                        column: x => x.AccountId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notification",
                 columns: table => new
                 {
@@ -803,57 +829,6 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MaintenanceTicket",
-                columns: table => new
-                {
-                    MaintenanceTicketId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeCreateId = table.Column<int>(type: "int", nullable: true),
-                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ComponentId = table.Column<int>(type: "int", nullable: true),
-                    InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ProductSerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ComponentPrice = table.Column<double>(type: "float", nullable: true),
-                    AdditionalFee = table.Column<double>(type: "float", nullable: true),
-                    TotalAmount = table.Column<double>(type: "float", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateRepair = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Maintain__76F8D53F2FA1A432", x => x.MaintenanceTicketId);
-                    table.ForeignKey(
-                        name: "FK_Invoice_MaintainTicket",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoices",
-                        principalColumn: "InvoiceId");
-                    table.ForeignKey(
-                        name: "FK_MaintenanceTicket_Account_EmployeeCreateId",
-                        column: x => x.EmployeeCreateId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                    table.ForeignKey(
-                        name: "FK_MaintenanceTicket_ComponentID",
-                        column: x => x.ComponentId,
-                        principalTable: "Component",
-                        principalColumn: "ComponentId");
-                    table.ForeignKey(
-                        name: "FK_MaintenanceTicket_ContractID",
-                        column: x => x.ContractId,
-                        principalTable: "Contract",
-                        principalColumn: "ContractId");
-                    table.ForeignKey(
-                        name: "FK_MaintenanceTicket_SerialNumberProduct",
-                        column: x => x.ProductSerialNumber,
-                        principalTable: "SerialNumberProduct",
-                        principalColumn: "SerialNumber");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DeliveryLog",
                 columns: table => new
                 {
@@ -911,7 +886,7 @@ namespace DAO.Migrations
                     TaskTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     RequestResponseId = table.Column<int>(type: "int", nullable: false),
-                    MaintenanceTicketId = table.Column<int>(type: "int", nullable: true),
+                    MaintenanceTicketId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     PreviousTaskId = table.Column<int>(type: "int", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StaffId = table.Column<int>(type: "int", nullable: true),
@@ -926,11 +901,6 @@ namespace DAO.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmployeeTask", x => x.EmployeeTaskId);
-                    table.ForeignKey(
-                        name: "FK_MaintenanceTicketId_Task",
-                        column: x => x.MaintenanceTicketId,
-                        principalTable: "MaintenanceTicket",
-                        principalColumn: "MaintenanceTicketId");
                     table.ForeignKey(
                         name: "FK_Task_Contract",
                         column: x => x.ContractId,
@@ -957,6 +927,62 @@ namespace DAO.Migrations
                         column: x => x.StaffId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaintenanceTicket",
+                columns: table => new
+                {
+                    MaintenanceTicketId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeCreateId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeTaskCreateId = table.Column<int>(type: "int", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ComponentId = table.Column<int>(type: "int", nullable: true),
+                    InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ProductSerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ComponentPrice = table.Column<double>(type: "float", nullable: true),
+                    AdditionalFee = table.Column<double>(type: "float", nullable: true),
+                    TotalAmount = table.Column<double>(type: "float", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateRepair = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceTicket", x => x.MaintenanceTicketId);
+                    table.ForeignKey(
+                        name: "FK_Invoice_MaintainTicket",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "InvoiceId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_Account_EmployeeCreateId",
+                        column: x => x.EmployeeCreateId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_ComponentID",
+                        column: x => x.ComponentId,
+                        principalTable: "Component",
+                        principalColumn: "ComponentId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_ContractID",
+                        column: x => x.ContractId,
+                        principalTable: "Contract",
+                        principalColumn: "ContractId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_EmployeeTaskCreated",
+                        column: x => x.EmployeeTaskCreateId,
+                        principalTable: "EmployeeTask",
+                        principalColumn: "EmployeeTaskId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_SerialNumberProduct",
+                        column: x => x.ProductSerialNumber,
+                        principalTable: "SerialNumberProduct",
+                        principalColumn: "SerialNumber");
                 });
 
             migrationBuilder.CreateTable(
@@ -1004,6 +1030,32 @@ namespace DAO.Migrations
                         principalTable: "EmployeeTask",
                         principalColumn: "EmployeeTaskId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaintenanceTicketLog",
+                columns: table => new
+                {
+                    MaintenanceTicketLogId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaintenanceTicketId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccountTriggerId = table.Column<int>(type: "int", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceTicketLog", x => x.MaintenanceTicketLogId);
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicketLog_Account_AccountTriggerId",
+                        column: x => x.AccountTriggerId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_MaintenanceTicket_Log",
+                        column: x => x.MaintenanceTicketId,
+                        principalTable: "MaintenanceTicket",
+                        principalColumn: "MaintenanceTicketId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -1174,6 +1226,11 @@ namespace DAO.Migrations
                 column: "EmployeeCreateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceTicket_EmployeeTaskCreateId",
+                table: "MaintenanceTicket",
+                column: "EmployeeTaskCreateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MaintenanceTicket_InvoiceId",
                 table: "MaintenanceTicket",
                 column: "InvoiceId",
@@ -1184,6 +1241,26 @@ namespace DAO.Migrations
                 name: "IX_MaintenanceTicket_ProductSerialNumber",
                 table: "MaintenanceTicket",
                 column: "ProductSerialNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceTicketLog_AccountTriggerId",
+                table: "MaintenanceTicketLog",
+                column: "AccountTriggerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceTicketLog_MaintenanceTicketId",
+                table: "MaintenanceTicketLog",
+                column: "MaintenanceTicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MembershipRankLog_AccountId",
+                table: "MembershipRankLog",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MembershipRankLog_MembershipRankId",
+                table: "MembershipRankLog",
+                column: "MembershipRankId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notification_AccountReceiveId",
@@ -1279,11 +1356,86 @@ namespace DAO.Migrations
                 name: "IX_TaskLog_EmployeeTaskId",
                 table: "TaskLog",
                 column: "EmployeeTaskId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MaintenanceTicketId_Task",
+                table: "EmployeeTask",
+                column: "MaintenanceTicketId",
+                principalTable: "MaintenanceTicket",
+                principalColumn: "MaintenanceTicketId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Account_MembershipRank",
+                table: "Account");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Contract_Account",
+                table: "Contract");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Task_Manager",
+                table: "EmployeeTask");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Task_Staff",
+                table: "EmployeeTask");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Invoices_Account",
+                table: "Invoices");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceTicket_Account_EmployeeCreateId",
+                table: "MaintenanceTicket");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_RentingRequest_Account",
+                table: "RentingRequest");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceTicket_ComponentID",
+                table: "MaintenanceTicket");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ProductNumber_Product",
+                table: "SerialNumberProduct");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Contract_SerialNumberProduct",
+                table: "Contract");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceTicket_SerialNumberProduct",
+                table: "MaintenanceTicket");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_RentingRequest_Contract",
+                table: "Contract");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Task_Contract",
+                table: "EmployeeTask");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceRequest_Contract",
+                table: "MaintenanceRequest");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceTicket_ContractID",
+                table: "MaintenanceTicket");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Invoice_MaintainTicket",
+                table: "MaintenanceTicket");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_MaintenanceTicketId_Task",
+                table: "EmployeeTask");
+
             migrationBuilder.DropTable(
                 name: "AccountBusiness");
 
@@ -1313,6 +1465,12 @@ namespace DAO.Migrations
 
             migrationBuilder.DropTable(
                 name: "LogDetail");
+
+            migrationBuilder.DropTable(
+                name: "MaintenanceTicketLog");
+
+            migrationBuilder.DropTable(
+                name: "MembershipRankLog");
 
             migrationBuilder.DropTable(
                 name: "Notification");
@@ -1363,25 +1521,19 @@ namespace DAO.Migrations
                 name: "RentingService");
 
             migrationBuilder.DropTable(
-                name: "EmployeeTask");
+                name: "MembershipRank");
 
             migrationBuilder.DropTable(
-                name: "MaintenanceTicket");
-
-            migrationBuilder.DropTable(
-                name: "RequestResponse");
-
-            migrationBuilder.DropTable(
-                name: "Invoices");
+                name: "Account");
 
             migrationBuilder.DropTable(
                 name: "Component");
 
             migrationBuilder.DropTable(
-                name: "MaintenanceRequest");
+                name: "Product");
 
             migrationBuilder.DropTable(
-                name: "Contract");
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "SerialNumberProduct");
@@ -1390,16 +1542,22 @@ namespace DAO.Migrations
                 name: "RentingRequest");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Contract");
 
             migrationBuilder.DropTable(
-                name: "Account");
+                name: "Invoices");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "MaintenanceTicket");
 
             migrationBuilder.DropTable(
-                name: "MembershipRank");
+                name: "EmployeeTask");
+
+            migrationBuilder.DropTable(
+                name: "RequestResponse");
+
+            migrationBuilder.DropTable(
+                name: "MaintenanceRequest");
         }
     }
 }

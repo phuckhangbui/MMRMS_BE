@@ -6,7 +6,7 @@ namespace DTOs.EmployeeTask
     public class CreateEmployeeTaskProcessMaintenanceTickett
     {
         [Required(ErrorMessage = MessageConstant.EmployeeTask.MaintenanceTicketIdRequired)]
-        public int MaintenanceTicketId { get; set; }
+        public string MaintenanceTicketId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.EmployeeTask.StaffIdRequired)]
         public int StaffId { get; set; }

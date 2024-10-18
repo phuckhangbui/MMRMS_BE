@@ -72,5 +72,9 @@ namespace Repository.Implement
         }
 
 
+        public Task UpdateRequestStatus(int maintenanceRequestId, string status)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

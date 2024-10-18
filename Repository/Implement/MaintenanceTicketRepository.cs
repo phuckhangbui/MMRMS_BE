@@ -39,7 +39,7 @@ namespace Repository.Implement
             return _mapper.Map<MaintenanceTicketDto>(maintenanceTicket);
         }
 
-        public async Task<MaintenanceTicketDto> GetTicket(int maintenanceTicketId)
+        public async Task<MaintenanceTicketDto> GetTicket(string maintenanceTicketId)
         {
             var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();
 
