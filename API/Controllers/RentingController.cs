@@ -21,6 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "Manager")]
         public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequests()
         {
             try
@@ -75,6 +76,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{rentingRequestId}/contracts/sign")]
+        [Authorize(policy: "Customer")]
         public async Task<ActionResult> SignContract(string rentingRequestId)
         {
             try
@@ -155,6 +157,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{rentingRequestId}/cancel")]
+        [Authorize(policy: "Customer")]
         public async Task<ActionResult> CancelRentingRequest(string rentingRequestId)
         {
             try

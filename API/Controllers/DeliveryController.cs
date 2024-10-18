@@ -37,6 +37,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpGet("staff")]
         [Authorize(Policy = "Staff")]
         public async Task<ActionResult<IEnumerable<DeliveryDto>>> GetDeliveriesForStaff()
@@ -87,6 +88,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpPatch("{deliveryId}")]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateDeliveryStatus([FromRoute] int deliveryId, [FromQuery] string status)

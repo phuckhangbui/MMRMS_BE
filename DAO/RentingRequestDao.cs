@@ -14,7 +14,7 @@ namespace DAO
         private static RentingRequestDao instance = null;
         private static readonly object instacelock = new object();
 
-        private RentingRequestDao()
+        public RentingRequestDao()
         {
 
         }

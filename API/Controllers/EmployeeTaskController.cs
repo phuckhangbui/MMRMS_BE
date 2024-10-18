@@ -35,6 +35,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpGet("staff")]
         [Authorize(Policy = "Staff")]
         public async Task<ActionResult<IEnumerable<EmployeeTaskDto>>> GetEmployeeTasksForStaff()
@@ -60,6 +61,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpGet("{taskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult<EmployeeTaskDisplayDetail>> GetEmployeeTaskDetail([FromRoute] int taskId)
@@ -127,6 +129,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpPatch("{employeeTaskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult> UpdateEmployeeTaskStatus([FromRoute] int employeeTaskId, [FromQuery] string status)

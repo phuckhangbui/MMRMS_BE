@@ -1,4 +1,5 @@
-﻿using Common.Enum;
+﻿using Common;
+using Common.Enum;
 using DTOs.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,13 +61,13 @@ namespace API.Controllers
                     return Ok("You are admin role");
                 }
 
-                if (accountRole == (int)AccountRoleEnum.Manager)
-                {
-                    var account = await _accountService.GetEmployeeAccount(accountId);
-                    return Ok(account);
-                }
+                //if (accountRole == (int)AccountRoleEnum.Manager)
+                //{
+                //    var account = await _accountService.GetEmployeeAccount(accountId);
+                //    return Ok(account);
+                //}
 
-                if (accountRole == (int)AccountRoleEnum.Staff)
+                if (accountRole == (int)AccountRoleEnum.TechnicalStaff || accountRole == (int)AccountRoleEnum.WebsiteStaff || accountRole == (int)AccountRoleEnum.Manager)
                 {
                     var account = await _accountService.GetEmployeeAccount(accountId);
                     return Ok(account);
@@ -254,6 +255,26 @@ namespace API.Controllers
             catch (ServiceException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("employees/{accountId}")]
+        [Authorize(policy: "AdminAndManager")]
+        public async Task<ActionResult> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        {
+            try
+            {
+                var result = await _accountService.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
+                if (result > 0) return Ok(MessageConstant.Account.UpdateEmployeeAccountSuccessfully);
+                return BadRequest(MessageConstant.Account.UpdateEmployeeAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

@@ -104,6 +104,12 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
             }
 
+            var isValidToSign = await _contractRepository.IsContractValidToSign(rentingRequestId);
+            if (!isValidToSign)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
+            }
+
             await _contractRepository.SignContract(rentingRequestId);
         }
 

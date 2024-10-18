@@ -16,6 +16,7 @@ namespace API.Controllers
             _maintenanceTicketService = maintenanceTicketService;
         }
 
+        //TODO:KHANG
         [HttpGet]
         [Authorize(Policy = "ManagerAndStaff")]
         public async Task<ActionResult<IEnumerable<MaintenanceTicketDto>>> GetMaintenanceRequests()
@@ -60,6 +61,7 @@ namespace API.Controllers
             }
         }
 
+        //TODO:KHANG
         [HttpPost]
         [Authorize(Policy = "Staff")]
         public async Task<ActionResult> CreateMaintenanceTicket(CreateMaintenanceTicketDto createMaintenanceTicketDto)

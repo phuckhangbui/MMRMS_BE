@@ -4,7 +4,8 @@
     {
         Admin = 0,
         Manager = 1,
-        Staff = 2,
-        Customer = 3
+        TechnicalStaff = 2,
+        WebsiteStaff = 3,
+        Customer = 4
     }
 }

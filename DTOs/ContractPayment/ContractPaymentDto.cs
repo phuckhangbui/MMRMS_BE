@@ -13,5 +13,13 @@
         public string? Type { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DueDate { get; set; }
+        public FirstRentalPaymentDto FirstRentalPayment { get; set; }
+    }
+
+    public class FirstRentalPaymentDto
+    {
+        public double? TotalServicePrice { get; set; }
+        public double? ShippingPrice { get; set; }
+        public double? DiscountPrice { get; set; }
     }
 }

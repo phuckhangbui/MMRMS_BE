@@ -1,11 +1,12 @@
 using API.Extension;
+using DAO;
 using Hangfire;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Repository;
 using Serilog;
 using Service;
-using Service.Interface;
 using Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -67,7 +68,8 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
-builder.Services.AddScoped<IBackgroundService, Service.Implement.BackgroundServiceImpl>();
+builder.Services.AddScoped<IBackground, BackgroundImpl>();
+builder.Services.AddScoped<RentingRequestDao>();
 
 builder.Services.IdentityServices(builder.Configuration);
 builder.Services.ApplicationServices(builder.Configuration);
@@ -97,16 +99,16 @@ app.MapHangfireDashboard("/hangfire");
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
-    var backgroundService = serviceProvider.GetRequiredService<IBackgroundService>();
+    var backgroundService = serviceProvider.GetRequiredService<IBackground>();
 
-    var timeZoneId = "SE Asia Standard Time";
-    var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    //var timeZoneId = "SE Asia Standard Time";
+    //var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
-    var localTime = new DateTime(1, 1, 1, 0, 0, 00);
-    var utcTime = TimeZoneInfo.ConvertTimeToUtc(localTime, timeZone);
+    //var localTime = new DateTime(1, 1, 1, 0, 0, 00);
+    //var utcTime = TimeZoneInfo.ConvertTimeToUtc(localTime, timeZone);
 
-    var cronMinute = utcTime.Minute;
-    var cronHour = utcTime.Hour;
+    //var cronMinute = utcTime.Minute;
+    //var cronHour = utcTime.Hour;
 
     //var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
     //RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("Recurring Job Triggered at " +

@@ -148,5 +148,16 @@ namespace Service.Implement
         {
             return await _accountRepository.GetActiveStaffAccounts();
         }
+
+        public async Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        {
+            var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
+            if (!isValid)
+            {
+                throw new ServiceException(MessageConstant.Account.EmployeeAccountNotValidToUpdate);
+            }
+
+            return await _accountRepository.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
+        }
     }
 }

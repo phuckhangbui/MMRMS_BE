@@ -2,7 +2,7 @@
 using DTOs.MaintenanceRequest;
 using DTOs.Notification;
 
-namespace Service.Interface
+namespace Repository.Interface
 {
     public interface INotificationService
     {

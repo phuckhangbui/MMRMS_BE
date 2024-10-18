@@ -125,6 +125,7 @@ namespace DAO
                                 Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
                                 Amount = contract.RentPrice * contract.NumberOfMonth,
                                 DueDate = contract.DateStart,
+                                IsFirstRentalPayment = true,
                             };
 
                             contractPayments.Add(depositContractPayment);
@@ -322,15 +323,13 @@ namespace DAO
                     Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId + " lần " + (i + 1),
                     Amount = (contract.RentPrice * 3),
                     DueDate = contract.DateStart!.Value.AddMonths(monthsToAdd),
+                    IsFirstRentalPayment = false,
                 };
-
-                //Rental Invoice
-                //var rentalInvoice = InitRentalInvoice(contract, rentingRequest);
-                //rentalContractPayment.Invoice = rentalInvoice;
 
                 if (i == 0)
                 {
                     rentalContractPayment.Invoice = invoice;
+                    rentalContractPayment.IsFirstRentalPayment = true;
                 }
 
                 list.Add(rentalContractPayment);
@@ -350,6 +349,7 @@ namespace DAO
                 Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
                 Amount = contract.DepositPrice,
                 DueDate = contract.DateStart,
+                IsFirstRentalPayment = false,
             };
 
             return contractPaymentDeposit;

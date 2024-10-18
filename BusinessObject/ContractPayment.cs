@@ -24,6 +24,8 @@ public partial class ContractPayment
 
     public DateTime? DueDate { get; set; }
 
+    public bool? IsFirstRentalPayment { get; set; }
+
     public virtual Contract? Contract { get; set; }
 
     public virtual Invoice? Invoice { get; set; }

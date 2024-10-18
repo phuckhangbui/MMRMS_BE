@@ -1,7 +1,7 @@
 ﻿using DTOs.Notification;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Interface;
 using Service.Exceptions;
-using Service.Interface;
 
 namespace API.Controllers
 {

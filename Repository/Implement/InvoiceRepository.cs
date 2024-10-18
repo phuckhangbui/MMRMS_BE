@@ -69,6 +69,23 @@ namespace Repository.Implement
                     if (!contractPayments.IsNullOrEmpty())
                     {
                         contractInvoice.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(contractPayments);
+
+                        var firstRentalContractPayment = contractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
+                        if (firstRentalContractPayment != null)
+                        {
+                            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(firstRentalContractPayment.Contract.RentingRequestId);
+
+                            var firstRentalPayment = new FirstRentalPaymentDto()
+                            {
+                                DiscountPrice = rentingRequest.DiscountPrice,
+                                ShippingPrice = rentingRequest.ShippingPrice,
+                                TotalServicePrice = rentingRequest.TotalServicePrice,
+                            };
+
+                            var firstRentalInvoice = contractInvoice.ContractPayments.Find(i => i.ContractPaymentId == firstRentalContractPayment.ContractPaymentId);
+                            firstRentalInvoice.FirstRentalPayment = firstRentalPayment;
+
+                        }
                     }
 
                     return contractInvoice;
