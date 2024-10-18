@@ -5,12 +5,14 @@
         Assigned,
         Completed,
         Failed,
+        ReAssigned,
+        CreateMaintenceTicket,
         Canceled
     }
 
     public enum EmployeeTaskTypeEnum
     {
-        MaintenanceRequest,
-        MaintenaceTicket
+        CheckMachinery,
+        ProcessMaintenanceRequest
     }
 }

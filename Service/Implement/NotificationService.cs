@@ -131,9 +131,9 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenAssignTaskToMaintenance(int staffId, ContractAddressDto contractAddress, DateTime dateStart)
+        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart)
         {
-            string title = "Bạn có thêm một nhiệm vụ kiểm tra máy vào bảo trì mới";
+            string title = "Bạn có thêm một nhiệm vụ kiểm tra máy mới";
             string body = $"Kiểm tra máy tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateStart.Date}";
 
 

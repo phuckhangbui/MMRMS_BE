@@ -230,6 +230,22 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
+            CreateMap<EmployeeTask, EmployeeTaskDisplayDetail>()
+                .ForMember(dest => dest.TaskLogs,
+                opt => opt.MapFrom(src => src.TaskLogs != null
+                            ? src.TaskLogs
+                            : null))
+                .ForMember(dest => dest.MaintenanceTicketCreateFromTaskList,
+                opt => opt.MapFrom(src => src.MaintenanceTicketsCreateFromTask != null
+                            ? src.MaintenanceTicketsCreateFromTask
+                            : null));
+
+            CreateMap<TaskLog, TaskLogDto>()
+                .ForMember(dest => dest.AccountTriggerName,
+                opt => opt.MapFrom(src => src.AccountTrigger != null
+                                ? src.AccountTrigger.Name
+                                : string.Empty));
+
             CreateMap<MaintenanceTicket, MaintenanceTicketDto>()
                .ForMember(dest => dest.EmployeeCreateName,
                opt => opt.MapFrom(src => src.EmployeeCreate != null

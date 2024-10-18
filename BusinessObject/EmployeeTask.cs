@@ -44,6 +44,8 @@ public partial class EmployeeTask
 
     public virtual MaintenanceTicket? MaintenanceTicket { get; set; }
 
+    public virtual ICollection<MaintenanceTicket> MaintenanceTicketsCreateFromTask { get; set; } = new List<MaintenanceTicket>();
+
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     public virtual ICollection<TaskLog> TaskLogs { get; set; } = new List<TaskLog>();

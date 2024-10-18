@@ -506,7 +506,6 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_MaintenanceTicket_ComponentID");
 
 
-
             entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintenanceTickets)
                 .HasForeignKey(d => d.ProductSerialNumber)
                 .HasConstraintName("FK_MaintenanceTicket_SerialNumberProduct");
@@ -519,6 +518,10 @@ public partial class MmrmsContext : DbContext
                 .WithOne(p => p.MaintenanceTicket)
                 .HasForeignKey<MaintenanceTicket>(d => d.InvoiceId)
                 .HasConstraintName("FK_Invoice_MaintainTicket");
+
+            entity.HasOne(d => d.EmployeeTaskCreate).WithMany(p => p.MaintenanceTicketsCreateFromTask)
+                .HasForeignKey(d => d.EmployeeTaskCreateId)
+                .HasConstraintName("FK_MaintenanceTicket_EmployeeTaskCreated");
 
         });
 
@@ -682,6 +685,8 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Request).WithMany(p => p.RequestResponses)
                 .HasForeignKey(d => d.RequestId)
                 .HasConstraintName("FK_RequestResponse_MaintenanceRequest");
+
+
 
             entity.HasOne(d => d.EmployeeTask)
                   .WithOne(t => t.RequestResponse)

@@ -60,9 +60,28 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet("{taskId}")]
+        [Authorize(Policy = "ManagerAndStaff")]
+        public async Task<ActionResult<EmployeeTaskDisplayDetail>> GetEmployeeTaskDetail([FromRoute] int taskId)
+        {
+            try
+            {
+                var taskDetail = await _employeeTaskService.GetEmployeeTaskDetail(taskId);
+                return Ok(taskDetail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("check-machine")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateEmployeeTask([FromBody] CreateEmployeeTaskDto createEmployeeTaskDto)
+        public async Task<IActionResult> CreateEmployeeTaskCheckMachine([FromBody] CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto)
         {
             int managerId = GetLoginAccountId();
             if (managerId == 0)
@@ -71,7 +90,31 @@ namespace API.Controllers
             }
             try
             {
-                await _employeeTaskService.CreateEmployeeTask(managerId, createEmployeeTaskDto);
+                await _employeeTaskService.CreateEmployeeTaskCheckMachine(managerId, createEmployeeTaskDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("process-maintenance-ticket")]
+        [Authorize(Policy = "Manager")]
+        public async Task<IActionResult> CreateEmployeeTaskProcessMaintenanceTicket([FromBody] CreateEmployeeTaskProcessMaintenanceTickett createEmployeeTaskDto)
+        {
+            int managerId = GetLoginAccountId();
+            if (managerId == 0)
+            {
+                return Unauthorized();
+            }
+            try
+            {
+                await _employeeTaskService.CreateEmployeeTaskProcessMaintenanceTicket(managerId, createEmployeeTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)

@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.EmployeeTask
 {
-    public class CreateEmployeeTaskCheckMachineDto
+    public class CreateEmployeeTaskProcessMaintenanceTickett
     {
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.RequestIdRequired)]
-        public string RequestId { get; set; }
+        [Required(ErrorMessage = MessageConstant.EmployeeTask.MaintenanceTicketIdRequired)]
+        public int MaintenanceTicketId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.EmployeeTask.StaffIdRequired)]
         public int StaffId { get; set; }
@@ -19,7 +19,5 @@ namespace DTOs.EmployeeTask
 
         [Required(ErrorMessage = MessageConstant.EmployeeTask.DateStartRequired)]
         public DateTime DateStart { get; set; }
-
-        public string? Note { get; set; }
     }
 }

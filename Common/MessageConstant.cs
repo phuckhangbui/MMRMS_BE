@@ -311,9 +311,13 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
+            public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
+            public const string TaskNotPossibleMaintenanceTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
+
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
+            public const string MaintenanceTicketIdRequired = "Mã ticket thay thế bộ phận máy là bắt buộc";
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
             public const string TaskContentRequired = "Nội dung công việc là bắt buộc";
             public const string TitleRequired = "Tên công việc là bắt buộc";

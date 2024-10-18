@@ -20,11 +20,11 @@ namespace Repository.Implement
             _maintenanceRequestRepository = maintenanceRequestRepository;
         }
 
-        public async Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskDto createEmployeeTaskDto)
+        public async Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto)
         {
             var staffAccount = await _accountRepository.GetAccounById(createEmployeeTaskDto.StaffId);
 
-            var request = await _maintenanceRequestRepository.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
+            var request = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
 
             var now = DateTime.Now;
             var requestResponse = new RequestResponse
@@ -32,7 +32,7 @@ namespace Repository.Implement
                 RequestId = createEmployeeTaskDto.RequestId,
                 DateCreate = now,
                 DateResponse = createEmployeeTaskDto.DateStart,
-                Action = $"Create new employee task"
+                Action = $"Yêu cầu của bạn đã được giao cho một nhân viên kiểm tra"
             };
 
             requestResponse = await RequestResponseDao.Instance.CreateAsync(requestResponse);
@@ -43,7 +43,7 @@ namespace Repository.Implement
                 Content = createEmployeeTaskDto.TaskContent,
                 StaffId = createEmployeeTaskDto.StaffId,
                 ManagerId = managerId,
-                Type = EmployeeTaskTypeEnum.MaintenanceRequest.ToString(),
+                Type = EmployeeTaskTypeEnum.CheckMachinery.ToString(),
                 DateCreate = now,
                 DateStart = createEmployeeTaskDto.DateStart,
                 Status = EmployeeTaskStatusEnum.Assigned.ToString(),
@@ -60,13 +60,15 @@ namespace Repository.Implement
                 AccountTriggerId = managerId,
             };
 
-            task.TaskLogs.Add(taskLog);
-
             task = await EmployeeTaskDao.Instance.CreateAsync(task);
 
-            requestResponse.EmployeeTaskId = task.EmployeeTaskId;
+            await EmployeeTaskLogDao.Instance.CreateAsync(taskLog);
 
+            requestResponse.EmployeeTaskId = task.EmployeeTaskId;
             await RequestResponseDao.Instance.UpdateAsync(requestResponse);
+
+            request.Status = MaintenanceRequestStatusEnum.Assigned.ToString();
+            await MaintenanceRequestDao.Instance.UpdateAsync(request);
         }
 
         public async Task Delete(int taskId)
@@ -90,6 +92,15 @@ namespace Repository.Implement
             var resultList = list.Where(t => t.StaffId == staffId).ToList();
 
             return _mapper.Map<IEnumerable<EmployeeTaskDto>>(resultList);
+        }
+
+        public async Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId)
+        {
+            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTaskDetail(taskId);
+
+            var taskDetail = _mapper.Map<EmployeeTaskDisplayDetail>(employeeTask);
+
+            return taskDetail;
         }
 
         public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks()

@@ -181,5 +181,16 @@ namespace Repository.Implement
 
             return contract;
         }
+        public async Task<ContractAddressDto> GetContractAddressById(string contractId)
+        {
+            var address = await ContractDao.Instance.GetRentingRequestAddressByContractId(contractId);
+
+            if (address == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<ContractAddressDto>(address);
+        }
     }
 }
