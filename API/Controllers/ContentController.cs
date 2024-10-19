@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> CreateContent([FromForm] ContentCreateRequestDto contentRequestDto)
         {
             if (!ModelState.IsValid)
@@ -65,7 +65,9 @@ namespace API.Controllers
 
             try
             {
-                await _contentService.CreateContent(contentRequestDto);
+                int accountId = GetLoginAccountId();
+
+                await _contentService.CreateContent(accountId, contentRequestDto);
                 return Created("", contentRequestDto);
             }
             catch (ServiceException ex)
@@ -79,7 +81,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{contentId}")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> UpdateContent(int contentId, [FromForm] ContentUpdateRequestDto contentUpdateRequestDto)
         {
             if (!ModelState.IsValid)
@@ -90,7 +92,9 @@ namespace API.Controllers
 
             try
             {
-                await _contentService.UpdateContent(contentId, contentUpdateRequestDto);
+                int accountId = GetLoginAccountId();
+
+                await _contentService.UpdateContent(accountId, contentId, contentUpdateRequestDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -104,7 +108,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{contentId}")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> DeleteContent(int contentId)
         {
             try
@@ -123,7 +127,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{contentId}/status")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<IActionResult> ChangeContentStatus(int contentId, [FromQuery, BindRequired] string status)
         {
             try
@@ -142,7 +146,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{contentId}/images")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> ChangeContentImage(int contentId, IFormFile imageUrl)
         {
             if (imageUrl == null || imageUrl.Length == 0)

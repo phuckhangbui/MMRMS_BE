@@ -29,7 +29,19 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Contents.FirstOrDefaultAsync(c => c.ContentId == contentId);
+                return await context.Contents
+                    .Include(c => c.Account)
+                    .FirstOrDefaultAsync(c => c.ContentId == contentId);
+            }
+        }
+
+        public async Task<IEnumerable<Content>> GetContents()
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Contents
+                .Include(c => c.Account)
+                .ToListAsync();
             }
         }
 

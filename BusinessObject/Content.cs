@@ -16,4 +16,7 @@ public partial class Content
 
     public string? Status { get; set; }
 
+    public int? AccountId { get; set; }
+
+    public virtual Account? Account { get; set; }
 }

@@ -29,11 +29,11 @@ namespace Service.Implement
             await _contentRepository.ChangeContentImage(contentId, imageUrlStr);
         }
 
-        public async Task CreateContent(ContentCreateRequestDto contentRequestDto)
+        public async Task CreateContent(int accountCreateId, ContentCreateRequestDto contentRequestDto)
         {
             string imageUrlStr = await _cloudinaryService.UploadImageToCloudinary(contentRequestDto.ImageUrl);
 
-            await _contentRepository.CreateContent(contentRequestDto, imageUrlStr);
+            await _contentRepository.CreateContent(accountCreateId, contentRequestDto, imageUrlStr);
         }
 
         public async Task DeleteContent(int contentId)
@@ -62,11 +62,11 @@ namespace Service.Implement
             return contents;
         }
 
-        public async Task UpdateContent(int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
+        public async Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
         {
             var content = await CheckContentExist(contentId);
 
-            await _contentRepository.UpdateContent(contentId, contentUpdateRequestDto);
+            await _contentRepository.UpdateContent(accountUpdateId, contentId, contentUpdateRequestDto);
         }
 
 

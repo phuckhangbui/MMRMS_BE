@@ -18,6 +18,8 @@ namespace DTOs.Content
         public DateTime? DateCreate { get; set; }
 
         public string? Status { get; set; }
+
+        public string? AccountCreateName { get; set; }
     }
 
     public class ContentCreateRequestDto
