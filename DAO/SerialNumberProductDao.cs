@@ -170,7 +170,7 @@ namespace DAO
 
             var serialNumbersInFutureContracts = await context.Contracts
                 .Where(c => availableSerialNumbers.Contains(c.SerialNumber!)
-                        && (c.Status == ContractStatusEnum.Shipped.ToString() || c.Status == ContractStatusEnum.Signed.ToString())
+                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
                         && (c.DateStart < requestedEndDate && c.DateEnd > startDate))
                 .Select(c => c.SerialNumber)
                 .ToListAsync();

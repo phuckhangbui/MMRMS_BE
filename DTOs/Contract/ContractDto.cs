@@ -20,6 +20,7 @@ namespace DTOs.Contract
         public string? ProductName { get; set; }
         public string? SerialNumber { get; set; }
         public double? RentPrice { get; set; }
+        public string? Thumbnail { get; set; }
     }
 
     public class ContractRequestDto

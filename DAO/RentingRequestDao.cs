@@ -42,6 +42,7 @@ namespace DAO
                     .Include(rr => rr.Contracts)
                         .ThenInclude(c => c.ContractSerialNumberProduct)
                         .ThenInclude(s => s.Product)
+                        .ThenInclude(p => p.ProductImages)
                     .Include(rr => rr.RentingRequestAddress)
                     .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
@@ -114,7 +115,7 @@ namespace DAO
                             var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableSerialNumberProducts.Contains(c.ContractSerialNumberProduct)
-                                        && (c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
+                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
                                         && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractSerialNumberProduct)
                                 .ToListAsync();
