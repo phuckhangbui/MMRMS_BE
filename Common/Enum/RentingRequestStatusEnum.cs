@@ -4,6 +4,7 @@
     {
         Pending,
         Canceled,
+        AllSigned,
         Completed
     }
 }

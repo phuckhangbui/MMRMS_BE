@@ -196,6 +196,9 @@ namespace DAO
                         }
                     }
 
+                    rentingRequest.Status = RentingRequestStatusEnum.AllSigned.ToString();
+                    context.RentingRequests.Update(rentingRequest);
+
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }

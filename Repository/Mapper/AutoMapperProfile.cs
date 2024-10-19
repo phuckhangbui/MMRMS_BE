@@ -151,7 +151,10 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
                     src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.ProductId : null))
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null));
+                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
+                    src.ContractSerialNumberProduct.Product != null &&
+                    src.ContractSerialNumberProduct.Product.ProductImages != null ? src.ContractSerialNumberProduct.Product.ProductImages.FirstOrDefault(p => p.IsThumbnail == true).ProductImageUrl : null));
             CreateMap<Contract, ContractDetailDto>()
                 .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
                 .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))

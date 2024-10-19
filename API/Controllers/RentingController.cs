@@ -49,7 +49,7 @@ namespace API.Controllers
             }
             catch (ServiceException ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace API.Controllers
             }
             catch (ServiceException ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ namespace API.Controllers
             }
             catch (ServiceException ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
