@@ -277,6 +277,11 @@ public partial class MmrmsContext : DbContext
             entity.Property(e => e.ContentId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
+
+            entity.HasOne(d => d.Account)
+                .WithMany(p => p.Contents)
+                .HasForeignKey(d => d.AccountId)
+                .HasConstraintName("FK_Content_Account");
         });
 
         modelBuilder.Entity<Contract>(entity =>

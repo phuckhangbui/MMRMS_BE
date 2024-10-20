@@ -33,11 +33,11 @@
             //Controller
             public const string UpdateEmployeeAccountSuccessfully = "Cập nhật tài khoản nhân viên thành công";
             public const string UpdateEmployeeAccountFail = "Cập nhật tài khoản nhân viên thất bại";
+            public const string ChangeAccountStatusSuccessfully = "Cập nhật trạng thái tài khoản thành công";
+            public const string ChangeAccountStatusFail = "Cập nhật trạng thái tài khoản thất bại";
 
             //Service
             public const string InvalidRoleValue = "Giá trị vai trò không hợp lệ";
-            public const string NotCustomerRole = "Tài khoản này không phải là vai trò khách hàng.";
-            public const string NotStaffOrManagerRole = "Tài khoản này không phải là vai trò nhân viên hoặc quản lý.";
             public const string AccountNotFound = "Tài khoản không tồn tại.";
             public const string EmailAlreadyExists = "Tài khoản với email này đã tồn tại.";
             public const string UsernameAlreadyExists = "Tài khoản với tên người dùng này đã tồn tại.";

@@ -19,7 +19,7 @@ namespace Service.Implement
             _mailService = mailService;
         }
 
-        public async Task ChangeAccountStatus(int accountId, string status)
+        public async Task<bool> ChangeAccountStatus(int accountId, string status)
         {
             await CheckAccountExist(accountId);
 
@@ -28,7 +28,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
-            await _accountRepository.ChangeAccountStatus(accountId, status);
+            return await _accountRepository.ChangeAccountStatus(accountId, status);
         }
 
         public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
@@ -48,22 +48,14 @@ namespace Service.Implement
 
         public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
         {
-            var account = await CheckAccountExist(accountId);
-            if (account.RoleId != (int)AccountRoleEnum.Customer)
-            {
-                throw new ServiceException(MessageConstant.Account.NotCustomerRole);
-            }
+            await CheckAccountExist(accountId);
 
             return await _accountRepository.GetCustomerAccountById(accountId);
         }
 
         public async Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId)
         {
-            var account = await CheckAccountExist(accountId);
-            if (account.RoleId == (int)AccountRoleEnum.Customer)
-            {
-                throw new ServiceException(MessageConstant.Account.NotStaffOrManagerRole);
-            }
+            await CheckAccountExist(accountId);
 
             return await _accountRepository.GetEmployeeAccountById(accountId);
         }

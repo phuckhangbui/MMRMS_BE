@@ -206,13 +206,14 @@ namespace API.Controllers
         }
 
         [HttpPatch("{accountId}/status")]
-        [Authorize(policy: "AdminAndManager")]
+        //[Authorize(policy: "AdminAndManager")]
         public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery, BindRequired] string status)
         {
             try
             {
-                await _accountService.ChangeAccountStatus(accountId, status);
-                return NoContent();
+                var result = await _accountService.ChangeAccountStatus(accountId, status);
+                if (result) return Ok(MessageConstant.Account.ChangeAccountStatusSuccessfully);
+                return BadRequest(MessageConstant.Account.ChangeAccountStatusFail);
             }
             catch (ServiceException ex)
             {

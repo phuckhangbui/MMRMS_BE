@@ -11,7 +11,7 @@ namespace Repository.Interface
         Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto);
         Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> IsAccountExistWithEmail(string email);
-        Task ChangeAccountStatus(int acocuntId, string status);
+        Task<bool> ChangeAccountStatus(int acocuntId, string status);
         Task<AccountBaseDto> GetAccountBaseById(int accountId);
         Task<AccountDto> GetAccounById(int accountId);
         Task<IEnumerable<AccountDto>> GetManagerAccounts();

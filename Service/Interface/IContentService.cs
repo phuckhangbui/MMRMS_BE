@@ -7,8 +7,8 @@ namespace Service.Interface
     {
         Task<IEnumerable<ContentDto>> GetContents();
         Task<ContentDto> GetContentDetailById(int contentId);
-        Task CreateContent(ContentCreateRequestDto contentRequestDto);
-        Task UpdateContent(int contentId, ContentUpdateRequestDto contentUpdateRequestDto);
+        Task CreateContent(int accountCreateId, ContentCreateRequestDto contentRequestDto);
+        Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto);
         Task DeleteContent(int contentId);
         Task ChangeContentImage(int contentId, IFormFile imageUrl);
         Task ChangeContentStatus(int contentId, string status);

@@ -6,8 +6,8 @@ namespace Repository.Interface
     {
         Task<IEnumerable<ContentDto>> GetContents();
         Task<ContentDto?> GetContentDetailById(int contentId);
-        Task CreateContent(ContentCreateRequestDto contentRequestDto, string imageUrl);
-        Task UpdateContent(int contentId, ContentUpdateRequestDto contentUpdateRequestDto);
+        Task CreateContent(int accountCreateId, ContentCreateRequestDto contentRequestDto, string imageUrl);
+        Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto);
         Task DeleteContent(int contentId);
         Task ChangeContentImage(int contentId, string imageUrl);
         Task ChangeContentStatus(int contentId, string status);

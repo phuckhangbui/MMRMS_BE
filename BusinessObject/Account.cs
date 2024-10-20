@@ -79,4 +79,6 @@ public partial class Account
     public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
 
     public virtual ICollection<MembershipRankLog> MembershipRankLogs { get; set; } = new List<MembershipRankLog>();
+
+    public virtual ICollection<Content> Contents { get; set; } = new List<Content>();
 }

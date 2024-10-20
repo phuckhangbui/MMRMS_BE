@@ -144,8 +144,8 @@ namespace API.Controllers.Tests
                 ContentBody = "Updated Content Body"
             };
 
-            _contentServiceMock.Setup(service => service.UpdateContent(contentId, mockContentUpdateRequest))
-                               .Returns(Task.CompletedTask);
+            //_contentServiceMock.Setup(service => service.UpdateContent(contentId, mockContentUpdateRequest))
+            //                   .Returns(Task.CompletedTask);
 
             // Act
             var result = await _contentController.UpdateContent(contentId, mockContentUpdateRequest);

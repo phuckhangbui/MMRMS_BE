@@ -38,10 +38,11 @@ namespace Repository.Implement
             }
         }
 
-        public async Task CreateContent(ContentCreateRequestDto contentRequestDto, string imageUrl)
+        public async Task CreateContent(int accountCreateId, ContentCreateRequestDto contentRequestDto, string imageUrl)
         {
             var content = _mapper.Map<Content>(contentRequestDto);
 
+            content.AccountId = accountCreateId;
             content.DateCreate = DateTime.Now;
             content.ImageUrl = imageUrl;
             content.Status = ContentStatusEnum.Active.ToString();
@@ -71,7 +72,7 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<ContentDto>> GetContents()
         {
-            var contents = await ContentDao.Instance.GetAllAsync();
+            var contents = await ContentDao.Instance.GetContents();
 
             if (!contents.IsNullOrEmpty())
             {
@@ -81,11 +82,12 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task UpdateContent(int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
+        public async Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
         {
             var content = await ContentDao.Instance.GetContentById(contentId);
             if (content != null)
             {
+                content.AccountId = accountUpdateId;
                 content.Title = contentUpdateRequestDto.Title;
                 content.ContentBody = contentUpdateRequestDto.ContentBody;
                 content.Summary = contentUpdateRequestDto.Summary;

@@ -138,7 +138,8 @@ namespace Repository.Mapper
             CreateMap<SerialNumberProduct, SerialNumberProductDto>();
             CreateMap<SerialNumberProduct, SerialNumberProductOptionDto>();
 
-            CreateMap<Content, ContentDto>();
+            CreateMap<Content, ContentDto>()
+                .ForMember(dest => dest.AccountCreateName, opt => opt.MapFrom(src => src.Account != null ? src.Account.Name : null));
             CreateMap<Content, ContentCreateRequestDto>().ReverseMap();
 
             //CreateMap<Promotion, PromotionDto>();
