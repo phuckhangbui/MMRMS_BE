@@ -6,14 +6,14 @@ using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/maintenance-ticket")]
+    [Route("api/component-replacement-ticket")]
     public class ComponentReplacementTicketController : BaseApiController
     {
-        private readonly IComponentReplacementTicketService _ComponentReplacementTicketService;
+        private readonly IComponentReplacementTicketService _componentReplacementTicketService;
 
         public ComponentReplacementTicketController(IComponentReplacementTicketService ComponentReplacementTicketService)
         {
-            _ComponentReplacementTicketService = ComponentReplacementTicketService;
+            _componentReplacementTicketService = ComponentReplacementTicketService;
         }
 
         //TODO:KHANG
@@ -23,7 +23,7 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<ComponentReplacementTicketDto> list = await _ComponentReplacementTicketService.GetComponentReplacementTickets();
+                IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTickets();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -48,7 +48,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<ComponentReplacementTicketDto> list = await _ComponentReplacementTicketService.GetComponentReplacementTickets(customerId);
+                IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTickets(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -74,7 +74,7 @@ namespace API.Controllers
 
             try
             {
-                await _ComponentReplacementTicketService.CreateComponentReplacementTicket(staffId, createComponentReplacementTicketDto);
+                await _componentReplacementTicketService.CreateComponentReplacementTicket(staffId, createComponentReplacementTicketDto);
                 return NoContent();
             }
             catch (ServiceException ex)

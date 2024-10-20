@@ -13,20 +13,20 @@ namespace Service.Implement
 {
     public class MachineTaskService : IMachineTaskService
     {
-        private readonly IMachineTaskRepository _MachineTaskRepository;
+        private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IMachineCheckRequestRepository _MachineCheckRequestRepository;
         private readonly IComponentReplacementTicketRepository _ComponentReplacementTicketRepository;
         private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
         private readonly IContractRepository _contractRepository;
         private readonly INotificationService _notificationService;
-        private readonly IHubContext<MachineTaskHub> _MachineTaskHub;
+        private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
         public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository)
         {
-            _MachineTaskRepository = MachineTaskRepository;
-            _MachineTaskHub = MachineTaskHub;
+            _machineTaskRepository = MachineTaskRepository;
+            _machineTaskHub = MachineTaskHub;
             _notificationService = notificationService;
             _accountRepository = accountRepository;
             _MachineCheckRequestRepository = MachineCheckRequestRepository;
@@ -45,7 +45,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
-            var staffTaskList = await _MachineTaskRepository.GetTaskOfStaffInADay(staffId, dateStart)
+            var staffTaskList = await _machineTaskRepository.GetTaskOfStaffInADay(staffId, dateStart)
                                         ?? Enumerable.Empty<MachineTaskDto>();
             var staffDeliveryTaskList = await _DeliveryTaskRepository.GetDeliveriesOfStaffInADay(staffId, dateStart)
                                         ?? Enumerable.Empty<DeliveryTaskDto>();
@@ -74,11 +74,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleRequestStatus);
             }
 
-            await _MachineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
+            await _machineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
 
             await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
 
-            await _MachineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+            await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
         }
 
         public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
@@ -106,7 +106,7 @@ namespace Service.Implement
         // currently comment out the controller, because task always have staffId when created
         public async Task DeleteMachineTask(int taskId)
         {
-            var MachineTask = await _MachineTaskRepository.GetMachineTask(taskId);
+            var MachineTask = await _machineTaskRepository.GetMachineTask(taskId);
 
             if (MachineTask == null)
             {
@@ -119,14 +119,14 @@ namespace Service.Implement
             }
 
             //need to check logic of the RequestResponse
-            await _MachineTaskRepository.Delete(taskId);
+            await _machineTaskRepository.Delete(taskId);
 
-            await _MachineTaskHub.Clients.All.SendAsync("OnDeleteMachineTask", taskId);
+            await _machineTaskHub.Clients.All.SendAsync("OnDeleteMachineTask", taskId);
         }
 
         public async Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId)
         {
-            var MachineTaskDetail = await _MachineTaskRepository.GetMachineTaskDetail(taskId);
+            var MachineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(taskId);
 
             if (MachineTaskDetail == null)
             {
@@ -147,21 +147,21 @@ namespace Service.Implement
 
         public async Task<IEnumerable<MachineTaskDto>> GetMachineTasks()
         {
-            var list = await _MachineTaskRepository.GetMachineTasks();
+            var list = await _machineTaskRepository.GetMachineTasks();
 
             return list;
         }
 
         public async Task<IEnumerable<MachineTaskDto>> GetMachineTasks(int staffId)
         {
-            var list = await _MachineTaskRepository.GetMachineTaskByStaff(staffId);
+            var list = await _machineTaskRepository.GetMachineTaskByStaff(staffId);
 
             return list;
         }
 
         public async Task UpdateMachineTaskStatus(int MachineTaskId, string status, int accountId)
         {
-            var MachineTask = await _MachineTaskRepository.GetMachineTask(MachineTaskId);
+            var MachineTask = await _machineTaskRepository.GetMachineTask(MachineTaskId);
 
             var account = await _accountRepository.GetAccounById(accountId);
 
@@ -177,7 +177,7 @@ namespace Service.Implement
             //logic here
 
 
-            await _MachineTaskRepository.UpdateTaskStatus(MachineTaskId, status, accountId);
+            await _machineTaskRepository.UpdateTaskStatus(MachineTaskId, status, accountId);
 
             //TODO:KHANG
             //if (account.RoleId == (int)AccountRoleEnum.Staff)
@@ -190,7 +190,7 @@ namespace Service.Implement
                 await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)MachineTask.StaffId, MachineTask.TaskTitle, status);
             }
 
-            await _MachineTaskHub.Clients.All.SendAsync("OnUpdateMachineTaskStatus", MachineTaskId);
+            await _machineTaskHub.Clients.All.SendAsync("OnUpdateMachineTaskStatus", MachineTaskId);
         }
     }
 }
