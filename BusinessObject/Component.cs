@@ -15,7 +15,7 @@ public partial class Component
     public string? Status { get; set; }
 
 
-    public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
+    public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
     public virtual ICollection<ComponentProduct> ComponentProducts { get; set; } = new List<ComponentProduct>();
 
 }

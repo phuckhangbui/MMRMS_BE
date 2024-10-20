@@ -2,66 +2,66 @@
 using BusinessObject;
 using Common.Enum;
 using DAO;
-using DTOs.MaintenanceTicket;
+using DTOs.ComponentReplacementTicket;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
-    public class MaintenanceTicketRepository : IMaintenanceTicketRepository
+    public class ComponentReplacementTicketRepository : IComponentReplacementTicketRepository
     {
         private readonly IMapper _mapper;
 
-        public MaintenanceTicketRepository(IMapper mapper)
+        public ComponentReplacementTicketRepository(IMapper mapper)
         {
             _mapper = mapper;
         }
 
-        public async Task<MaintenanceTicketDto> CreateTicket(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto)
+        public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
-            var maintenanceTicket = new MaintenanceTicket
+            var ComponentReplacementTicket = new ComponentReplacementTicket
             {
                 EmployeeCreateId = staffId,
                 DateCreate = DateTime.Now,
-                ComponentId = createMaintenanceTicketDto.ComponentId,
-                ProductSerialNumber = createMaintenanceTicketDto.ProductSerialNumber,
-                ComponentPrice = createMaintenanceTicketDto.ComponentPrice,
-                AdditionalFee = createMaintenanceTicketDto.AdditionalFee,
-                Type = createMaintenanceTicketDto.Type,
-                Note = createMaintenanceTicketDto.Note,
-                Quantity = createMaintenanceTicketDto.Quantity,
+                ComponentId = createComponentReplacementTicketDto.ComponentId,
+                ProductSerialNumber = createComponentReplacementTicketDto.ProductSerialNumber,
+                ComponentPrice = createComponentReplacementTicketDto.ComponentPrice,
+                AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
+                Type = createComponentReplacementTicketDto.Type,
+                Note = createComponentReplacementTicketDto.Note,
+                Quantity = createComponentReplacementTicketDto.Quantity,
             };
 
-            maintenanceTicket.TotalAmount = maintenanceTicket.ComponentPrice + maintenanceTicket.AdditionalFee;
-            maintenanceTicket.Status = MaintenanceTicketStatusEnum.Created.ToString();
+            ComponentReplacementTicket.TotalAmount = ComponentReplacementTicket.ComponentPrice + ComponentReplacementTicket.AdditionalFee;
+            ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Created.ToString();
 
-            maintenanceTicket = await MaintenanceTicketDao.Instance.CreateAsync(maintenanceTicket);
+            ComponentReplacementTicket = await ComponentReplacementTicketDao.Instance.CreateAsync(ComponentReplacementTicket);
 
-            return _mapper.Map<MaintenanceTicketDto>(maintenanceTicket);
+            return _mapper.Map<ComponentReplacementTicketDto>(ComponentReplacementTicket);
         }
 
-        public async Task<MaintenanceTicketDto> GetTicket(string maintenanceTicketId)
+        public async Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId)
         {
-            var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();
+            var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTickets();
 
-            var result = list.FirstOrDefault(t => t.MaintenanceTicketId == maintenanceTicketId);
+            var result = list.FirstOrDefault(t => t.ComponentReplacementTicketId == ComponentReplacementTicketId);
 
-            return _mapper.Map<MaintenanceTicketDto>(result);
+            return _mapper.Map<ComponentReplacementTicketDto>(result);
         }
 
-        public async Task<IEnumerable<MaintenanceTicketDto>> GetTickets()
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetTickets()
         {
-            var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();
+            var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTickets();
 
-            return _mapper.Map<IEnumerable<MaintenanceTicketDto>>(list);
+            return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
         }
 
-        public async Task<IEnumerable<MaintenanceTicketDto>> GetTicketsByCustomerId(int customerId)
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketsByCustomerId(int customerId)
         {
-            var list = await MaintenanceTicketDao.Instance.GetMaintenanceTickets();
+            var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTickets();
 
             var resultList = list.Where(c => c.Contract?.AccountSignId == customerId).ToList();
 
-            return _mapper.Map<IEnumerable<MaintenanceTicketDto>>(list);
+            return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
         }
     }
 }

@@ -2,146 +2,146 @@
 using BusinessObject;
 using Common.Enum;
 using DAO;
-using DTOs.EmployeeTask;
+using DTOs.MachineTask;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
-    public class EmployeeTaskRepository : IEmployeeTaskRepository
+    public class MachineTaskRepository : IMachineTaskRepository
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
+        private readonly IMachineCheckRequestRepository _MachineCheckRequestRepository;
         private readonly IMapper _mapper;
 
-        public EmployeeTaskRepository(IMapper mapper, IAccountRepository accountRepository, IMaintenanceRequestRepository maintenanceRequestRepository)
+        public MachineTaskRepository(IMapper mapper, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository)
         {
             _mapper = mapper;
             _accountRepository = accountRepository;
-            _maintenanceRequestRepository = maintenanceRequestRepository;
+            _MachineCheckRequestRepository = MachineCheckRequestRepository;
         }
 
-        public async Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto)
+        public async Task CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
-            var staffAccount = await _accountRepository.GetAccounById(createEmployeeTaskDto.StaffId);
+            var staffAccount = await _accountRepository.GetAccounById(createMachineTaskDto.StaffId);
 
-            var request = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
+            var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(createMachineTaskDto.RequestId);
 
             var now = DateTime.Now;
             var requestResponse = new RequestResponse
             {
-                RequestId = createEmployeeTaskDto.RequestId,
+                MachineCheckRequestId = createMachineTaskDto.RequestId,
                 DateCreate = now,
-                DateResponse = createEmployeeTaskDto.DateStart,
+                DateResponse = createMachineTaskDto.DateStart,
                 Action = $"Yêu cầu của bạn đã được giao cho một nhân viên kiểm tra"
             };
 
             requestResponse = await RequestResponseDao.Instance.CreateAsync(requestResponse);
 
-            var task = new EmployeeTask
+            var task = new MachineTask
             {
-                TaskTitle = createEmployeeTaskDto.TaskTitle,
-                Content = createEmployeeTaskDto.TaskContent,
-                StaffId = createEmployeeTaskDto.StaffId,
+                TaskTitle = createMachineTaskDto.TaskTitle,
+                Content = createMachineTaskDto.TaskContent,
+                StaffId = createMachineTaskDto.StaffId,
                 ManagerId = managerId,
-                Type = EmployeeTaskTypeEnum.CheckMachinery.ToString(),
+                Type = MachineTaskTypeEnum.CheckMachinery.ToString(),
                 DateCreate = now,
-                DateStart = createEmployeeTaskDto.DateStart,
-                Status = EmployeeTaskStatusEnum.Assigned.ToString(),
-                Note = createEmployeeTaskDto.Note,
+                DateStart = createMachineTaskDto.DateStart,
+                Status = MachineTaskStatusEnum.Assigned.ToString(),
+                Note = createMachineTaskDto.Note,
                 RequestResponseId = requestResponse.RequestResponseId,
                 ContractId = request.ContractId
             };
 
-            var taskLog = new TaskLog
+            var taskLog = new MachineTaskLog
             {
-                EmployeeTaskId = task.EmployeeTaskId,
+                MachineTaskId = task.MachineTaskId,
                 Action = $"Create and assign task to staff name {staffAccount.Name}",
                 DateCreate = now,
                 AccountTriggerId = managerId,
             };
 
-            task = await EmployeeTaskDao.Instance.CreateAsync(task);
+            task = await MachineTaskDao.Instance.CreateAsync(task);
 
-            await EmployeeTaskLogDao.Instance.CreateAsync(taskLog);
+            await MachineTaskLogDao.Instance.CreateAsync(taskLog);
 
-            requestResponse.EmployeeTaskId = task.EmployeeTaskId;
+            requestResponse.MachineTaskId = task.MachineTaskId;
             await RequestResponseDao.Instance.UpdateAsync(requestResponse);
 
-            request.Status = MaintenanceRequestStatusEnum.Assigned.ToString();
-            await MaintenanceRequestDao.Instance.UpdateAsync(request);
+            request.Status = MachineCheckRequestStatusEnum.Assigned.ToString();
+            await MachineCheckRequestDao.Instance.UpdateAsync(request);
         }
 
         public async Task Delete(int taskId)
         {
-            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTask(taskId);
+            var MachineTask = await MachineTaskDao.Instance.GetMachineTask(taskId);
 
-            await EmployeeTaskDao.Instance.RemoveAsync(employeeTask);
+            await MachineTaskDao.Instance.RemoveAsync(MachineTask);
         }
 
-        public async Task<EmployeeTaskDto> GetEmployeeTask(int taskId)
+        public async Task<MachineTaskDto> GetMachineTask(int taskId)
         {
-            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTask(taskId);
+            var MachineTask = await MachineTaskDao.Instance.GetMachineTask(taskId);
 
-            return _mapper.Map<EmployeeTaskDto>(employeeTask);
+            return _mapper.Map<MachineTaskDto>(MachineTask);
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTaskByStaff(int staffId)
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTaskByStaff(int staffId)
         {
-            var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
+            var list = await MachineTaskDao.Instance.GetMachineTasks();
 
             var resultList = list.Where(t => t.StaffId == staffId).ToList();
 
-            return _mapper.Map<IEnumerable<EmployeeTaskDto>>(resultList);
+            return _mapper.Map<IEnumerable<MachineTaskDto>>(resultList);
         }
 
-        public async Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId)
+        public async Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId)
         {
-            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTaskDetail(taskId);
+            var MachineTask = await MachineTaskDao.Instance.GetMachineTaskDetail(taskId);
 
-            var taskDetail = _mapper.Map<EmployeeTaskDisplayDetail>(employeeTask);
+            var taskDetail = _mapper.Map<MachineTaskDisplayDetail>(MachineTask);
 
             return taskDetail;
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks()
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasks()
         {
-            var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
+            var list = await MachineTaskDao.Instance.GetMachineTasks();
 
-            return _mapper.Map<IEnumerable<EmployeeTaskDto>>(list);
+            return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date)
+        public async Task<IEnumerable<MachineTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date)
         {
-            var list = await EmployeeTaskDao.Instance.GetEmployeeTasks();
+            var list = await MachineTaskDao.Instance.GetMachineTasks();
 
             var staffList = list.Where(t => t.StaffId == staffId).ToList();
 
             var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date).ToList();
 
-            return _mapper.Map<IEnumerable<EmployeeTaskDto>>(filteredList);
+            return _mapper.Map<IEnumerable<MachineTaskDto>>(filteredList);
         }
 
-        public async Task UpdateTaskStatus(int employeeTaskId, string status, int accountId)
+        public async Task UpdateTaskStatus(int MachineTaskId, string status, int accountId)
         {
-            var employeeTask = await EmployeeTaskDao.Instance.GetEmployeeTask(employeeTaskId);
+            var MachineTask = await MachineTaskDao.Instance.GetMachineTask(MachineTaskId);
 
-            string oldStatus = employeeTask.Status;
+            string oldStatus = MachineTask.Status;
 
-            employeeTask.Status = status;
+            MachineTask.Status = status;
 
-            await EmployeeTaskDao.Instance.UpdateAsync(employeeTask);
+            await MachineTaskDao.Instance.UpdateAsync(MachineTask);
 
             string action = $"Change status from {oldStatus} to {status}";
 
-            var taskLog = new TaskLog
+            var taskLog = new MachineTaskLog
             {
-                EmployeeTaskId = employeeTaskId,
+                MachineTaskId = MachineTaskId,
                 AccountTriggerId = accountId,
                 DateCreate = DateTime.Now,
                 Action = action,
             };
 
-            await EmployeeTaskLogDao.Instance.CreateAsync(taskLog);
+            await MachineTaskLogDao.Instance.CreateAsync(taskLog);
         }
     }
 }

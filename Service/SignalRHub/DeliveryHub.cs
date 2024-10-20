@@ -2,7 +2,7 @@
 
 namespace Service.SignalRHub
 {
-    public class DeliveryHub : Hub
+    public class DeliveryTaskHub : Hub
     {
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum EmployeeTaskStatusEnum
+    public enum MachineTaskStatusEnum
     {
         Assigned,
         Completed,
@@ -10,9 +10,9 @@
         Canceled
     }
 
-    public enum EmployeeTaskTypeEnum
+    public enum MachineTaskTypeEnum
     {
         CheckMachinery,
-        ProcessMaintenanceRequest
+        ProcessMachineCheckRequest
     }
 }

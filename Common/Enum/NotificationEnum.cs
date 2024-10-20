@@ -11,9 +11,9 @@
         Feedback,
         Task,
         Billing,
-        Delivery,
+        DeliveryTask,
         RequestMaintenance,
-        MaintenanceTicket
+        ComponentReplacementTicket
     }
 
 }

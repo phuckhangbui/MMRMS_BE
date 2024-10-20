@@ -2,77 +2,77 @@
 using BusinessObject;
 using Common.Enum;
 using DAO;
-using DTOs.MaintenanceRequest;
+using DTOs.MachineCheckRequest;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
-    public class MaintenanceRequestRepository : IMaintenanceRequestRepository
+    public class MachineCheckRequestRepository : IMachineCheckRequestRepository
     {
         private readonly IMapper _mapper;
 
-        public MaintenanceRequestRepository(IMapper mapper)
+        public MachineCheckRequestRepository(IMapper mapper)
         {
             _mapper = mapper;
         }
 
-        public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
+        public async Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
-            var request = new MaintenanceRequest
+            var request = new MachineCheckRequest
             {
-                ContractId = createMaintenanceRequestDto.ContractId,
-                Note = createMaintenanceRequestDto.Note,
-                Status = MaintenanceRequestStatusEnum.Processing.ToString(),
+                ContractId = createMachineCheckRequestDto.ContractId,
+                Note = createMachineCheckRequestDto.Note,
+                Status = MachineCheckRequestStatusEnum.Processing.ToString(),
                 DateCreate = DateTime.Now
             };
 
-            await MaintenanceRequestDao.Instance.CreateAsync(request);
+            await MachineCheckRequestDao.Instance.CreateAsync(request);
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
         {
-            var list = await MaintenanceRequestDao.Instance.GetMaintenanceRequests();
+            var list = await MachineCheckRequestDao.Instance.GetMachineCheckRequests();
 
-            return _mapper.Map<IEnumerable<MaintenanceRequestDto>>(list);
+            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(list);
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsByContractId(string contractId)
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByContractId(string contractId)
         {
-            var list = await MaintenanceRequestDao.Instance.GetMaintenanceRequests();
+            var list = await MachineCheckRequestDao.Instance.GetMachineCheckRequests();
 
             var resultList = list.Where(c => c.ContractId.Equals(contractId)).ToList();
 
-            return _mapper.Map<IEnumerable<MaintenanceRequestDto>>(list);
+            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(list);
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsByCustomerId(int customerId)
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByCustomerId(int customerId)
         {
-            var list = await MaintenanceRequestDao.Instance.GetMaintenanceRequests();
+            var list = await MachineCheckRequestDao.Instance.GetMachineCheckRequests();
 
             var resultList = list.Where(c => c.Contract.AccountSignId.Equals(customerId)).ToList();
 
-            return _mapper.Map<IEnumerable<MaintenanceRequestDto>>(list);
+            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(list);
         }
 
-        public async Task<MaintenanceRequestDto> GetMaintenanceRequest(string maintenanceRequestId)
+        public async Task<MachineCheckRequestDto> GetMachineCheckRequest(string MachineCheckRequestId)
         {
-            var maintenanceRequest = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(maintenanceRequestId);
+            var MachineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(MachineCheckRequestId);
 
-            return _mapper.Map<MaintenanceRequestDto>(maintenanceRequest);
+            return _mapper.Map<MachineCheckRequestDto>(MachineCheckRequest);
         }
 
 
-        public async Task UpdateRequestStatus(string maintenanceRequestId, string status)
+        public async Task UpdateRequestStatus(string MachineCheckRequestId, string status)
         {
-            var maintenanceRequest = await MaintenanceRequestDao.Instance.GetMaintenanceRequest(maintenanceRequestId);
+            var MachineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(MachineCheckRequestId);
 
-            maintenanceRequest.Status = status;
+            MachineCheckRequest.Status = status;
 
-            await MaintenanceRequestDao.Instance.UpdateAsync(maintenanceRequest);
+            await MachineCheckRequestDao.Instance.UpdateAsync(MachineCheckRequest);
         }
 
 
-        public Task UpdateRequestStatus(int maintenanceRequestId, string status)
+        public Task UpdateRequestStatus(int MachineCheckRequestId, string status)
         {
             throw new NotImplementedException();
         }

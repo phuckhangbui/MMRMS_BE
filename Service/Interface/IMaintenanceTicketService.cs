@@ -1,11 +1,11 @@
-﻿using DTOs.MaintenanceTicket;
+﻿using DTOs.ComponentReplacementTicket;
 
 namespace Service.Interface
 {
-    public interface IMaintenanceTicketService
+    public interface IComponentReplacementTicketService
     {
-        Task CreateMaintenanceTicket(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto);
-        Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets();
-        Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets(int customerId);
+        Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets();
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId);
     }
 }

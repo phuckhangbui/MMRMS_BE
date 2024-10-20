@@ -1,10 +1,10 @@
 ﻿using DTOs.Contract;
 
-namespace DTOs.Delivery
+namespace DTOs.DeliveryTask
 {
-    public class DeliveryDto
+    public class DeliveryTaskDto
     {
-        public int DeliveryId { get; set; }
+        public int DeliveryTaskId { get; set; }
 
         public int? StaffId { get; set; }
 

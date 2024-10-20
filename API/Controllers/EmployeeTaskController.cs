@@ -1,4 +1,4 @@
-﻿using DTOs.EmployeeTask;
+﻿using DTOs.MachineTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -7,22 +7,22 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/tasks")]
-    public class EmployeeTaskController : BaseApiController
+    public class MachineTaskController : BaseApiController
     {
-        private readonly IEmployeeTaskService _employeeTaskService;
+        private readonly IMachineTaskService _MachineTaskService;
 
-        public EmployeeTaskController(IEmployeeTaskService employeeTaskService)
+        public MachineTaskController(IMachineTaskService MachineTaskService)
         {
-            _employeeTaskService = employeeTaskService;
+            _MachineTaskService = MachineTaskService;
         }
 
         [HttpGet]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<EmployeeTaskDto>>> GetEmployeeTasksForManager()
+        public async Task<ActionResult<IEnumerable<MachineTaskDto>>> GetMachineTasksForManager()
         {
             try
             {
-                IEnumerable<EmployeeTaskDto> list = await _employeeTaskService.GetEmployeeTasks();
+                IEnumerable<MachineTaskDto> list = await _MachineTaskService.GetMachineTasks();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -38,7 +38,7 @@ namespace API.Controllers
         //TODO:KHANG
         [HttpGet("staff")]
         [Authorize(Policy = "Staff")]
-        public async Task<ActionResult<IEnumerable<EmployeeTaskDto>>> GetEmployeeTasksForStaff()
+        public async Task<ActionResult<IEnumerable<MachineTaskDto>>> GetMachineTasksForStaff()
         {
             int staffId = GetLoginAccountId();
             if (staffId == 0)
@@ -48,7 +48,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<EmployeeTaskDto> list = await _employeeTaskService.GetEmployeeTasks(staffId);
+                IEnumerable<MachineTaskDto> list = await _MachineTaskService.GetMachineTasks(staffId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -64,11 +64,11 @@ namespace API.Controllers
         //TODO:KHANG
         [HttpGet("{taskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult<EmployeeTaskDisplayDetail>> GetEmployeeTaskDetail([FromRoute] int taskId)
+        public async Task<ActionResult<MachineTaskDisplayDetail>> GetMachineTaskDetail([FromRoute] int taskId)
         {
             try
             {
-                var taskDetail = await _employeeTaskService.GetEmployeeTaskDetail(taskId);
+                var taskDetail = await _MachineTaskService.GetMachineTaskDetail(taskId);
                 return Ok(taskDetail);
             }
             catch (ServiceException ex)
@@ -83,7 +83,7 @@ namespace API.Controllers
 
         [HttpPost("check-machine")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateEmployeeTaskCheckMachine([FromBody] CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto)
+        public async Task<IActionResult> CreateMachineTaskCheckMachine([FromBody] CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
             if (managerId == 0)
@@ -92,7 +92,7 @@ namespace API.Controllers
             }
             try
             {
-                await _employeeTaskService.CreateEmployeeTaskCheckMachine(managerId, createEmployeeTaskDto);
+                await _MachineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -107,7 +107,7 @@ namespace API.Controllers
 
         [HttpPost("process-maintenance-ticket")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateEmployeeTaskProcessMaintenanceTicket([FromBody] CreateEmployeeTaskProcessMaintenanceTickett createEmployeeTaskDto)
+        public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
             if (managerId == 0)
@@ -116,7 +116,7 @@ namespace API.Controllers
             }
             try
             {
-                await _employeeTaskService.CreateEmployeeTaskProcessMaintenanceTicket(managerId, createEmployeeTaskDto);
+                await _MachineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -130,9 +130,9 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{employeeTaskId}")]
+        [HttpPatch("{MachineTaskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateEmployeeTaskStatus([FromRoute] int employeeTaskId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateMachineTaskStatus([FromRoute] int MachineTaskId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -141,7 +141,7 @@ namespace API.Controllers
             }
             try
             {
-                await _employeeTaskService.UpdateEmployeeTaskStatus(employeeTaskId, status, accountId);
+                await _MachineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -156,11 +156,11 @@ namespace API.Controllers
 
         //[HttpDelete("{taskId}")]
         //[Authorize(Policy = "Manager")]
-        //public async Task<IActionResult> DeleteEmployeeTask([FromRoute] int taskId)
+        //public async Task<IActionResult> DeleteMachineTask([FromRoute] int taskId)
         //{
         //    try
         //    {
-        //        await _employeeTaskService.DeleteEmployeeTask(taskId);
+        //        await _MachineTaskService.DeleteMachineTask(taskId);
         //        return NoContent();
         //    }
         //    catch (ServiceException ex)

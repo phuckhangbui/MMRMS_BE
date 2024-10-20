@@ -4,9 +4,9 @@ public partial class RequestResponse
 {
     public int RequestResponseId { get; set; }
 
-    public string? RequestId { get; set; }
+    public string? MachineCheckRequestId { get; set; }
 
-    public int? EmployeeTaskId { get; set; }
+    public int? MachineTaskId { get; set; }
 
     public DateTime? DateResponse { get; set; }
 
@@ -14,7 +14,7 @@ public partial class RequestResponse
 
     public string? Action { get; set; }
 
-    public virtual MaintenanceRequest? Request { get; set; }
+    public virtual MachineCheckRequest? MachineCheckRequest { get; set; }
 
-    public virtual EmployeeTask? EmployeeTask { get; set; }
+    public virtual MachineTask? MachineTask { get; set; }
 }

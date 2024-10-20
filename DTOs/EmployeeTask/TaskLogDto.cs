@@ -1,10 +1,10 @@
-﻿namespace DTOs.EmployeeTask
+﻿namespace DTOs.MachineTask
 {
     public class TaskLogDto
     {
         public int TaskLogId { get; set; }
 
-        public int? EmployeeTaskId { get; set; }
+        public int? MachineTaskId { get; set; }
 
         public int? AccountTriggerId { get; set; }
 

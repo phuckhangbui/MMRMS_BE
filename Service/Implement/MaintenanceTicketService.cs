@@ -1,5 +1,5 @@
 ﻿using Common;
-using DTOs.MaintenanceTicket;
+using DTOs.ComponentReplacementTicket;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
@@ -8,39 +8,39 @@ using Service.SignalRHub;
 
 namespace Service.Implement
 {
-    public class MaintenanceTicketService : IMaintenanceTicketService
+    public class ComponentReplacementTicketService : IComponentReplacementTicketService
     {
-        private readonly IMaintenanceTicketRepository _maintenanceTicketRepository;
+        private readonly IComponentReplacementTicketRepository _ComponentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly IContractRepository _contractRepository;
-        private readonly IHubContext<MaintenanceTicketHub> _maintenanceTicketHub;
+        private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly INotificationService _notificationService;
 
 
-        public MaintenanceTicketService(IMaintenanceTicketRepository maintenanceTicketRepository, ISerialNumberProductRepository serialNumberProductRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<MaintenanceTicketHub> maintenanceTicketHub, INotificationService notificationService)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, ISerialNumberProductRepository serialNumberProductRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService)
         {
-            _maintenanceTicketRepository = maintenanceTicketRepository;
+            _ComponentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _serialNumberProductRepository = serialNumberProductRepository;
             _componentRepository = componentRepository;
             _contractRepository = contractRepository;
-            _maintenanceTicketHub = maintenanceTicketHub;
+            _ComponentReplacementTicketHub = ComponentReplacementTicketHub;
             _notificationService = notificationService;
         }
 
-        public async Task CreateMaintenanceTicket(int staffId, CreateMaintenanceTicketDto createMaintenanceTicketDto)
+        public async Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
-            if (!await _componentRepository.IsComponentIdExisted(createMaintenanceTicketDto.ComponentId))
+            if (!await _componentRepository.IsComponentIdExisted(createComponentReplacementTicketDto.ComponentId))
             {
                 throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
             }
 
-            if (!await _serialNumberProductRepository.IsSerialNumberExist(createMaintenanceTicketDto.ProductSerialNumber))
+            if (!await _serialNumberProductRepository.IsSerialNumberExist(createComponentReplacementTicketDto.ProductSerialNumber))
             {
                 throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
             }
 
-            var contract = await _contractRepository.GetContractDetailById(createMaintenanceTicketDto.ContractId);
+            var contract = await _contractRepository.GetContractDetailById(createComponentReplacementTicketDto.ContractId);
 
             if (contract == null)
             {
@@ -52,21 +52,21 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
             }
 
-            var maintenanceTicketDto = await _maintenanceTicketRepository.CreateTicket(staffId, createMaintenanceTicketDto);
+            var ComponentReplacementTicketDto = await _ComponentReplacementTicketRepository.CreateTicket(staffId, createComponentReplacementTicketDto);
 
-            await _notificationService.SendNotificationToCustomerWhenCreateMaintenanceTicket((int)contract.AccountSignId, (double)maintenanceTicketDto.TotalAmount, maintenanceTicketDto.ComponentName);
+            await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)ComponentReplacementTicketDto.TotalAmount, ComponentReplacementTicketDto.ComponentName);
 
-            await _maintenanceTicketHub.Clients.All.SendAsync("OnCreateMaintenanceTicket");
+            await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnCreateComponentReplacementTicket");
         }
 
-        public async Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets()
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets()
         {
-            return await _maintenanceTicketRepository.GetTickets();
+            return await _ComponentReplacementTicketRepository.GetTickets();
         }
 
-        public async Task<IEnumerable<MaintenanceTicketDto>> GetMaintenanceTickets(int customerId)
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId)
         {
-            return await _maintenanceTicketRepository.GetTicketsByCustomerId(customerId);
+            return await _ComponentReplacementTicketRepository.GetTicketsByCustomerId(customerId);
         }
     }
 }

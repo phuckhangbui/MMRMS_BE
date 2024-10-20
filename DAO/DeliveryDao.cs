@@ -3,29 +3,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
-    public class DeliveryDao : BaseDao<Delivery>
+    public class DeliveryTaskDao : BaseDao<DeliveryTask>
     {
-        private static DeliveryDao instance = null;
+        private static DeliveryTaskDao instance = null;
         private static readonly object instacelock = new object();
 
-        private DeliveryDao()
+        private DeliveryTaskDao()
         {
 
         }
 
-        public static DeliveryDao Instance
+        public static DeliveryTaskDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new DeliveryDao();
+                    instance = new DeliveryTaskDao();
                 }
                 return instance;
             }
         }
 
-        public async Task<IEnumerable<Delivery>> GetDeliveries()
+        public async Task<IEnumerable<DeliveryTask>> GetDeliveries()
         {
             using (var context = new MmrmsContext())
             {
@@ -38,7 +38,7 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<Delivery>> GetDeliveriesForStaff(int staffId)
+        public async Task<IEnumerable<DeliveryTask>> GetDeliveriesForStaff(int staffId)
         {
             using (var context = new MmrmsContext())
             {
@@ -53,7 +53,7 @@ namespace DAO
             }
         }
 
-        public async Task<Delivery> GetDelivery(int deliveryId)
+        public async Task<DeliveryTask> GetDeliveryTask(int DeliveryTaskId)
         {
             using (var context = new MmrmsContext())
             {
@@ -62,7 +62,7 @@ namespace DAO
                     .Include(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
-                    .FirstOrDefaultAsync(d => d.DeliveryId == deliveryId);
+                    .FirstOrDefaultAsync(d => d.DeliveryTaskId == DeliveryTaskId);
             }
         }
     }

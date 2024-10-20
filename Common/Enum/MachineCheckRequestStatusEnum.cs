@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum MaintenanceRequestStatusEnum
+    public enum MachineCheckRequestStatusEnum
     {
         Processing,
         Assigned,

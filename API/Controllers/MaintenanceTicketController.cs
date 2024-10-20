@@ -1,4 +1,4 @@
-﻿using DTOs.MaintenanceTicket;
+﻿using DTOs.ComponentReplacementTicket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -7,23 +7,23 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/maintenance-ticket")]
-    public class MaintenanceTicketController : BaseApiController
+    public class ComponentReplacementTicketController : BaseApiController
     {
-        private readonly IMaintenanceTicketService _maintenanceTicketService;
+        private readonly IComponentReplacementTicketService _ComponentReplacementTicketService;
 
-        public MaintenanceTicketController(IMaintenanceTicketService maintenanceTicketService)
+        public ComponentReplacementTicketController(IComponentReplacementTicketService ComponentReplacementTicketService)
         {
-            _maintenanceTicketService = maintenanceTicketService;
+            _ComponentReplacementTicketService = ComponentReplacementTicketService;
         }
 
         //TODO:KHANG
         [HttpGet]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult<IEnumerable<MaintenanceTicketDto>>> GetMaintenanceRequests()
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetMachineCheckRequests()
         {
             try
             {
-                IEnumerable<MaintenanceTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets();
+                IEnumerable<ComponentReplacementTicketDto> list = await _ComponentReplacementTicketService.GetComponentReplacementTickets();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -38,7 +38,7 @@ namespace API.Controllers
 
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult<IEnumerable<MaintenanceTicketDto>>> GetMaintenanceRequestsForCustomer()
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetMachineCheckRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
             if (customerId == 0)
@@ -48,7 +48,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MaintenanceTicketDto> list = await _maintenanceTicketService.GetMaintenanceTickets(customerId);
+                IEnumerable<ComponentReplacementTicketDto> list = await _ComponentReplacementTicketService.GetComponentReplacementTickets(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -64,7 +64,7 @@ namespace API.Controllers
         //TODO:KHANG
         [HttpPost]
         [Authorize(Policy = "Staff")]
-        public async Task<ActionResult> CreateMaintenanceTicket(CreateMaintenanceTicketDto createMaintenanceTicketDto)
+        public async Task<ActionResult> CreateComponentReplacementTicket(CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
             int staffId = GetLoginAccountId();
             if (staffId == 0)
@@ -74,7 +74,7 @@ namespace API.Controllers
 
             try
             {
-                await _maintenanceTicketService.CreateMaintenanceTicket(staffId, createMaintenanceTicketDto);
+                await _ComponentReplacementTicketService.CreateComponentReplacementTicket(staffId, createComponentReplacementTicketDto);
                 return NoContent();
             }
             catch (ServiceException ex)

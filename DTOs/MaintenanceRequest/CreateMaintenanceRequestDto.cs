@@ -1,9 +1,9 @@
 ﻿using Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.MaintenanceRequest
+namespace DTOs.MachineCheckRequest
 {
-    public class CreateMaintenanceRequestDto
+    public class CreateMachineCheckRequestDto
     {
         [Required(ErrorMessage = MessageConstant.MaintanningTicket.ProductSerialNumberRequired)]
         public string ContractId { get; set; }

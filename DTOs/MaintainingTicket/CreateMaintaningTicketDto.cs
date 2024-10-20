@@ -1,9 +1,9 @@
 ﻿using Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.MaintenanceTicket
+namespace DTOs.ComponentReplacementTicket
 {
-    public class CreateMaintenanceTicketDto
+    public class CreateComponentReplacementTicketDto
     {
         [Required(ErrorMessage = MessageConstant.MaintanningTicket.ComponentIdRequired)]
         public int ComponentId { get; set; }

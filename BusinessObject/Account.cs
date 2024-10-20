@@ -58,7 +58,7 @@ public partial class Account
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
-    public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
+    public virtual ICollection<DeliveryTask> Deliveries { get; set; } = new List<DeliveryTask>();
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
@@ -66,15 +66,15 @@ public partial class Account
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
-    public virtual ICollection<EmployeeTask> TaskReceivedList { get; set; } = new List<EmployeeTask>();
+    public virtual ICollection<MachineTask> TaskReceivedList { get; set; } = new List<MachineTask>();
 
-    public virtual ICollection<EmployeeTask> TaskGaveList { get; set; } = new List<EmployeeTask>();
+    public virtual ICollection<MachineTask> TaskGaveList { get; set; } = new List<MachineTask>();
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
-    public virtual ICollection<TaskLog> TaskLogs { get; set; } = new List<TaskLog>();
+    public virtual ICollection<MachineTaskLog> MachineTaskLogs { get; set; } = new List<MachineTaskLog>();
 
-    public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
+    public virtual ICollection<DeliveryTaskLog> DeliveryTaskLogs { get; set; } = new List<DeliveryTaskLog>();
 
     public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
 

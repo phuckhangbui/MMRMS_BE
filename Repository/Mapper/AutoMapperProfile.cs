@@ -6,15 +6,15 @@ using DTOs.Address;
 using DTOs.Authentication;
 using DTOs.Category;
 using DTOs.Component;
+using DTOs.ComponentReplacementTicket;
 using DTOs.Content;
 using DTOs.Contract;
 using DTOs.ContractPayment;
-using DTOs.Delivery;
-using DTOs.EmployeeTask;
+using DTOs.DeliveryTask;
 using DTOs.Invoice;
 using DTOs.Log;
-using DTOs.MaintenanceRequest;
-using DTOs.MaintenanceTicket;
+using DTOs.MachineCheckRequest;
+using DTOs.MachineTask;
 using DTOs.MembershipRank;
 using DTOs.Notification;
 using DTOs.Product;
@@ -205,7 +205,7 @@ namespace Repository.Mapper
             CreateMap<Address, AddressDto>();
             CreateMap<Address, AddressRequestDto>().ReverseMap();
 
-            CreateMap<Delivery, DeliveryDto>()
+            CreateMap<DeliveryTask, DeliveryTaskDto>()
                 .ForMember(dest => dest.StaffName,
                 opt => opt.MapFrom(src => src.Staff != null
                             ? src.Staff.Name
@@ -216,13 +216,13 @@ namespace Repository.Mapper
                             : null));
 
             CreateMap<RentingRequestAddress, ContractAddressDto>();
-            CreateMap<MaintenanceRequest, MaintenanceRequestDto>()
+            CreateMap<MachineCheckRequest, MachineCheckRequestDto>()
                 .ForMember(dest => dest.ContractAddress,
                  opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
                             ? src.Contract.RentingRequest.RentingRequestAddress
                             : null)); ;
 
-            CreateMap<EmployeeTask, EmployeeTaskDto>()
+            CreateMap<MachineTask, MachineTaskDto>()
                 .ForMember(dest => dest.StaffName,
                 opt => opt.MapFrom(src => src.Staff != null
                             ? src.Staff.Name
@@ -232,23 +232,23 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
-            CreateMap<EmployeeTask, EmployeeTaskDisplayDetail>()
+            CreateMap<MachineTask, MachineTaskDisplayDetail>()
                 .ForMember(dest => dest.TaskLogs,
-                opt => opt.MapFrom(src => src.TaskLogs != null
-                            ? src.TaskLogs
+                opt => opt.MapFrom(src => src.MachineTaskLogs != null
+                            ? src.MachineTaskLogs
                             : null))
-                .ForMember(dest => dest.MaintenanceTicketCreateFromTaskList,
-                opt => opt.MapFrom(src => src.MaintenanceTicketsCreateFromTask != null
-                            ? src.MaintenanceTicketsCreateFromTask
+                .ForMember(dest => dest.ComponentReplacementTicketCreateFromTaskList,
+                opt => opt.MapFrom(src => src.ComponentReplacementTicketsCreateFromTask != null
+                            ? src.ComponentReplacementTicketsCreateFromTask
                             : null));
 
-            CreateMap<TaskLog, TaskLogDto>()
+            CreateMap<MachineTaskLog, TaskLogDto>()
                 .ForMember(dest => dest.AccountTriggerName,
                 opt => opt.MapFrom(src => src.AccountTrigger != null
                                 ? src.AccountTrigger.Name
                                 : string.Empty));
 
-            CreateMap<MaintenanceTicket, MaintenanceTicketDto>()
+            CreateMap<ComponentReplacementTicket, ComponentReplacementTicketDto>()
                .ForMember(dest => dest.EmployeeCreateName,
                opt => opt.MapFrom(src => src.EmployeeCreate != null
                            ? src.EmployeeCreate.Name

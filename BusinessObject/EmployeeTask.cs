@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject;
 
-public partial class EmployeeTask
+public partial class MachineTask
 {
-    public int EmployeeTaskId { get; set; }
+    public int MachineTaskId { get; set; }
 
     public string? TaskTitle { get; set; }
 
@@ -10,7 +10,7 @@ public partial class EmployeeTask
 
     public int? RequestResponseId { get; set; }
 
-    public string? MaintenanceTicketId { get; set; }
+    public string? ComponentReplacementTicketId { get; set; }
 
     public int? PreviousTaskId { get; set; }
 
@@ -38,15 +38,15 @@ public partial class EmployeeTask
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual EmployeeTask? PreviousTask { get; set; }
+    public virtual MachineTask? PreviousTask { get; set; }
 
     public virtual RequestResponse? RequestResponse { get; set; }
 
-    public virtual MaintenanceTicket? MaintenanceTicket { get; set; }
+    public virtual ComponentReplacementTicket? ComponentReplacementTicket { get; set; }
 
-    public virtual ICollection<MaintenanceTicket> MaintenanceTicketsCreateFromTask { get; set; } = new List<MaintenanceTicket>();
+    public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTicketsCreateFromTask { get; set; } = new List<ComponentReplacementTicket>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
-    public virtual ICollection<TaskLog> TaskLogs { get; set; } = new List<TaskLog>();
+    public virtual ICollection<MachineTaskLog> MachineTaskLogs { get; set; } = new List<MachineTaskLog>();
 }

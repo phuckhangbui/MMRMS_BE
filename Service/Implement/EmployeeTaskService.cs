@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Common;
 using Common.Enum;
-using DTOs.Delivery;
-using DTOs.EmployeeTask;
+using DTOs.DeliveryTask;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
@@ -11,29 +11,29 @@ using Service.SignalRHub;
 
 namespace Service.Implement
 {
-    public class EmployeeTaskService : IEmployeeTaskService
+    public class MachineTaskService : IMachineTaskService
     {
-        private readonly IEmployeeTaskRepository _employeeTaskRepository;
+        private readonly IMachineTaskRepository _MachineTaskRepository;
         private readonly IAccountRepository _accountRepository;
-        private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
-        private readonly IMaintenanceTicketRepository _maintenanceTicketRepository;
-        private readonly IDeliveryRepository _deliveryRepository;
+        private readonly IMachineCheckRequestRepository _MachineCheckRequestRepository;
+        private readonly IComponentReplacementTicketRepository _ComponentReplacementTicketRepository;
+        private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
         private readonly IContractRepository _contractRepository;
         private readonly INotificationService _notificationService;
-        private readonly IHubContext<EmployeeTaskHub> _employeeTaskHub;
+        private readonly IHubContext<MachineTaskHub> _MachineTaskHub;
         private readonly IMapper _mapper;
 
-        public EmployeeTaskService(IEmployeeTaskRepository employeeTaskRepository, IHubContext<EmployeeTaskHub> employeeTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMaintenanceRequestRepository maintenanceRequestRepository, IDeliveryRepository deliveryRepository, IMapper mapper, IContractRepository contractRepository, IMaintenanceTicketRepository maintenanceTicketRepository)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository)
         {
-            _employeeTaskRepository = employeeTaskRepository;
-            _employeeTaskHub = employeeTaskHub;
+            _MachineTaskRepository = MachineTaskRepository;
+            _MachineTaskHub = MachineTaskHub;
             _notificationService = notificationService;
             _accountRepository = accountRepository;
-            _maintenanceRequestRepository = maintenanceRequestRepository;
-            _deliveryRepository = deliveryRepository;
+            _MachineCheckRequestRepository = MachineCheckRequestRepository;
+            _DeliveryTaskRepository = DeliveryTaskRepository;
             _mapper = mapper;
             _contractRepository = contractRepository;
-            _maintenanceTicketRepository = maintenanceTicketRepository;
+            _ComponentReplacementTicketRepository = ComponentReplacementTicketRepository;
         }
 
         private async Task CheckCreateTaskCondition(int staffId, DateTime dateStart)
@@ -45,56 +45,56 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
-            var staffTaskList = await _employeeTaskRepository.GetTaskOfStaffInADay(staffId, dateStart)
-                                        ?? Enumerable.Empty<EmployeeTaskDto>();
-            var staffDeliveryList = await _deliveryRepository.GetDeliveriesOfStaffInADay(staffId, dateStart)
-                                        ?? Enumerable.Empty<DeliveryDto>();
+            var staffTaskList = await _MachineTaskRepository.GetTaskOfStaffInADay(staffId, dateStart)
+                                        ?? Enumerable.Empty<MachineTaskDto>();
+            var staffDeliveryTaskList = await _DeliveryTaskRepository.GetDeliveriesOfStaffInADay(staffId, dateStart)
+                                        ?? Enumerable.Empty<DeliveryTaskDto>();
 
-            int taskCounter = staffDeliveryList.Count() + staffTaskList.Count();
+            int taskCounter = staffDeliveryTaskList.Count() + staffTaskList.Count();
 
             if (taskCounter >= GlobalConstant.MaxTaskLimitADayContract)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.ReachMaxTaskLimit);
+                throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
             }
         }
 
-        public async Task CreateEmployeeTaskCheckMachine(int managerId, CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto)
+        public async Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
-            await CheckCreateTaskCondition(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart);
+            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, createMachineTaskDto.DateStart);
 
-            var requestDto = await _maintenanceRequestRepository.GetMaintenanceRequest(createEmployeeTaskDto.RequestId);
+            var requestDto = await _MachineCheckRequestRepository.GetMachineCheckRequest(createMachineTaskDto.RequestId);
 
             if (requestDto == null)
             {
-                throw new ServiceException(MessageConstant.MaintenanceRequest.RequestNotFound);
+                throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
             }
 
-            if (requestDto.Status != MaintenanceRequestStatusEnum.Processing.ToString())
+            if (requestDto.Status != MachineCheckRequestStatusEnum.Processing.ToString())
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.TaskNotPossibleRequestStatus);
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleRequestStatus);
             }
 
-            await _employeeTaskRepository.CreateEmployeeTaskWithRequest(managerId, createEmployeeTaskDto);
+            await _MachineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
 
-            await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createEmployeeTaskDto.StaffId, requestDto.ContractAddress, createEmployeeTaskDto.DateStart);
+            await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
 
-            await _employeeTaskHub.Clients.All.SendAsync("OnCreateEmployeeTask");
+            await _MachineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
         }
 
-        public async Task CreateEmployeeTaskProcessMaintenanceTicket(int managerId, CreateEmployeeTaskProcessMaintenanceTickett createEmployeeTaskDto)
+        public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
         {
-            await CheckCreateTaskCondition(createEmployeeTaskDto.StaffId, createEmployeeTaskDto.DateStart);
+            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, createMachineTaskDto.DateStart);
 
-            var ticketDto = await _maintenanceTicketRepository.GetTicket(createEmployeeTaskDto.MaintenanceTicketId);
+            var ticketDto = await _ComponentReplacementTicketRepository.GetTicket(createMachineTaskDto.ComponentReplacementTicketId);
 
             if (ticketDto == null)
             {
                 throw new ServiceException(MessageConstant.MaintanningTicket.TicketNotFound);
             }
 
-            if (ticketDto.Status != MaintenanceTicketStatusEnum.Paid.ToString())
+            if (ticketDto.Status != ComponentReplacementTicketStatusEnum.Paid.ToString())
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.TaskNotPossibleMaintenanceTicketStatus);
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleComponentReplacementTicketStatus);
             }
 
 
@@ -104,93 +104,93 @@ namespace Service.Implement
 
 
         // currently comment out the controller, because task always have staffId when created
-        public async Task DeleteEmployeeTask(int taskId)
+        public async Task DeleteMachineTask(int taskId)
         {
-            var employeeTask = await _employeeTaskRepository.GetEmployeeTask(taskId);
+            var MachineTask = await _MachineTaskRepository.GetMachineTask(taskId);
 
-            if (employeeTask == null)
+            if (MachineTask == null)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.TaskNotFound);
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
 
-            if (employeeTask.StaffId != null)
+            if (MachineTask.StaffId != null)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.CannotDeleted);
+                throw new ServiceException(MessageConstant.MachineTask.CannotDeleted);
             }
 
             //need to check logic of the RequestResponse
-            await _employeeTaskRepository.Delete(taskId);
+            await _MachineTaskRepository.Delete(taskId);
 
-            await _employeeTaskHub.Clients.All.SendAsync("OnDeleteEmployeeTask", taskId);
+            await _MachineTaskHub.Clients.All.SendAsync("OnDeleteMachineTask", taskId);
         }
 
-        public async Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId)
+        public async Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId)
         {
-            var employeeTaskDetail = await _employeeTaskRepository.GetEmployeeTaskDetail(taskId);
+            var MachineTaskDetail = await _MachineTaskRepository.GetMachineTaskDetail(taskId);
 
-            if (employeeTaskDetail == null)
+            if (MachineTaskDetail == null)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.TaskNotFound);
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
-            var contract = await _contractRepository.GetContractDetailById(employeeTaskDetail.ContractId);
+            var contract = await _contractRepository.GetContractDetailById(MachineTaskDetail.ContractId);
 
-            employeeTaskDetail.CustomerId = contract.AccountOrder.AccountId;
-            employeeTaskDetail.CustomerName = contract.AccountOrder.Name;
-            employeeTaskDetail.CustomerPhone = contract.AccountOrder.Phone;
+            MachineTaskDetail.CustomerId = contract.AccountOrder.AccountId;
+            MachineTaskDetail.CustomerName = contract.AccountOrder.Name;
+            MachineTaskDetail.CustomerPhone = contract.AccountOrder.Phone;
 
-            var contractAddress = await _contractRepository.GetContractAddressById(employeeTaskDetail?.ContractId);
+            var contractAddress = await _contractRepository.GetContractAddressById(MachineTaskDetail?.ContractId);
 
-            employeeTaskDetail.Address = contractAddress;
+            MachineTaskDetail.Address = contractAddress;
 
-            return employeeTaskDetail;
+            return MachineTaskDetail;
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks()
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasks()
         {
-            var list = await _employeeTaskRepository.GetEmployeeTasks();
+            var list = await _MachineTaskRepository.GetMachineTasks();
 
             return list;
         }
 
-        public async Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks(int staffId)
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasks(int staffId)
         {
-            var list = await _employeeTaskRepository.GetEmployeeTaskByStaff(staffId);
+            var list = await _MachineTaskRepository.GetMachineTaskByStaff(staffId);
 
             return list;
         }
 
-        public async Task UpdateEmployeeTaskStatus(int employeeTaskId, string status, int accountId)
+        public async Task UpdateMachineTaskStatus(int MachineTaskId, string status, int accountId)
         {
-            var employeeTask = await _employeeTaskRepository.GetEmployeeTask(employeeTaskId);
+            var MachineTask = await _MachineTaskRepository.GetMachineTask(MachineTaskId);
 
             var account = await _accountRepository.GetAccounById(accountId);
 
-            if (employeeTask == null)
+            if (MachineTask == null)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.TaskNotFound);
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
 
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(EmployeeTaskStatusEnum), status, true, out _))
+            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MachineTaskStatusEnum), status, true, out _))
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.StatusNotAvailable);
+                throw new ServiceException(MessageConstant.MachineTask.StatusNotAvailable);
             }
             //logic here
 
 
-            await _employeeTaskRepository.UpdateTaskStatus(employeeTaskId, status, accountId);
+            await _MachineTaskRepository.UpdateTaskStatus(MachineTaskId, status, accountId);
 
             //TODO:KHANG
             //if (account.RoleId == (int)AccountRoleEnum.Staff)
             //{
-            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)employeeTask.ManagerId, employeeTask.TaskTitle, status);
+            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)MachineTask.ManagerId, MachineTask.TaskTitle, status);
             //}
 
             if (account.RoleId == (int)AccountRoleEnum.Manager)
             {
-                await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)employeeTask.StaffId, employeeTask.TaskTitle, status);
+                await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)MachineTask.StaffId, MachineTask.TaskTitle, status);
             }
 
-            await _employeeTaskHub.Clients.All.SendAsync("OnUpdateEmployeeTaskStatus", employeeTaskId);
+            await _MachineTaskHub.Clients.All.SendAsync("OnUpdateMachineTaskStatus", MachineTaskId);
         }
     }
 }

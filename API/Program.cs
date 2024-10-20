@@ -126,10 +126,10 @@ using (var scope = app.Services.CreateScope())
     //RecurringJob.AddOrUpdate("TestSchedule", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
 }
 
-app.MapHub<DeliveryHub>("/delivery");
-app.MapHub<EmployeeTaskHub>("/employee-task");
+app.MapHub<DeliveryTaskHub>("/DeliveryTask");
+app.MapHub<MachineTaskHub>("/employee-task");
 app.MapHub<InvoiceHub>("/invoice");
-app.MapHub<MaintenanceRequestHub>("/maintenance-request");
-app.MapHub<MaintenanceTicketHub>("/maintenance-ticket");
+app.MapHub<MachineCheckRequestHub>("/maintenance-request");
+app.MapHub<ComponentReplacementTicketHub>("/maintenance-ticket");
 
 app.Run();

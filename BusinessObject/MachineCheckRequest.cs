@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject;
 
-public partial class MaintenanceRequest
+public partial class MachineCheckRequest
 {
-    public string RequestId { get; set; }
+    public string MachineCheckRequestId { get; set; }
 
     public string? ContractId { get; set; }
 

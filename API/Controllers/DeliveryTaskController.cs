@@ -1,4 +1,4 @@
-﻿using DTOs.Delivery;
+﻿using DTOs.DeliveryTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -7,24 +7,24 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/deliveries")]
-    public class DeliveryController : BaseApiController
+    public class DeliveryTaskController : BaseApiController
     {
-        private readonly IDeliveryService _deliveryService;
+        private readonly IDeliverService _deliverService;
 
-        public DeliveryController(IDeliveryService deliveryService)
+        public DeliveryTaskController(IDeliverService DeliveryTaskervice)
         {
-            _deliveryService = deliveryService;
+            _deliverService = DeliveryTaskervice;
         }
 
 
 
         [HttpGet]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<DeliveryDto>>> GetDeliveriesForManager()
+        public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForManager()
         {
             try
             {
-                IEnumerable<DeliveryDto> list = await _deliveryService.GetDeliveries();
+                IEnumerable<DeliveryTaskDto> list = await _deliverService.GetDeliveries();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -40,7 +40,7 @@ namespace API.Controllers
         //TODO:KHANG
         [HttpGet("staff")]
         [Authorize(Policy = "Staff")]
-        public async Task<ActionResult<IEnumerable<DeliveryDto>>> GetDeliveriesForStaff()
+        public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForStaff()
         {
             int staffId = GetLoginAccountId();
             if (staffId == 0)
@@ -50,7 +50,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<DeliveryDto> list = await _deliveryService.GetDeliveries(staffId);
+                IEnumerable<DeliveryTaskDto> list = await _deliverService.GetDeliveries(staffId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -65,7 +65,7 @@ namespace API.Controllers
 
         [HttpPost("assign")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> AssignDelivery([FromBody] AssignDeliveryDto assignDeliveryDto)
+        public async Task<ActionResult> AssignDeliveryTask([FromBody] AssignDeliveryTaskDto assignDeliveryTaskDto)
         {
             int managerId = GetLoginAccountId();
             if (managerId == 0)
@@ -75,7 +75,7 @@ namespace API.Controllers
 
             try
             {
-                await _deliveryService.AssignDelivery(managerId, assignDeliveryDto);
+                await _deliverService.AssignDeliveryTask(managerId, assignDeliveryTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -89,9 +89,9 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{deliveryId}")]
+        [HttpPatch("{DeliveryTaskId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateDeliveryStatus([FromRoute] int deliveryId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateDeliveryTasktatus([FromRoute] int DeliveryTaskId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -102,7 +102,7 @@ namespace API.Controllers
 
             try
             {
-                await _deliveryService.UpdateDeliveryStatus(deliveryId, status, accountId);
+                await _deliverService.UpdateDeliveryTaskStatus(DeliveryTaskId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -118,7 +118,7 @@ namespace API.Controllers
 
         //[HttpPost]
         //[Authorize(Policy = "Manager")]
-        //public async Task<IActionResult> CreateDelivery([FromBody] CreateComponentDto createComponentDto)
+        //public async Task<IActionResult> CreateDeliveryTask([FromBody] CreateComponentDto createComponentDto)
         //{
         //    if (!ModelState.IsValid)
         //    {
@@ -128,7 +128,7 @@ namespace API.Controllers
 
         //    try
         //    {
-        //        await _deliveryService.CreateComponent(createComponentDto);
+        //        await _deliverService.CreateComponent(createComponentDto);
         //        return Created();
         //    }
         //    catch (ServiceException ex)
@@ -152,7 +152,7 @@ namespace API.Controllers
 
         //    try
         //    {
-        //        await _deliveryService.UpdateComponent(updateComponentDto);
+        //        await _DeliveryTaskervice.UpdateComponent(updateComponentDto);
         //        return NoContent();
         //    }
         //    catch (ServiceException ex)
@@ -171,7 +171,7 @@ namespace API.Controllers
 
         //    try
         //    {
-        //        await _deliveryService.UpdateComponentStatus(componentId, status);
+        //        await _DeliveryTaskervice.UpdateComponentStatus(componentId, status);
         //        return NoContent();
         //    }
         //    catch (ServiceException ex)
@@ -189,7 +189,7 @@ namespace API.Controllers
         //{
         //    try
         //    {
-        //        await _deliveryService.DeleteComponent(componentId);
+        //        await _DeliveryTaskervice.DeleteComponent(componentId);
         //        return NoContent();
         //    }
         //    catch (ServiceException ex)
