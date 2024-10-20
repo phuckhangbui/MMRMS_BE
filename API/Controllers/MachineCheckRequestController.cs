@@ -9,11 +9,11 @@ namespace API.Controllers
     [Route("api/maintenance-request")]
     public class MachineCheckRequestController : BaseApiController
     {
-        private readonly IMachineCheckRequestService _MachineCheckRequestService;
+        private readonly IMachineCheckRequestService _machineCheckRequestService;
 
         public MachineCheckRequestController(IMachineCheckRequestService MachineCheckRequestService)
         {
-            _MachineCheckRequestService = MachineCheckRequestService;
+            _machineCheckRequestService = MachineCheckRequestService;
         }
 
 
@@ -23,7 +23,7 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests();
+                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequests();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -41,7 +41,7 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests();
+                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequests();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -66,7 +66,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests(customerId);
+                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequests(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -86,7 +86,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequestsOfContract(contractId);
+                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequestsOfContract(contractId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -111,7 +111,7 @@ namespace API.Controllers
 
             try
             {
-                await _MachineCheckRequestService.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
+                await _machineCheckRequestService.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -125,9 +125,9 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{MachineCheckRequestId}")]
+        [HttpPatch("{machineCheckRequestId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string MachineCheckRequestId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string machineCheckRequestId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -137,7 +137,7 @@ namespace API.Controllers
 
             try
             {
-                await _MachineCheckRequestService.UpdateRequestStatus(MachineCheckRequestId, status, accountId);
+                await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
