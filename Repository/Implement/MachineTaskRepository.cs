@@ -10,14 +10,14 @@ namespace Repository.Implement
     public class MachineTaskRepository : IMachineTaskRepository
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IMachineCheckRequestRepository _MachineCheckRequestRepository;
+        private readonly IMachineCheckRequestRepository _machineCheckRequestRepository;
         private readonly IMapper _mapper;
 
         public MachineTaskRepository(IMapper mapper, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository)
         {
             _mapper = mapper;
             _accountRepository = accountRepository;
-            _MachineCheckRequestRepository = MachineCheckRequestRepository;
+            _machineCheckRequestRepository = MachineCheckRequestRepository;
         }
 
         public async Task CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)

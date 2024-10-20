@@ -9,11 +9,11 @@ namespace API.Controllers
     [Route("api/tasks")]
     public class MachineTaskController : BaseApiController
     {
-        private readonly IMachineTaskService _MachineTaskService;
+        private readonly IMachineTaskService _machineTaskService;
 
         public MachineTaskController(IMachineTaskService MachineTaskService)
         {
-            _MachineTaskService = MachineTaskService;
+            _machineTaskService = MachineTaskService;
         }
 
         [HttpGet]
@@ -22,7 +22,7 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<MachineTaskDto> list = await _MachineTaskService.GetMachineTasks();
+                IEnumerable<MachineTaskDto> list = await _machineTaskService.GetMachineTasks();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -48,7 +48,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MachineTaskDto> list = await _MachineTaskService.GetMachineTasks(staffId);
+                IEnumerable<MachineTaskDto> list = await _machineTaskService.GetMachineTasks(staffId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -68,7 +68,7 @@ namespace API.Controllers
         {
             try
             {
-                var taskDetail = await _MachineTaskService.GetMachineTaskDetail(taskId);
+                var taskDetail = await _machineTaskService.GetMachineTaskDetail(taskId);
                 return Ok(taskDetail);
             }
             catch (ServiceException ex)
@@ -92,7 +92,7 @@ namespace API.Controllers
             }
             try
             {
-                await _MachineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
+                await _machineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -116,7 +116,7 @@ namespace API.Controllers
             }
             try
             {
-                await _MachineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
+                await _machineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -141,7 +141,7 @@ namespace API.Controllers
             }
             try
             {
-                await _MachineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);
+                await _machineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
