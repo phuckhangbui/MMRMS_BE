@@ -6,7 +6,7 @@ using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/maintenance-request")]
+    [Route("api/machine-check-request")]
     public class MachineCheckRequestController : BaseApiController
     {
         private readonly IMachineCheckRequestService _machineCheckRequestService;

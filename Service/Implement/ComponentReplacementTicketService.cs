@@ -10,7 +10,7 @@ namespace Service.Implement
 {
     public class ComponentReplacementTicketService : IComponentReplacementTicketService
     {
-        private readonly IComponentReplacementTicketRepository _ComponentReplacementTicketRepository;
+        private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
         private readonly IContractRepository _contractRepository;
@@ -20,7 +20,7 @@ namespace Service.Implement
 
         public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, ISerialNumberProductRepository serialNumberProductRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService)
         {
-            _ComponentReplacementTicketRepository = ComponentReplacementTicketRepository;
+            _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _serialNumberProductRepository = serialNumberProductRepository;
             _componentRepository = componentRepository;
             _contractRepository = contractRepository;
@@ -52,7 +52,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
             }
 
-            var ComponentReplacementTicketDto = await _ComponentReplacementTicketRepository.CreateTicket(staffId, createComponentReplacementTicketDto);
+            var ComponentReplacementTicketDto = await _componentReplacementTicketRepository.CreateTicket(staffId, createComponentReplacementTicketDto);
 
             await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)ComponentReplacementTicketDto.TotalAmount, ComponentReplacementTicketDto.ComponentName);
 
@@ -61,12 +61,12 @@ namespace Service.Implement
 
         public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets()
         {
-            return await _ComponentReplacementTicketRepository.GetTickets();
+            return await _componentReplacementTicketRepository.GetTickets();
         }
 
         public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId)
         {
-            return await _ComponentReplacementTicketRepository.GetTicketsByCustomerId(customerId);
+            return await _componentReplacementTicketRepository.GetTicketsByCustomerId(customerId);
         }
     }
 }

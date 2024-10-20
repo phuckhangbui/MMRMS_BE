@@ -6,7 +6,7 @@ using Service.Interface;
 
 namespace API.Controllers
 {
-    [Route("api/tasks")]
+    [Route("api/machine-tasks")]
     public class MachineTaskController : BaseApiController
     {
         private readonly IMachineTaskService _machineTaskService;
