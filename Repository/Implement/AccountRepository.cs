@@ -21,14 +21,18 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task ChangeAccountStatus(int acocuntId, string status)
+        public async Task<bool> ChangeAccountStatus(int acocuntId, string status)
         {
             var currentAccount = await AccountDao.Instance.GetAccountAsyncById(acocuntId);
             if (currentAccount != null)
             {
                 currentAccount.Status = status;
                 await AccountDao.Instance.UpdateAsync(currentAccount);
+
+                return true;
             }
+
+            return false;
         }
 
         public async Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)

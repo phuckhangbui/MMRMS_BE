@@ -74,7 +74,6 @@ namespace DTOs.Account
     public class EmployeeAccountDto : AccountBaseDto
     {
         public string Username { get; set; }
-        public int Position { get; set; }
         public string DateExpire { get; set; }
         public string DateBirth { get; set; }
         public string AvatarImg { get; set; }

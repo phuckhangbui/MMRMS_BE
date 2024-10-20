@@ -163,8 +163,8 @@ namespace API.Controllers
             try
             {
                 var result = await _rentingService.CancelRentingRequest(rentingRequestId);
-                if (!result) return Ok(MessageConstant.RentingRequest.RentingRequestCancelFail);
-                return BadRequest(MessageConstant.RentingRequest.RentingRequestCancelSuccessfully);
+                if (result) return Ok(MessageConstant.RentingRequest.RentingRequestCancelSuccessfully);
+                return BadRequest(MessageConstant.RentingRequest.RentingRequestCancelFail);
             }
             catch (ServiceException ex)
             {

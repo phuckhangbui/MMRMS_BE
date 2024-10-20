@@ -12,7 +12,7 @@ namespace Service.Interface
         Task<EmployeeAccountDto> GetEmployeeAccount(int accountId);
         Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto);
         Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
-        Task ChangeAccountStatus(int accountId, string status);
+        Task<bool> ChangeAccountStatus(int accountId, string status);
         Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId);
         Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId);
         Task<AccountDto> GetAccount(int accountId);
