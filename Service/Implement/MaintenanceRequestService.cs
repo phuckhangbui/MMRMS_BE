@@ -1,6 +1,6 @@
 ﻿using Common;
 using Common.Enum;
-using DTOs.MaintenanceRequest;
+using DTOs.MachineCheckRequest;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
@@ -9,27 +9,27 @@ using Service.SignalRHub;
 
 namespace Service.Implement
 {
-    public class MaintenanceRequestService : IMaintenanceRequestService
+    public class MachineCheckRequestService : IMachineCheckRequestService
     {
-        private readonly IMaintenanceRequestRepository _maintenanceRequestRepository;
+        private readonly IMachineCheckRequestRepository _MachineCheckRequestRepository;
 
         private readonly IContractRepository _contractRepository;
 
         private readonly INotificationService _notificationService;
 
-        private readonly IHubContext<MaintenanceRequestHub> _maintenanceRequestHub;
+        private readonly IHubContext<MachineCheckRequestHub> _MachineCheckRequestHub;
 
-        public MaintenanceRequestService(IMaintenanceRequestRepository maintenanceRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MaintenanceRequestHub> maintenanceRequestHub)
+        public MachineCheckRequestService(IMachineCheckRequestRepository MachineCheckRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MachineCheckRequestHub> MachineCheckRequestHub)
         {
-            _maintenanceRequestRepository = maintenanceRequestRepository;
+            _MachineCheckRequestRepository = MachineCheckRequestRepository;
             _contractRepository = contractRepository;
             _notificationService = notificationService;
-            _maintenanceRequestHub = maintenanceRequestHub;
+            _MachineCheckRequestHub = MachineCheckRequestHub;
         }
 
-        public async Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
+        public async Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
-            var contract = await _contractRepository.GetContractDetailById(createMaintenanceRequestDto.ContractId);
+            var contract = await _contractRepository.GetContractDetailById(createMachineCheckRequestDto.ContractId);
 
             if (contract == null)
             {
@@ -46,56 +46,56 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractIsNotReadyForRequest);
             }
 
-            var maintenanceRequestList = await _maintenanceRequestRepository.GetMaintenanceRequestsByContractId(createMaintenanceRequestDto.ContractId);
+            var MachineCheckRequestList = await _MachineCheckRequestRepository.GetMachineCheckRequestsByContractId(createMachineCheckRequestDto.ContractId);
 
-            bool isFailToCreateNewRequest = maintenanceRequestList.Any(request => request.Status == MaintenanceRequestStatusEnum.Processing.ToString() || request.Status == MaintenanceRequestStatusEnum.Assigned.ToString());
+            bool isFailToCreateNewRequest = MachineCheckRequestList.Any(request => request.Status == MachineCheckRequestStatusEnum.Processing.ToString() || request.Status == MachineCheckRequestStatusEnum.Assigned.ToString());
 
             if (isFailToCreateNewRequest)
             {
-                throw new ServiceException(MessageConstant.MaintenanceRequest.PendingRequestStillExist);
+                throw new ServiceException(MessageConstant.MachineCheckRequest.PendingRequestStillExist);
             }
 
-            await _maintenanceRequestRepository.CreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
+            await _MachineCheckRequestRepository.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
 
-            await _notificationService.SendToManagerWhenCustomerCreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
+            await _notificationService.SendToManagerWhenCustomerCreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
 
-            await _maintenanceRequestHub.Clients.All.SendAsync("OnCreateMaintenanceRequest");
+            await _MachineCheckRequestHub.Clients.All.SendAsync("OnCreateMachineCheckRequest");
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests()
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
         {
-            return await _maintenanceRequestRepository.GetMaintenanceRequests();
+            return await _MachineCheckRequestRepository.GetMachineCheckRequests();
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests(int customerId)
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests(int customerId)
         {
-            return await _maintenanceRequestRepository.GetMaintenanceRequestsByCustomerId(customerId);
+            return await _MachineCheckRequestRepository.GetMachineCheckRequestsByCustomerId(customerId);
         }
 
-        public async Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsOfContract(string contractId)
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsOfContract(string contractId)
         {
-            return await _maintenanceRequestRepository.GetMaintenanceRequestsByContractId(contractId);
+            return await _MachineCheckRequestRepository.GetMachineCheckRequestsByContractId(contractId);
         }
 
-        public async Task UpdateRequestStatus(string maintenanceRequestId, string status, int accountId)
+        public async Task UpdateRequestStatus(string MachineCheckRequestId, string status, int accountId)
         {
-            var maintenanceDto = await _maintenanceRequestRepository.GetMaintenanceRequest(maintenanceRequestId);
+            var maintenanceDto = await _MachineCheckRequestRepository.GetMachineCheckRequest(MachineCheckRequestId);
 
             if (maintenanceDto == null)
             {
-                throw new ServiceException(MessageConstant.MaintenanceRequest.RequestNotFound);
+                throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
             }
 
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MaintenanceRequestStatusEnum), status, true, out _))
+            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MachineCheckRequestStatusEnum), status, true, out _))
             {
-                throw new ServiceException(MessageConstant.MaintenanceRequest.StatusNotAvailable);
+                throw new ServiceException(MessageConstant.MachineCheckRequest.StatusNotAvailable);
             }
 
             //business logic here, fix later
 
-            await _maintenanceRequestRepository.UpdateRequestStatus(maintenanceRequestId, status);
+            await _MachineCheckRequestRepository.UpdateRequestStatus(MachineCheckRequestId, status);
 
-            await _maintenanceRequestHub.Clients.All.SendAsync("OnUpdateMaintenanceRequestStatus", maintenanceRequestId);
+            await _MachineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequestStatus", MachineCheckRequestId);
         }
     }
 }

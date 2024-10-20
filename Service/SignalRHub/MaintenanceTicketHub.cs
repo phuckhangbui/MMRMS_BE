@@ -2,7 +2,7 @@
 
 namespace Service.SignalRHub
 {
-    public class MaintenanceTicketHub : Hub
+    public class ComponentReplacementTicketHub : Hub
     {
     }
 }

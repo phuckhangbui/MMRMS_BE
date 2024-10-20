@@ -1,14 +1,14 @@
-﻿using DTOs.MaintenanceRequest;
+﻿using DTOs.MachineCheckRequest;
 
 namespace Repository.Interface
 {
-    public interface IMaintenanceRequestRepository
+    public interface IMachineCheckRequestRepository
     {
-        Task CreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto);
-        Task<MaintenanceRequestDto> GetMaintenanceRequest(string maintenanceRequestId);
-        Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequests();
-        Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsByContractId(string contractId);
-        Task<IEnumerable<MaintenanceRequestDto>> GetMaintenanceRequestsByCustomerId(int customerId);
-        Task UpdateRequestStatus(string maintenanceRequestId, string status);
+        Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
+        Task<MachineCheckRequestDto> GetMachineCheckRequest(string MachineCheckRequestId);
+        Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests();
+        Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByContractId(string contractId);
+        Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByCustomerId(int customerId);
+        Task UpdateRequestStatus(string MachineCheckRequestId, string status);
     }
 }

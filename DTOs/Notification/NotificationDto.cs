@@ -38,13 +38,13 @@ namespace DTOs.Notification
                 case var nt when nt == NotificationTypeEnum.Billing.ToString():
                     return "/billing";
 
-                case var nt when nt == NotificationTypeEnum.Delivery.ToString():
-                    return "/delivery";
+                case var nt when nt == NotificationTypeEnum.DeliveryTask.ToString():
+                    return "/DeliveryTask";
 
                 case var nt when nt == NotificationTypeEnum.RequestMaintenance.ToString():
                     return "/maintenance-requests";
 
-                case var nt when nt == NotificationTypeEnum.MaintenanceTicket.ToString():
+                case var nt when nt == NotificationTypeEnum.ComponentReplacementTicket.ToString():
                     return "/maintenance-tickets";
 
                 default:

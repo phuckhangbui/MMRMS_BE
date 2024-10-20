@@ -282,22 +282,22 @@
             public const string CityRequired = "Thành phố là bắt buộc.";
         }
 
-        public static class Delivery
+        public static class DeliveryTask
         {
             //Service
-            public const string DeliveryNotFound = "Mã giao hàng này không tồn tại";
+            public const string DeliveryTaskNotFound = "Mã giao hàng này không tồn tại";
             public const string StatusCannotSet = "Tình trạng giao hàng này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
 
             //DTO
-            public const string DeliveryIdRequired = "Mã giao hàng là bắt buộc";
+            public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
             public const string DateshipIsRequired = "Ngày giao là bắt buộc";
 
         }
 
-        public static class MaintenanceRequest
+        public static class MachineCheckRequest
         {
             //Service
             public const string RequestNotFound = "Mã yêu cầu này không tồn tại";
@@ -308,7 +308,7 @@
             //DTO
         }
 
-        public static class EmployeeTask
+        public static class MachineTask
         {
             //Service
             public const string TaskNotFound = "Mã công việc này không tồn tại";
@@ -317,12 +317,12 @@
             public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
-            public const string TaskNotPossibleMaintenanceTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
+            public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
 
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
-            public const string MaintenanceTicketIdRequired = "Mã ticket thay thế bộ phận máy là bắt buộc";
+            public const string ComponentReplacementTicketIdRequired = "Mã ticket thay thế bộ phận máy là bắt buộc";
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
             public const string TaskContentRequired = "Nội dung công việc là bắt buộc";
             public const string TitleRequired = "Tên công việc là bắt buộc";

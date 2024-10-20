@@ -1,8 +1,8 @@
-﻿namespace DTOs.EmployeeTask
+﻿namespace DTOs.MachineTask
 {
-    public class EmployeeTaskDto
+    public class MachineTaskDto
     {
-        public int EmployeeTaskId { get; set; }
+        public int MachineTaskId { get; set; }
 
         public string? TaskTitle { get; set; }
 
@@ -10,7 +10,7 @@
 
         public int? PreviousTaskId { get; set; }
 
-        public string? MaintenanceTicketId { get; set; }
+        public string? ComponentReplacementTicketId { get; set; }
 
         public string? Content { get; set; }
 

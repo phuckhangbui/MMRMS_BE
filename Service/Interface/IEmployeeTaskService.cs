@@ -1,15 +1,15 @@
-﻿using DTOs.EmployeeTask;
+﻿using DTOs.MachineTask;
 
 namespace Service.Interface
 {
-    public interface IEmployeeTaskService
+    public interface IMachineTaskService
     {
-        Task CreateEmployeeTaskCheckMachine(int managerId, CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto);
-        Task CreateEmployeeTaskProcessMaintenanceTicket(int managerId, CreateEmployeeTaskProcessMaintenanceTickett createEmployeeTaskDto);
-        Task DeleteEmployeeTask(int taskId);
-        Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId);
-        Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks();
-        Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks(int staffId);
-        Task UpdateEmployeeTaskStatus(int employeeTaskId, string status, int accountId);
+        Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto);
+        Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto);
+        Task DeleteMachineTask(int taskId);
+        Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);
+        Task<IEnumerable<MachineTaskDto>> GetMachineTasks();
+        Task<IEnumerable<MachineTaskDto>> GetMachineTasks(int staffId);
+        Task UpdateMachineTaskStatus(int MachineTaskId, string status, int accountId);
     }
 }

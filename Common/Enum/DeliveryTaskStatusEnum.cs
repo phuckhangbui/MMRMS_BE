@@ -1,11 +1,11 @@
 ﻿namespace Common.Enum
 {
-    public enum MaintenanceTicketStatusEnum
+    public enum DeliveryTasktatusEnum
     {
         Created,
-        Paid,
         Assigned,
+        Delivering,
         Completed,
-        Canceled
+        Fail
     }
 }

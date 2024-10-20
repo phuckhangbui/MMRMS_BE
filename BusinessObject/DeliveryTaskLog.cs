@@ -1,10 +1,10 @@
 ﻿namespace BusinessObject
 {
-    public class MaintenanceTicketLog
+    public partial class DeliveryTaskLog
     {
-        public int MaintenanceTicketLogId { get; set; }
+        public int DeliveryTaskLogId { get; set; }
 
-        public string? MaintenanceTicketId { get; set; }
+        public int? DeliveryTaskId { get; set; }
 
         public int? AccountTriggerId { get; set; }
 
@@ -12,7 +12,7 @@
 
         public DateTime? DateCreate { get; set; }
 
-        public virtual MaintenanceTicket? MaintenanceTicket { get; set; }
+        public virtual DeliveryTask? DeliveryTask { get; set; }
 
         public virtual Account? AccountTrigger { get; set; }
     }

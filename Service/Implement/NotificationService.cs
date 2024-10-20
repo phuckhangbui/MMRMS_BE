@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Contract;
-using DTOs.MaintenanceRequest;
+using DTOs.MachineCheckRequest;
 using DTOs.Notification;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -173,13 +173,13 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenDeliveryStatusUpdated(int staffId, ContractAddressDto contractAddress, string status)
+        public async Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status)
         {
             string title = "Cập nhật trạng thái giao hàng";
             string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
 
 
-            string type = NotificationTypeEnum.Delivery.ToString();
+            string type = NotificationTypeEnum.DeliveryTask.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
 
             var account = await _accountRepository.GetAccounById(staffId);
@@ -215,13 +215,13 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenAssignDelivery(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
+        public async Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
         {
             string title = "Bạn có thêm một nhiệm vụ giao hàng mới";
             string body = $"Giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateShip.Date}";
 
 
-            string type = NotificationTypeEnum.Delivery.ToString();
+            string type = NotificationTypeEnum.DeliveryTask.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
 
             var account = await _accountRepository.GetAccounById(staffId);
@@ -257,10 +257,10 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendToManagerWhenCustomerCreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto)
+        public async Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
             string title = "Yêu cầu kiểm tra máy";
-            string body = $"Có một yêu cầu kiểm tra máy của hợp đồng {createMaintenanceRequestDto.ContractId}";
+            string body = $"Có một yêu cầu kiểm tra máy của hợp đồng {createMachineCheckRequestDto.ContractId}";
 
             var managerList = await _accountRepository.GetManagerAccounts();
 
@@ -308,13 +308,13 @@ namespace Service.Implement
 
         }
 
-        public async Task SendNotificationToCustomerWhenCreateMaintenanceTicket(int customerId, double totalAmount, string componentName)
+        public async Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string componentName)
         {
             string title = "Bạn có ticket thay sửa bộ phận cần được thanh toán";
             string body = $"Bộ phận {componentName} cần được thay/sửa với tổng giá tiền là {totalAmount}";
 
 
-            string type = NotificationTypeEnum.MaintenanceTicket.ToString();
+            string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
 
             var account = await _accountRepository.GetAccounById(customerId);

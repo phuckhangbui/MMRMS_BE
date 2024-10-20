@@ -1,4 +1,4 @@
-﻿using DTOs.MaintenanceRequest;
+﻿using DTOs.MachineCheckRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -7,23 +7,23 @@ using Service.Interface;
 namespace API.Controllers
 {
     [Route("api/maintenance-request")]
-    public class MaintenanceRequestController : BaseApiController
+    public class MachineCheckRequestController : BaseApiController
     {
-        private readonly IMaintenanceRequestService _maintenanceRequestService;
+        private readonly IMachineCheckRequestService _MachineCheckRequestService;
 
-        public MaintenanceRequestController(IMaintenanceRequestService maintenanceRequestService)
+        public MachineCheckRequestController(IMachineCheckRequestService MachineCheckRequestService)
         {
-            _maintenanceRequestService = maintenanceRequestService;
+            _MachineCheckRequestService = MachineCheckRequestService;
         }
 
 
         [HttpGet]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequestsForManager()
+        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForManager()
         {
             try
             {
-                IEnumerable<MaintenanceRequestDto> list = await _maintenanceRequestService.GetMaintenanceRequests();
+                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -36,12 +36,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{maintenanceRequestId}")]
-        public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequest([FromRoute] string maintenanceRequestId)
+        [HttpGet("{MachineCheckRequestId}")]
+        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequest([FromRoute] string MachineCheckRequestId)
         {
             try
             {
-                IEnumerable<MaintenanceRequestDto> list = await _maintenanceRequestService.GetMaintenanceRequests();
+                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests();
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -56,7 +56,7 @@ namespace API.Controllers
 
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequestsForCustomer()
+        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
             if (customerId == 0)
@@ -66,7 +66,7 @@ namespace API.Controllers
 
             try
             {
-                IEnumerable<MaintenanceRequestDto> list = await _maintenanceRequestService.GetMaintenanceRequests(customerId);
+                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequests(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -81,12 +81,12 @@ namespace API.Controllers
 
         [HttpGet("contract/{contractId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<MaintenanceRequestDto>>> GetMaintenanceRequestsForContract(string contractId)
+        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForContract(string contractId)
         {
 
             try
             {
-                IEnumerable<MaintenanceRequestDto> list = await _maintenanceRequestService.GetMaintenanceRequestsOfContract(contractId);
+                IEnumerable<MachineCheckRequestDto> list = await _MachineCheckRequestService.GetMachineCheckRequestsOfContract(contractId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -101,7 +101,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult> CreateMaintenanceRequest(CreateMaintenanceRequestDto createMaintenanceRequestDto)
+        public async Task<ActionResult> CreateMachineCheckRequest(CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
             int customerId = GetLoginAccountId();
             if (customerId == 0)
@@ -111,7 +111,7 @@ namespace API.Controllers
 
             try
             {
-                await _maintenanceRequestService.CreateMaintenanceRequest(customerId, createMaintenanceRequestDto);
+                await _MachineCheckRequestService.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -125,9 +125,9 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{maintenanceRequestId}")]
+        [HttpPatch("{MachineCheckRequestId}")]
         [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string maintenanceRequestId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string MachineCheckRequestId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -137,7 +137,7 @@ namespace API.Controllers
 
             try
             {
-                await _maintenanceRequestService.UpdateRequestStatus(maintenanceRequestId, status, accountId);
+                await _MachineCheckRequestService.UpdateRequestStatus(MachineCheckRequestId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

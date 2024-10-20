@@ -42,13 +42,13 @@ public partial class Contract
 
     public virtual ICollection<ContractTerm> ContractTerms { get; set; } = new List<ContractTerm>();
 
-    public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
+    public virtual ICollection<DeliveryTask> Deliveries { get; set; } = new List<DeliveryTask>();
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new List<MaintenanceRequest>();
+    public virtual ICollection<MachineCheckRequest> MachineCheckRequests { get; set; } = new List<MachineCheckRequest>();
 
-    public virtual ICollection<MaintenanceTicket> MaintenanceTickets { get; set; } = new List<MaintenanceTicket>();
+    public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
 
-    public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
+    public virtual ICollection<MachineTask> MachineTasks { get; set; } = new List<MachineTask>();
 }

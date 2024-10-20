@@ -3,33 +3,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
-    public class MaintenanceRequestDao : BaseDao<MaintenanceRequest>
+    public class MachineCheckRequestDao : BaseDao<MachineCheckRequest>
     {
-        private static MaintenanceRequestDao instance = null;
+        private static MachineCheckRequestDao instance = null;
         private static readonly object instacelock = new object();
 
-        private MaintenanceRequestDao()
+        private MachineCheckRequestDao()
         {
 
         }
 
-        public static MaintenanceRequestDao Instance
+        public static MachineCheckRequestDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new MaintenanceRequestDao();
+                    instance = new MachineCheckRequestDao();
                 }
                 return instance;
             }
         }
 
-        public async Task<IEnumerable<MaintenanceRequest>> GetMaintenanceRequests()
+        public async Task<IEnumerable<MachineCheckRequest>> GetMachineCheckRequests()
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MaintenanceRequests
+                return await context.MachineCheckRequests
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
@@ -37,15 +37,15 @@ namespace DAO
             }
         }
 
-        public async Task<MaintenanceRequest> GetMaintenanceRequest(string maintenanceRequestId)
+        public async Task<MachineCheckRequest> GetMachineCheckRequest(string MachineCheckRequestId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MaintenanceRequests
+                return await context.MachineCheckRequests
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
-                    .FirstOrDefaultAsync(m => m.RequestId == maintenanceRequestId);
+                    .FirstOrDefaultAsync(m => m.MachineCheckRequestId == MachineCheckRequestId);
             }
         }
     }

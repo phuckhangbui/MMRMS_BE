@@ -2,23 +2,23 @@
 
 namespace DAO
 {
-    public class EmployeeTaskLogDao : BaseDao<TaskLog>
+    public class MachineTaskLogDao : BaseDao<MachineTaskLog>
     {
-        private static EmployeeTaskLogDao instance = null;
+        private static MachineTaskLogDao instance = null;
         private static readonly object instacelock = new object();
 
-        private EmployeeTaskLogDao()
+        private MachineTaskLogDao()
         {
 
         }
 
-        public static EmployeeTaskLogDao Instance
+        public static MachineTaskLogDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new EmployeeTaskLogDao();
+                    instance = new MachineTaskLogDao();
                 }
                 return instance;
             }

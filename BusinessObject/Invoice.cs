@@ -30,7 +30,7 @@ public partial class Invoice
 
     public virtual Account? AccountPaid { get; set; }
 
-    public virtual MaintenanceTicket? MaintenanceTicket { get; set; }
+    public virtual ComponentReplacementTicket? ComponentReplacementTicket { get; set; }
 
     public virtual DigitalTransaction? DigitalTransaction { get; set; }
 

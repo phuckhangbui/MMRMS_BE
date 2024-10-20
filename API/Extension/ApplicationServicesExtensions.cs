@@ -27,10 +27,10 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IRentingServiceRepository, RentingServiceRepository>();
-        services.AddScoped<IDeliveryRepository, DeliveryRepository>();
-        services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
-        services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
-        services.AddScoped<IMaintenanceTicketRepository, MaintenanceTicketRepository>();
+        services.AddScoped<IDeliveryTaskRepository, DeliveryTaskRepository>();
+        services.AddScoped<IMachineTaskRepository, MachineTaskRepository>();
+        services.AddScoped<IMachineCheckRequestRepository, MachineCheckRequestRepository>();
+        services.AddScoped<IComponentReplacementTicketRepository, ComponentReplacementTicketRepository>();
         services.AddScoped<IAccountLogRepository, AccountLogRepository>();
         services.AddScoped<ITermRepository, TermRepository>();
 
@@ -53,10 +53,10 @@ public static class ApplicationServicesExtensions
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAddressService, AddressServiceImpl>();
         services.AddScoped<IRentingServiceService, RentingServiceServiceImpl>();
-        services.AddScoped<IDeliveryService, DeliveryService>();
-        services.AddScoped<IEmployeeTaskService, EmployeeTaskService>();
-        services.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
-        services.AddScoped<IMaintenanceTicketService, MaintenanceTicketService>();
+        services.AddScoped<IDeliverService, DeliveryService>();
+        services.AddScoped<IMachineTaskService, MachineTaskService>();
+        services.AddScoped<IMachineCheckRequestService, MachineCheckRequestService>();
+        services.AddScoped<IComponentReplacementTicketService, ComponentReplacementTicketService>();
         services.AddScoped<ILogSerevice, LogSereviceImpl>();
         services.AddScoped<ITermService, TermService>();
 

@@ -1,5 +1,5 @@
 ﻿using DTOs.Contract;
-using DTOs.MaintenanceRequest;
+using DTOs.MachineCheckRequest;
 using DTOs.Notification;
 
 namespace Repository.Interface
@@ -9,12 +9,12 @@ namespace Repository.Interface
         Task CreateNotification(CreateNotificationDto createNotificationDto);
         Task MarkNotificationAsRead(int id);
         Task<IEnumerable<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId);
-        Task SendToManagerWhenCustomerCreateMaintenanceRequest(int customerId, CreateMaintenanceRequestDto createMaintenanceRequestDto);
+        Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
         Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status);
         Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status);
-        Task SendNotificationToStaffWhenDeliveryStatusUpdated(int staffId, ContractAddressDto contractAddress, string status);
-        Task SendNotificationToStaffWhenAssignDelivery(int staffId, ContractAddressDto contractAddress, DateTime dateShip);
+        Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status);
+        Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip);
         Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
-        Task SendNotificationToCustomerWhenCreateMaintenanceTicket(int customerId, double totalAmount, string? componentName);
+        Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string? componentName);
     }
 }

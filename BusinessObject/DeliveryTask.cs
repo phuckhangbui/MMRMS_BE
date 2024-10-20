@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject;
 
-public partial class Delivery
+public partial class DeliveryTask
 {
-    public int DeliveryId { get; set; }
+    public int DeliveryTaskId { get; set; }
 
     public int? StaffId { get; set; }
 
@@ -22,5 +22,5 @@ public partial class Delivery
 
     public virtual Account? Staff { get; set; }
 
-    public virtual ICollection<DeliveryLog> DeliveryLogs { get; set; } = new List<DeliveryLog>();
+    public virtual ICollection<DeliveryTaskLog> DeliveryTaskLogs { get; set; } = new List<DeliveryTaskLog>();
 }

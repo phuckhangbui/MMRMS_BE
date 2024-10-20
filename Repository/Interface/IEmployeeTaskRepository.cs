@@ -1,17 +1,17 @@
 ﻿
-using DTOs.EmployeeTask;
+using DTOs.MachineTask;
 
 namespace Repository.Interface
 {
-    public interface IEmployeeTaskRepository
+    public interface IMachineTaskRepository
     {
-        Task CreateEmployeeTaskWithRequest(int managerId, CreateEmployeeTaskCheckMachineDto createEmployeeTaskDto);
+        Task CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto);
         Task Delete(int taskId);
-        Task<EmployeeTaskDto> GetEmployeeTask(int taskId);
-        Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTaskByStaff(int staffId);
-        Task<EmployeeTaskDisplayDetail> GetEmployeeTaskDetail(int taskId);
-        Task<IEnumerable<EmployeeTaskDto>> GetEmployeeTasks();
-        Task<IEnumerable<EmployeeTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date);
-        Task UpdateTaskStatus(int employeeTaskId, string status, int accountId);
+        Task<MachineTaskDto> GetMachineTask(int taskId);
+        Task<IEnumerable<MachineTaskDto>> GetMachineTaskByStaff(int staffId);
+        Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);
+        Task<IEnumerable<MachineTaskDto>> GetMachineTasks();
+        Task<IEnumerable<MachineTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date);
+        Task UpdateTaskStatus(int MachineTaskId, string status, int accountId);
     }
 }

@@ -1,23 +1,23 @@
 ﻿using Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.EmployeeTask
+namespace DTOs.MachineTask
 {
-    public class CreateEmployeeTaskProcessMaintenanceTickett
+    public class CreateMachineTaskProcessComponentReplacementTickett
     {
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.MaintenanceTicketIdRequired)]
-        public string MaintenanceTicketId { get; set; }
+        [Required(ErrorMessage = MessageConstant.MachineTask.ComponentReplacementTicketIdRequired)]
+        public string ComponentReplacementTicketId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.StaffIdRequired)]
+        [Required(ErrorMessage = MessageConstant.MachineTask.StaffIdRequired)]
         public int StaffId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.TitleRequired)]
+        [Required(ErrorMessage = MessageConstant.MachineTask.TitleRequired)]
         public string TaskTitle { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.TaskContentRequired)]
+        [Required(ErrorMessage = MessageConstant.MachineTask.TaskContentRequired)]
         public string TaskContent { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.EmployeeTask.DateStartRequired)]
+        [Required(ErrorMessage = MessageConstant.MachineTask.DateStartRequired)]
         public DateTime DateStart { get; set; }
     }
 }
