@@ -14,7 +14,7 @@ public partial class ContractPayment
 
     public DateTime? CustomerPaidDate { get; set; }
 
-    public DateTime? SystemPaidDate { get; set; }
+    //public DateTime? SystemPaidDate { get; set; }
 
     public string? Status { get; set; }
 

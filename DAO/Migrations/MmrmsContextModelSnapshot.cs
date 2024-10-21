@@ -528,7 +528,7 @@ namespace DAO.Migrations
                         .IsUnique()
                         .HasFilter("[InvoiceId] IS NOT NULL");
 
-                    b.ToTable("DigitalTransactions");
+                    b.ToTable("DigitalTransactions", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
@@ -679,7 +679,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("AccountPaidId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.LogDetail", b =>

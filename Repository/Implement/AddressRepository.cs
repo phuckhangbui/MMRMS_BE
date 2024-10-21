@@ -32,9 +32,22 @@ namespace Repository.Implement
             var address = _mapper.Map<Address>(addressRequestDto);
 
             address.AccountId = customerId;
-            address.IsDelete = false;
+            //address.IsDelete = false;
 
             await AddressDao.Instance.CreateAsync(address);
+        }
+
+        public async Task<bool> DeleteAddress(int addressId)
+        {
+            var address = await AddressDao.Instance.GetAddressById(addressId);
+            if (address != null)
+            {
+                await AddressDao.Instance.RemoveAsync(address);
+
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<IEnumerable<AddressDto>> GetAddressesForCustomer(int customerId)
@@ -47,6 +60,25 @@ namespace Repository.Implement
             }
 
             return [];
+        }
+
+        public async Task<AddressDto?> UpdateAddress(int accountId, int addressId, AddressRequestDto addressRequestDto)
+        {
+            var addresses = await AddressDao.Instance.GetAddressesForCustomer(accountId);
+            var currentAddress = addresses.FirstOrDefault(a => a.AddressId == addressId);
+
+            if (currentAddress != null)
+            {
+                currentAddress.AddressBody = addressRequestDto.AddressBody;
+                currentAddress.Coordinates = addressRequestDto.Coordinates;
+                currentAddress.City = addressRequestDto.City;
+                currentAddress.District = addressRequestDto.District;
+
+                currentAddress = await AddressDao.Instance.UpdateAsync(currentAddress);
+                return _mapper.Map<AddressDto>(currentAddress);
+            }
+
+            return null;
         }
     }
 }

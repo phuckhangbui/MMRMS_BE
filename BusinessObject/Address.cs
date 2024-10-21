@@ -12,8 +12,6 @@ public partial class Address
 
     public string? City { get; set; }
 
-    public bool? IsDelete { get; set; }
-
     public string? Coordinates { get; set; }
 
     public virtual Account? Account { get; set; }
