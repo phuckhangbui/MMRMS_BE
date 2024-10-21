@@ -137,6 +137,16 @@ namespace Repository.Mapper
 
             CreateMap<SerialNumberProduct, SerialNumberProductDto>();
             CreateMap<SerialNumberProduct, SerialNumberProductOptionDto>();
+            CreateMap<SerialNumberProductLog, SerialNumberProductLogDto>()
+                .ForMember(dest => dest.AccountTriggerName,
+                        opt => opt.MapFrom(src => src.AccountTrigger != null
+                            ? src.AccountTrigger.Name
+                            : null));
+            CreateMap<ProductComponentStatus, ProductComponentStatusDto>()
+                .ForMember(dest => dest.ComponentName,
+                        opt => opt.MapFrom(src => src.Component != null
+                            ? src.Component.Component.ComponentName
+                            : null));
 
             CreateMap<Content, ContentDto>()
                 .ForMember(dest => dest.AccountCreateName, opt => opt.MapFrom(src => src.Account != null ? src.Account.Name : null));

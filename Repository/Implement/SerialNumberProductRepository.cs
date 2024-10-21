@@ -141,7 +141,7 @@ namespace Repository.Implement
                 return new List<SerialNumberProductLogDto>();
             }
 
-            return _mapper.Map<IEnumerable<SerialNumberProductLogDto>>(serialNumberProduct.SerialNumberProductLogs);
+            return _mapper.Map<List<SerialNumberProductLogDto>>(serialNumberProduct.SerialNumberProductLogs);
         }
 
         public async Task<IEnumerable<SerialNumberProductOptionDto>> GetSerialProductNumbersAvailableForRenting(string rentingRequestId)
