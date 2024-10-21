@@ -125,7 +125,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                var serialNumberProduct = await context.SerialNumberProducts.Include(c => c.SerialNumberProductLogs).Include(c => c.ProductComponentStatuses).FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+                var serialNumberProduct = await context.SerialNumberProducts.Include(c => c.SerialNumberProductLogs).ThenInclude(l => l.AccountTrigger).Include(c => c.ProductComponentStatuses).ThenInclude(c => c.Component).ThenInclude(c => c.Component).FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
 
                 return serialNumberProduct;
             }

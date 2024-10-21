@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Manager")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<IActionResult> CreateSerialNumberProduct([FromBody] SerialNumberProductCreateRequestDto createSerialProductNumberDto)
         {
             if (!ModelState.IsValid)
