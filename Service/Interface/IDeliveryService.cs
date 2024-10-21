@@ -1,12 +1,12 @@
-﻿using DTOs.Delivery;
+﻿using DTOs.DeliveryTask;
 
 namespace Service.Interface
 {
-    public interface IDeliveryService
+    public interface IDeliverService
     {
-        Task AssignDelivery(int managerId, AssignDeliveryDto assignDeliveryDto);
-        Task<IEnumerable<DeliveryDto>> GetDeliveries();
-        Task<IEnumerable<DeliveryDto>> GetDeliveries(int staffId);
-        Task UpdateDeliveryStatus(int deliveryId, string status, int accountId);
+        Task AssignDeliveryTask(int managerId, AssignDeliveryTaskDto assignDeliveryTaskDto);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveries(int staffId);
+        Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId);
     }
 }

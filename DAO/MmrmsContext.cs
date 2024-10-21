@@ -41,7 +41,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ContractTerm> ContractTerms { get; set; }
 
-    public virtual DbSet<Delivery> Deliveries { get; set; }
+    public virtual DbSet<DeliveryTask> Deliveries { get; set; }
 
     public virtual DbSet<Feedback> Feedbacks { get; set; }
 
@@ -53,11 +53,11 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<LogDetail> LogDetails { get; set; }
 
-    public virtual DbSet<MaintenanceTicket> MaintenanceTickets { get; set; }
+    public virtual DbSet<ComponentReplacementTicket> ComponentReplacementTickets { get; set; }
 
-    public virtual DbSet<MaintenanceTicketLog> MaintenanceTicketLogs { get; set; }
+    public virtual DbSet<ComponentReplacementTicketLog> ComponentReplacementTicketLogs { get; set; }
 
-    public virtual DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
+    public virtual DbSet<MachineCheckRequest> MachineCheckRequests { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
@@ -79,9 +79,9 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<RentingRequestAddress> RentingRequestAddresses { get; set; }
 
-    public virtual DbSet<EmployeeTask> EmployeeTasks { get; set; }
+    public virtual DbSet<MachineTask> MachineTasks { get; set; }
 
-    public virtual DbSet<TaskLog> TaskLogs { get; set; }
+    public virtual DbSet<MachineTaskLog> MachineTaskLogs { get; set; }
 
     public virtual DbSet<SerialNumberProductLog> SerialNumberProductLogs { get; set; }
 
@@ -89,7 +89,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ServiceRentingRequest> ServiceRentingRequests { get; set; }
 
-    public virtual DbSet<DeliveryLog> DeliveryLogs { get; set; }
+    public virtual DbSet<DeliveryTaskLog> DeliveryTaskLogs { get; set; }
 
     public virtual DbSet<Term> Terms { get; set; }
 
@@ -387,7 +387,7 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Invoices_Account");
 
             // One-to-one relationship with MaintainTicket
-            entity.HasOne(d => d.MaintenanceTicket)
+            entity.HasOne(d => d.ComponentReplacementTicket)
                 .WithOne(p => p.Invoice)
                 .HasForeignKey<Invoice>(d => d.MaintainTicketId)
                 .HasConstraintName("FK_Invoice_MaintainTicket");
@@ -420,23 +420,23 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_ContractTerm_ContractID");
         });
 
-        modelBuilder.Entity<Delivery>(entity =>
+        modelBuilder.Entity<DeliveryTask>(entity =>
         {
-            entity.HasKey(e => e.DeliveryId);
+            entity.HasKey(e => e.DeliveryTaskId);
 
-            entity.ToTable("Delivery");
+            entity.ToTable("DeliveryTask");
 
-            entity.Property(e => e.DeliveryId)
+            entity.Property(e => e.DeliveryTaskId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
             entity.HasOne(d => d.Contract).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_Delivery_ContractID");
+                .HasConstraintName("FK_DeliveryTask_ContractID");
 
             entity.HasOne(d => d.Staff).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.StaffId)
-                .HasConstraintName("FK_Delivery_StaffID");
+                .HasConstraintName("FK_DeliveryTask_StaffID");
         });
 
 
@@ -498,61 +498,61 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_LogDetail_AccountID");
         });
 
-        modelBuilder.Entity<MaintenanceTicket>(entity =>
+        modelBuilder.Entity<ComponentReplacementTicket>(entity =>
         {
-            entity.HasKey(e => e.MaintenanceTicketId);
+            entity.HasKey(e => e.ComponentReplacementTicketId);
 
-            entity.ToTable("MaintenanceTicket");
+            entity.ToTable("ComponentReplacementTicket");
 
-            entity.HasOne(d => d.Component).WithMany(p => p.MaintenanceTickets)
+            entity.HasOne(d => d.Component).WithMany(p => p.ComponentReplacementTickets)
                 .HasForeignKey(d => d.ComponentId)
-                .HasConstraintName("FK_MaintenanceTicket_ComponentID");
+                .HasConstraintName("FK_ComponentReplacementTicket_ComponentID");
 
 
-            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.MaintenanceTickets)
+            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ComponentReplacementTickets)
                 .HasForeignKey(d => d.ProductSerialNumber)
-                .HasConstraintName("FK_MaintenanceTicket_SerialNumberProduct");
+                .HasConstraintName("FK_ComponentReplacementTicket_SerialNumberProduct");
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceTickets)
+            entity.HasOne(d => d.Contract).WithMany(p => p.ComponentReplacementTickets)
                 .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_MaintenanceTicket_ContractID");
+                .HasConstraintName("FK_ComponentReplacementTicket_ContractID");
 
             entity.HasOne(d => d.Invoice)
-                .WithOne(p => p.MaintenanceTicket)
-                .HasForeignKey<MaintenanceTicket>(d => d.InvoiceId)
+                .WithOne(p => p.ComponentReplacementTicket)
+                .HasForeignKey<ComponentReplacementTicket>(d => d.InvoiceId)
                 .HasConstraintName("FK_Invoice_MaintainTicket");
 
-            entity.HasOne(d => d.EmployeeTaskCreate).WithMany(p => p.MaintenanceTicketsCreateFromTask)
-                .HasForeignKey(d => d.EmployeeTaskCreateId)
-                .HasConstraintName("FK_MaintenanceTicket_EmployeeTaskCreated");
+            entity.HasOne(d => d.MachineTaskCreate).WithMany(p => p.ComponentReplacementTicketsCreateFromTask)
+                .HasForeignKey(d => d.MachineTaskCreateId)
+                .HasConstraintName("FK_ComponentReplacementTicket_MachineTaskCreated");
 
         });
 
-        modelBuilder.Entity<MaintenanceTicketLog>(entity =>
+        modelBuilder.Entity<ComponentReplacementTicketLog>(entity =>
         {
-            entity.HasKey(e => e.MaintenanceTicketLogId);
+            entity.HasKey(e => e.ComponentReplacementTicketLogId);
 
-            entity.ToTable("MaintenanceTicketLog");
+            entity.ToTable("ComponentReplacementTicketLog");
 
-            entity.Property(e => e.MaintenanceTicketLogId)
+            entity.Property(e => e.ComponentReplacementTicketLogId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.MaintenanceTicket).WithMany(p => p.MaintenanceTicketLogs)
-                .HasForeignKey(d => d.MaintenanceTicketId)
-                .HasConstraintName("FK_MaintenanceTicket_Log");
+            entity.HasOne(d => d.ComponentReplacementTicket).WithMany(p => p.ComponentReplacementTicketLogs)
+                .HasForeignKey(d => d.ComponentReplacementTicketId)
+                .HasConstraintName("FK_ComponentReplacementTicket_Log");
 
         });
 
-        modelBuilder.Entity<MaintenanceRequest>(entity =>
+        modelBuilder.Entity<MachineCheckRequest>(entity =>
         {
-            entity.HasKey(e => e.RequestId);
+            entity.HasKey(e => e.MachineCheckRequestId);
 
-            entity.ToTable("MaintenanceRequest");
+            entity.ToTable("MachineCheckRequest");
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.MaintenanceRequests)
+            entity.HasOne(d => d.Contract).WithMany(p => p.MachineCheckRequests)
                 .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_MaintenanceRequest_Contract");
+                .HasConstraintName("FK_MachineCheckRequest_Contract");
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -686,8 +686,8 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.EmployeeTask).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.EmployeeTaskId)
+            entity.HasOne(d => d.MachineTask).WithMany(p => p.Reports)
+                .HasForeignKey(d => d.MachineTaskId)
                 .HasConstraintName("FK_Report_TaskID");
         });
 
@@ -701,27 +701,27 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Request).WithMany(p => p.RequestResponses)
-                .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("FK_RequestResponse_MaintenanceRequest");
+            entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.RequestResponses)
+                .HasForeignKey(d => d.MachineCheckRequestId)
+                .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
 
 
 
-            entity.HasOne(d => d.EmployeeTask)
+            entity.HasOne(d => d.MachineTask)
                   .WithOne(t => t.RequestResponse)
-                  .HasForeignKey<EmployeeTask>(t => t.RequestResponseId)
+                  .HasForeignKey<MachineTask>(t => t.RequestResponseId)
                   .IsRequired()
                   .OnDelete(DeleteBehavior.Cascade)
                   .HasConstraintName("FK_Response_Task");
         });
 
-        modelBuilder.Entity<EmployeeTask>(entity =>
+        modelBuilder.Entity<MachineTask>(entity =>
         {
-            entity.HasKey(e => e.EmployeeTaskId);
+            entity.HasKey(e => e.MachineTaskId);
 
-            entity.ToTable("EmployeeTask");
+            entity.ToTable("MachineTask");
 
-            entity.Property(e => e.EmployeeTaskId)
+            entity.Property(e => e.MachineTaskId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -729,7 +729,7 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.StaffId)
                 .HasConstraintName("FK_Task_Staff");
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.EmployeeTasks)
+            entity.HasOne(d => d.Contract).WithMany(p => p.MachineTasks)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_Task_Contract");
 
@@ -737,59 +737,59 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ManagerId)
                 .HasConstraintName("FK_Task_Manager");
 
-            entity.HasOne(d => d.MaintenanceTicket).WithMany(p => p.EmployeeTasks)
-               .HasForeignKey(d => d.MaintenanceTicketId)
-               .HasConstraintName("FK_MaintenanceTicketId_Task");
+            entity.HasOne(d => d.ComponentReplacementTicket).WithMany(p => p.MachineTasks)
+               .HasForeignKey(d => d.ComponentReplacementTicketId)
+               .HasConstraintName("FK_ComponentReplacementTicketId_Task");
 
             entity.HasOne(d => d.RequestResponse)
-                  .WithOne(t => t.EmployeeTask)
-                  .HasForeignKey<EmployeeTask>(t => t.RequestResponseId)
+                  .WithOne(t => t.MachineTask)
+                  .HasForeignKey<MachineTask>(t => t.RequestResponseId)
                   .HasConstraintName("FK_Task_Response");
 
             entity.HasOne(d => d.PreviousTask)
                 .WithOne()
-                .HasForeignKey<EmployeeTask>(d => d.PreviousTaskId)
+                .HasForeignKey<MachineTask>(d => d.PreviousTaskId)
                 .HasConstraintName("FK_Task_PreviousTask");
         });
 
-        modelBuilder.Entity<TaskLog>(entity =>
+        modelBuilder.Entity<MachineTaskLog>(entity =>
         {
-            entity.HasKey(e => e.TaskLogId);
+            entity.HasKey(e => e.MachineTaskLogId);
 
-            entity.ToTable("TaskLog");
+            entity.ToTable("MachineTaskLog");
 
-            entity.Property(e => e.TaskLogId)
+            entity.Property(e => e.MachineTaskLogId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.EmployeeTask).WithMany(p => p.TaskLogs)
-                .HasForeignKey(d => d.EmployeeTaskId)
+            entity.HasOne(d => d.MachineTask).WithMany(p => p.MachineTaskLogs)
+                .HasForeignKey(d => d.MachineTaskId)
                   .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_TaskLog_TaskID");
+                .HasConstraintName("FK_MachineTaskLog_TaskID");
 
-            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.TaskLogs)
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.MachineTaskLogs)
                 .HasForeignKey(d => d.AccountTriggerId)
-                .HasConstraintName("FK_TaskLog_AccountID");
+                .HasConstraintName("FK_MachineTaskLog_AccountID");
         });
 
-        modelBuilder.Entity<DeliveryLog>(entity =>
+        modelBuilder.Entity<DeliveryTaskLog>(entity =>
         {
-            entity.HasKey(e => e.DeliveryLogId);
+            entity.HasKey(e => e.DeliveryTaskLogId);
 
-            entity.ToTable("DeliveryLog");
+            entity.ToTable("DeliveryTaskLog");
 
-            entity.Property(e => e.DeliveryLogId)
+            entity.Property(e => e.DeliveryTaskLogId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Delivery).WithMany(p => p.DeliveryLogs)
-                .HasForeignKey(d => d.DeliveryId)
-                .HasConstraintName("FK_DeliveryLog_DeliveryID");
+            entity.HasOne(d => d.DeliveryTask).WithMany(p => p.DeliveryTaskLogs)
+                .HasForeignKey(d => d.DeliveryTaskId)
+                .HasConstraintName("FK_DeliveryTaskLog_DeliveryTaskID");
 
-            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.DeliveryLogs)
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.DeliveryTaskLogs)
                 .HasForeignKey(d => d.AccountTriggerId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_DeliveryLog_AccountID");
+                .HasConstraintName("FK_DeliveryTaskLog_AccountID");
         });
 
         modelBuilder.Entity<RentingService>(entity =>

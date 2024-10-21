@@ -1,11 +1,11 @@
 ﻿using DTOs.Contract;
-using DTOs.MaintenanceTicket;
+using DTOs.ComponentReplacementTicket;
 
-namespace DTOs.EmployeeTask
+namespace DTOs.MachineTask
 {
-    public class EmployeeTaskDisplayDetail
+    public class MachineTaskDisplayDetail
     {
-        public int EmployeeTaskId { get; set; }
+        public int MachineTaskId { get; set; }
 
         public string? TaskTitle { get; set; }
 
@@ -13,7 +13,7 @@ namespace DTOs.EmployeeTask
 
         public int? PreviousTaskId { get; set; }
 
-        public string? MaintenanceTicketId { get; set; }
+        public string? ComponentReplacementTicketId { get; set; }
 
         public string? Content { get; set; }
 
@@ -45,7 +45,7 @@ namespace DTOs.EmployeeTask
 
         public ContractAddressDto? Address { get; set; }
 
-        public IEnumerable<MaintenanceTicketDto>? MaintenanceTicketCreateFromTaskList { get; set; }
+        public IEnumerable<ComponentReplacementTicketDto>? ComponentReplacementTicketCreateFromTaskList { get; set; }
 
         public IEnumerable<TaskLogDto>? TaskLogs { get; set; }
 

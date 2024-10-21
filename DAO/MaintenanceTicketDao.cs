@@ -3,33 +3,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
-    public class MaintenanceTicketDao : BaseDao<MaintenanceTicket>
+    public class ComponentReplacementTicketDao : BaseDao<ComponentReplacementTicket>
     {
-        private static MaintenanceTicketDao instance = null;
+        private static ComponentReplacementTicketDao instance = null;
         private static readonly object instacelock = new object();
 
-        private MaintenanceTicketDao()
+        private ComponentReplacementTicketDao()
         {
 
         }
 
-        public static MaintenanceTicketDao Instance
+        public static ComponentReplacementTicketDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new MaintenanceTicketDao();
+                    instance = new ComponentReplacementTicketDao();
                 }
                 return instance;
             }
         }
 
-        public async Task<IEnumerable<MaintenanceTicket>> GetMaintenanceTickets()
+        public async Task<IEnumerable<ComponentReplacementTicket>> GetComponentReplacementTickets()
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MaintenanceTickets
+                return await context.ComponentReplacementTickets
                     .Include(c => c.EmployeeCreate).Include(c => c.Component).Include(c => c.Contract)
                     .ToListAsync();
             }

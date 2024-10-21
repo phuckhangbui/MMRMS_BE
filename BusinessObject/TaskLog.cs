@@ -1,10 +1,10 @@
 ﻿namespace BusinessObject;
 
-public partial class TaskLog
+public partial class MachineTaskLog
 {
-    public int TaskLogId { get; set; }
+    public int MachineTaskLogId { get; set; }
 
-    public int? EmployeeTaskId { get; set; }
+    public int? MachineTaskId { get; set; }
 
     public int? AccountTriggerId { get; set; }
 
@@ -12,7 +12,7 @@ public partial class TaskLog
 
     public DateTime? DateCreate { get; set; }
 
-    public virtual EmployeeTask? EmployeeTask { get; set; }
+    public virtual MachineTask? MachineTask { get; set; }
 
     public virtual Account? AccountTrigger { get; set; }
 }

@@ -1,14 +1,14 @@
-﻿using DTOs.Delivery;
+﻿using DTOs.DeliveryTask;
 
 namespace Repository.Interface
 {
-    public interface IDeliveryRepository
+    public interface IDeliveryTaskRepository
     {
-        Task AssignDeliveryToStaff(int managerId, AssignDeliveryDto assignDeliveryDto);
-        Task<IEnumerable<DeliveryDto>> GetDeliveries();
-        Task<IEnumerable<DeliveryDto>> GetDeliveriesForStaff(int staffId);
-        Task<IEnumerable<DeliveryDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip);
-        Task<DeliveryDto> GetDelivery(int deliveryId);
-        Task UpdateDeliveryStatus(int deliveryId, string status, int accountId);
+        Task AssignDeliveryTaskToStaff(int managerId, AssignDeliveryTaskDto assignDeliveryTaskDto);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesForStaff(int staffId);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip);
+        Task<DeliveryTaskDto> GetDeliveryTask(int DeliveryTaskId);
+        Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId);
     }
 }

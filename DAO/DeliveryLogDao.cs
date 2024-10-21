@@ -2,23 +2,23 @@
 
 namespace DAO
 {
-    public class DeliveryLogDao : BaseDao<DeliveryLog>
+    public class DeliveryTaskLogDao : BaseDao<DeliveryTaskLog>
     {
-        private static DeliveryLogDao instance = null;
+        private static DeliveryTaskLogDao instance = null;
         private static readonly object instacelock = new object();
 
-        private DeliveryLogDao()
+        private DeliveryTaskLogDao()
         {
 
         }
 
-        public static DeliveryLogDao Instance
+        public static DeliveryTaskLogDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new DeliveryLogDao();
+                    instance = new DeliveryTaskLogDao();
                 }
                 return instance;
             }

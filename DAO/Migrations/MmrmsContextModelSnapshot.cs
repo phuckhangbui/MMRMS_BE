@@ -250,6 +250,104 @@ namespace DAO.Migrations
                     b.ToTable("ComponentProduct", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
+                {
+                    b.Property<string>("ComponentReplacementTicketId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("AdditionalFee")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("ComponentPrice")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateRepair")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("EmployeeCreateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InvoiceId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("MachineTaskCreateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductSerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("ComponentReplacementTicketId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("EmployeeCreateId");
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique()
+                        .HasFilter("[InvoiceId] IS NOT NULL");
+
+                    b.HasIndex("MachineTaskCreateId");
+
+                    b.HasIndex("ProductSerialNumber");
+
+                    b.ToTable("ComponentReplacementTicket", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.ComponentReplacementTicketLog", b =>
+                {
+                    b.Property<int>("ComponentReplacementTicketLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentReplacementTicketLogId"));
+
+                    b.Property<int?>("AccountTriggerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ComponentReplacementTicketId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ComponentReplacementTicketLogId");
+
+                    b.HasIndex("AccountTriggerId");
+
+                    b.HasIndex("ComponentReplacementTicketId");
+
+                    b.ToTable("ComponentReplacementTicketLog", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.Content", b =>
                 {
                     b.Property<int>("ContentId")
@@ -423,13 +521,13 @@ namespace DAO.Migrations
                     b.ToTable("ContractTerm", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.Delivery", b =>
+            modelBuilder.Entity("BusinessObject.DeliveryTask", b =>
                 {
-                    b.Property<int>("DeliveryId")
+                    b.Property<int>("DeliveryTaskId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryTaskId"));
 
                     b.Property<string>("ContractId")
                         .HasColumnType("nvarchar(450)");
@@ -452,22 +550,22 @@ namespace DAO.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DeliveryId");
+                    b.HasKey("DeliveryTaskId");
 
                     b.HasIndex("ContractId");
 
                     b.HasIndex("StaffId");
 
-                    b.ToTable("Delivery", (string)null);
+                    b.ToTable("DeliveryTask", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.DeliveryLog", b =>
+            modelBuilder.Entity("BusinessObject.DeliveryTaskLog", b =>
                 {
-                    b.Property<int>("DeliveryLogId")
+                    b.Property<int>("DeliveryTaskLogId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryLogId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryTaskLogId"));
 
                     b.Property<int?>("AccountTriggerId")
                         .HasColumnType("int");
@@ -478,16 +576,16 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeliveryId")
+                    b.Property<int?>("DeliveryTaskId")
                         .HasColumnType("int");
 
-                    b.HasKey("DeliveryLogId");
+                    b.HasKey("DeliveryTaskLogId");
 
                     b.HasIndex("AccountTriggerId");
 
-                    b.HasIndex("DeliveryId");
+                    b.HasIndex("DeliveryTaskId");
 
-                    b.ToTable("DeliveryLog", (string)null);
+                    b.ToTable("DeliveryTaskLog", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.DigitalTransaction", b =>
@@ -529,77 +627,6 @@ namespace DAO.Migrations
                         .HasFilter("[InvoiceId] IS NOT NULL");
 
                     b.ToTable("DigitalTransactions", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
-                {
-                    b.Property<int>("EmployeeTaskId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeTaskId"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCompleted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PreviousTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RequestResponseId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TaskTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("EmployeeTaskId");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("MaintenanceTicketId");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("PreviousTaskId")
-                        .IsUnique()
-                        .HasFilter("[PreviousTaskId] IS NOT NULL");
-
-                    b.HasIndex("RequestResponseId")
-                        .IsUnique();
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("EmployeeTask", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Feedback", b =>
@@ -706,9 +733,9 @@ namespace DAO.Migrations
                     b.ToTable("LogDetail", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
+            modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
-                    b.Property<string>("RequestId")
+                    b.Property<string>("MachineCheckRequestId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ContractId")
@@ -723,89 +750,91 @@ namespace DAO.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RequestId");
+                    b.HasKey("MachineCheckRequestId");
 
                     b.HasIndex("ContractId");
 
-                    b.ToTable("MaintenanceRequest", (string)null);
+                    b.ToTable("MachineCheckRequest", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
+            modelBuilder.Entity("BusinessObject.MachineTask", b =>
                 {
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double?>("AdditionalFee")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("ComponentPrice")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ContractId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateRepair")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("EmployeeCreateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EmployeeTaskCreateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InvoiceId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductSerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("TotalAmount")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("MaintenanceTicketId");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("EmployeeCreateId");
-
-                    b.HasIndex("EmployeeTaskCreateId");
-
-                    b.HasIndex("InvoiceId")
-                        .IsUnique()
-                        .HasFilter("[InvoiceId] IS NOT NULL");
-
-                    b.HasIndex("ProductSerialNumber");
-
-                    b.ToTable("MaintenanceTicket", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.MaintenanceTicketLog", b =>
-                {
-                    b.Property<int>("MaintenanceTicketLogId")
+                    b.Property<int>("MachineTaskId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaintenanceTicketLogId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineTaskId"));
+
+                    b.Property<string>("ComponentReplacementTicketId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContractId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCompleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PreviousTaskId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RequestResponseId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StaffId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaskTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineTaskId");
+
+                    b.HasIndex("ComponentReplacementTicketId");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("PreviousTaskId")
+                        .IsUnique()
+                        .HasFilter("[PreviousTaskId] IS NOT NULL");
+
+                    b.HasIndex("RequestResponseId")
+                        .IsUnique();
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("MachineTask", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineTaskLog", b =>
+                {
+                    b.Property<int>("MachineTaskLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineTaskLogId"));
 
                     b.Property<int?>("AccountTriggerId")
                         .HasColumnType("int");
@@ -816,16 +845,16 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MaintenanceTicketId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("MachineTaskId")
+                        .HasColumnType("int");
 
-                    b.HasKey("MaintenanceTicketLogId");
+                    b.HasKey("MachineTaskLogId");
 
                     b.HasIndex("AccountTriggerId");
 
-                    b.HasIndex("MaintenanceTicketId");
+                    b.HasIndex("MachineTaskId");
 
-                    b.ToTable("MaintenanceTicketLog", (string)null);
+                    b.ToTable("MachineTaskLog", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
@@ -1211,7 +1240,7 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeTaskId")
+                    b.Property<int?>("MachineTaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("ReportContent")
@@ -1219,7 +1248,7 @@ namespace DAO.Migrations
 
                     b.HasKey("ReportId");
 
-                    b.HasIndex("EmployeeTaskId");
+                    b.HasIndex("MachineTaskId");
 
                     b.ToTable("Report", (string)null);
                 });
@@ -1241,15 +1270,15 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateResponse")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RequestId")
+                    b.Property<string>("MachineCheckRequestId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("MachineTaskId")
+                        .HasColumnType("int");
 
                     b.HasKey("RequestResponseId");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("MachineCheckRequestId");
 
                     b.ToTable("RequestResponse", (string)null);
                 });
@@ -1339,35 +1368,6 @@ namespace DAO.Migrations
                     b.ToTable("ServiceRentingRequest", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.TaskLog", b =>
-                {
-                    b.Property<int>("TaskLogId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskLogId"));
-
-                    b.Property<int?>("AccountTriggerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("EmployeeTaskId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TaskLogId");
-
-                    b.HasIndex("AccountTriggerId");
-
-                    b.HasIndex("EmployeeTaskId");
-
-                    b.ToTable("TaskLog", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObject.Term", b =>
                 {
                     b.Property<int>("TermId")
@@ -1438,6 +1438,66 @@ namespace DAO.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
+                {
+                    b.HasOne("BusinessObject.Component", "Component")
+                        .WithMany("ComponentReplacementTickets")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_ComponentReplacementTicket_ComponentID");
+
+                    b.HasOne("BusinessObject.Contract", "Contract")
+                        .WithMany("ComponentReplacementTickets")
+                        .HasForeignKey("ContractId")
+                        .HasConstraintName("FK_ComponentReplacementTicket_ContractID");
+
+                    b.HasOne("BusinessObject.Account", "EmployeeCreate")
+                        .WithMany()
+                        .HasForeignKey("EmployeeCreateId");
+
+                    b.HasOne("BusinessObject.Invoice", "Invoice")
+                        .WithOne("ComponentReplacementTicket")
+                        .HasForeignKey("BusinessObject.ComponentReplacementTicket", "InvoiceId")
+                        .HasConstraintName("FK_Invoice_MaintainTicket");
+
+                    b.HasOne("BusinessObject.MachineTask", "MachineTaskCreate")
+                        .WithMany("ComponentReplacementTicketsCreateFromTask")
+                        .HasForeignKey("MachineTaskCreateId")
+                        .HasConstraintName("FK_ComponentReplacementTicket_MachineTaskCreated");
+
+                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
+                        .WithMany("ComponentReplacementTickets")
+                        .HasForeignKey("ProductSerialNumber")
+                        .HasConstraintName("FK_ComponentReplacementTicket_SerialNumberProduct");
+
+                    b.Navigation("Component");
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("EmployeeCreate");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("MachineTaskCreate");
+
+                    b.Navigation("SerialNumberProduct");
+                });
+
+            modelBuilder.Entity("BusinessObject.ComponentReplacementTicketLog", b =>
+                {
+                    b.HasOne("BusinessObject.Account", "AccountTrigger")
+                        .WithMany()
+                        .HasForeignKey("AccountTriggerId");
+
+                    b.HasOne("BusinessObject.ComponentReplacementTicket", "ComponentReplacementTicket")
+                        .WithMany("ComponentReplacementTicketLogs")
+                        .HasForeignKey("ComponentReplacementTicketId")
+                        .HasConstraintName("FK_ComponentReplacementTicket_Log");
+
+                    b.Navigation("AccountTrigger");
+
+                    b.Navigation("ComponentReplacementTicket");
+                });
+
             modelBuilder.Entity("BusinessObject.Content", b =>
                 {
                     b.HasOne("BusinessObject.Account", "Account")
@@ -1503,39 +1563,39 @@ namespace DAO.Migrations
                     b.Navigation("Contract");
                 });
 
-            modelBuilder.Entity("BusinessObject.Delivery", b =>
+            modelBuilder.Entity("BusinessObject.DeliveryTask", b =>
                 {
                     b.HasOne("BusinessObject.Contract", "Contract")
                         .WithMany("Deliveries")
                         .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_Delivery_ContractID");
+                        .HasConstraintName("FK_DeliveryTask_ContractID");
 
                     b.HasOne("BusinessObject.Account", "Staff")
                         .WithMany("Deliveries")
                         .HasForeignKey("StaffId")
-                        .HasConstraintName("FK_Delivery_StaffID");
+                        .HasConstraintName("FK_DeliveryTask_StaffID");
 
                     b.Navigation("Contract");
 
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("BusinessObject.DeliveryLog", b =>
+            modelBuilder.Entity("BusinessObject.DeliveryTaskLog", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountTrigger")
-                        .WithMany("DeliveryLogs")
+                        .WithMany("DeliveryTaskLogs")
                         .HasForeignKey("AccountTriggerId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_DeliveryLog_AccountID");
+                        .HasConstraintName("FK_DeliveryTaskLog_AccountID");
 
-                    b.HasOne("BusinessObject.Delivery", "Delivery")
-                        .WithMany("DeliveryLogs")
-                        .HasForeignKey("DeliveryId")
-                        .HasConstraintName("FK_DeliveryLog_DeliveryID");
+                    b.HasOne("BusinessObject.DeliveryTask", "DeliveryTask")
+                        .WithMany("DeliveryTaskLogs")
+                        .HasForeignKey("DeliveryTaskId")
+                        .HasConstraintName("FK_DeliveryTaskLog_DeliveryTaskID");
 
                     b.Navigation("AccountTrigger");
 
-                    b.Navigation("Delivery");
+                    b.Navigation("DeliveryTask");
                 });
 
             modelBuilder.Entity("BusinessObject.DigitalTransaction", b =>
@@ -1546,53 +1606,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_DigitalTransaction_Invoice");
 
                     b.Navigation("Invoice");
-                });
-
-            modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
-                {
-                    b.HasOne("BusinessObject.Contract", "Contract")
-                        .WithMany("EmployeeTasks")
-                        .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_Task_Contract");
-
-                    b.HasOne("BusinessObject.MaintenanceTicket", "MaintenanceTicket")
-                        .WithMany("EmployeeTasks")
-                        .HasForeignKey("MaintenanceTicketId")
-                        .HasConstraintName("FK_MaintenanceTicketId_Task");
-
-                    b.HasOne("BusinessObject.Account", "Manager")
-                        .WithMany("TaskGaveList")
-                        .HasForeignKey("ManagerId")
-                        .HasConstraintName("FK_Task_Manager");
-
-                    b.HasOne("BusinessObject.EmployeeTask", "PreviousTask")
-                        .WithOne()
-                        .HasForeignKey("BusinessObject.EmployeeTask", "PreviousTaskId")
-                        .HasConstraintName("FK_Task_PreviousTask");
-
-                    b.HasOne("BusinessObject.RequestResponse", "RequestResponse")
-                        .WithOne("EmployeeTask")
-                        .HasForeignKey("BusinessObject.EmployeeTask", "RequestResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Task_Response");
-
-                    b.HasOne("BusinessObject.Account", "Staff")
-                        .WithMany("TaskReceivedList")
-                        .HasForeignKey("StaffId")
-                        .HasConstraintName("FK_Task_Staff");
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("MaintenanceTicket");
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("PreviousTask");
-
-                    b.Navigation("RequestResponse");
-
-                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("BusinessObject.Feedback", b =>
@@ -1632,74 +1645,79 @@ namespace DAO.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
+            modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
                     b.HasOne("BusinessObject.Contract", "Contract")
-                        .WithMany("MaintenanceRequests")
+                        .WithMany("MachineCheckRequests")
                         .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_MaintenanceRequest_Contract");
+                        .HasConstraintName("FK_MachineCheckRequest_Contract");
 
                     b.Navigation("Contract");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
+            modelBuilder.Entity("BusinessObject.MachineTask", b =>
                 {
-                    b.HasOne("BusinessObject.Component", "Component")
-                        .WithMany("MaintenanceTickets")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_MaintenanceTicket_ComponentID");
+                    b.HasOne("BusinessObject.ComponentReplacementTicket", "ComponentReplacementTicket")
+                        .WithMany("MachineTasks")
+                        .HasForeignKey("ComponentReplacementTicketId")
+                        .HasConstraintName("FK_ComponentReplacementTicketId_Task");
 
                     b.HasOne("BusinessObject.Contract", "Contract")
-                        .WithMany("MaintenanceTickets")
+                        .WithMany("MachineTasks")
                         .HasForeignKey("ContractId")
-                        .HasConstraintName("FK_MaintenanceTicket_ContractID");
+                        .HasConstraintName("FK_Task_Contract");
 
-                    b.HasOne("BusinessObject.Account", "EmployeeCreate")
-                        .WithMany()
-                        .HasForeignKey("EmployeeCreateId");
+                    b.HasOne("BusinessObject.Account", "Manager")
+                        .WithMany("TaskGaveList")
+                        .HasForeignKey("ManagerId")
+                        .HasConstraintName("FK_Task_Manager");
 
-                    b.HasOne("BusinessObject.EmployeeTask", "EmployeeTaskCreate")
-                        .WithMany("MaintenanceTicketsCreateFromTask")
-                        .HasForeignKey("EmployeeTaskCreateId")
-                        .HasConstraintName("FK_MaintenanceTicket_EmployeeTaskCreated");
+                    b.HasOne("BusinessObject.MachineTask", "PreviousTask")
+                        .WithOne()
+                        .HasForeignKey("BusinessObject.MachineTask", "PreviousTaskId")
+                        .HasConstraintName("FK_Task_PreviousTask");
 
-                    b.HasOne("BusinessObject.Invoice", "Invoice")
-                        .WithOne("MaintenanceTicket")
-                        .HasForeignKey("BusinessObject.MaintenanceTicket", "InvoiceId")
-                        .HasConstraintName("FK_Invoice_MaintainTicket");
+                    b.HasOne("BusinessObject.RequestResponse", "RequestResponse")
+                        .WithOne("MachineTask")
+                        .HasForeignKey("BusinessObject.MachineTask", "RequestResponseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Task_Response");
 
-                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
-                        .WithMany("MaintenanceTickets")
-                        .HasForeignKey("ProductSerialNumber")
-                        .HasConstraintName("FK_MaintenanceTicket_SerialNumberProduct");
+                    b.HasOne("BusinessObject.Account", "Staff")
+                        .WithMany("TaskReceivedList")
+                        .HasForeignKey("StaffId")
+                        .HasConstraintName("FK_Task_Staff");
 
-                    b.Navigation("Component");
+                    b.Navigation("ComponentReplacementTicket");
 
                     b.Navigation("Contract");
 
-                    b.Navigation("EmployeeCreate");
+                    b.Navigation("Manager");
 
-                    b.Navigation("EmployeeTaskCreate");
+                    b.Navigation("PreviousTask");
 
-                    b.Navigation("Invoice");
+                    b.Navigation("RequestResponse");
 
-                    b.Navigation("SerialNumberProduct");
+                    b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceTicketLog", b =>
+            modelBuilder.Entity("BusinessObject.MachineTaskLog", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountTrigger")
-                        .WithMany()
-                        .HasForeignKey("AccountTriggerId");
+                        .WithMany("MachineTaskLogs")
+                        .HasForeignKey("AccountTriggerId")
+                        .HasConstraintName("FK_MachineTaskLog_AccountID");
 
-                    b.HasOne("BusinessObject.MaintenanceTicket", "MaintenanceTicket")
-                        .WithMany("MaintenanceTicketLogs")
-                        .HasForeignKey("MaintenanceTicketId")
-                        .HasConstraintName("FK_MaintenanceTicket_Log");
+                    b.HasOne("BusinessObject.MachineTask", "MachineTask")
+                        .WithMany("MachineTaskLogs")
+                        .HasForeignKey("MachineTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_MachineTaskLog_TaskID");
 
                     b.Navigation("AccountTrigger");
 
-                    b.Navigation("MaintenanceTicket");
+                    b.Navigation("MachineTask");
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRankLog", b =>
@@ -1828,22 +1846,22 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Report", b =>
                 {
-                    b.HasOne("BusinessObject.EmployeeTask", "EmployeeTask")
+                    b.HasOne("BusinessObject.MachineTask", "MachineTask")
                         .WithMany("Reports")
-                        .HasForeignKey("EmployeeTaskId")
+                        .HasForeignKey("MachineTaskId")
                         .HasConstraintName("FK_Report_TaskID");
 
-                    b.Navigation("EmployeeTask");
+                    b.Navigation("MachineTask");
                 });
 
             modelBuilder.Entity("BusinessObject.RequestResponse", b =>
                 {
-                    b.HasOne("BusinessObject.MaintenanceRequest", "Request")
+                    b.HasOne("BusinessObject.MachineCheckRequest", "MachineCheckRequest")
                         .WithMany("RequestResponses")
-                        .HasForeignKey("RequestId")
-                        .HasConstraintName("FK_RequestResponse_MaintenanceRequest");
+                        .HasForeignKey("MachineCheckRequestId")
+                        .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
 
-                    b.Navigation("Request");
+                    b.Navigation("MachineCheckRequest");
                 });
 
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
@@ -1891,24 +1909,6 @@ namespace DAO.Migrations
                     b.Navigation("RentingService");
                 });
 
-            modelBuilder.Entity("BusinessObject.TaskLog", b =>
-                {
-                    b.HasOne("BusinessObject.Account", "AccountTrigger")
-                        .WithMany("TaskLogs")
-                        .HasForeignKey("AccountTriggerId")
-                        .HasConstraintName("FK_TaskLog_AccountID");
-
-                    b.HasOne("BusinessObject.EmployeeTask", "EmployeeTask")
-                        .WithMany("TaskLogs")
-                        .HasForeignKey("EmployeeTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_TaskLog_TaskID");
-
-                    b.Navigation("AccountTrigger");
-
-                    b.Navigation("EmployeeTask");
-                });
-
             modelBuilder.Entity("BusinessObject.Account", b =>
                 {
                     b.Navigation("AccountBusiness");
@@ -1921,13 +1921,15 @@ namespace DAO.Migrations
 
                     b.Navigation("Deliveries");
 
-                    b.Navigation("DeliveryLogs");
+                    b.Navigation("DeliveryTaskLogs");
 
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Invoices");
 
                     b.Navigation("LogDetails");
+
+                    b.Navigation("MachineTaskLogs");
 
                     b.Navigation("MembershipRankLogs");
 
@@ -1938,8 +1940,6 @@ namespace DAO.Migrations
                     b.Navigation("SerialNumberProductLogs");
 
                     b.Navigation("TaskGaveList");
-
-                    b.Navigation("TaskLogs");
 
                     b.Navigation("TaskReceivedList");
                 });
@@ -1953,7 +1953,7 @@ namespace DAO.Migrations
                 {
                     b.Navigation("ComponentProducts");
 
-                    b.Navigation("MaintenanceTickets");
+                    b.Navigation("ComponentReplacementTickets");
                 });
 
             modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
@@ -1961,56 +1961,56 @@ namespace DAO.Migrations
                     b.Navigation("ProductComponentStatuses");
                 });
 
+            modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
+                {
+                    b.Navigation("ComponentReplacementTicketLogs");
+
+                    b.Navigation("MachineTasks");
+                });
+
             modelBuilder.Entity("BusinessObject.Contract", b =>
                 {
+                    b.Navigation("ComponentReplacementTickets");
+
                     b.Navigation("ContractPayments");
 
                     b.Navigation("ContractTerms");
 
                     b.Navigation("Deliveries");
 
-                    b.Navigation("EmployeeTasks");
-
                     b.Navigation("Feedbacks");
 
-                    b.Navigation("MaintenanceRequests");
+                    b.Navigation("MachineCheckRequests");
 
-                    b.Navigation("MaintenanceTickets");
+                    b.Navigation("MachineTasks");
                 });
 
-            modelBuilder.Entity("BusinessObject.Delivery", b =>
+            modelBuilder.Entity("BusinessObject.DeliveryTask", b =>
                 {
-                    b.Navigation("DeliveryLogs");
-                });
-
-            modelBuilder.Entity("BusinessObject.EmployeeTask", b =>
-                {
-                    b.Navigation("MaintenanceTicketsCreateFromTask");
-
-                    b.Navigation("Reports");
-
-                    b.Navigation("TaskLogs");
+                    b.Navigation("DeliveryTaskLogs");
                 });
 
             modelBuilder.Entity("BusinessObject.Invoice", b =>
                 {
+                    b.Navigation("ComponentReplacementTicket");
+
                     b.Navigation("ContractPayments");
 
                     b.Navigation("DigitalTransaction");
-
-                    b.Navigation("MaintenanceTicket");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceRequest", b =>
+            modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
                     b.Navigation("RequestResponses");
                 });
 
-            modelBuilder.Entity("BusinessObject.MaintenanceTicket", b =>
+            modelBuilder.Entity("BusinessObject.MachineTask", b =>
                 {
-                    b.Navigation("EmployeeTasks");
+                    b.Navigation("ComponentReplacementTicketsCreateFromTask");
 
-                    b.Navigation("MaintenanceTicketLogs");
+                    b.Navigation("MachineTaskLogs");
+
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
@@ -2053,14 +2053,14 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.RequestResponse", b =>
                 {
-                    b.Navigation("EmployeeTask");
+                    b.Navigation("MachineTask");
                 });
 
             modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
                 {
-                    b.Navigation("Contracts");
+                    b.Navigation("ComponentReplacementTickets");
 
-                    b.Navigation("MaintenanceTickets");
+                    b.Navigation("Contracts");
 
                     b.Navigation("ProductComponentStatuses");
 

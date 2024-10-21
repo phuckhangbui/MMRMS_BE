@@ -1,59 +1,59 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using EmployeeTask = BusinessObject.EmployeeTask;
+using MachineTask = BusinessObject.MachineTask;
 
 namespace DAO
 {
-    public class EmployeeTaskDao : BaseDao<EmployeeTask>
+    public class MachineTaskDao : BaseDao<MachineTask>
     {
-        private static EmployeeTaskDao instance = null;
+        private static MachineTaskDao instance = null;
         private static readonly object instacelock = new object();
 
-        private EmployeeTaskDao()
+        private MachineTaskDao()
         {
 
         }
 
-        public static EmployeeTaskDao Instance
+        public static MachineTaskDao Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new EmployeeTaskDao();
+                    instance = new MachineTaskDao();
                 }
                 return instance;
             }
         }
 
-        public async Task<IEnumerable<EmployeeTask>> GetEmployeeTasks()
+        public async Task<IEnumerable<MachineTask>> GetMachineTasks()
         {
             using (var context = new MmrmsContext())
             {
-                return await context.EmployeeTasks.Include(d => d.Staff).Include(d => d.Manager).OrderByDescending(p => p.DateCreate).ToListAsync();
+                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).OrderByDescending(p => p.DateCreate).ToListAsync();
             }
         }
 
-        public async Task<EmployeeTask> GetEmployeeTask(int employeeTaskId)
+        public async Task<MachineTask> GetMachineTask(int MachineTaskId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.EmployeeTasks.Include(d => d.Staff).Include(d => d.Manager).FirstOrDefaultAsync(d => d.EmployeeTaskId == employeeTaskId);
+                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).FirstOrDefaultAsync(d => d.MachineTaskId == MachineTaskId);
             }
         }
 
-        public async Task<EmployeeTask> GetEmployeeTaskDetail(int taskId)
+        public async Task<MachineTask> GetMachineTaskDetail(int taskId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.EmployeeTasks.Include(d => d.Staff).Include(d => d.Manager)
-                                                .Include(d => d.TaskLogs)
+                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager)
+                                                .Include(d => d.MachineTaskLogs)
                                                 .ThenInclude(l => l.AccountTrigger)
-                                                .Include(d => d.MaintenanceTicketsCreateFromTask)
-                                                .FirstOrDefaultAsync(d => d.EmployeeTaskId == taskId);
+                                                .Include(d => d.ComponentReplacementTicketsCreateFromTask)
+                                                .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
             }
         }
 
-        //public async Task CreateTaskWithRequest(EmployeeTask task, RequestResponse requestResponse)
+        //public async Task CreateTaskWithRequest(MachineTask task, RequestResponse requestResponse)
         //{
         //    using (var context = new MmrmsContext())
         //    {

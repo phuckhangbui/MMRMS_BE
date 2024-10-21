@@ -1,10 +1,10 @@
-﻿namespace DTOs.MaintenanceTicket
+﻿namespace DTOs.ComponentReplacementTicket
 {
-    public class MaintenanceTicketDto
+    public class ComponentReplacementTicketDto
     {
-        public string MaintenanceTicketId { get; set; }
+        public string ComponentReplacementTicketId { get; set; }
 
-        public int? EmployeeTaskId { get; set; }
+        public int? MachineTaskId { get; set; }
 
         public string? ContractId { get; set; }
 

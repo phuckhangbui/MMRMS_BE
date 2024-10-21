@@ -1,8 +1,8 @@
 ﻿using DTOs.Contract;
 
-namespace DTOs.MaintenanceRequest
+namespace DTOs.MachineCheckRequest
 {
-    public class MaintenanceRequestDto
+    public class MachineCheckRequestDto
     {
         public string RequestId { get; set; }
 

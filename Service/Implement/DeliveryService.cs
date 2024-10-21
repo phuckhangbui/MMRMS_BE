@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Enum;
-using DTOs.Delivery;
-using DTOs.EmployeeTask;
+using DTOs.DeliveryTask;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
@@ -10,104 +10,104 @@ using Service.SignalRHub;
 
 namespace Service.Implement
 {
-    public class DeliveryService : IDeliveryService
+    public class DeliveryService : IDeliverService
     {
 
-        private readonly IDeliveryRepository _deliveryRepository;
-        private readonly IEmployeeTaskRepository _employeeTaskRepository;
+        private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
+        private readonly IMachineTaskRepository _MachineTaskRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly INotificationService _notificationService;
-        private readonly IHubContext<DeliveryHub> _deliveryHub;
+        private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
 
-        public DeliveryService(IDeliveryRepository deliveryRepository, IEmployeeTaskRepository employeeTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryHub> deliveryHub, INotificationService notificationService)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService)
         {
-            _deliveryRepository = deliveryRepository;
-            _employeeTaskRepository = employeeTaskRepository;
+            _DeliveryTaskRepository = DeliveryTaskRepository;
+            _MachineTaskRepository = MachineTaskRepository;
             _accountRepository = accountRepository;
-            _deliveryHub = deliveryHub;
+            _DeliveryTaskHub = DeliveryTaskHub;
             _notificationService = notificationService;
         }
 
-        public async Task AssignDelivery(int managerId, AssignDeliveryDto assignDeliveryDto)
+        public async Task AssignDeliveryTask(int managerId, AssignDeliveryTaskDto assignDeliveryTaskDto)
         {
-            var deliveryDto = await _deliveryRepository.GetDelivery(assignDeliveryDto.DeliveryId);
+            var DeliveryTaskDto = await _DeliveryTaskRepository.GetDeliveryTask(assignDeliveryTaskDto.DeliveryTaskId);
 
-            if (deliveryDto == null)
+            if (DeliveryTaskDto == null)
             {
-                throw new ServiceException(MessageConstant.Delivery.DeliveryNotFound);
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
             }
 
-            var accountDto = await _accountRepository.GetAccounById(assignDeliveryDto.StaffId);
+            var accountDto = await _accountRepository.GetAccounById(assignDeliveryTaskDto.StaffId);
 
             if (accountDto == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
-            var taskList = await _employeeTaskRepository.GetTaskOfStaffInADay(assignDeliveryDto.StaffId, assignDeliveryDto.DateShip)
-                                        ?? Enumerable.Empty<EmployeeTaskDto>();
+            var taskList = await _MachineTaskRepository.GetTaskOfStaffInADay(assignDeliveryTaskDto.StaffId, assignDeliveryTaskDto.DateShip)
+                                        ?? Enumerable.Empty<MachineTaskDto>();
 
-            var deliveryList = await _deliveryRepository.GetDeliveriesOfStaffInADay(assignDeliveryDto.StaffId, assignDeliveryDto.DateShip)
-                                        ?? Enumerable.Empty<DeliveryDto>();
+            var DeliveryTaskList = await _DeliveryTaskRepository.GetDeliveriesOfStaffInADay(assignDeliveryTaskDto.StaffId, assignDeliveryTaskDto.DateShip)
+                                        ?? Enumerable.Empty<DeliveryTaskDto>();
 
-            int taskCounter = taskList.Count() + deliveryList.Count();
+            int taskCounter = taskList.Count() + DeliveryTaskList.Count();
 
 
             if (taskCounter >= GlobalConstant.MaxTaskLimitADayContract)
             {
-                throw new ServiceException(MessageConstant.EmployeeTask.ReachMaxTaskLimit);
+                throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
             }
 
-            await _deliveryRepository.AssignDeliveryToStaff(managerId, assignDeliveryDto);
+            await _DeliveryTaskRepository.AssignDeliveryTaskToStaff(managerId, assignDeliveryTaskDto);
 
-            await _notificationService.SendNotificationToStaffWhenAssignDelivery(assignDeliveryDto.StaffId, deliveryDto.ContractAddress, assignDeliveryDto.DateShip);
+            await _notificationService.SendNotificationToStaffWhenAssignDeliveryTask(assignDeliveryTaskDto.StaffId, DeliveryTaskDto.ContractAddress, assignDeliveryTaskDto.DateShip);
 
-            await _deliveryHub.Clients.All.SendAsync("OnAssignDeliveryToStaff", deliveryDto.DeliveryId);
+            await _DeliveryTaskHub.Clients.All.SendAsync("OnAssignDeliveryTaskToStaff", DeliveryTaskDto.DeliveryTaskId);
         }
 
-        public async Task<IEnumerable<DeliveryDto>> GetDeliveries()
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()
         {
-            return await _deliveryRepository.GetDeliveries();
+            return await _DeliveryTaskRepository.GetDeliveries();
         }
 
-        public async Task<IEnumerable<DeliveryDto>> GetDeliveries(int staffId)
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries(int staffId)
         {
-            return await _deliveryRepository.GetDeliveriesForStaff(staffId);
+            return await _DeliveryTaskRepository.GetDeliveriesForStaff(staffId);
         }
 
-        public async Task UpdateDeliveryStatus(int deliveryId, string status, int accountId)
+        public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
         {
-            DeliveryDto deliveryDto = await _deliveryRepository.GetDelivery(deliveryId);
+            DeliveryTaskDto DeliveryTaskDto = await _DeliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);
 
             var account = await _accountRepository.GetAccounById(accountId);
 
 
-            if (deliveryDto == null)
+            if (DeliveryTaskDto == null)
             {
-                throw new ServiceException(MessageConstant.Delivery.DeliveryNotFound);
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
             }
 
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(DeliveryStatusEnum), status, true, out _))
+            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(DeliveryTasktatusEnum), status, true, out _))
             {
-                throw new ServiceException(MessageConstant.Delivery.StatusNotAvailable);
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusNotAvailable);
             }
 
             //business logic here, fix later
 
-            await _deliveryRepository.UpdateDeliveryStatus(deliveryId, status, accountId);
+            await _DeliveryTaskRepository.UpdateDeliveryTaskStatus(DeliveryTaskId, status, accountId);
 
 
             //if (account.RoleId == (int)AccountRoleEnum.Staff)
             //{
-            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated(accountId, deliveryDto.TaskTitle, status);
+            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated(accountId, DeliveryTaskDto.TaskTitle, status);
             //}
 
             if (account.RoleId == (int)AccountRoleEnum.Manager)
             {
-                await _notificationService.SendNotificationToStaffWhenDeliveryStatusUpdated((int)deliveryDto.StaffId, deliveryDto.ContractAddress, status);
+                await _notificationService.SendNotificationToStaffWhenDeliveryTaskStatusUpdated((int)DeliveryTaskDto.StaffId, DeliveryTaskDto.ContractAddress, status);
             }
 
-            await _deliveryHub.Clients.All.SendAsync("OnUpdateDeliveryStatus", deliveryId);
+            await _DeliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
         }
     }
 }
