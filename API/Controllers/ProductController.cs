@@ -162,7 +162,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/toggle-lock")]
+        [HttpPatch("{productId}/toggle-lock")]
         [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId)
         {

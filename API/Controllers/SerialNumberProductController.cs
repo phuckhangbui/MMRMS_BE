@@ -106,13 +106,15 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{serialNumber}/status")]
-        public async Task<IActionResult> UpdateSerialNumberProductStatus([FromRoute] string serialNumber, [FromQuery] string status)
+        [HttpPatch("{serialNumber}/toggle-lock")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<IActionResult> ToggleSerialNumberProductStatus([FromRoute] string serialNumber)
         {
+            int staffId = GetLoginAccountId();
 
             try
             {
-                await _serialNumberProductService.UpdateStatus(serialNumber, status);
+                await _serialNumberProductService.ToggleStatus(serialNumber, staffId);
                 return NoContent();
             }
             catch (ServiceException ex)
