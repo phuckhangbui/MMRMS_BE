@@ -100,7 +100,7 @@ namespace Repository.Implement
             {
                 SerialNumber = serialProduct.SerialNumber,
                 AccountTriggerId = accountId,
-                Action = "Create",
+                Action = "Create new serial number product",
                 Type = SerialNumberProductLogTypeEnum.System.ToString(),
                 DateCreate = now
             };
@@ -187,9 +187,24 @@ namespace Repository.Implement
             }
         }
 
-        public async Task UpdateStatus(string serialNumber, string status)
+        public async Task UpdateStatus(string serialNumber, string status, int accountId)
         {
-            await SerialNumberProductDao.Instance.UpdateStatus(serialNumber, status);
+            var serialNumberProduct = await SerialNumberProductDao.Instance.GetSerialNumberProduct(serialNumber);
+
+            serialNumberProduct.Status = status;
+
+            var log = new SerialNumberProductLog
+            {
+                SerialNumber = serialNumber,
+                AccountTriggerId = accountId,
+                Type = SerialNumberProductLogTypeEnum.UpdateStatus.ToString(),
+                DateCreate = DateTime.Now,
+                Action = $"Change status to {status}"
+            };
+
+            await SerialNumberProductDao.Instance.UpdateAsync(serialNumberProduct);
+
+            await SerialNumberProductLogDao.Instance.CreateAsync(log);
         }
     }
 }

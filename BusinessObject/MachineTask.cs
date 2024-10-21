@@ -32,6 +32,8 @@ public partial class MachineTask
 
     public string? Type { get; set; }
 
+    public string? ConfirmationPictureUrl { get; set; }
+
     public virtual Account? Staff { get; set; }
 
     public virtual Account? Manager { get; set; }

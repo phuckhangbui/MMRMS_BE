@@ -1,6 +1,9 @@
-﻿namespace DTOs.MachineTask
+﻿using DTOs.ComponentReplacementTicket;
+using DTOs.Contract;
+
+namespace DTOs.MachineTask
 {
-    public class MachineTaskDto
+    public class MachineTaskDisplayDetail
     {
         public int MachineTaskId { get; set; }
 
@@ -22,6 +25,12 @@
 
         public string? ManagerName { get; set; }
 
+        public int? CustomerId { get; set; }
+
+        public string? CustomerName { get; set; }
+
+        public string? CustomerPhone { get; set; }
+
         public DateTime? DateStart { get; set; }
 
         public DateTime? DateCreate { get; set; }
@@ -34,6 +43,13 @@
 
         public string? Note { get; set; }
 
+        public string? ConfirmationPictureUrl { get; set; }
+
+        public ContractAddressDto? Address { get; set; }
+
+        public IEnumerable<ComponentReplacementTicketDto>? ComponentReplacementTicketCreateFromTaskList { get; set; }
+
+        public IEnumerable<TaskLogDto>? TaskLogs { get; set; }
 
     }
 }

@@ -43,7 +43,7 @@ namespace Repository.Implement
                 Content = createMachineTaskDto.TaskContent,
                 StaffId = createMachineTaskDto.StaffId,
                 ManagerId = managerId,
-                Type = MachineTaskTypeEnum.CheckMachinery.ToString(),
+                Type = MachineTaskTypeEnum.MachineryCheck.ToString(),
                 DateCreate = now,
                 DateStart = createMachineTaskDto.DateStart,
                 Status = MachineTaskStatusEnum.Assigned.ToString(),
@@ -121,21 +121,25 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<MachineTaskDto>>(filteredList);
         }
 
-        public async Task UpdateTaskStatus(int MachineTaskId, string status, int accountId)
+        public async Task UpdateTaskStatus(int machineTaskId, string status, int accountId, string? confirmationPictureUrl)
         {
-            var MachineTask = await MachineTaskDao.Instance.GetMachineTask(MachineTaskId);
+            var machineTask = await MachineTaskDao.Instance.GetMachineTask(machineTaskId);
 
-            string oldStatus = MachineTask.Status;
+            string oldStatus = machineTask.Status;
+            if (confirmationPictureUrl != null && status == MachineTaskStatusEnum.Completed.ToString())
+            {
+                machineTask.ConfirmationPictureUrl = confirmationPictureUrl;
+            }
 
-            MachineTask.Status = status;
+            machineTask.Status = status;
 
-            await MachineTaskDao.Instance.UpdateAsync(MachineTask);
+            await MachineTaskDao.Instance.UpdateAsync(machineTask);
 
             string action = $"Change status from {oldStatus} to {status}";
 
             var taskLog = new MachineTaskLog
             {
-                MachineTaskId = MachineTaskId,
+                MachineTaskId = machineTaskId,
                 AccountTriggerId = accountId,
                 DateCreate = DateTime.Now,
                 Action = action,

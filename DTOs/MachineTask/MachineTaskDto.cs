@@ -1,15 +1,14 @@
-﻿using DTOs.Contract;
-using DTOs.ComponentReplacementTicket;
-
-namespace DTOs.MachineTask
+﻿namespace DTOs.MachineTask
 {
-    public class MachineTaskDisplayDetail
+    public class MachineTaskDto
     {
         public int MachineTaskId { get; set; }
 
         public string? TaskTitle { get; set; }
 
         public string? ContractId { get; set; }
+
+        public int? RequestResponseId { get; set; }
 
         public int? PreviousTaskId { get; set; }
 
@@ -25,12 +24,6 @@ namespace DTOs.MachineTask
 
         public string? ManagerName { get; set; }
 
-        public int? CustomerId { get; set; }
-
-        public string? CustomerName { get; set; }
-
-        public string? CustomerPhone { get; set; }
-
         public DateTime? DateStart { get; set; }
 
         public DateTime? DateCreate { get; set; }
@@ -43,11 +36,6 @@ namespace DTOs.MachineTask
 
         public string? Note { get; set; }
 
-        public ContractAddressDto? Address { get; set; }
-
-        public IEnumerable<ComponentReplacementTicketDto>? ComponentReplacementTicketCreateFromTaskList { get; set; }
-
-        public IEnumerable<TaskLogDto>? TaskLogs { get; set; }
 
     }
 }

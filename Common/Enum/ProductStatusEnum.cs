@@ -4,7 +4,6 @@
     {
         Active,
         OutOfStock,
-        NoSerialMachine,
         Locked,
     }
 }

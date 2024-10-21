@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
@@ -21,6 +22,15 @@ namespace DAO
                     instance = new RequestResponseDao();
                 }
                 return instance;
+            }
+        }
+
+        public async Task<RequestResponse> GetRequestResponse(int requestResponseId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.RequestResponses
+                    .FirstOrDefaultAsync(s => s.RequestResponseId == requestResponseId);
             }
         }
     }
