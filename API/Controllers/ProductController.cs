@@ -1,4 +1,5 @@
 ﻿using DTOs.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -117,6 +118,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProductDto)
         {
             if (!ModelState.IsValid)
@@ -142,6 +144,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{productId}")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> DeleteProduct([FromRoute] int productId)
         {
             try
@@ -160,6 +163,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/status")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
         {
 
@@ -179,6 +183,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/attribute/update")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProductAttribute([FromRoute] int productId, [FromBody] IEnumerable<CreateProductAttributeDto> productAttributeDtos)
         {
             if (!ModelState.IsValid)
@@ -202,6 +207,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/term/update")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProductTerm([FromRoute] int productId, [FromBody] IEnumerable<CreateProductTermDto> productTermDtos)
         {
             if (!ModelState.IsValid)
@@ -225,6 +231,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/component/update")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProductComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
         {
             if (!ModelState.IsValid)
@@ -248,6 +255,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/detail/update")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateProduct([FromRoute] int productId, [FromBody] UpdateProductDto updateProductDto)
         {
 
@@ -273,6 +281,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{productId}/images")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> ChangeProductImages(int productId, [FromBody] List<ImageList> imageList)
         {
             if (!ModelState.IsValid)
