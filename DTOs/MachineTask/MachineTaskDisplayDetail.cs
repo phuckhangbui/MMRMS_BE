@@ -1,5 +1,5 @@
-﻿using DTOs.Contract;
-using DTOs.ComponentReplacementTicket;
+﻿using DTOs.ComponentReplacementTicket;
+using DTOs.Contract;
 
 namespace DTOs.MachineTask
 {
@@ -42,6 +42,8 @@ namespace DTOs.MachineTask
         public string? Type { get; set; }
 
         public string? Note { get; set; }
+
+        public string? ConfirmationPictureUrl { get; set; }
 
         public ContractAddressDto? Address { get; set; }
 

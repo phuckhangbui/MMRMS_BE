@@ -18,6 +18,8 @@ public partial class DeliveryTask
 
     public string? Note { get; set; }
 
+    public string? ConfirmationPictureUrl { get; set; }
+
     public virtual Contract? Contract { get; set; }
 
     public virtual Account? Staff { get; set; }

@@ -83,7 +83,7 @@ namespace Service.Implement
             await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
         }
 
-        public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
+        public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
         {
             await CheckCreateTaskCondition(createMachineTaskDto.StaffId, createMachineTaskDto.DateStart);
 
@@ -161,42 +161,9 @@ namespace Service.Implement
             return list;
         }
 
-
         //will remove this 
-        public async Task UpdateMachineTaskStatus(int MachineTaskId, string status, int accountId)
-        {
-            var MachineTask = await _machineTaskRepository.GetMachineTask(MachineTaskId);
 
-            var account = await _accountRepository.GetAccounById(accountId);
-
-            if (MachineTask == null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-            }
-
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MachineTaskStatusEnum), status, true, out _))
-            {
-                throw new ServiceException(MessageConstant.MachineTask.StatusNotAvailable);
-            }
-            //logic here
-
-
-            await _machineTaskRepository.UpdateTaskStatus(MachineTaskId, status, accountId);
-
-            if (account.RoleId == (int)AccountRoleEnum.TechnicalStaff)
-            {
-                await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)MachineTask.ManagerId, MachineTask.TaskTitle, status);
-            }
-
-            if (account.RoleId == (int)AccountRoleEnum.Manager)
-            {
-                await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)MachineTask.StaffId, MachineTask.TaskTitle, status);
-            }
-
-            await _machineTaskHub.Clients.All.SendAsync("OnUpdateMachineTaskStatus", MachineTaskId);
-        }
-
-        public async Task StaffCheckMachineSuccess(int taskId, int staffId)
+        public async Task StaffCheckMachineSuccess(int taskId, int staffId, string? confirmationPictureUrl)
         {
             var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
 
@@ -216,14 +183,14 @@ namespace Service.Implement
             }
 
             //Todo logic here
-            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId);
+            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
             //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
 
             await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, MachineTaskStatusEnum.Completed.ToString());
         }
 
-        public async Task StaffReplaceComponentSuccess(int taskId, int staffId)
+        public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)
         {
             var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
 
@@ -244,7 +211,7 @@ namespace Service.Implement
 
             //Todo logic here
 
-            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId);
+            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
             await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, MachineTaskStatusEnum.Completed.ToString());
         }

@@ -1,4 +1,5 @@
-﻿using DTOs.MachineTask;
+﻿using DTOs;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -98,13 +99,13 @@ namespace API.Controllers
 
         [HttpPatch("{taskId}/check-machine-success")]
         [Authorize(Policy = "TechnicalStaff")]
-        public async Task<IActionResult> CheckMachineSuccess([FromRoute] int taskId)
+        public async Task<IActionResult> CheckMachineSuccess([FromRoute] int taskId, [FromBody] PictureUrlDto confirmationPicture)
         {
             int staffId = GetLoginAccountId();
 
             try
             {
-                await _machineTaskService.StaffCheckMachineSuccess(taskId, staffId);
+                await _machineTaskService.StaffCheckMachineSuccess(taskId, staffId, confirmationPicture.Url);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -119,13 +120,13 @@ namespace API.Controllers
 
         [HttpPatch("{taskId}/replace-component-success")]
         [Authorize(Policy = "TechnicalStaff")]
-        public async Task<IActionResult> ReplaceComponentSucess([FromRoute] int taskId)
+        public async Task<IActionResult> ReplaceComponentSuccess([FromRoute] int taskId, [FromBody] PictureUrlDto confirmationPicture)
         {
             int staffId = GetLoginAccountId();
 
             try
             {
-                await _machineTaskService.StaffReplaceComponentSuccess(taskId, staffId);
+                await _machineTaskService.StaffReplaceComponentSuccess(taskId, staffId, confirmationPicture.Url);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -163,7 +164,7 @@ namespace API.Controllers
         //TODO:KHANG
         [HttpPost("process-maintenance-ticket")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
+        public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
 
@@ -182,26 +183,26 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{MachineTaskId}")]
-        [Authorize(Policy = "ManagerAndTechnicalStaff")]
-        public async Task<ActionResult> UpdateMachineTaskStatus([FromRoute] int MachineTaskId, [FromQuery] string status)
-        {
-            int accountId = GetLoginAccountId();
+        //[HttpPatch("{MachineTaskId}")]
+        //[Authorize(Policy = "ManagerAndTechnicalStaff")]
+        //public async Task<ActionResult> UpdateMachineTaskStatus([FromRoute] int MachineTaskId, [FromQuery] string status)
+        //{
+        //    int accountId = GetLoginAccountId();
 
-            try
-            {
-                await _machineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        await _machineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         //[HttpDelete("{taskId}")]
         //[Authorize(Policy = "Manager")]
