@@ -8,6 +8,8 @@
 
         public string? ContractId { get; set; }
 
+        public int? RequestResponseId { get; set; }
+
         public int? PreviousTaskId { get; set; }
 
         public string? ComponentReplacementTicketId { get; set; }

@@ -35,16 +35,11 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
-        [HttpGet("staff")]
-        [Authorize(Policy = "Staff")]
+        [HttpGet("technical-staff")]
+        [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult<IEnumerable<MachineTaskDto>>> GetMachineTasksForStaff()
         {
             int staffId = GetLoginAccountId();
-            if (staffId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
@@ -61,9 +56,8 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
         [HttpGet("{taskId}")]
-        [Authorize(Policy = "ManagerAndStaff")]
+        [Authorize(Policy = "ManagerAndTechnicalStaff")]
         public async Task<ActionResult<MachineTaskDisplayDetail>> GetMachineTaskDetail([FromRoute] int taskId)
         {
             try
@@ -86,10 +80,7 @@ namespace API.Controllers
         public async Task<IActionResult> CreateMachineTaskCheckMachine([FromBody] CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
-            if (managerId == 0)
-            {
-                return Unauthorized();
-            }
+
             try
             {
                 await _machineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
@@ -105,15 +96,77 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{taskId}/check-machine-success")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<IActionResult> CheckMachineSuccess([FromRoute] int taskId)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineTaskService.StaffCheckMachineSuccess(taskId, staffId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{taskId}/replace-component-success")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<IActionResult> ReplaceComponentSucess([FromRoute] int taskId)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineTaskService.StaffReplaceComponentSuccess(taskId, staffId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        //[HttpPost("create/next-task")]
+        //[Authorize(Policy = "TechnicalStaff")]
+        //public async Task<IActionResult> CreateNextTaskForFailTask()
+        //{
+        //    int staffId = GetLoginAccountId();
+
+        //    try
+        //    {
+
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+
+        //TODO:KHANG
         [HttpPost("process-maintenance-ticket")]
         [Authorize(Policy = "Manager")]
         public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTickett createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
-            if (managerId == 0)
-            {
-                return Unauthorized();
-            }
+
             try
             {
                 await _machineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
@@ -129,16 +182,12 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
         [HttpPatch("{MachineTaskId}")]
-        [Authorize(Policy = "ManagerAndStaff")]
+        [Authorize(Policy = "ManagerAndTechnicalStaff")]
         public async Task<ActionResult> UpdateMachineTaskStatus([FromRoute] int MachineTaskId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
-            if (accountId == 0)
-            {
-                return Unauthorized();
-            }
+
             try
             {
                 await _machineTaskService.UpdateMachineTaskStatus(MachineTaskId, status, accountId);

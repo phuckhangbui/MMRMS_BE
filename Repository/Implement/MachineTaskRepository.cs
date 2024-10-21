@@ -43,7 +43,7 @@ namespace Repository.Implement
                 Content = createMachineTaskDto.TaskContent,
                 StaffId = createMachineTaskDto.StaffId,
                 ManagerId = managerId,
-                Type = MachineTaskTypeEnum.CheckMachinery.ToString(),
+                Type = MachineTaskTypeEnum.MachineryCheck.ToString(),
                 DateCreate = now,
                 DateStart = createMachineTaskDto.DateStart,
                 Status = MachineTaskStatusEnum.Assigned.ToString(),

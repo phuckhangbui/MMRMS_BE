@@ -10,6 +10,8 @@ namespace Service.Interface
         Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);
         Task<IEnumerable<MachineTaskDto>> GetMachineTasks();
         Task<IEnumerable<MachineTaskDto>> GetMachineTasks(int staffId);
+        Task StaffCheckMachineSuccess(int taskId, int staffId);
+        Task StaffReplaceComponentSuccess(int taskId, int staffId);
         Task UpdateMachineTaskStatus(int MachineTaskId, string status, int accountId);
     }
 }
