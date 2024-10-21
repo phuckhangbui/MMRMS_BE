@@ -117,20 +117,6 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
-        {
-            var accounts = await AccountDao.Instance.GetAccountsByRoleAsync(role);
-
-            if (role.HasValue && role.Value == (int)AccountRoleEnum.Customer)
-            {
-                return _mapper.Map<IEnumerable<CustomerAccountDto>>(accounts);
-            }
-            else
-            {
-                return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
-            }
-        }
-
         public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);

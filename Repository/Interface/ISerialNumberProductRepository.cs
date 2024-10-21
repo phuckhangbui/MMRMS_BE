@@ -14,10 +14,7 @@ namespace Repository.Interface
         Task<bool> IsSerialNumberProductHasContract(string serialNumber);
         Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto);
         Task UpdateStatus(string serialNumber, string status);
-        Task<bool> CheckSerialNumberProductValidToRequest(
-            List<NewRentingRequestProductDetailDto> rentingRequestProductDetailDtos,
-            DateTime requestStartDate,
-            int numberOfMonth);
+        Task<bool> CheckSerialNumberProductValidToRequest(NewRentingRequestDto newRentingRequestDto);
         Task<SerialNumberProductDto> GetSerialNumberProduct(string serialNumber);
         Task<IEnumerable<SerialNumberProductLogDto>> GetSerialNumberProductLog(string serialNumber);
         Task<IEnumerable<ProductComponentStatusDto>> GetProductComponentStatus(string serialNumber);

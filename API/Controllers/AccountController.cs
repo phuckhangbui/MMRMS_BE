@@ -19,24 +19,6 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetAccounts([FromQuery] int? role)
-        {
-            try
-            {
-                var accounts = await _accountService.GetAccountsByRole(role);
-                return Ok(accounts);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpGet("login-user-detail")]
         [Authorize]
         public async Task<ActionResult> GetLoginUserAccount()

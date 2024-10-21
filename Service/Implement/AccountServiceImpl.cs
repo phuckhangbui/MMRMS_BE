@@ -31,16 +31,6 @@ namespace Service.Implement
             return await _accountRepository.ChangeAccountStatus(accountId, status);
         }
 
-        public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
-        {
-            if (role.HasValue && !Enum.IsDefined(typeof(AccountRoleEnum), role.Value))
-            {
-                throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
-            }
-
-            return await _accountRepository.GetAccountsByRole(role);
-        }
-
         public async Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts()
         {
             return await _accountRepository.GetEmployeeAccounts();

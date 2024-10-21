@@ -4,7 +4,6 @@ namespace Repository.Interface
 {
     public interface IAccountRepository
     {
-        Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role);
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts();
