@@ -29,6 +29,7 @@ namespace Service.Implement
         {
             var list = await _productRepository.GetProductList();
 
+
             if (list.IsNullOrEmpty())
             {
                 return null;
@@ -56,8 +57,6 @@ namespace Service.Implement
             if (isProductExisted)
             {
                 var list = await _productRepository.GetProductNumberList(productId);
-
-
                 return _mapper.Map<IEnumerable<SerialNumberProductDto>>(list);
             }
 
@@ -303,6 +302,55 @@ namespace Service.Implement
         public async Task<IEnumerable<ProductReviewDto>> GetProductReviews(List<int> productIds)
         {
             return await _productRepository.GetProductReviews(productIds);
+        }
+
+        public async Task ToggleLockStatus(int productId)
+        {
+
+            var productDto = await _productRepository.GetProduct(productId);
+
+            if (productDto == null)
+            {
+                throw new ServiceException(MessageConstant.Product.ProductNotFound);
+            }
+
+            //if (productDto.Status == ProductStatusEnum.NoSerialMachine.ToString())
+            //{
+            //    throw new ServiceException(MessageConstant.Product.ProductStateNotSuitableForModifyStatus);
+            //}
+
+            if (productDto.Status != ProductStatusEnum.Locked.ToString())
+            {
+                productDto.Status = ProductStatusEnum.Locked.ToString();
+
+                await _productRepository.UpdateProduct(productDto);
+
+                return;
+            }
+
+            // when status is currently "locked"
+            var serialProductList = await GetSerialProductList(productId);
+
+            if (serialProductList.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.Product.ProductStateNotSuitableForModifyStatus);
+            }
+
+            foreach (var serialProduct in serialProductList)
+            {
+                if (serialProduct.Status == SerialNumberProductStatusEnum.Available.ToString())
+                {
+                    productDto.Status = ProductStatusEnum.Active.ToString();
+
+                    await _productRepository.UpdateProduct(productDto);
+
+                    return;
+                }
+            }
+
+            productDto.Status = ProductStatusEnum.OutOfStock.ToString();
+
+            await _productRepository.UpdateProduct(productDto);
         }
     }
 }

@@ -162,14 +162,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/status")]
+        [HttpPut("{productId}/toggle-lock")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId, [FromQuery] string status)
+        public async Task<ActionResult> UpdateProductStatus([FromRoute] int productId)
         {
 
             try
             {
-                await _productService.UpdateProductStatus(productId, status);
+                await _productService.ToggleLockStatus(productId);
                 return Ok();
             }
             catch (ServiceException ex)

@@ -109,6 +109,7 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string ProductHasSerialNumberCannotDeleted = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể xóa";
             public const string ProductHasSerialNumberCannotUpdateComponentList = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể cập nhật danh sách các bộ phận máy";
+            public const string ProductStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
 
 
             //DTO

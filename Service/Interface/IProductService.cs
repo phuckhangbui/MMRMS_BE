@@ -18,5 +18,6 @@ namespace Service.Interface
         Task UpdateProductComponent(int productId, ComponentList productAttributeDtos);
         Task ChangeProductImages(int productId, List<ImageList> imageList);
         Task UpdateProductTerm(int productId, IEnumerable<CreateProductTermDto> productTermDtos);
+        Task ToggleLockStatus(int productId);
     }
 }

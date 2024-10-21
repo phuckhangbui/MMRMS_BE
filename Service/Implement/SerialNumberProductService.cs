@@ -51,7 +51,7 @@ namespace Service.Implement
 
             var product = _mapper.Map<ProductDto>(productDetail);
 
-            if (product.Status == ProductStatusEnum.NoSerialMachine.ToString())
+            if (product.Status == ProductStatusEnum.Locked.ToString())
             {
                 product.Status = ProductStatusEnum.Active.ToString();
             }
