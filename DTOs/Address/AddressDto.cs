@@ -11,7 +11,6 @@ namespace DTOs.Address
         public string District { get; set; }
         public string City { get; set; }
         public string Coordinates { get; set; }
-        public bool IsDelete { get; set; }
     }
 
     public class AddressRequestDto

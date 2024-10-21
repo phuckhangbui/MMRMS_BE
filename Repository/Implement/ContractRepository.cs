@@ -129,7 +129,7 @@ namespace Repository.Implement
                         Title = string.Empty,
                         Amount = 0,
                         CustomerPaidDate = DateTime.Now,
-                        SystemPaidDate = DateTime.Now,
+                        //SystemPaidDate = DateTime.Now,
                         Status = string.Empty,
                         DateCreate = DateTime.Now,
                     };

@@ -20,7 +20,7 @@ namespace Repository.Implement
         {
             var category = _mapper.Map<Category>(categoryRequestDto);
 
-            category.Status = CategoryEnum.OutOfStock.ToString();
+            //category.Status = CategoryEnum.OutOfStock.ToString();
             category.DateCreate = DateTime.Now;
 
             await CategoryDao.Instance.CreateAsync(category);
@@ -35,7 +35,7 @@ namespace Repository.Implement
                 CategoryId = category.CategoryId,
                 CategoryName = category.CategoryName,
                 DateCreate = category.DateCreate,
-                Status = category.Status,
+                //Status = category.Status,
                 //Quantity = category.Products.Sum(p => p.Quantity) ?? 0
             }).ToList();
 

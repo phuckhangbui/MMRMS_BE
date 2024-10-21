@@ -273,8 +273,15 @@
 
         public static class Address
         {
+            //Controller
+            public const string ChangeAddressSuccessfully = "Cập nhật địa chỉ thành công";
+            public const string ChangeAddressFail = "Cập nhật địa chỉ thất bại";
+            public const string DeleteAddressSuccessfully = "Xóa địa chỉ thành công";
+            public const string DeleteAddressFail = "Xóa địa chỉ thất bại";
+
             //Service
             public const string AddressListEmpty = "Danh sách địa chỉ của bạn trống";
+            public const string AddressNotValid = "Địa chỉ không tồn tại hoặc không hợp lệ";
 
             //DTO
             public const string AddressBodyRequired = "Địa chỉ chi tiết là bắt buộc.";

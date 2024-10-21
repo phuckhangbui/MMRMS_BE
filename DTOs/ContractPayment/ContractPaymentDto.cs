@@ -8,7 +8,7 @@
         public string? Title { get; set; }
         public double? Amount { get; set; }
         public DateTime? CustomerPaidDate { get; set; }
-        public DateTime? SystemPaidDate { get; set; }
+        //public DateTime? SystemPaidDate { get; set; }
         public string? Status { get; set; }
         public string? Type { get; set; }
         public DateTime? DateCreate { get; set; }
