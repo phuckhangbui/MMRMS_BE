@@ -22,14 +22,25 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<ProductDto>> GetProductList()
         {
-            var productList = await ProductDao.Instance.GetProductListWithCategory();
+            var list = await ProductDao.Instance.GetProductListWithCategory();
 
-            if (!productList.IsNullOrEmpty())
+            var resultList = new List<ProductDto>();
+
+            if (list.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ProductDto>>(productList);
+                return null;
             }
 
-            return null;
+            foreach (var product in list)
+            {
+                var productDto = _mapper.Map<ProductDto>(product);
+
+                productDto.Quantity = product.SerialNumberProducts?.Count;
+
+                resultList.Add(productDto);
+            }
+
+            return resultList;
         }
 
         public async Task<ProductDto> GetProduct(int productId)
@@ -102,7 +113,7 @@ namespace Repository.Implement
             product.ComponentProducts = componentProducts;
 
             product.DateCreate = DateTime.Now;
-            product.Status = ProductStatusEnum.NoSerialMachine.ToString();
+            product.Status = ProductStatusEnum.Locked.ToString();
 
             List<Tuple<Component, int, bool>> componentsTuple = new List<Tuple<Component, int, bool>>();
 

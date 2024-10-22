@@ -13,8 +13,8 @@ namespace Repository.Interface
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsSerialNumberProductHasContract(string serialNumber);
         Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto);
-        Task UpdateStatus(string serialNumber, string status);
         Task<bool> CheckSerialNumberProductValidToRequest(NewRentingRequestDto newRentingRequestDto);
+        Task UpdateStatus(string serialNumber, string status, int staffId);
         Task<SerialNumberProductDto> GetSerialNumberProduct(string serialNumber);
         Task<IEnumerable<SerialNumberProductLogDto>> GetSerialNumberProductLog(string serialNumber);
         Task<IEnumerable<ProductComponentStatusDto>> GetProductComponentStatus(string serialNumber);

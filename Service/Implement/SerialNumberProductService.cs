@@ -51,7 +51,7 @@ namespace Service.Implement
 
             var product = _mapper.Map<ProductDto>(productDetail);
 
-            if (product.Status == ProductStatusEnum.NoSerialMachine.ToString())
+            if (product.Status == ProductStatusEnum.Locked.ToString())
             {
                 product.Status = ProductStatusEnum.Active.ToString();
             }
@@ -63,15 +63,12 @@ namespace Service.Implement
         {
             var serialNumberProduct = await _serialNumberProductRepository.GetSerialNumberProduct(serialNumber);
 
-            if (serialNumberProduct != null)
+            if (serialNumberProduct == null)
             {
                 throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
 
             }
-            if (string.IsNullOrEmpty(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
-            }
+
 
             if (await _serialNumberProductRepository.IsSerialNumberProductHasContract(serialNumber))
             {
@@ -81,7 +78,40 @@ namespace Service.Implement
             await _serialNumberProductRepository.Delete(serialNumber);
 
 
-            //var serialProductList = await _productRepository.GetProductNumberList()
+            var serialProductList = await _productRepository.GetProductNumberList((int)serialNumberProduct.ProductId);
+
+
+            var productDto = await _productRepository.GetProduct((int)serialNumberProduct.ProductId);
+
+            if (productDto == null)
+            {
+                return;
+            }
+
+            if (serialProductList.IsNullOrEmpty())
+            {
+                productDto.Status = ProductStatusEnum.Locked.ToString();
+
+                await _productRepository.UpdateProduct(productDto);
+
+                return;
+            }
+
+            foreach (var serialProduct in serialProductList)
+            {
+                if (serialProduct.Status == SerialNumberProductStatusEnum.Available.ToString())
+                {
+                    productDto.Status = ProductStatusEnum.Active.ToString();
+
+                    await _productRepository.UpdateProduct(productDto);
+
+                    return;
+                }
+            }
+
+            productDto.Status = ProductStatusEnum.OutOfStock.ToString();
+
+            await _productRepository.UpdateProduct(productDto);
         }
 
         public async Task<IEnumerable<SerialNumberProductLogDto>> GetDetailLog(string serialNumber)
@@ -120,6 +150,35 @@ namespace Service.Implement
             return serialNumberProducts;
         }
 
+        public async Task ToggleStatus(string serialNumber, int staffId)
+        {
+            var serialNumberProduct = await _serialNumberProductRepository.GetSerialNumberProduct(serialNumber);
+
+            if (serialNumberProduct == null)
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+            }
+
+            if (serialNumberProduct.Status == SerialNumberProductStatusEnum.Maintenance.ToString()
+               || serialNumberProduct.Status == SerialNumberProductStatusEnum.Rented.ToString())
+            {
+                throw new ServiceException(MessageConstant.SerialNumberProduct.ProductStateNotSuitableForModifyStatus);
+            }
+
+            if (serialNumberProduct.Status == SerialNumberProductStatusEnum.Available.ToString())
+            {
+                serialNumberProduct.Status = SerialNumberProductStatusEnum.Locked.ToString();
+            }
+            else
+            {
+                serialNumberProduct.Status = SerialNumberProductStatusEnum.Available.ToString();
+            }
+
+            await _serialNumberProductRepository.UpdateStatus(serialNumber, serialNumberProduct.Status, staffId);
+
+
+        }
+
         public async Task Update(string serialNumber, SerialNumberProductUpdateDto serialNumberProductUpdateDto)
         {
             if (string.IsNullOrEmpty(serialNumber))
@@ -135,26 +194,26 @@ namespace Service.Implement
             await _serialNumberProductRepository.Update(serialNumber, serialNumberProductUpdateDto);
         }
 
-        public async Task UpdateStatus(string serialNumber, string status)
-        {
-            if (string.IsNullOrEmpty(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
-            }
+        //public async Task UpdateStatus(string serialNumber, string status)
+        //{
+        //    if (string.IsNullOrEmpty(serialNumber))
+        //    {
+        //        throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberRequired);
+        //    }
 
-            if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
-            }
+        //    if (!await _serialNumberProductRepository.IsSerialNumberExist(serialNumber))
+        //    {
+        //        throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+        //    }
 
-            if (!status.Equals(SerialNumberProductStatusEnum.Maintenance.ToString()) ||
-               !status.Equals(SerialNumberProductStatusEnum.Locked.ToString()) ||
-               !status.Equals(SerialNumberProductStatusEnum.Available.ToString()))
-            {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.StatusCannotSet);
-            }
+        //    if (!status.Equals(SerialNumberProductStatusEnum.Maintenance.ToString()) ||
+        //       !status.Equals(SerialNumberProductStatusEnum.Locked.ToString()) ||
+        //       !status.Equals(SerialNumberProductStatusEnum.Available.ToString()))
+        //    {
+        //        throw new ServiceException(MessageConstant.SerialNumberProduct.StatusCannotSet);
+        //    }
 
-            await _serialNumberProductRepository.UpdateStatus(serialNumber, status);
-        }
+        //    await _serialNumberProductRepository.UpdateStatus(serialNumber, status, staffId);
+        //}
     }
 }

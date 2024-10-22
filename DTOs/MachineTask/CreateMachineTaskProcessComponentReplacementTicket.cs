@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.MachineTask
 {
-    public class CreateMachineTaskProcessComponentReplacementTickett
+    public class CreateMachineTaskProcessComponentReplacementTicket
     {
         [Required(ErrorMessage = MessageConstant.MachineTask.ComponentReplacementTicketIdRequired)]
         public string ComponentReplacementTicketId { get; set; }

@@ -75,7 +75,11 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                var list = await context.Products.Include(p => p.Category).Include(p => p.ProductImages).ToListAsync();
+                var list = await context.Products
+                    .Include(p => p.Category)
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.SerialNumberProducts)
+                    .ToListAsync();
 
                 return list;
             }

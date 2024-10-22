@@ -109,6 +109,7 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string ProductHasSerialNumberCannotDeleted = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể xóa";
             public const string ProductHasSerialNumberCannotUpdateComponentList = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể cập nhật danh sách các bộ phận máy";
+            public const string ProductStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
 
 
             //DTO
@@ -182,6 +183,7 @@
             public const string SerialNumberProductHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
             public const string NoAvailableSerailNumberProductForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
+            public const string ProductStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
 
             //DTO
             public const string ProductIdRequired = "ID máy là bắt buộc";
@@ -325,6 +327,7 @@
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
+            public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
 
 
             //DTO

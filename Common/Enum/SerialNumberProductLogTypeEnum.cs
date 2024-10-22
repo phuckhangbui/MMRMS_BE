@@ -3,5 +3,6 @@
     public enum SerialNumberProductLogTypeEnum
     {
         System,
+        UpdateStatus,
     }
 }

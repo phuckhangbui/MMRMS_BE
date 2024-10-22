@@ -12,6 +12,6 @@ namespace Repository.Interface
         Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);
         Task<IEnumerable<MachineTaskDto>> GetMachineTasks();
         Task<IEnumerable<MachineTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date);
-        Task UpdateTaskStatus(int MachineTaskId, string status, int accountId);
+        Task UpdateTaskStatus(int machineTaskId, string status, int accountId, string? confirmationPictureUrl);
     }
 }

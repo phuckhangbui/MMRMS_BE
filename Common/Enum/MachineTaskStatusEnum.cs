@@ -12,7 +12,7 @@
 
     public enum MachineTaskTypeEnum
     {
-        CheckMachinery,
-        ProcessMachineCheckRequest
+        MachineryCheck,
+        ComponentReplacement
     }
 }
