@@ -17,5 +17,6 @@ namespace Service.Interface
         Task<AccountDto> GetAccount(int accountId);
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
+        Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
     }
 }

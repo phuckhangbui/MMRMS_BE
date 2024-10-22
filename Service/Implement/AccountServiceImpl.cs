@@ -136,10 +136,21 @@ namespace Service.Implement
             var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
             if (!isValid)
             {
-                throw new ServiceException(MessageConstant.Account.EmployeeAccountNotValidToUpdate);
+                throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
             }
 
             return await _accountRepository.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
+        }
+
+        public async Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto)
+        {
+            var isValid = await _accountRepository.IsCustomerAccountValidToUpdate(accountId, customerAccountUpdateDto);
+            if (!isValid)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
+            }
+
+            return await _accountRepository.UpdateCustomerAccount(accountId, customerAccountUpdateDto);
         }
     }
 }

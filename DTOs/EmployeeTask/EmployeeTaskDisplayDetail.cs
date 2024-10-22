@@ -1,5 +1,5 @@
-﻿using DTOs.Contract;
-using DTOs.ComponentReplacementTicket;
+﻿using DTOs.ComponentReplacementTicket;
+using DTOs.Contract;
 
 namespace DTOs.MachineTask
 {

@@ -32,6 +32,7 @@ namespace DAO
             {
                 return await context.LogDetails
                     .Include(l => l.Account)
+                    .OrderByDescending(l => l.DateCreate)
                     .ToListAsync();
             }
         }

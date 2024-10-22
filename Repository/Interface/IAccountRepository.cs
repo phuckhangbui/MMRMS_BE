@@ -26,5 +26,7 @@ namespace Repository.Interface
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
+        Task<bool> IsCustomerAccountValidToUpdate(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
+        Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
     }
 }
