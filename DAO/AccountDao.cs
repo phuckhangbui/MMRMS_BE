@@ -175,5 +175,56 @@ namespace DAO
                 return true;
             }
         }
+
+        public async Task<bool> IsCustomerAccountValidToUpdate(int accountId, CustomerAccountUpdateDto updateDto)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var account = await context.Accounts.FindAsync(accountId);
+                if (account == null || account.IsDelete == true || account.Status.Equals(AccountStatusEnum.Active))
+                {
+                    return false;
+                }
+
+                bool emailExists = await context.Accounts
+                    .AnyAsync(a => a.Email == updateDto.Email && a.AccountId != accountId && a.IsDelete == false);
+
+                bool phoneExists = await context.Accounts
+                    .AnyAsync(a => a.Phone == updateDto.Phone && a.AccountId != accountId && a.IsDelete == false);
+
+                if (emailExists || phoneExists)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public async Task<Account> UpdateCustomerAccount(Account account)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.AccountBusinesses.Update(account.AccountBusiness);
+
+                        context.Accounts.Update(account);
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+
+                        return account;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
     }
 }

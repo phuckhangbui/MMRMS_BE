@@ -11,18 +11,15 @@ namespace Service.Implement
     {
         private readonly IContractRepository _contractRepository;
         private readonly IRentingRequestRepository _rentingRepository;
-        private readonly IAccountRepository _accountRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IRentingRequestRepository rentingRepository,
-            IAccountRepository accountRepository,
             ISerialNumberProductRepository serialNumberProductRepository)
         {
             _contractRepository = contractRepository;
             _rentingRepository = rentingRepository;
-            _accountRepository = accountRepository;
             _serialNumberProductRepository = serialNumberProductRepository;
         }
 

@@ -117,20 +117,6 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role)
-        {
-            var accounts = await AccountDao.Instance.GetAccountsByRoleAsync(role);
-
-            if (role.HasValue && role.Value == (int)AccountRoleEnum.Customer)
-            {
-                return _mapper.Map<IEnumerable<CustomerAccountDto>>(accounts);
-            }
-            else
-            {
-                return _mapper.Map<IEnumerable<EmployeeAccountDto>>(accounts);
-            }
-        }
-
         public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
         {
             var account = await AccountDao.Instance.GetAccountAsyncById(accountId);
@@ -263,6 +249,42 @@ namespace Repository.Implement
                 await AccountDao.Instance.UpdateAsync(employeeAccount);
 
                 return employeeAccount.AccountId;
+            }
+
+            return 0;
+        }
+
+        public async Task<bool> IsCustomerAccountValidToUpdate(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto)
+        {
+            return await AccountDao.Instance.IsCustomerAccountValidToUpdate(accountId, customerAccountUpdateDto);
+        }
+
+        public async Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto)
+        {
+            var customerAccount = await AccountDao.Instance.GetAccountAsyncById(accountId);
+
+            if (customerAccount != null)
+            {
+                customerAccount.Name = customerAccountUpdateDto.Name;
+                customerAccount.Email = customerAccountUpdateDto.Email;
+                customerAccount.Phone = customerAccountUpdateDto.Phone;
+                customerAccount.Gender = customerAccountUpdateDto.Gender;
+                customerAccount.DateBirth = customerAccountUpdateDto.DateBirth;
+
+                var accountBusiness = customerAccount.AccountBusiness;
+                if (accountBusiness != null)
+                {
+                    accountBusiness.TaxNumber = customerAccountUpdateDto?.TaxNumber;
+                    accountBusiness.Address = customerAccountUpdateDto?.Address;
+                    accountBusiness.Company = customerAccountUpdateDto?.Company;
+                    accountBusiness.Position = customerAccountUpdateDto?.Position;
+
+                    customerAccount.AccountBusiness = accountBusiness;
+                }
+
+                await AccountDao.Instance.UpdateCustomerAccount(customerAccount);
+
+                return customerAccount.AccountId;
             }
 
             return 0;

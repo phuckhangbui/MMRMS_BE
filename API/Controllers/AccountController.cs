@@ -19,24 +19,6 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetAccounts([FromQuery] int? role)
-        {
-            try
-            {
-                var accounts = await _accountService.GetAccountsByRole(role);
-                return Ok(accounts);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpGet("login-user-detail")]
         [Authorize]
         public async Task<ActionResult> GetLoginUserAccount()
@@ -270,8 +252,30 @@ namespace API.Controllers
             try
             {
                 var result = await _accountService.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
-                if (result > 0) return Ok(MessageConstant.Account.UpdateEmployeeAccountSuccessfully);
-                return BadRequest(MessageConstant.Account.UpdateEmployeeAccountFail);
+                if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
+                return BadRequest(MessageConstant.Account.UpdateAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("customers")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult> UpdateCustomerAccount(CustomerAccountUpdateDto customerAccountUpdateDto)
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+
+                var result = await _accountService.UpdateCustomerAccount(accountId, customerAccountUpdateDto);
+                if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
+                return BadRequest(MessageConstant.Account.UpdateAccountFail);
             }
             catch (ServiceException ex)
             {

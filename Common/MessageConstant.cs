@@ -31,8 +31,8 @@
         public static class Account
         {
             //Controller
-            public const string UpdateEmployeeAccountSuccessfully = "Cập nhật tài khoản nhân viên thành công";
-            public const string UpdateEmployeeAccountFail = "Cập nhật tài khoản nhân viên thất bại";
+            public const string UpdateAccountSuccessfully = "Cập nhật tài khoản thành công";
+            public const string UpdateAccountFail = "Cập nhật tài khoản thất bại";
             public const string ChangeAccountStatusSuccessfully = "Cập nhật trạng thái tài khoản thành công";
             public const string ChangeAccountStatusFail = "Cập nhật trạng thái tài khoản thất bại";
 
@@ -46,7 +46,7 @@
             public const string AccountInactive = "Tài khoản chưa kích hoạt";
             public const string AccountLocked = "Tài khoản đã bị khóa";
             public const string WrongOtp = "Mã OTP không hợp lệ";
-            public const string EmployeeAccountNotValidToUpdate = "Tài khoản nhân viên không thể cập nhật do thông tin không hợp lệ";
+            public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";
 
             //DTO
             public const string NameRequired = "Tên là bắt buộc.";

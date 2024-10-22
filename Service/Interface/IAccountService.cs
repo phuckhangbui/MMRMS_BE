@@ -4,7 +4,6 @@ namespace Service.Interface
 {
     public interface IAccountService
     {
-        Task<IEnumerable<AccountBaseDto>> GetAccountsByRole(int? role);
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts();
@@ -18,5 +17,6 @@ namespace Service.Interface
         Task<AccountDto> GetAccount(int accountId);
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
+        Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
     }
 }

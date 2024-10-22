@@ -16,7 +16,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<bool> CheckAddressValid(int addressId, int accountId)
+        public async Task<bool> IsAddressValid(int addressId, int accountId)
         {
             var address = await AddressDao.Instance.GetAddressById(addressId);
             if (address == null || address.AccountId != accountId)

@@ -23,7 +23,7 @@ namespace Service.Implement
 
         public async Task<bool> DeleteAddress(int accountId, int addressId)
         {
-            var isValid = await _addressRepository.CheckAddressValid(addressId, accountId);
+            var isValid = await _addressRepository.IsAddressValid(addressId, accountId);
             if (!isValid)
             {
                 throw new ServiceException(MessageConstant.Address.AddressNotValid);
@@ -46,7 +46,7 @@ namespace Service.Implement
 
         public async Task<bool> UpdateAddress(int accountId, int addressId, AddressRequestDto addressRequestDto)
         {
-            var isValid = await _addressRepository.CheckAddressValid(addressId, accountId);
+            var isValid = await _addressRepository.IsAddressValid(addressId, accountId);
             if (!isValid)
             {
                 throw new ServiceException(MessageConstant.Address.AddressNotValid);

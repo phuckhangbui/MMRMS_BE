@@ -7,6 +7,37 @@ namespace DTOs.Account
     {
     }
 
+    public class CustomerAccountUpdateDto
+    {
+        [Required(ErrorMessage = MessageConstant.Account.NameRequired)]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
+        public int Gender { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
+        public DateTime DateBirth { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.CompanyRequired)]
+        public string Company { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.PositionRequired)]
+        public string? Position { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.TaxNumberRequired)]
+        public string? TaxNumber { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
+        public string Address { get; set; }
+    }
+
     public class EmployeeAccountUpdateDto
     {
         [Required(ErrorMessage = MessageConstant.Account.NameRequired)]

@@ -10,35 +10,29 @@ namespace Service.Implement
     {
         private readonly IRentingRequestRepository _rentingRepository;
         private readonly ISerialNumberProductRepository _serialNumberProductRepository;
-        private readonly IAccountRepository _accountRepository;
         private readonly IAddressRepository _addressRepository;
 
         public RentingRequestServiceImpl(
             IRentingRequestRepository rentingRepository,
             ISerialNumberProductRepository serialNumberProductRepository,
-            IAccountRepository accountRepository,
             IAddressRepository addressRepository)
         {
             _rentingRepository = rentingRepository;
             _serialNumberProductRepository = serialNumberProductRepository;
-            _accountRepository = accountRepository;
             _addressRepository = addressRepository;
         }
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
-            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(
-                newRentingRequestDto.RentingRequestProductDetails,
-                newRentingRequestDto.DateStart,
-                newRentingRequestDto.NumberOfMonth);
+            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto);
             if (!isProductsValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestProductsInvalid);
             }
 
             //Check address valid
-            var isAddressValid = await _addressRepository.CheckAddressValid(newRentingRequestDto.AddressId, customerId);
+            var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
             if (!isAddressValid)
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
