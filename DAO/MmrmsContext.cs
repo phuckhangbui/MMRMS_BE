@@ -526,7 +526,7 @@ public partial class MmrmsContext : DbContext
 
 
             entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.ComponentReplacementTickets)
-                .HasForeignKey(d => d.MachineSerialNumber)
+                .HasForeignKey(d => d.SerialNumber)
                 .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumber");
 
             entity.HasOne(d => d.Contract).WithMany(p => p.ComponentReplacementTickets)
