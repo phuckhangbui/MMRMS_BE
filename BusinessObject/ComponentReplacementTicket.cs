@@ -14,7 +14,7 @@ public partial class ComponentReplacementTicket
 
     public string? InvoiceId { get; set; }
 
-    public string? ProductSerialNumber { get; set; }
+    public string? SerialNumber { get; set; }
 
     public double? ComponentPrice { get; set; }
 
@@ -48,7 +48,7 @@ public partial class ComponentReplacementTicket
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual SerialNumberProduct? SerialNumberProduct { get; set; }
+    public virtual MachineSerialNumber? MachineSerialNumber { get; set; }
 
 
 }

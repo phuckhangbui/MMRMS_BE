@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum SerialNumberProductStatusEnum
+    public enum MachineSerialNumberStatusEnum
     {
         Available,
         Rented,

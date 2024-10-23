@@ -45,9 +45,9 @@ namespace Service.Implement
             if (updateComponentDto.ComponentName.Trim().ToLower() != component.ComponentName.Trim().ToLower())
             {
 
-                var componentProducts = await _componentRepository.GetComponentProductList(component.ComponentId);
+                var componentMachines = await _componentRepository.GetMachineComponentList(component.ComponentId);
 
-                if (!componentProducts.IsNullOrEmpty())
+                if (!componentMachines.IsNullOrEmpty())
                 {
                     throw new ServiceException(MessageConstant.Component.ComponentHasBeenUsedCannotUpdateName);
                 }
@@ -107,9 +107,9 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
             }
 
-            var componentProducts = await _componentRepository.GetComponentProductList(componentId);
+            var componentMachines = await _componentRepository.GetMachineComponentList(componentId);
 
-            if (!componentProducts.IsNullOrEmpty())
+            if (!componentMachines.IsNullOrEmpty())
             {
                 throw new ServiceException(MessageConstant.Component.ComponentHasBeenUsedCannotDelete);
             }

@@ -52,11 +52,11 @@ namespace API.Controllers
         }
 
         [HttpGet("product")]
-        public async Task<ActionResult<IEnumerable<TermDto>>> GetProductTerms()
+        public async Task<ActionResult<IEnumerable<TermDto>>> GetMachineTerms()
         {
             try
             {
-                var terms = await _termService.GetProductTerms();
+                var terms = await _termService.GetMachineTerms();
                 return Ok(terms);
             }
             catch (ServiceException ex)

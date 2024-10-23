@@ -9,26 +9,26 @@ namespace Service.Implement
     public class RentingRequestServiceImpl : IRentingRequestService
     {
         private readonly IRentingRequestRepository _rentingRepository;
-        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IAddressRepository _addressRepository;
 
         public RentingRequestServiceImpl(
             IRentingRequestRepository rentingRepository,
-            ISerialNumberProductRepository serialNumberProductRepository,
+            IMachineSerialNumberRepository machineSerialNumberRepository,
             IAddressRepository addressRepository)
         {
             _rentingRepository = rentingRepository;
-            _serialNumberProductRepository = serialNumberProductRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
             _addressRepository = addressRepository;
         }
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             //Check product valid (quantity + status)
-            var isProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductValidToRequest(newRentingRequestDto);
-            if (!isProductsValid)
+            var isMachinesValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRequest(newRentingRequestDto);
+            if (!isMachinesValid)
             {
-                throw new ServiceException(MessageConstant.RentingRequest.RequestProductsInvalid);
+                throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
             //Check address valid
@@ -57,9 +57,9 @@ namespace Service.Implement
             return rentingRequest;
         }
 
-        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
+        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto)
         {
-            return await _rentingRepository.InitializeRentingRequestData(customerId, rentingRequestProductInRangeDto);
+            return await _rentingRepository.InitializeRentingRequestData(customerId, rentingRequestMachineInRangeDto);
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)

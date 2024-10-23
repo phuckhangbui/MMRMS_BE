@@ -32,7 +32,7 @@ public partial class Contract
 
     public string? SerialNumber { get; set; }
 
-    public virtual SerialNumberProduct? ContractSerialNumberProduct { get; set; }
+    public virtual MachineSerialNumber? ContractMachineSerialNumber { get; set; }
 
     public virtual Account? AccountSign { get; set; }
 

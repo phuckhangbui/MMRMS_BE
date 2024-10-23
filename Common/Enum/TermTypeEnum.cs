@@ -3,6 +3,6 @@
     public enum TermTypeEnum
     {
         Contract,
-        Product
+        Machine
     }
 }

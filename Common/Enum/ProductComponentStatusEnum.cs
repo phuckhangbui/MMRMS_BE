@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum ProductComponentStatusEnum
+    public enum MachineComponentStatusEnum
     {
         Normal,
         NeedReplacement,

@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum SerialNumberProductLogTypeEnum
+    public enum MachineSerialNumberLogTypeEnum
     {
         System,
         UpdateStatus,

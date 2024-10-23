@@ -14,7 +14,7 @@ public static class ApplicationServicesExtensions
     {
         //Repository
         services.AddScoped<IAccountRepository, AccountRepository>();
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IContentRepository, ContentRepository>();
         services.AddScoped<IComponentRepository, ComponentRepository>();
@@ -22,7 +22,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IContractRepository, ContractRepository>();
         services.AddScoped<IRentingRequestRepository, RentingRequestRepository>();
-        services.AddScoped<ISerialNumberProductRepository, SerialNumberProductRepository>();
+        services.AddScoped<IMachineSerialNumberRepository, MachineSerialNumberRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
@@ -41,14 +41,14 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPayOSService, PayOSService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IAccountService, AccountServiceImpl>();
-        services.AddScoped<IProductService, ProductServiceImpl>();
+        services.AddScoped<IMachineService, MachineServiceImpl>();
         services.AddScoped<ICategoryService, CategoryServiceImpl>();
         services.AddScoped<IContentService, ContentServiceImpl>();
         services.AddScoped<IComponentService, ComponentServiceImpl>();
         services.AddScoped<IMembershipRankService, MembershipRankServiceImpl>();
         services.AddScoped<IDashboardService, DashboardServiceImpl>();
         services.AddScoped<IContractService, ContractServiceImpl>();
-        services.AddScoped<ISerialNumberProductService, SerialNumberProductService>();
+        services.AddScoped<IMachineSerialNumberService, MachineSerialNumberService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IRentingRequestService, RentingRequestServiceImpl>();
         services.AddScoped<INotificationService, NotificationService>();

@@ -16,6 +16,6 @@ public partial class Component
 
 
     public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
-    public virtual ICollection<ComponentProduct> ComponentProducts { get; set; } = new List<ComponentProduct>();
+    public virtual ICollection<MachineComponent> MachineComponents { get; set; } = new List<MachineComponent>();
 
 }

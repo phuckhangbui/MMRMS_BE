@@ -52,6 +52,8 @@ public partial class Account
 
     public virtual AccountBusiness? AccountBusiness { get; set; }
 
+    public virtual Role? Role { get; set; }
+
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
 
     public virtual ICollection<LogDetail> LogDetails { get; set; } = new List<LogDetail>();
@@ -76,7 +78,7 @@ public partial class Account
 
     public virtual ICollection<DeliveryTaskLog> DeliveryTaskLogs { get; set; } = new List<DeliveryTaskLog>();
 
-    public virtual ICollection<SerialNumberProductLog> SerialNumberProductLogs { get; set; } = new List<SerialNumberProductLog>();
+    public virtual ICollection<MachineSerialNumberLog> MachineSerialNumberLogs { get; set; } = new List<MachineSerialNumberLog>();
 
     public virtual ICollection<MembershipRankLog> MembershipRankLogs { get; set; } = new List<MembershipRankLog>();
 

@@ -7,7 +7,7 @@ namespace Service.Interface
     {
         Task CreateTerm(CreateTermDto createTermDto);
         Task DeleteTerm(int termId);
-        Task<IEnumerable<TermDto>> GetProductTerms();
+        Task<IEnumerable<TermDto>> GetMachineTerms();
         Task<TermDto> GetTerm(int termId);
         Task<IEnumerable<TermDto>> GetTerms();
         Task UpdateTerm(UpdateTermDto updateTermDto);

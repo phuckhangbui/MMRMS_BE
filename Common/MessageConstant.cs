@@ -99,36 +99,36 @@
             public const string DateEndRequired = "Ngày kết thúc là bắt buộc.";
         }
 
-        public static class Product
+        public static class Machine
         {
             //Service
-            public const string ProductNotFound = "Không tìm thấy sản phẩm";
-            public const string ProductNameDuplicated = "Tên sản phẩm bị trùng";
-            public const string ProductModelDuplicated = "Mã model sản phẩm bị trùng";
+            public const string MachineNotFound = "Không tìm thấy sản phẩm";
+            public const string MachineNameDuplicated = "Tên sản phẩm bị trùng";
+            public const string MachineModelDuplicated = "Mã model sản phẩm bị trùng";
             public const string ComponentIdListNotCorrect = "Danh sách bộ phận máy không đúng";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
-            public const string ProductHasSerialNumberCannotDeleted = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể xóa";
-            public const string ProductHasSerialNumberCannotUpdateComponentList = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể cập nhật danh sách các bộ phận máy";
-            public const string ProductStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
+            public const string MachineHasSerialNumberCannotDeleted = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể xóa";
+            public const string MachineHasSerialNumberCannotUpdateComponentList = "Sản phẩm này đã có danh sách các mã serial, vì vậy không thể cập nhật danh sách các bộ phận máy";
+            public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
 
 
             //DTO
-            public const string ProductNameRequired = "Tên máy là bắt buộc";
+            public const string MachineNameRequired = "Tên máy là bắt buộc";
             public const string DescriptionRequired = "Miêu tả máy là bắt buộc";
-            public const string ProductPriceRequired = "Giá máy là bắt buộc";
+            public const string MachinePriceRequired = "Giá máy là bắt buộc";
             public const string RentPriceRequired = "Giá thuê là bắt buộc";
             public const string ModelRequired = "Mã model là bắt buộc";
             public const string OrginRequired = "Nguồn gốc là bắt buộc";
             public const string CategoryRequired = "Loại máy là bắt buộc";
             public const string StatusRequired = "Trạng thái là bắt buộc";
 
-            public const string ProductPricePositiveNumber = "Giá máy phải là số dương";
+            public const string MachinePricePositiveNumber = "Giá máy phải là số dương";
             public const string RentPricePositiveNumber = "Giá thuê phải là số dương";
             public const string ImageIsRequired = "Hình ảnh của sản phẩm là bắt buộc";
 
         }
 
-        public static class ProductAttribute
+        public static class MachineAttribute
         {
             //Service
 
@@ -138,7 +138,7 @@
             public const string SpecsRequired = "Chi tiết máy là bắt buộc";
         }
 
-        public static class ProductTerm
+        public static class MachineTerm
         {
             //Service
 
@@ -174,21 +174,21 @@
 
         }
 
-        public static class SerialNumberProduct
+        public static class MachineSerialNumber
         {
             //Service
-            public const string SerialNumberProductDuplicated = "Mã máy bị trùng";
-            public const string ProductHaveNoComponentAndIsForceSetToFalse = "Máy này chưa có bộ phận, bạn có chắc là muốn thêm mã máy này?";
-            public const string SerialNumberProductNotFound = "Mã máy không tồn tại";
-            public const string SerialNumberProductHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
+            public const string MachineSerialNumberDuplicated = "Mã máy bị trùng";
+            public const string MachineHaveNoComponentAndIsForceSetToFalse = "Máy này chưa có bộ phận, bạn có chắc là muốn thêm mã máy này?";
+            public const string MachineSerialNumberNotFound = "Mã máy không tồn tại";
+            public const string MachineSerialNumberHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
-            public const string NoAvailableSerailNumberProductForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
-            public const string ProductStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
+            public const string NoAvailableSerailNumberMachineForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
+            public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
 
             //DTO
-            public const string ProductIdRequired = "ID máy là bắt buộc";
+            public const string MachineIdRequired = "ID máy là bắt buộc";
             public const string SerialNumberRequired = "Mã máy là bắt buộc";
-            public const string ForceWhenNoComponentInProductRequired = "Thêm flag khi sản phẩm có hoặc không có bộ phận máy";
+            public const string ForceWhenNoComponentInMachineRequired = "Thêm flag khi sản phẩm có hoặc không có bộ phận máy";
 
             public const string ActualRentPriceRequired = "Giá thuê máy là bắt buộc";
             public const string RentTimeCounterequired = "Số lần máy đã cho thuê là bắt buộc";
@@ -204,7 +204,7 @@
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
             public const string RentingRequestInvalid = "Yêu cầu thuê không hợp lệ.";
             public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
-            public const string SerialNumberProductsInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
+            public const string MachineSerialNumbersInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
@@ -220,7 +220,7 @@
             public const string DateEndRequired = "Ngày kết thúc là bắt buộc.";
             public const string DateEndAfterStart = "Ngày kết thúc phải sau ngày bắt đầu.";
             public const string ContractTermsRequired = "Danh sách điều khoản hợp đồng là bắt buộc.";
-            public const string SerialNumberProductsRequired = "Danh sách sản phẩm với số serial là bắt buộc.";
+            public const string MachineSerialNumbersRequired = "Danh sách sản phẩm với số serial là bắt buộc.";
         }
 
         public static class Notification
@@ -233,7 +233,7 @@
         public static class RentingRequest
         {
             //Service
-            public const string RequestProductsInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
+            public const string RequestMachinesInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
             public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
             public const string RentingRequestNotFound = "Yêu cầu thuê không tồn tại";
@@ -251,7 +251,7 @@
             public const string NumberOfMonthRequired = "Số tháng thuê là bắt buộc.";
             public const string TotalAmountRequired = "Tổng tiền là bắt buộc.";
             public const string IsOnetimePaymentRequired = "Hình thức thanh toán một lần là bắt buộc.";
-            public const string RequestProductsRequired = "Danh sách máy yêu cầu thuê là bắt buộc.";
+            public const string RequestMachinesRequired = "Danh sách máy yêu cầu thuê là bắt buộc.";
             public const string ServiceRentingRequestsRequired = "Danh sách dịch vụ thuê là bắt buộc.";
         }
 
@@ -340,7 +340,7 @@
 
         }
 
-        public static class MaintanningTicket
+        public static class ComponentReplacementTicket
         {
             //Service
             public const string TicketNotFound = "Mã yêu cầu thay thế này không tồn tại";
@@ -349,7 +349,7 @@
 
             //DTO
             public const string ComponentIdRequired = "Mã bộ phận máy là bắt buộc";
-            public const string ProductSerialNumberRequired = "Mã máy là bắt buộc";
+            public const string MachineSerialNumberRequired = "Mã máy là bắt buộc";
             public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
             public const string PriceRequired = "Giá tiền là bắt buộc";
             public const string PricePositiveNumberRequired = "Giá tiền phải là số dương";

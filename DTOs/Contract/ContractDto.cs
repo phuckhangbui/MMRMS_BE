@@ -1,5 +1,5 @@
 ﻿using Common;
-using DTOs.SerialNumberProduct;
+using DTOs.MachineSerialNumber;
 using DTOs.Term;
 using DTOs.Validation;
 using System.ComponentModel.DataAnnotations;
@@ -16,8 +16,8 @@ namespace DTOs.Contract
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public string? Status { get; set; }
-        public int? ProductId { get; set; }
-        public string? ProductName { get; set; }
+        public int? MachineId { get; set; }
+        public string? MachineName { get; set; }
         public string? SerialNumber { get; set; }
         public double? RentPrice { get; set; }
         public string? Thumbnail { get; set; }
@@ -44,7 +44,7 @@ namespace DTOs.Contract
         [Required(ErrorMessage = MessageConstant.Contract.ContractTermsRequired)]
         public List<ContractTermRequestDto> ContractTerms { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Contract.SerialNumberProductsRequired)]
-        public List<SerialNumberProductRentRequestDto> SerialNumberProducts { get; set; }
+        [Required(ErrorMessage = MessageConstant.Contract.MachineSerialNumbersRequired)]
+        public List<MachineSerialNumberRentRequestDto> MachineSerialNumbers { get; set; }
     }
 }

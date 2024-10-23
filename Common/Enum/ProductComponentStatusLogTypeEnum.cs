@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum ProductComponentStatusLogTypeEnum
+    public enum MachineComponentStatusLogTypeEnum
     {
         System,
     }

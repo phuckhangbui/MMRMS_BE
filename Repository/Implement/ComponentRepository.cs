@@ -4,7 +4,7 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Component;
-using DTOs.Product;
+using DTOs.Machine;
 using Repository.Exceptions;
 using Repository.Interface;
 
@@ -99,11 +99,11 @@ namespace Repository.Implement
             return _mapper.Map<ComponentDto>(component);
         }
 
-        public async Task<IEnumerable<ComponentProductDto>> GetComponentProductList(int componentId)
+        public async Task<IEnumerable<MachineComponentDto>> GetMachineComponentList(int componentId)
         {
-            var list = await ComponentProductDao.Instance.GetComponentProductBaseOnComponentId(componentId);
+            var list = await MachineComponentDao.Instance.GetMachineComponentBaseOnComponentId(componentId);
 
-            return _mapper.Map<IEnumerable<ComponentProductDto>>(list);
+            return _mapper.Map<IEnumerable<MachineComponentDto>>(list);
         }
 
         public async Task UpdateComponent(ComponentDto componentDto)

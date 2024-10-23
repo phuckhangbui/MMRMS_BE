@@ -3,35 +3,35 @@
 
 //namespace DAO
 //{
-//    public class ContractSerialNumberProductDao : BaseDao<ContractSerialNumberProduct>
+//    public class ContractMachineSerialNumberDao : BaseDao<ContractMachineSerialNumber>
 //    {
-//        private static ContractSerialNumberProductDao instance = null;
+//        private static ContractMachineSerialNumberDao instance = null;
 //        private static readonly object instacelock = new object();
 
-//        private ContractSerialNumberProductDao()
+//        private ContractMachineSerialNumberDao()
 //        {
 
 //        }
 
-//        public static ContractSerialNumberProductDao Instance
+//        public static ContractMachineSerialNumberDao Instance
 //        {
 //            get
 //            {
 //                if (instance == null)
 //                {
-//                    instance = new ContractSerialNumberProductDao();
+//                    instance = new ContractMachineSerialNumberDao();
 //                }
 //                return instance;
 //            }
 //        }
 
-//        public async Task<IEnumerable<ContractSerialNumberProduct>> GetContractSerialNumberProductsByContractId(string contractId)
+//        public async Task<IEnumerable<ContractMachineSerialNumber>> GetContractMachineSerialNumbersByContractId(string contractId)
 //        {
 //            using (var context = new MmrmsContext())
 //            {
-//                return await context.ContractSerialNumberProducts
+//                return await context.ContractMachineSerialNumbers
 //                    .Where(c => c.ContractId == contractId)
-//                    .Include(c => c.SerialNumberProduct)
+//                    .Include(c => c.MachineSerialNumber)
 //                    .ToListAsync();
 //            }
 //        }

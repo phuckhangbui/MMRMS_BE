@@ -13,15 +13,15 @@ using DTOs.ContractPayment;
 using DTOs.DeliveryTask;
 using DTOs.Invoice;
 using DTOs.Log;
+using DTOs.Machine;
 using DTOs.MachineCheckRequest;
+using DTOs.MachineSerialNumber;
 using DTOs.MachineTask;
 using DTOs.MembershipRank;
 using DTOs.Notification;
-using DTOs.Product;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using DTOs.RentingService;
-using DTOs.SerialNumberProduct;
 using DTOs.Term;
 
 namespace Repository.Mapper
@@ -78,71 +78,71 @@ namespace Repository.Mapper
             CreateMap<Category, CategoryDto>();
             CreateMap<Category, CategoryRequestDto>().ReverseMap();
 
-            CreateMap<Product, ProductDto>()
+            CreateMap<Machine, MachineDto>()
                      .ForMember(dest => dest.CategoryName,
                          opt => opt.MapFrom(src => src.Category != null
                              ? src.Category.CategoryName
                              : null))
-                     .ForMember(dest => dest.ProductImageList,
-                         opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
-                             ? src.ProductImages
+                     .ForMember(dest => dest.MachineImageList,
+                         opt => opt.MapFrom(src => src.MachineImages != null && src.MachineImages.Any()
+                             ? src.MachineImages
                              : null));
-            CreateMap<ProductDto, Product>();
-            CreateMap<Product, ProductReviewDto>();
+            CreateMap<MachineDto, Machine>();
+            CreateMap<Machine, MachineReviewDto>();
 
-            CreateMap<UpdateProductDto, ProductDto>();
+            CreateMap<UpdateMachineDto, MachineDto>();
 
-            CreateMap<Product, DisplayProductDetailDto>()
+            CreateMap<Machine, DisplayMachineDetailDto>()
                     .ForMember(dest => dest.CategoryName,
                         opt => opt.MapFrom(src => src.Category != null
                             ? src.Category.CategoryName
                             : null))
-                    .ForMember(dest => dest.ProductImageList,
-                        opt => opt.MapFrom(src => src.ProductImages != null && src.ProductImages.Any()
-                            ? src.ProductImages
+                    .ForMember(dest => dest.MachineImageList,
+                        opt => opt.MapFrom(src => src.MachineImages != null && src.MachineImages.Any()
+                            ? src.MachineImages
                             : null))
-                    .ForMember(dest => dest.ProductAttributeList,
-                        opt => opt.MapFrom(src => src.ProductAttributes != null && src.ProductAttributes.Any()
-                            ? src.ProductAttributes
+                    .ForMember(dest => dest.MachineAttributeList,
+                        opt => opt.MapFrom(src => src.MachineAttributes != null && src.MachineAttributes.Any()
+                            ? src.MachineAttributes
                             : null))
-                    .ForMember(dest => dest.ComponentProductList,
-                        opt => opt.MapFrom(src => src.ComponentProducts != null && src.ComponentProducts.Any()
-                            ? src.ComponentProducts
+                    .ForMember(dest => dest.MachineComponentList,
+                        opt => opt.MapFrom(src => src.MachineComponents != null && src.MachineComponents.Any()
+                            ? src.MachineComponents
                             : null))
-                    .ForMember(dest => dest.ProductTermList,
-                        opt => opt.MapFrom(src => src.ProductTerms != null && src.ProductTerms.Any()
-                            ? src.ProductTerms
+                    .ForMember(dest => dest.MachineTermList,
+                        opt => opt.MapFrom(src => src.MachineTerms != null && src.MachineTerms.Any()
+                            ? src.MachineTerms
                             : null));
 
-            CreateMap<DisplayProductDetailDto, ProductDto>();
+            CreateMap<DisplayMachineDetailDto, MachineDto>();
 
 
-            CreateMap<ProductImage, ProductImageDto>();
-            CreateMap<ProductAttribute, ProductAttributeDto>();
-            CreateMap<ProductTerm, ProductTermDto>();
-            CreateMap<ComponentProduct, ComponentProductDto>()
+            CreateMap<MachineImage, MachineImageDto>();
+            CreateMap<MachineAttribute, MachineAttributeDto>();
+            CreateMap<MachineTerm, MachineTermDto>();
+            CreateMap<MachineComponent, MachineComponentDto>()
                  .ForMember(dest => dest.ComponentName,
                         opt => opt.MapFrom(src => src.Component != null
                             ? src.Component.ComponentName
                             : null));
 
-            CreateMap<CreateProductDto, Product>();
-            CreateMap<CreateProductAttributeDto, ProductAttribute>();
-            CreateMap<CreateProductTermDto, ProductTerm>();
-            CreateMap<AddExistedComponentToProduct, ComponentProduct>();
+            CreateMap<CreateMachineDto, Machine>();
+            CreateMap<CreateMachineAttributeDto, MachineAttribute>();
+            CreateMap<CreateMachineTermDto, MachineTerm>();
+            CreateMap<AddExistedComponentToMachine, MachineComponent>();
 
             CreateMap<Component, ComponentDto>();
             CreateMap<UpdateComponentDto, Component>();
             CreateMap<CreateComponentDto, Component>();
 
-            CreateMap<SerialNumberProduct, SerialNumberProductDto>();
-            CreateMap<SerialNumberProduct, SerialNumberProductOptionDto>();
-            CreateMap<SerialNumberProductLog, SerialNumberProductLogDto>()
+            CreateMap<MachineSerialNumber, MachineSerialNumberDto>();
+            CreateMap<MachineSerialNumber, MachineSerialNumberOptionDto>();
+            CreateMap<MachineSerialNumberLog, MachineSerialNumberLogDto>()
                 .ForMember(dest => dest.AccountTriggerName,
                         opt => opt.MapFrom(src => src.AccountTrigger != null
                             ? src.AccountTrigger.Name
                             : null));
-            CreateMap<ProductComponentStatus, ProductComponentStatusDto>()
+            CreateMap<MachineComponentStatus, MachineComponentStatusDto>()
                 .ForMember(dest => dest.ComponentName,
                         opt => opt.MapFrom(src => src.Component != null
                             ? src.Component.Component.ComponentName
@@ -159,21 +159,21 @@ namespace Repository.Mapper
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
             CreateMap<Contract, ContractDto>()
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.ProductId : null))
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null))
-                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null &&
-                    src.ContractSerialNumberProduct.Product.ProductImages != null ? src.ContractSerialNumberProduct.Product.ProductImages.FirstOrDefault(p => p.IsThumbnail == true).ProductImageUrl : null));
+                .ForMember(dest => dest.MachineId, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.MachineId : null))
+                .ForMember(dest => dest.MachineName, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.Machine.MachineName : null))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null &&
+                    src.ContractMachineSerialNumber.Machine.MachineImages != null ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null));
             CreateMap<Contract, ContractDetailDto>()
                 .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
                 .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.ProductId : null))
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ContractSerialNumberProduct != null &&
-                    src.ContractSerialNumberProduct.Product != null ? src.ContractSerialNumberProduct.Product.ProductName : null))
+                .ForMember(dest => dest.MachineId, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.MachineId : null))
+                .ForMember(dest => dest.MachineName, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.Machine.MachineName : null))
                 .ForMember(dest => dest.IsOnetimePayment, opt => opt.MapFrom(src => src.RentingRequest != null ? src.RentingRequest.IsOnetimePayment : null));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
@@ -200,7 +200,7 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore());
-            CreateMap<RentingRequestProductDetail, NewRentingRequestProductDetailDto>().ReverseMap();
+            CreateMap<RentingRequestMachineDetail, NewRentingRequestMachineDetailDto>().ReverseMap();
             CreateMap<RentingRequest, RentingRequestDetailDto>();
             CreateMap<ServiceRentingRequest, ServiceRentingRequestDto>()
                 .ForMember(dest => dest.RentingServiceName, opt => opt.MapFrom(src => src.RentingService.RentingServiceName));

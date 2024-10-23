@@ -5,7 +5,7 @@ using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Contract = BusinessObject.Contract;
 using RentingRequest = BusinessObject.RentingRequest;
-using SerialNumberProduct = BusinessObject.SerialNumberProduct;
+using MachineSerialNumber = BusinessObject.MachineSerialNumber;
 
 namespace DAO
 {
@@ -40,9 +40,9 @@ namespace DAO
                         .ThenInclude(rr => rr.RentingService)
                     .Include(rr => rr.AccountOrder)
                     .Include(rr => rr.Contracts)
-                        .ThenInclude(c => c.ContractSerialNumberProduct)
-                        .ThenInclude(s => s.Product)
-                        .ThenInclude(p => p.ProductImages)
+                        .ThenInclude(c => c.ContractMachineSerialNumber)
+                        .ThenInclude(s => s.Machine)
+                        .ThenInclude(p => p.MachineImages)
                     .Include(rr => rr.RentingRequestAddress)
                     .FirstOrDefaultAsync(rr => rr.RentingRequestId.Equals(rentingRequestId));
             }
@@ -102,47 +102,47 @@ namespace DAO
                         double totalDepositPrice = 0;
                         double totalRentPrice = 0;
                         //Contract
-                        foreach (var newRentingRequestProduct in newRentingRequestDto.RentingRequestProductDetails)
+                        foreach (var newRentingRequestMachine in newRentingRequestDto.RentingRequestMachineDetails)
                         {
-                            var availableSerialNumberProducts = await context.SerialNumberProducts
-                                .Where(s => s.ProductId == newRentingRequestProduct.ProductId && s.Status!.Equals(SerialNumberProductStatusEnum.Available.ToString()))
-                                .Include(s => s.Product)
-                                    .ThenInclude(p => p.ProductTerms)
+                            var availableMachineSerialNumbers = await context.MachineSerialNumbers
+                                .Where(s => s.MachineId == newRentingRequestMachine.MachineId && s.Status!.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
+                                .Include(s => s.Machine)
+                                    .ThenInclude(p => p.MachineTerms)
                                 .OrderByDescending(s => s.DateCreate)
                                 .ToListAsync();
 
                             //Check serial number in active/signed contract
                             var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
-                                .Where(c => availableSerialNumberProducts.Contains(c.ContractSerialNumberProduct)
+                                .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
                                         && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
                                         && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
-                                .Select(c => c.ContractSerialNumberProduct)
+                                .Select(c => c.ContractMachineSerialNumber)
                                 .ToListAsync();
 
-                            var suitableAvailableSerialNumbers = availableSerialNumberProducts
+                            var suitableAvailableSerialNumbers = availableMachineSerialNumbers
                                 .Except(serialNumbersInFutureContracts)
                                 .ToList();
 
                             var selectedSerialNumbers = suitableAvailableSerialNumbers
-                                .Take(newRentingRequestProduct.Quantity)
+                                .Take(newRentingRequestMachine.Quantity)
                                 .ToList();
 
                             var contractTerms = await context.Terms
                                 .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
                                 .ToListAsync();
 
-                            foreach (var serialNumberProduct in selectedSerialNumbers)
+                            foreach (var machineSerialNumber in selectedSerialNumbers)
                             {
                                 //Assign serial number to the contract
-                                var contractSerialNumber = InitContract(serialNumberProduct, rentingRequest, contractTerms);
+                                var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms);
                                 totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
                                 totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
 
-                                //Update serialNumberProduct
-                                //serialNumberProduct.Status = SerialNumberProductStatusEnum.Rented.ToString();
-                                //serialNumberProduct.RentTimeCounter++;
-                                //context.SerialNumberProducts.Update(serialNumberProduct);
+                                //Update machineSerialNumber
+                                //machineSerialNumber.Status = MachineSerialNumberStatusEnum.Rented.ToString();
+                                //machineSerialNumber.RentTimeCounter++;
+                                //context.MachineSerialNumbers.Update(machineSerialNumber);
 
                                 rentingRequest.Contracts.Add(contractSerialNumber);
                             }
@@ -171,19 +171,19 @@ namespace DAO
             }
         }
 
-        private Contract InitContract(SerialNumberProduct serialNumberProduct, RentingRequest rentingRequest, List<Term> contractTerms)
+        private Contract InitContract(MachineSerialNumber machineSerialNumber, RentingRequest rentingRequest, List<Term> contractTerms)
         {
             var dateCreate = DateTime.Now;
 
             var contractSerialNumber = new Contract
             {
-                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern) + serialNumberProduct.SerialNumber,
-                SerialNumber = serialNumberProduct.SerialNumber,
+                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern) + machineSerialNumber.SerialNumber,
+                SerialNumber = machineSerialNumber.SerialNumber,
 
                 DateCreate = dateCreate,
                 Status = ContractStatusEnum.NotSigned.ToString(),
 
-                ContractName = GlobalConstant.ContractName + serialNumberProduct.SerialNumber,
+                ContractName = GlobalConstant.ContractName + machineSerialNumber.SerialNumber,
                 DateStart = rentingRequest.DateStart,
                 DateEnd = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!),
                 Content = string.Empty,
@@ -191,13 +191,13 @@ namespace DAO
                 AccountSignId = rentingRequest.AccountOrderId,
                 NumberOfMonth = rentingRequest.NumberOfMonth,
 
-                RentPrice = serialNumberProduct.ActualRentPrice,
-                DepositPrice = serialNumberProduct.Product!.ProductPrice * GlobalConstant.DepositValue,
-                TotalRentPrice = serialNumberProduct.ActualRentPrice * rentingRequest.NumberOfMonth,
+                RentPrice = machineSerialNumber.ActualRentPrice,
+                DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
+                TotalRentPrice = machineSerialNumber.ActualRentPrice * rentingRequest.NumberOfMonth,
             };
 
             //Contract Term
-            foreach (var productTerm in serialNumberProduct.Product.ProductTerms)
+            foreach (var productTerm in machineSerialNumber.Machine.MachineTerms)
             {
                 if (productTerm != null)
                 {

@@ -30,7 +30,7 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Categories
-                    .Include(c => c.Products)
+                    .Include(c => c.Machines)
                     .ToListAsync();
             }
         }
