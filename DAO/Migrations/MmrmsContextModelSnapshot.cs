@@ -100,6 +100,8 @@ namespace DAO.Migrations
 
                     b.HasIndex("MembershipRankId");
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Account", (string)null);
                 });
 
@@ -212,38 +214,6 @@ namespace DAO.Migrations
                     b.ToTable("Component", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
-                {
-                    b.Property<int>("ComponentProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComponentProductId"));
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("IsRequiredMoney")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ComponentProductId");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ComponentProduct", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
                 {
                     b.Property<string>("ComponentReplacementTicketId")
@@ -279,11 +249,11 @@ namespace DAO.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProductSerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
@@ -308,7 +278,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("MachineTaskCreateId");
 
-                    b.HasIndex("ProductSerialNumber");
+                    b.HasIndex("SerialNumber");
 
                     b.ToTable("ComponentReplacementTicket", (string)null);
                 });
@@ -538,10 +508,16 @@ namespace DAO.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReceiverName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("StaffId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DeliveryTaskId");
@@ -727,6 +703,94 @@ namespace DAO.Migrations
                     b.ToTable("LogDetail", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.Machine", b =>
+                {
+                    b.Property<int>("MachineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineId"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MachineName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("MachinePrice")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Origin")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("RentPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ShipPricePerKm")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Machine", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineAttribute", b =>
+                {
+                    b.Property<int>("MachineAttributeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineAttributeId"));
+
+                    b.Property<string>("AttributeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Specifications")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineAttributeId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("MachineAttribute", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineCheckCriteria", b =>
+                {
+                    b.Property<int>("MachineCheckCriteriaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineCheckCriteriaId"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineCheckCriteriaId");
+
+                    b.ToTable("MachineCheckCriteria", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
                     b.Property<string>("MachineCheckRequestId")
@@ -749,6 +813,179 @@ namespace DAO.Migrations
                     b.HasIndex("ContractId");
 
                     b.ToTable("MachineCheckRequest", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineCheckRequestCriteria", b =>
+                {
+                    b.Property<int>("MachineCheckRequestCriteriaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineCheckRequestCriteriaId"));
+
+                    b.Property<string>("CustomerNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MachineCheckCriteriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MachineCheckRequestId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("MachineCheckRequestCriteriaId");
+
+                    b.HasIndex("MachineCheckCriteriaId");
+
+                    b.HasIndex("MachineCheckRequestId");
+
+                    b.ToTable("MachineCheckRequestCriteria", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineComponent", b =>
+                {
+                    b.Property<int>("MachineComponentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineComponentId"));
+
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsRequiredMoney")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineComponentId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("MachineComponent", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineComponentStatus", b =>
+                {
+                    b.Property<int>("MachineComponentStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineComponentStatusId"));
+
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineComponentStatusId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.ToTable("MachineComponentStatus", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineImage", b =>
+                {
+                    b.Property<int>("MachineImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineImageId"));
+
+                    b.Property<bool?>("IsThumbnail")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MachineImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineImageId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("MachineImage", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineSerialNumber", b =>
+                {
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("ActualRentPrice")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RentDaysCounter")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SerialNumber");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("MachineSerialNumber", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineSerialNumberLog", b =>
+                {
+                    b.Property<int>("MachineSerialNumberLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineSerialNumberLogId"));
+
+                    b.Property<int?>("AccountTriggerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineSerialNumberLogId");
+
+                    b.HasIndex("AccountTriggerId");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.ToTable("MachineSerialNumberLog", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.MachineTask", b =>
@@ -854,6 +1091,30 @@ namespace DAO.Migrations
                     b.ToTable("MachineTaskLog", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.MachineTerm", b =>
+                {
+                    b.Property<int>("MachineTermId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineTermId"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MachineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MachineTermId");
+
+                    b.HasIndex("MachineId");
+
+                    b.ToTable("MachineTerm", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.MembershipRank", b =>
                 {
                     b.Property<int>("MembershipRankId")
@@ -953,155 +1214,6 @@ namespace DAO.Migrations
                     b.ToTable("Notification", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.Product", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Origin")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("ProductPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("RentPrice")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Product", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductAttribute", b =>
-                {
-                    b.Property<int>("ProductAttributeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductAttributeId"));
-
-                    b.Property<string>("AttributeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Specifications")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductAttributeId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductAttribute", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
-                {
-                    b.Property<int>("ProductComponentStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductComponentStatusId"));
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductComponentStatusId");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("SerialNumber");
-
-                    b.ToTable("ProductComponentStatus", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductImage", b =>
-                {
-                    b.Property<int>("ProductImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductImageId"));
-
-                    b.Property<bool?>("IsThumbnail")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductImageId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImage", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductTerm", b =>
-                {
-                    b.Property<int>("ProductTermId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductTermId"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductTermId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductTerm", (string)null);
-                });
-
             modelBuilder.Entity("BusinessObject.RentingRequest", b =>
                 {
                     b.Property<string>("RentingRequestId")
@@ -1175,15 +1287,15 @@ namespace DAO.Migrations
                     b.ToTable("RentingRequestAddress", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.RentingRequestProductDetail", b =>
+            modelBuilder.Entity("BusinessObject.RentingRequestMachineDetail", b =>
                 {
-                    b.Property<int>("RentingRequestProductDetailId")
+                    b.Property<int>("RentingRequestMachineDetailId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentingRequestProductDetailId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentingRequestMachineDetailId"));
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int?>("MachineId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Quantity")
@@ -1192,13 +1304,13 @@ namespace DAO.Migrations
                     b.Property<string>("RentingRequestId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("RentingRequestProductDetailId");
+                    b.HasKey("RentingRequestMachineDetailId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("MachineId");
 
                     b.HasIndex("RentingRequestId");
 
-                    b.ToTable("RentingRequestProductDetail", (string)null);
+                    b.ToTable("RentingRequestMachineDetail", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.RentingService", b =>
@@ -1280,63 +1392,20 @@ namespace DAO.Migrations
                     b.ToTable("RequestResponse", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
+            modelBuilder.Entity("BusinessObject.Role", b =>
                 {
-                    b.Property<string>("SerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double?>("ActualRentPrice")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RentTimeCounter")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SerialNumber");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("SerialNumberProduct", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessObject.SerialNumberProductLog", b =>
-                {
-                    b.Property<int>("SerialNumberProductLogId")
+                    b.Property<int>("RoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SerialNumberProductLogId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
-                    b.Property<int?>("AccountTriggerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Action")
+                    b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DateCreate")
-                        .HasColumnType("datetime2");
+                    b.HasKey("RoleId");
 
-                    b.Property<string>("SerialNumber")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SerialNumberProductLogId");
-
-                    b.HasIndex("AccountTriggerId");
-
-                    b.HasIndex("SerialNumber");
-
-                    b.ToTable("SerialNumberProductLog", (string)null);
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.ServiceRentingRequest", b =>
@@ -1394,7 +1463,14 @@ namespace DAO.Migrations
                         .HasForeignKey("MembershipRankId")
                         .HasConstraintName("FK_Account_MembershipRank");
 
+                    b.HasOne("BusinessObject.Role", "Role")
+                        .WithMany("Accounts")
+                        .HasForeignKey("RoleId")
+                        .HasConstraintName("FK_Account_Role");
+
                     b.Navigation("MembershipRank");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("BusinessObject.AccountBusiness", b =>
@@ -1416,23 +1492,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_Address_Account");
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
-                {
-                    b.HasOne("BusinessObject.Component", "Component")
-                        .WithMany("ComponentProducts")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_ComponentProduct_ComponentID");
-
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ComponentProducts")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ComponentProduct_ProductID");
-
-                    b.Navigation("Component");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
@@ -1461,10 +1520,10 @@ namespace DAO.Migrations
                         .HasForeignKey("MachineTaskCreateId")
                         .HasConstraintName("FK_ComponentReplacementTicket_MachineTaskCreated");
 
-                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
+                    b.HasOne("BusinessObject.MachineSerialNumber", "MachineSerialNumber")
                         .WithMany("ComponentReplacementTickets")
-                        .HasForeignKey("ProductSerialNumber")
-                        .HasConstraintName("FK_ComponentReplacementTicket_SerialNumberProduct");
+                        .HasForeignKey("SerialNumber")
+                        .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumber");
 
                     b.Navigation("Component");
 
@@ -1474,9 +1533,9 @@ namespace DAO.Migrations
 
                     b.Navigation("Invoice");
 
-                    b.Navigation("MachineTaskCreate");
+                    b.Navigation("MachineSerialNumber");
 
-                    b.Navigation("SerialNumberProduct");
+                    b.Navigation("MachineTaskCreate");
                 });
 
             modelBuilder.Entity("BusinessObject.ComponentReplacementTicketLog", b =>
@@ -1519,16 +1578,16 @@ namespace DAO.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_RentingRequest_Contract");
 
-                    b.HasOne("BusinessObject.SerialNumberProduct", "ContractSerialNumberProduct")
+                    b.HasOne("BusinessObject.MachineSerialNumber", "ContractMachineSerialNumber")
                         .WithMany("Contracts")
                         .HasForeignKey("SerialNumber")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Contract_SerialNumberProduct");
+                        .HasConstraintName("FK_Contract_MachineSerialNumber");
 
                     b.Navigation("AccountSign");
 
-                    b.Navigation("ContractSerialNumberProduct");
+                    b.Navigation("ContractMachineSerialNumber");
 
                     b.Navigation("RentingRequest");
                 });
@@ -1642,6 +1701,26 @@ namespace DAO.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("BusinessObject.Machine", b =>
+                {
+                    b.HasOne("BusinessObject.Category", "Category")
+                        .WithMany("Machines")
+                        .HasForeignKey("CategoryId")
+                        .HasConstraintName("FK_Machine_Category");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineAttribute", b =>
+                {
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("MachineAttributes")
+                        .HasForeignKey("MachineId")
+                        .HasConstraintName("FK_Attribute_Machine");
+
+                    b.Navigation("Machine");
+                });
+
             modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
                     b.HasOne("BusinessObject.Contract", "Contract")
@@ -1650,6 +1729,97 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_MachineCheckRequest_Contract");
 
                     b.Navigation("Contract");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineCheckRequestCriteria", b =>
+                {
+                    b.HasOne("BusinessObject.MachineCheckCriteria", "MachineCheckCriteria")
+                        .WithMany("MachineCheckRequestCriterias")
+                        .HasForeignKey("MachineCheckCriteriaId")
+                        .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckCriteria");
+
+                    b.HasOne("BusinessObject.MachineCheckRequest", "MachineCheckRequest")
+                        .WithMany("MachineCheckRequestCriterias")
+                        .HasForeignKey("MachineCheckRequestId")
+                        .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckRequest");
+
+                    b.Navigation("MachineCheckCriteria");
+
+                    b.Navigation("MachineCheckRequest");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineComponent", b =>
+                {
+                    b.HasOne("BusinessObject.Component", "Component")
+                        .WithMany("MachineComponents")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_MachineComponent_ComponentID");
+
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("MachineComponents")
+                        .HasForeignKey("MachineId")
+                        .HasConstraintName("FK_MachineComponent_MachineID");
+
+                    b.Navigation("Component");
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineComponentStatus", b =>
+                {
+                    b.HasOne("BusinessObject.MachineComponent", "Component")
+                        .WithMany("MachineComponentStatuses")
+                        .HasForeignKey("ComponentId")
+                        .HasConstraintName("FK_MachineComponentStatus_ComponentID");
+
+                    b.HasOne("BusinessObject.MachineSerialNumber", "MachineSerialNumber")
+                        .WithMany("MachineComponentStatuses")
+                        .HasForeignKey("SerialNumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_MachineComponentStatus_MachineSerialNumber");
+
+                    b.Navigation("Component");
+
+                    b.Navigation("MachineSerialNumber");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineImage", b =>
+                {
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("MachineImages")
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_MachineImage_Machine");
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineSerialNumber", b =>
+                {
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("MachineSerialNumbers")
+                        .HasForeignKey("MachineId")
+                        .HasConstraintName("FK_MachineNumber_Machine");
+
+                    b.Navigation("Machine");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineSerialNumberLog", b =>
+                {
+                    b.HasOne("BusinessObject.Account", "AccountTrigger")
+                        .WithMany("MachineSerialNumberLogs")
+                        .HasForeignKey("AccountTriggerId")
+                        .HasConstraintName("FK_MachineSerialNumberLog_AccountID");
+
+                    b.HasOne("BusinessObject.MachineSerialNumber", "MachineSerialNumber")
+                        .WithMany("MachineSerialNumberLogs")
+                        .HasForeignKey("SerialNumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_MachineSerialNumber_Log");
+
+                    b.Navigation("AccountTrigger");
+
+                    b.Navigation("MachineSerialNumber");
                 });
 
             modelBuilder.Entity("BusinessObject.MachineTask", b =>
@@ -1717,6 +1887,16 @@ namespace DAO.Migrations
                     b.Navigation("MachineTask");
                 });
 
+            modelBuilder.Entity("BusinessObject.MachineTerm", b =>
+                {
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("MachineTerms")
+                        .HasForeignKey("MachineId")
+                        .HasConstraintName("FK_Term_Machine");
+
+                    b.Navigation("Machine");
+                });
+
             modelBuilder.Entity("BusinessObject.MembershipRankLog", b =>
                 {
                     b.HasOne("BusinessObject.Account", "Account")
@@ -1744,65 +1924,6 @@ namespace DAO.Migrations
                     b.Navigation("AccountReceive");
                 });
 
-            modelBuilder.Entity("BusinessObject.Product", b =>
-                {
-                    b.HasOne("BusinessObject.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK_Product_Category");
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductAttribute", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductAttributes")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Attribute_Product");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductComponentStatus", b =>
-                {
-                    b.HasOne("BusinessObject.ComponentProduct", "Component")
-                        .WithMany("ProductComponentStatuses")
-                        .HasForeignKey("ComponentId")
-                        .HasConstraintName("FK_ProductComponentStatus_ComponentID");
-
-                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
-                        .WithMany("ProductComponentStatuses")
-                        .HasForeignKey("SerialNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
-
-                    b.Navigation("Component");
-
-                    b.Navigation("SerialNumberProduct");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductImage", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductImages")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_ProductImage_Product");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BusinessObject.ProductTerm", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("ProductTerms")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_Term_Product");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("BusinessObject.RentingRequest", b =>
                 {
                     b.HasOne("BusinessObject.Account", "AccountOrder")
@@ -1824,19 +1945,19 @@ namespace DAO.Migrations
                     b.Navigation("RentingRequest");
                 });
 
-            modelBuilder.Entity("BusinessObject.RentingRequestProductDetail", b =>
+            modelBuilder.Entity("BusinessObject.RentingRequestMachineDetail", b =>
                 {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("RentingRequestProductDetails")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_RentingRequestProductDetail_Product");
+                    b.HasOne("BusinessObject.Machine", "Machine")
+                        .WithMany("RentingRequestMachineDetails")
+                        .HasForeignKey("MachineId")
+                        .HasConstraintName("FK_RentingRequestMachineDetail_Machine");
 
                     b.HasOne("BusinessObject.RentingRequest", "RentingRequest")
-                        .WithMany("RentingRequestProductDetails")
+                        .WithMany("RentingRequestMachineDetails")
                         .HasForeignKey("RentingRequestId")
-                        .HasConstraintName("FK_RentingRequestProductDetail_RentingRequest");
+                        .HasConstraintName("FK_RentingRequestMachineDetail_RentingRequest");
 
-                    b.Navigation("Product");
+                    b.Navigation("Machine");
 
                     b.Navigation("RentingRequest");
                 });
@@ -1859,34 +1980,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
 
                     b.Navigation("MachineCheckRequest");
-                });
-
-            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
-                {
-                    b.HasOne("BusinessObject.Product", "Product")
-                        .WithMany("SerialNumberProducts")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_ProductNumber_Product");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BusinessObject.SerialNumberProductLog", b =>
-                {
-                    b.HasOne("BusinessObject.Account", "AccountTrigger")
-                        .WithMany("SerialNumberProductLogs")
-                        .HasForeignKey("AccountTriggerId")
-                        .HasConstraintName("FK_SerialNumberProductLog_AccountID");
-
-                    b.HasOne("BusinessObject.SerialNumberProduct", "SerialNumberProduct")
-                        .WithMany("SerialNumberProductLogs")
-                        .HasForeignKey("SerialNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_SerialNumberProduct_Log");
-
-                    b.Navigation("AccountTrigger");
-
-                    b.Navigation("SerialNumberProduct");
                 });
 
             modelBuilder.Entity("BusinessObject.ServiceRentingRequest", b =>
@@ -1926,6 +2019,8 @@ namespace DAO.Migrations
 
                     b.Navigation("LogDetails");
 
+                    b.Navigation("MachineSerialNumberLogs");
+
                     b.Navigation("MachineTaskLogs");
 
                     b.Navigation("MembershipRankLogs");
@@ -1934,8 +2029,6 @@ namespace DAO.Migrations
 
                     b.Navigation("RentingRequests");
 
-                    b.Navigation("SerialNumberProductLogs");
-
                     b.Navigation("TaskGaveList");
 
                     b.Navigation("TaskReceivedList");
@@ -1943,19 +2036,14 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Category", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("Machines");
                 });
 
             modelBuilder.Entity("BusinessObject.Component", b =>
                 {
-                    b.Navigation("ComponentProducts");
-
                     b.Navigation("ComponentReplacementTickets");
-                });
 
-            modelBuilder.Entity("BusinessObject.ComponentProduct", b =>
-                {
-                    b.Navigation("ProductComponentStatuses");
+                    b.Navigation("MachineComponents");
                 });
 
             modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
@@ -1996,9 +2084,47 @@ namespace DAO.Migrations
                     b.Navigation("DigitalTransaction");
                 });
 
+            modelBuilder.Entity("BusinessObject.Machine", b =>
+                {
+                    b.Navigation("MachineAttributes");
+
+                    b.Navigation("MachineComponents");
+
+                    b.Navigation("MachineImages");
+
+                    b.Navigation("MachineSerialNumbers");
+
+                    b.Navigation("MachineTerms");
+
+                    b.Navigation("RentingRequestMachineDetails");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineCheckCriteria", b =>
+                {
+                    b.Navigation("MachineCheckRequestCriterias");
+                });
+
             modelBuilder.Entity("BusinessObject.MachineCheckRequest", b =>
                 {
+                    b.Navigation("MachineCheckRequestCriterias");
+
                     b.Navigation("RequestResponses");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineComponent", b =>
+                {
+                    b.Navigation("MachineComponentStatuses");
+                });
+
+            modelBuilder.Entity("BusinessObject.MachineSerialNumber", b =>
+                {
+                    b.Navigation("ComponentReplacementTickets");
+
+                    b.Navigation("Contracts");
+
+                    b.Navigation("MachineComponentStatuses");
+
+                    b.Navigation("MachineSerialNumberLogs");
                 });
 
             modelBuilder.Entity("BusinessObject.MachineTask", b =>
@@ -2017,28 +2143,13 @@ namespace DAO.Migrations
                     b.Navigation("MembershipRankLogs");
                 });
 
-            modelBuilder.Entity("BusinessObject.Product", b =>
-                {
-                    b.Navigation("ComponentProducts");
-
-                    b.Navigation("ProductAttributes");
-
-                    b.Navigation("ProductImages");
-
-                    b.Navigation("ProductTerms");
-
-                    b.Navigation("RentingRequestProductDetails");
-
-                    b.Navigation("SerialNumberProducts");
-                });
-
             modelBuilder.Entity("BusinessObject.RentingRequest", b =>
                 {
                     b.Navigation("Contracts");
 
                     b.Navigation("RentingRequestAddress");
 
-                    b.Navigation("RentingRequestProductDetails");
+                    b.Navigation("RentingRequestMachineDetails");
 
                     b.Navigation("ServiceRentingRequests");
                 });
@@ -2053,15 +2164,9 @@ namespace DAO.Migrations
                     b.Navigation("MachineTask");
                 });
 
-            modelBuilder.Entity("BusinessObject.SerialNumberProduct", b =>
+            modelBuilder.Entity("BusinessObject.Role", b =>
                 {
-                    b.Navigation("ComponentReplacementTickets");
-
-                    b.Navigation("Contracts");
-
-                    b.Navigation("ProductComponentStatuses");
-
-                    b.Navigation("SerialNumberProductLogs");
+                    b.Navigation("Accounts");
                 });
 #pragma warning restore 612, 618
         }

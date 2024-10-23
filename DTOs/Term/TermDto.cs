@@ -13,13 +13,13 @@ namespace DTOs.Term
 
     public class CreateTermDto
     {
-        [Required(ErrorMessage = MessageConstant.Product.ProductPriceRequired)]
+        [Required(ErrorMessage = MessageConstant.Machine.MachinePriceRequired)]
         public string Type { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Product.ProductPriceRequired)]
+        [Required(ErrorMessage = MessageConstant.Machine.MachinePriceRequired)]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Product.ProductPriceRequired)]
+        [Required(ErrorMessage = MessageConstant.Machine.MachinePriceRequired)]
         public string Content { get; set; }
     }
 

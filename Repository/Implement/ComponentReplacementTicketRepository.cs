@@ -23,7 +23,7 @@ namespace Repository.Implement
                 EmployeeCreateId = staffId,
                 DateCreate = DateTime.Now,
                 ComponentId = createComponentReplacementTicketDto.ComponentId,
-                ProductSerialNumber = createComponentReplacementTicketDto.ProductSerialNumber,
+                SerialNumber = createComponentReplacementTicketDto.MachineSerialNumber,
                 ComponentPrice = createComponentReplacementTicketDto.ComponentPrice,
                 AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
                 Type = createComponentReplacementTicketDto.Type,

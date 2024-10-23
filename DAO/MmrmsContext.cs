@@ -17,21 +17,23 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<Account> Accounts { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<AccountBusiness> AccountBusinesses { get; set; }
 
     //public virtual DbSet<AccountPromotion> AccountPromotions { get; set; }
 
     public virtual DbSet<Address> Addresses { get; set; }
 
-    public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
+    public virtual DbSet<MachineAttribute> MachineAttributes { get; set; }
 
-    public virtual DbSet<ProductTerm> ProductTerms { get; set; }
+    public virtual DbSet<MachineTerm> MachineTerms { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Component> Components { get; set; }
 
-    public virtual DbSet<ComponentProduct> ComponentProducts { get; set; }
+    public virtual DbSet<MachineComponent> MachineComponents { get; set; }
 
     public virtual DbSet<Content> Contents { get; set; }
 
@@ -47,7 +49,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<RentingRequest> RentingRequests { get; set; }
 
-    public virtual DbSet<RentingRequestProductDetail> RentingRequestProductDetails { get; set; }
+    public virtual DbSet<RentingRequestMachineDetail> RentingRequestMachineDetails { get; set; }
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
@@ -59,15 +61,19 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<MachineCheckRequest> MachineCheckRequests { get; set; }
 
+    public virtual DbSet<MachineCheckCriteria> MachineCheckCriterias { get; set; }
+
+    public virtual DbSet<MachineCheckRequestCriteria> MachineCheckRequestCriterias { get; set; }
+
     public virtual DbSet<Notification> Notifications { get; set; }
 
-    public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<Machine> Machines { get; set; }
 
-    public virtual DbSet<ProductImage> ProductImages { get; set; }
+    public virtual DbSet<MachineImage> MachineImages { get; set; }
 
-    public virtual DbSet<ProductComponentStatus> ProductComponentStatuses { get; set; }
+    public virtual DbSet<MachineComponentStatus> MachineComponentStatuses { get; set; }
 
-    public virtual DbSet<SerialNumberProduct> SerialNumberProducts { get; set; }
+    public virtual DbSet<MachineSerialNumber> MachineSerialNumbers { get; set; }
 
     //public virtual DbSet<Promotion> Promotions { get; set; }
 
@@ -83,7 +89,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<MachineTaskLog> MachineTaskLogs { get; set; }
 
-    public virtual DbSet<SerialNumberProductLog> SerialNumberProductLogs { get; set; }
+    public virtual DbSet<MachineSerialNumberLog> MachineSerialNumberLogs { get; set; }
 
     public virtual DbSet<RentingService> RentingServices { get; set; }
 
@@ -133,6 +139,10 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.MembershipRankId)
                 .HasConstraintName("FK_Account_MembershipRank");
 
+            entity.HasOne(d => d.Role).WithMany(p => p.Accounts)
+               .HasForeignKey(d => d.RoleId)
+               .HasConstraintName("FK_Account_Role");
+
             entity.HasOne(d => d.AccountBusiness)
                 .WithOne(p => p.Account)
                 .HasForeignKey<AccountBusiness>(d => d.AccountBusinessId)
@@ -140,25 +150,31 @@ public partial class MmrmsContext : DbContext
 
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.RoleId);
+
+            entity.ToTable("Role");
+        });
 
 
 
         modelBuilder.Entity<AccountBusiness>(entity =>
-        {
-            entity.HasKey(e => e.AccountBusinessId);
+    {
+        entity.HasKey(e => e.AccountBusinessId);
 
-            entity.ToTable("AccountBusiness");
+        entity.ToTable("AccountBusiness");
 
-            entity.Property(e => e.AccountBusinessId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
+        entity.Property(e => e.AccountBusinessId)
+            .ValueGeneratedOnAdd()
+            .UseIdentityColumn();
 
-            entity.HasOne(d => d.Account)
-                .WithOne(p => p.AccountBusiness)
-                .HasForeignKey<AccountBusiness>(d => d.AccountId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("FK_AccountBusiness_Account");
-        });
+        entity.HasOne(d => d.Account)
+            .WithOne(p => p.AccountBusiness)
+            .HasForeignKey<AccountBusiness>(d => d.AccountId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_AccountBusiness_Account");
+    });
 
         //modelBuilder.Entity<AccountPromotion>(entity =>
         //{
@@ -194,34 +210,34 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Address_Account");
         });
 
-        modelBuilder.Entity<ProductAttribute>(entity =>
+        modelBuilder.Entity<MachineAttribute>(entity =>
         {
-            entity.HasKey(e => e.ProductAttributeId);
+            entity.HasKey(e => e.MachineAttributeId);
 
-            entity.ToTable("ProductAttribute");
+            entity.ToTable("MachineAttribute");
 
-            entity.Property(e => e.ProductAttributeId)
+            entity.Property(e => e.MachineAttributeId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductAttributes)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_Attribute_Product");
+            entity.HasOne(d => d.Machine).WithMany(p => p.MachineAttributes)
+                .HasForeignKey(d => d.MachineId)
+                .HasConstraintName("FK_Attribute_Machine");
         });
 
-        modelBuilder.Entity<ProductTerm>(entity =>
+        modelBuilder.Entity<MachineTerm>(entity =>
         {
-            entity.HasKey(e => e.ProductTermId);
+            entity.HasKey(e => e.MachineTermId);
 
-            entity.ToTable("ProductTerm");
+            entity.ToTable("MachineTerm");
 
-            entity.Property(e => e.ProductTermId)
+            entity.Property(e => e.MachineTermId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductTerms)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_Term_Product");
+            entity.HasOne(d => d.Machine).WithMany(p => p.MachineTerms)
+                .HasForeignKey(d => d.MachineId)
+                .HasConstraintName("FK_Term_Machine");
         });
 
 
@@ -249,23 +265,23 @@ public partial class MmrmsContext : DbContext
 
         });
 
-        modelBuilder.Entity<ComponentProduct>(entity =>
+        modelBuilder.Entity<MachineComponent>(entity =>
         {
-            entity.HasKey(e => e.ComponentProductId);
+            entity.HasKey(e => e.MachineComponentId);
 
-            entity.ToTable("ComponentProduct");
+            entity.ToTable("MachineComponent");
 
-            entity.Property(e => e.ComponentProductId)
+            entity.Property(e => e.MachineComponentId)
                  .ValueGeneratedOnAdd()
                  .UseIdentityColumn();
 
-            entity.HasOne(d => d.Component).WithMany(p => p.ComponentProducts)
+            entity.HasOne(d => d.Component).WithMany(p => p.MachineComponents)
                 .HasForeignKey(d => d.ComponentId)
-                .HasConstraintName("FK_ComponentProduct_ComponentID");
+                .HasConstraintName("FK_MachineComponent_ComponentID");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ComponentProducts)
-              .HasForeignKey(d => d.ProductId)
-              .HasConstraintName("FK_ComponentProduct_ProductID");
+            entity.HasOne(d => d.Machine).WithMany(p => p.MachineComponents)
+              .HasForeignKey(d => d.MachineId)
+              .HasConstraintName("FK_MachineComponent_MachineID");
         });
 
         modelBuilder.Entity<Content>(entity =>
@@ -300,10 +316,10 @@ public partial class MmrmsContext : DbContext
                 .IsRequired() // Contract requires RentingRequestId
                 .HasConstraintName("FK_Contract_RentingRequest");
 
-            entity.HasOne(d => d.ContractSerialNumberProduct)
-                .WithMany(p => p.Contracts) // Assuming SerialNumberProduct has 'Contracts' collection
+            entity.HasOne(d => d.ContractMachineSerialNumber)
+                .WithMany(p => p.Contracts) // Assuming MachineSerialNumber has 'Contracts' collection
                 .HasForeignKey(d => d.SerialNumber)
-                .HasConstraintName("FK_Contract_SerialNumberProduct")
+                .HasConstraintName("FK_Contract_MachineSerialNumber")
                 .IsRequired();
         });
 
@@ -461,23 +477,23 @@ public partial class MmrmsContext : DbContext
 
 
 
-        modelBuilder.Entity<RentingRequestProductDetail>(entity =>
+        modelBuilder.Entity<RentingRequestMachineDetail>(entity =>
         {
-            entity.HasKey(e => e.RentingRequestProductDetailId);
+            entity.HasKey(e => e.RentingRequestMachineDetailId);
 
-            entity.ToTable("RentingRequestProductDetail");
+            entity.ToTable("RentingRequestMachineDetail");
 
-            entity.Property(e => e.RentingRequestProductDetailId)
+            entity.Property(e => e.RentingRequestMachineDetailId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.RentingRequest).WithMany(p => p.RentingRequestProductDetails)
+            entity.HasOne(d => d.RentingRequest).WithMany(p => p.RentingRequestMachineDetails)
                 .HasForeignKey(d => d.RentingRequestId)
-                .HasConstraintName("FK_RentingRequestProductDetail_RentingRequest");
+                .HasConstraintName("FK_RentingRequestMachineDetail_RentingRequest");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.RentingRequestProductDetails)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_RentingRequestProductDetail_Product");
+            entity.HasOne(d => d.Machine).WithMany(p => p.RentingRequestMachineDetails)
+                .HasForeignKey(d => d.MachineId)
+                .HasConstraintName("FK_RentingRequestMachineDetail_Machine");
         });
 
 
@@ -509,9 +525,9 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_ComponentReplacementTicket_ComponentID");
 
 
-            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ComponentReplacementTickets)
-                .HasForeignKey(d => d.ProductSerialNumber)
-                .HasConstraintName("FK_ComponentReplacementTicket_SerialNumberProduct");
+            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.ComponentReplacementTickets)
+                .HasForeignKey(d => d.SerialNumber)
+                .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumber");
 
             entity.HasOne(d => d.Contract).WithMany(p => p.ComponentReplacementTickets)
                 .HasForeignKey(d => d.ContractId)
@@ -555,6 +571,34 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_MachineCheckRequest_Contract");
         });
 
+        modelBuilder.Entity<MachineCheckCriteria>(entity =>
+        {
+            entity.HasKey(e => e.MachineCheckCriteriaId);
+
+            entity.ToTable("MachineCheckCriteria");
+
+            entity.Property(e => e.MachineCheckCriteriaId)
+               .ValueGeneratedOnAdd()
+               .UseIdentityColumn();
+
+        });
+
+        modelBuilder.Entity<MachineCheckRequestCriteria>(entity =>
+        {
+            entity.HasKey(e => e.MachineCheckRequestCriteriaId);
+
+            entity.ToTable("MachineCheckRequestCriteria");
+
+            entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.MachineCheckRequestCriterias)
+                .HasForeignKey(d => d.MachineCheckRequestId)
+                .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckRequest");
+
+            entity.HasOne(d => d.MachineCheckCriteria).WithMany(p => p.MachineCheckRequestCriterias)
+                .HasForeignKey(d => d.MachineCheckCriteriaId)
+                .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckCriteria");
+        });
+
+
         modelBuilder.Entity<Notification>(entity =>
         {
             entity.HasKey(e => e.NotificationId);
@@ -570,86 +614,86 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_Notification_Account");
         });
 
-        modelBuilder.Entity<Product>(entity =>
+        modelBuilder.Entity<Machine>(entity =>
         {
-            entity.HasKey(e => e.ProductId);
+            entity.HasKey(e => e.MachineId);
 
-            entity.ToTable("Product");
+            entity.ToTable("Machine");
 
-            entity.Property(e => e.ProductId)
+            entity.Property(e => e.MachineId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Products)
+            entity.HasOne(d => d.Category).WithMany(p => p.Machines)
                 .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK_Product_Category");
+                .HasConstraintName("FK_Machine_Category");
         });
 
-        modelBuilder.Entity<ProductImage>(entity =>
+        modelBuilder.Entity<MachineImage>(entity =>
         {
-            entity.HasKey(e => e.ProductImageId);
+            entity.HasKey(e => e.MachineImageId);
 
-            entity.ToTable("ProductImage");
+            entity.ToTable("MachineImage");
 
-            entity.Property(e => e.ProductImageId)
+            entity.Property(e => e.MachineImageId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
-                .HasForeignKey(d => d.ProductId)
+            entity.HasOne(d => d.Machine).WithMany(p => p.MachineImages)
+                .HasForeignKey(d => d.MachineId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_ProductImage_Product");
+                .HasConstraintName("FK_MachineImage_Machine");
         });
 
-        modelBuilder.Entity<ProductComponentStatus>(entity =>
+        modelBuilder.Entity<MachineComponentStatus>(entity =>
         {
-            entity.HasKey(e => e.ProductComponentStatusId);
+            entity.HasKey(e => e.MachineComponentStatusId);
 
-            entity.ToTable("ProductComponentStatus");
+            entity.ToTable("MachineComponentStatus");
 
-            entity.Property(e => e.ProductComponentStatusId)
+            entity.Property(e => e.MachineComponentStatusId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Component).WithMany(p => p.ProductComponentStatuses)
+            entity.HasOne(d => d.Component).WithMany(p => p.MachineComponentStatuses)
                 .HasForeignKey(d => d.ComponentId)
-                .HasConstraintName("FK_ProductComponentStatus_ComponentID");
+                .HasConstraintName("FK_MachineComponentStatus_ComponentID");
 
-            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.ProductComponentStatuses)
+            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.MachineComponentStatuses)
                 .HasForeignKey(d => d.SerialNumber)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_ProductComponentStatus_SerialNumberProduct");
+                .HasConstraintName("FK_MachineComponentStatus_MachineSerialNumber");
         });
 
-        modelBuilder.Entity<SerialNumberProductLog>(entity =>
+        modelBuilder.Entity<MachineSerialNumberLog>(entity =>
         {
-            entity.HasKey(e => e.SerialNumberProductLogId);
+            entity.HasKey(e => e.MachineSerialNumberLogId);
 
-            entity.ToTable("SerialNumberProductLog");
+            entity.ToTable("MachineSerialNumberLog");
 
-            entity.Property(e => e.SerialNumberProductLogId)
+            entity.Property(e => e.MachineSerialNumberLogId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.SerialNumberProduct).WithMany(p => p.SerialNumberProductLogs)
+            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.MachineSerialNumberLogs)
                 .HasForeignKey(d => d.SerialNumber)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_SerialNumberProduct_Log");
+                .HasConstraintName("FK_MachineSerialNumber_Log");
 
-            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.SerialNumberProductLogs)
+            entity.HasOne(d => d.AccountTrigger).WithMany(p => p.MachineSerialNumberLogs)
                 .HasForeignKey(d => d.AccountTriggerId)
-                .HasConstraintName("FK_SerialNumberProductLog_AccountID");
+                .HasConstraintName("FK_MachineSerialNumberLog_AccountID");
         });
 
-        modelBuilder.Entity<SerialNumberProduct>(entity =>
+        modelBuilder.Entity<MachineSerialNumber>(entity =>
         {
             entity.HasKey(e => e.SerialNumber);
 
-            entity.ToTable("SerialNumberProduct");
+            entity.ToTable("MachineSerialNumber");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.SerialNumberProducts)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_ProductNumber_Product");
+            entity.HasOne(d => d.Machine).WithMany(p => p.MachineSerialNumbers)
+                .HasForeignKey(d => d.MachineId)
+                .HasConstraintName("FK_MachineNumber_Machine");
         });
 
         //modelBuilder.Entity<Promotion>(entity =>

@@ -48,17 +48,17 @@ namespace DTOs.RentingRequest
 
         public string? Note { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.RentingRequest.RequestProductsRequired)]
-        public List<NewRentingRequestProductDetailDto> RentingRequestProductDetails { get; set; } = new List<NewRentingRequestProductDetailDto>();
+        [Required(ErrorMessage = MessageConstant.RentingRequest.RequestMachinesRequired)]
+        public List<NewRentingRequestMachineDetailDto> RentingRequestMachineDetails { get; set; } = new List<NewRentingRequestMachineDetailDto>();
 
         [Required(ErrorMessage = MessageConstant.RentingRequest.ServiceRentingRequestsRequired)]
         public List<int> ServiceRentingRequests { get; set; } = new List<int>();
         //public int AccountPromotionId { get; set; }
     }
 
-    public class NewRentingRequestProductDetailDto
+    public class NewRentingRequestMachineDetailDto
     {
-        public int ProductId { get; set; }
+        public int MachineId { get; set; }
         public int Quantity { get; set; }
     }
 }

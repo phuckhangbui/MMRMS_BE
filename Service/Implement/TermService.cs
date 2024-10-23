@@ -35,11 +35,11 @@ namespace Service.Implement
             await _termRepository.DeleteTerm(termId);
         }
 
-        public async Task<IEnumerable<TermDto>> GetProductTerms()
+        public async Task<IEnumerable<TermDto>> GetMachineTerms()
         {
             var list = await _termRepository.GetTerms();
 
-            return list.Where(t => t.Type.Equals(TermTypeEnum.Product.ToString())).ToList();
+            return list.Where(t => t.Type.Equals(TermTypeEnum.Machine.ToString())).ToList();
         }
 
         public async Task<TermDto> GetTerm(int termId)

@@ -38,8 +38,8 @@ namespace DAO
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
-                    .Include(c => c.ContractSerialNumberProduct)
-                        .ThenInclude(a => a.Product)
+                    .Include(c => c.ContractMachineSerialNumber)
+                        .ThenInclude(a => a.Machine)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
         }
@@ -54,8 +54,8 @@ namespace DAO
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
-                    .Include(c => c.ContractSerialNumberProduct)
-                        .ThenInclude(a => a.Product)
+                    .Include(c => c.ContractMachineSerialNumber)
+                        .ThenInclude(a => a.Machine)
                     .ToListAsync();
             }
         }
@@ -75,8 +75,8 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Contracts
-                    .Include(c => c.ContractSerialNumberProduct)
-                        .ThenInclude(s => s.Product)
+                    .Include(c => c.ContractMachineSerialNumber)
+                        .ThenInclude(s => s.Machine)
                     .ToListAsync();
             }
         }
@@ -393,26 +393,26 @@ namespace DAO
                         double totalDepositPrice = 0;
                         double totalRentPrice = 0;
 
-                        foreach (var rentSerialNumberProduct in contractRequestDto.SerialNumberProducts)
+                        foreach (var rentMachineSerialNumber in contractRequestDto.MachineSerialNumbers)
                         {
-                            var serialNumberProduct = await context.SerialNumberProducts
-                                .Include(s => s.Product)
-                                .FirstOrDefaultAsync(s => s.ProductId == rentSerialNumberProduct.ProductId && s.SerialNumber.Equals(rentSerialNumberProduct.SerialNumber));
+                            var machineSerialNumber = await context.MachineSerialNumbers
+                                .Include(s => s.Machine)
+                                .FirstOrDefaultAsync(s => s.MachineId == rentMachineSerialNumber.MachineId && s.SerialNumber.Equals(rentMachineSerialNumber.SerialNumber));
 
-                            //var contractSerialNumberProduct = new ContractSerialNumberProduct()
+                            //var contractMachineSerialNumber = new ContractMachineSerialNumber()
                             //{
-                            //    SerialNumber = rentSerialNumberProduct.SerialNumber,
-                            //    DepositPrice = serialNumberProduct!.Product!.ProductPrice * GlobalConstant.DepositValue,
-                            //    RentPrice = serialNumberProduct!.ActualRentPrice ?? 0,
+                            //    SerialNumber = rentMachineSerialNumber.SerialNumber,
+                            //    DepositPrice = machineSerialNumber!.Machine!.MachinePrice * GlobalConstant.DepositValue,
+                            //    RentPrice = machineSerialNumber!.ActualRentPrice ?? 0,
                             //};
-                            //contract.ContractSerialNumberProducts.Add(contractSerialNumberProduct);
-                            //totalDepositPrice += (double)contractSerialNumberProduct.DepositPrice!;
-                            //totalRentPrice += (double)contractSerialNumberProduct.RentPrice;
+                            //contract.ContractMachineSerialNumbers.Add(contractMachineSerialNumber);
+                            //totalDepositPrice += (double)contractMachineSerialNumber.DepositPrice!;
+                            //totalRentPrice += (double)contractMachineSerialNumber.RentPrice;
 
-                            serialNumberProduct!.Status = SerialNumberProductStatusEnum.Rented.ToString();
-                            serialNumberProduct.RentTimeCounter++;
+                            machineSerialNumber!.Status = MachineSerialNumberStatusEnum.Rented.ToString();
+                            //machineSerialNumber.RentTimeCounter++;
 
-                            context.SerialNumberProducts.Update(serialNumberProduct);
+                            context.MachineSerialNumbers.Update(machineSerialNumber);
                         }
 
                         var rentingRequest = await context.RentingRequests.FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(contract.RentingRequestId));

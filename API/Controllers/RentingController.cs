@@ -122,12 +122,12 @@ namespace API.Controllers
 
         [HttpPost("init-data")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult<RentingRequestInitDataDto>> InitializeRentingRequest([FromBody] RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
+        public async Task<ActionResult<RentingRequestInitDataDto>> InitializeRentingRequest([FromBody] RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto)
         {
             try
             {
                 int customerId = GetLoginAccountId();
-                var rentingRequests = await _rentingService.InitializeRentingRequestData(customerId, rentingRequestProductInRangeDto);
+                var rentingRequests = await _rentingService.InitializeRentingRequestData(customerId, rentingRequestMachineInRangeDto);
                 return Ok(rentingRequests);
             }
             catch (ServiceException ex)

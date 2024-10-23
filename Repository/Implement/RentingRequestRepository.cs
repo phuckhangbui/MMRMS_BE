@@ -5,7 +5,7 @@ using Common.Enum;
 using DAO;
 using DTOs.AccountAddressDto;
 using DTOs.MembershipRank;
-using DTOs.Product;
+using DTOs.Machine;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
 using DTOs.Term;
@@ -50,50 +50,50 @@ namespace Repository.Implement
             return null;
         }
 
-        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestProductInRangeDto rentingRequestProductInRangeDto)
+        public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto)
         {
             var rentingRequestInitDataDto = new RentingRequestInitDataDto();
 
-            //Product data
-            var rentingRequestProductDatas = new List<RentingRequestProductDataDto>();
-            foreach (var productId in rentingRequestProductInRangeDto.ProductIds)
+            //Machine data
+            var rentingRequestMachineDatas = new List<RentingRequestMachineDataDto>();
+            foreach (var productId in rentingRequestMachineInRangeDto.MachineIds)
             {
-                var availableSerialNumberProducts = await SerialNumberProductDao.Instance
-                    .GetSerialNumberProductValidToRent(productId, rentingRequestProductInRangeDto.DateStart, rentingRequestProductInRangeDto.NumberOfMonth);
+                var availableMachineSerialNumbers = await MachineSerialNumberDao.Instance
+                    .GetMachineSerialNumberValidToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.NumberOfMonth);
 
-                if (availableSerialNumberProducts.IsNullOrEmpty())
+                if (availableMachineSerialNumbers.IsNullOrEmpty())
                 {
                     continue;
                 }
 
-                var product = await ProductDao.Instance.GetProduct(productId);
-                var prices = availableSerialNumberProducts
+                var product = await MachineDao.Instance.GetMachine(productId);
+                var prices = availableMachineSerialNumbers
                     .Select(s => s.ActualRentPrice ?? 0)
                     .ToList();
 
-                var rentingRequestProductDataDto = new RentingRequestProductDataDto()
+                var rentingRequestMachineDataDto = new RentingRequestMachineDataDto()
                 {
-                    ProductId = productId,
-                    ProductName = product.ProductName,
-                    ProductPrice = product.ProductPrice ?? 0,
-                    Quantity = availableSerialNumberProducts.Count,
+                    MachineId = productId,
+                    MachineName = product.MachineName,
+                    MachinePrice = product.MachinePrice ?? 0,
+                    Quantity = availableMachineSerialNumbers.Count,
                     RentPrice = product.RentPrice ?? 0,
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
                     ThumbnailUrl = string.Empty,
                     RentPrices = prices,
                 };
 
-                var productTerms = _mapper.Map<List<ProductTermDto>>(product.ProductTerms);
-                rentingRequestProductDataDto.ProductTerms = productTerms;
+                var productTerms = _mapper.Map<List<MachineTermDto>>(product.MachineTerms);
+                rentingRequestMachineDataDto.MachineTerms = productTerms;
 
-                if (!product.ProductImages.IsNullOrEmpty())
+                if (!product.MachineImages.IsNullOrEmpty())
                 {
-                    rentingRequestProductDataDto.ThumbnailUrl = product.ProductImages.First(p => p.IsThumbnail == true).ProductImageUrl ?? string.Empty;
+                    rentingRequestMachineDataDto.ThumbnailUrl = product.MachineImages.First(p => p.IsThumbnail == true).MachineImageUrl ?? string.Empty;
                 }
 
-                rentingRequestProductDatas.Add(rentingRequestProductDataDto);
+                rentingRequestMachineDatas.Add(rentingRequestMachineDataDto);
             }
-            rentingRequestInitDataDto.RentingRequestProductDatas = rentingRequestProductDatas;
+            rentingRequestInitDataDto.RentingRequestMachineDatas = rentingRequestMachineDatas;
 
             //Promotion data
             //var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);

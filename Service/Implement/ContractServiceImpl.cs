@@ -11,16 +11,16 @@ namespace Service.Implement
     {
         private readonly IContractRepository _contractRepository;
         private readonly IRentingRequestRepository _rentingRepository;
-        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IRentingRequestRepository rentingRepository,
-            ISerialNumberProductRepository serialNumberProductRepository)
+            IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _contractRepository = contractRepository;
             _rentingRepository = rentingRepository;
-            _serialNumberProductRepository = serialNumberProductRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
         //TODO: Remove
@@ -41,10 +41,10 @@ namespace Service.Implement
             //}
 
             //Check list rent serail number valid (Available)
-            var isSerialNumberProductsValid = await _serialNumberProductRepository.CheckSerialNumberProductsValidToRent(contractRequestDto.SerialNumberProducts);
-            if (!isSerialNumberProductsValid)
+            var isMachineSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumbersValidToRent(contractRequestDto.MachineSerialNumbers);
+            if (!isMachineSerialNumbersValid)
             {
-                throw new ServiceException(MessageConstant.Contract.SerialNumberProductsInvalid);
+                throw new ServiceException(MessageConstant.Contract.MachineSerialNumbersInvalid);
             }
 
             return await _contractRepository.CreateContract(managerId, contractRequestDto);

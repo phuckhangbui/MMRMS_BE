@@ -16,4 +16,6 @@ public partial class MachineCheckRequest
 
     public virtual ICollection<RequestResponse> RequestResponses { get; set; } = new List<RequestResponse>();
 
+    public virtual ICollection<MachineCheckRequestCriteria> MachineCheckRequestCriterias { get; set; } = new List<MachineCheckRequestCriteria>();
+
 }

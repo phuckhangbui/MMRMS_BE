@@ -36,7 +36,7 @@ public partial class RentingRequest
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
-    public virtual ICollection<RentingRequestProductDetail> RentingRequestProductDetails { get; set; } = new List<RentingRequestProductDetail>();
+    public virtual ICollection<RentingRequestMachineDetail> RentingRequestMachineDetails { get; set; } = new List<RentingRequestMachineDetail>();
 
     public virtual ICollection<ServiceRentingRequest> ServiceRentingRequests { get; set; } = new List<ServiceRentingRequest>();
 }

@@ -91,7 +91,7 @@ namespace Service.Implement
 
             if (ticketDto == null)
             {
-                throw new ServiceException(MessageConstant.MaintanningTicket.TicketNotFound);
+                throw new ServiceException(MessageConstant.ComponentReplacementTicket.TicketNotFound);
             }
 
             if (ticketDto.Status != ComponentReplacementTicketStatusEnum.Paid.ToString())

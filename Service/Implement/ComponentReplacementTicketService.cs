@@ -12,16 +12,16 @@ namespace Service.Implement
     {
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
-        private readonly ISerialNumberProductRepository _serialNumberProductRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, ISerialNumberProductRepository serialNumberProductRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
-            _serialNumberProductRepository = serialNumberProductRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
             _componentRepository = componentRepository;
             _contractRepository = contractRepository;
             _ComponentReplacementTicketHub = ComponentReplacementTicketHub;
@@ -35,9 +35,9 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
             }
 
-            if (!await _serialNumberProductRepository.IsSerialNumberExist(createComponentReplacementTicketDto.ProductSerialNumber))
+            if (!await _machineSerialNumberRepository.IsSerialNumberExist(createComponentReplacementTicketDto.MachineSerialNumber))
             {
-                throw new ServiceException(MessageConstant.SerialNumberProduct.SerialNumberProductNotFound);
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
             }
 
             var contract = await _contractRepository.GetContractDetailById(createComponentReplacementTicketDto.ContractId);

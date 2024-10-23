@@ -9,7 +9,7 @@ namespace DTOs.Contract
         public List<ContractTermDto> ContractTerms { get; set; }
         public bool IsOnetimePayment { get; set; }
         //public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
-        //public List<ContractProductDetailDto> ContractProductDetails { get; set; }
+        //public List<ContractMachineDetailDto> ContractMachineDetails { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
         public string? Content { get; set; }
         public int? AccountSignId { get; set; }
