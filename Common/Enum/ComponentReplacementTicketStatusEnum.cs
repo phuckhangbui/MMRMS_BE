@@ -2,9 +2,9 @@
 {
     public enum ComponentReplacementTicketStatusEnum
     {
-        Created,
+        Unpaid,
         Paid,
-        Assigned,
+        Processing,
         Completed,
         Canceled
     }
