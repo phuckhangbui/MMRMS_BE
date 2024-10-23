@@ -2,7 +2,7 @@
 {
     public enum MachineCheckRequestStatusEnum
     {
-        Processing,
+        New,
         Assigned,
         Completed,
         Canceled,

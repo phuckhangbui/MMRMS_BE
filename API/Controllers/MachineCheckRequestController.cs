@@ -125,29 +125,29 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{machineCheckRequestId}")]
-        [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string machineCheckRequestId, [FromQuery] string status)
-        {
-            int accountId = GetLoginAccountId();
-            if (accountId == 0)
-            {
-                return Unauthorized();
-            }
+        //[HttpPatch("{machineCheckRequestId}")]
+        //[Authorize(Policy = "ManagerAndStaff")]
+        //public async Task<ActionResult> UpdateMaintenanceStatus([FromRoute] string machineCheckRequestId, [FromQuery] string status)
+        //{
+        //    int accountId = GetLoginAccountId();
+        //    if (accountId == 0)
+        //    {
+        //        return Unauthorized();
+        //    }
 
-            try
-            {
-                await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId, status, accountId);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId, status, accountId);
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
     }
 }

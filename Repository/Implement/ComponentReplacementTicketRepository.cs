@@ -32,7 +32,7 @@ namespace Repository.Implement
             };
 
             ComponentReplacementTicket.TotalAmount = ComponentReplacementTicket.ComponentPrice + ComponentReplacementTicket.AdditionalFee;
-            ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Created.ToString();
+            ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString();
 
             ComponentReplacementTicket = await ComponentReplacementTicketDao.Instance.CreateAsync(ComponentReplacementTicket);
 
