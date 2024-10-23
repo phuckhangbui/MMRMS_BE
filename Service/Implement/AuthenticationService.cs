@@ -181,13 +181,12 @@ namespace Service.Implement
 
         public async Task RegisterCustomer(NewCustomerAccountDto newCustomerAccountDto)
         {
-            AccountDto accountDto = await _accountRepository.GetCustomerAccountWithEmail(newCustomerAccountDto.Email);
-            if (accountDto != null)
+            if (await _accountRepository.IsAccountExistWithEmail(newCustomerAccountDto.Email))
             {
                 throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
-            accountDto = await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
+            var accountDto = await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
 
             //send email opt here
             _mailService.SendMail(AuthenticationMail.SendWelcomeAndOtpToCustomer(accountDto.Email, accountDto.Name, accountDto.OtpNumber));

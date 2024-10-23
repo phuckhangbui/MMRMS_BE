@@ -8,7 +8,6 @@
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? DateCreate { get; set; }
-        public string? Address { get; set; }
         public string? Status { get; set; }
         public int? RoleId { get; set; }
         public string? RefreshToken { get; set; }

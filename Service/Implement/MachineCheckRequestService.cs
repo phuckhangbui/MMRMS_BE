@@ -48,7 +48,7 @@ namespace Service.Implement
 
             var MachineCheckRequestList = await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(createMachineCheckRequestDto.ContractId);
 
-            bool isFailToCreateNewRequest = MachineCheckRequestList.Any(request => request.Status == MachineCheckRequestStatusEnum.Processing.ToString() || request.Status == MachineCheckRequestStatusEnum.Assigned.ToString());
+            bool isFailToCreateNewRequest = MachineCheckRequestList.Any(request => request.Status == MachineCheckRequestStatusEnum.New.ToString() || request.Status == MachineCheckRequestStatusEnum.Assigned.ToString());
 
             if (isFailToCreateNewRequest)
             {

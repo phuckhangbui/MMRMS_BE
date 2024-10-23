@@ -22,7 +22,7 @@ namespace Repository.Implement
             {
                 ContractId = createMachineCheckRequestDto.ContractId,
                 Note = createMachineCheckRequestDto.Note,
-                Status = MachineCheckRequestStatusEnum.Processing.ToString(),
+                Status = MachineCheckRequestStatusEnum.New.ToString(),
                 DateCreate = DateTime.Now
             };
 

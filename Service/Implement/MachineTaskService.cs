@@ -71,7 +71,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
             }
 
-            if (requestDto.Status != MachineCheckRequestStatusEnum.Processing.ToString())
+            if (requestDto.Status != MachineCheckRequestStatusEnum.New.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleRequestStatus);
             }
