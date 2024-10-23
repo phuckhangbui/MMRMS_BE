@@ -50,7 +50,13 @@ namespace Repository.Implement
             account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
             account.OtpNumber = otp;
 
-            account.RoleId = (int)AccountRoleEnum.Customer;
+            //account.RoleId = (int)AccountRoleEnum.Customer;
+            var customerRole = await RoleDao.Instance.GetRoleByRoleName(AccountRoleEnum.Customer);
+            if (customerRole != null)
+            {
+                account.RoleId = customerRole.RoleId;
+            }
+
             var accountBusiness = new AccountBusiness
             {
                 Company = newCustomerAccountDto.Company,
@@ -85,10 +91,10 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newStaffAndManagerAccountDto)
+        public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto)
         {
 
-            var account = _mapper.Map<Account>(newStaffAndManagerAccountDto);
+            var account = _mapper.Map<Account>(newEmployeeAccountDto);
 
             using var hmac = new HMACSHA512();
             account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GlobalConstant.DefaultPassword));
@@ -97,6 +103,7 @@ namespace Repository.Implement
             account.Status = AccountStatusEnum.Active.ToString();
             account.IsDelete = false;
             account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
+            account.RoleId = newEmployeeAccountDto.RoleId;
 
             account = await AccountDao.Instance.CreateAsync(account);
 

@@ -4,8 +4,8 @@ using Common.Enum;
 using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Contract = BusinessObject.Contract;
-using RentingRequest = BusinessObject.RentingRequest;
 using MachineSerialNumber = BusinessObject.MachineSerialNumber;
+using RentingRequest = BusinessObject.RentingRequest;
 
 namespace DAO
 {
@@ -86,19 +86,6 @@ namespace DAO
                 {
                     try
                     {
-                        //Promotion
-                        //if (accountPromotionId != 0)
-                        //{
-                        //    var accountPromotion = await context.AccountPromotions
-                        //        .FirstOrDefaultAsync(ap => ap.AccountPromotionId == accountPromotionId);
-
-                        //    if (accountPromotion != null && accountPromotion.Status!.Equals(AccountPromotionStatusEnum.Active.ToString()))
-                        //    {
-                        //        accountPromotion.Status = AccountPromotionStatusEnum.Redeemed.ToString();
-                        //        context.AccountPromotions.Update(accountPromotion);
-                        //    }
-                        //}
-
                         double totalDepositPrice = 0;
                         double totalRentPrice = 0;
                         //Contract
@@ -112,11 +99,11 @@ namespace DAO
                                 .ToListAsync();
 
                             //Check serial number in active/signed contract
-                            var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
+                            //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
                                         && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
-                                        && (c.DateStart < requestedEndDate && c.DateEnd > rentingRequest.DateStart))
+                                        && (c.DateStart < rentingRequest.DateEnd && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractMachineSerialNumber)
                                 .ToListAsync();
 
@@ -138,11 +125,6 @@ namespace DAO
                                 var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms);
                                 totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
                                 totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
-
-                                //Update machineSerialNumber
-                                //machineSerialNumber.Status = MachineSerialNumberStatusEnum.Rented.ToString();
-                                //machineSerialNumber.RentTimeCounter++;
-                                //context.MachineSerialNumbers.Update(machineSerialNumber);
 
                                 rentingRequest.Contracts.Add(contractSerialNumber);
                             }
@@ -174,10 +156,11 @@ namespace DAO
         private Contract InitContract(MachineSerialNumber machineSerialNumber, RentingRequest rentingRequest, List<Term> contractTerms)
         {
             var dateCreate = DateTime.Now;
+            int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days;
 
-            var contractSerialNumber = new Contract
+            var contract = new Contract
             {
-                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern) + machineSerialNumber.SerialNumber,
+                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
                 SerialNumber = machineSerialNumber.SerialNumber,
 
                 DateCreate = dateCreate,
@@ -185,7 +168,7 @@ namespace DAO
 
                 ContractName = GlobalConstant.ContractName + machineSerialNumber.SerialNumber,
                 DateStart = rentingRequest.DateStart,
-                DateEnd = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!),
+                DateEnd = rentingRequest.DateEnd,
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
@@ -193,7 +176,7 @@ namespace DAO
 
                 RentPrice = machineSerialNumber.ActualRentPrice,
                 DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
-                TotalRentPrice = machineSerialNumber.ActualRentPrice * rentingRequest.NumberOfMonth,
+                TotalRentPrice = machineSerialNumber.ActualRentPrice * numberOfDays,
             };
 
             //Contract Term
@@ -208,7 +191,7 @@ namespace DAO
                         DateCreate = dateCreate,
                     };
 
-                    contractSerialNumber.ContractTerms.Add(term);
+                    contract.ContractTerms.Add(term);
                 }
             }
 
@@ -223,11 +206,55 @@ namespace DAO
                         DateCreate = dateCreate,
                     };
 
-                    contractSerialNumber.ContractTerms.Add(term);
+                    contract.ContractTerms.Add(term);
                 }
             }
 
-            return contractSerialNumber;
+            //ContractPayment
+            var contractPayments = new List<ContractPayment>();
+
+            if ((bool)rentingRequest.IsOnetimePayment)
+            {
+                //ContractPayment(Deposit)
+                var depositContractPayment = InitDepositContractPayment(contract);
+
+                //ContractPayment(Rental)
+                var rentalContractPayment = new ContractPayment
+                {
+                    ContractId = contract.ContractId,
+                    DateCreate = DateTime.Now.Date,
+                    Status = ContractPaymentStatusEnum.Pending.ToString(),
+                    Type = ContractPaymentTypeEnum.Rental.ToString(),
+                    Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
+                    Amount = contract.RentPrice * contract.NumberOfMonth,
+                    DueDate = contract.DateStart,
+                    IsFirstRentalPayment = true,
+                };
+
+                contractPayments.Add(depositContractPayment);
+                contractPayments.Add(rentalContractPayment);
+
+                contract.ContractPayments = contractPayments;
+            }
+
+            return contract;
+        }
+
+        private ContractPayment InitDepositContractPayment(Contract contract)
+        {
+            var contractPaymentDeposit = new ContractPayment
+            {
+                ContractId = contract.ContractId,
+                DateCreate = DateTime.Now.Date,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Deposit.ToString(),
+                Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
+                Amount = contract.DepositPrice,
+                DueDate = contract.DateStart,
+                IsFirstRentalPayment = false,
+            };
+
+            return contractPaymentDeposit;
         }
 
         public async Task<RentingRequest?> CancelRentingRequest(string rentingRequestId)

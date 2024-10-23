@@ -91,7 +91,7 @@ namespace DAO
             }
         }
 
-        
+
 
 
         public async Task<MachineSerialNumber> GetMachineSerialNumber(string serialNumber)
@@ -140,11 +140,11 @@ namespace DAO
         //    }
         //}
 
-        public async Task<bool> IsMachineSerialNumberValidToRent(int productId, int quantity, DateTime startDate, int numberOfMonth)
+        public async Task<bool> IsMachineSerialNumberValidToRent(int productId, int quantity, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
 
-            var requestedEndDate = startDate.AddMonths(numberOfMonth);
+            //var requestedEndDate = startDate.AddMonths(numberOfMonth);
 
             var availableSerialNumbers = await context.MachineSerialNumbers
                 .Where(s => s.MachineId == productId
@@ -155,7 +155,7 @@ namespace DAO
             var serialNumbersInFutureContracts = await context.Contracts
                 .Where(c => availableSerialNumbers.Contains(c.SerialNumber!)
                         && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
-                        && (c.DateStart < requestedEndDate && c.DateEnd > startDate))
+                        && (c.DateStart < endDate && c.DateEnd > startDate))
                 .Select(c => c.SerialNumber)
                 .ToListAsync();
 
@@ -166,11 +166,11 @@ namespace DAO
             return suitableAvailableSerialNumbers.Count >= quantity;
         }
 
-        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberValidToRent(int productId, DateTime startDate, int numberOfMonth)
+        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberValidToRent(int productId, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
 
-            var requestedEndDate = startDate.AddMonths(numberOfMonth);
+            //var requestedEndDate = startDate.AddMonths(numberOfMonth);
 
             var availableSerialNumbers = await context.MachineSerialNumbers
                 .Where(s => s.MachineId == productId
@@ -180,7 +180,7 @@ namespace DAO
             var serialNumbersInFutureContracts = await context.Contracts
                 .Where(c => availableSerialNumbers.Contains(c.ContractMachineSerialNumber)
                         && (c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
-                        && (c.DateStart < requestedEndDate && c.DateEnd > startDate))
+                        && (c.DateStart < endDate && c.DateEnd > startDate))
                 .Select(c => c.ContractMachineSerialNumber)
                 .ToListAsync();
 

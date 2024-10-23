@@ -1,6 +1,6 @@
 ﻿using DTOs.Machine;
-using DTOs.RentingRequest;
 using DTOs.MachineSerialNumber;
+using DTOs.RentingRequest;
 
 namespace Repository.Interface
 {
