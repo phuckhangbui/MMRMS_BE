@@ -33,10 +33,12 @@ namespace DTOs.RentingRequest
         [DataType(DataType.Date)]
         public DateTime DateStart { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.RentingRequest.DateEndRequired)]
+        [DataType(DataType.Date)]
+        public DateTime DateEnd { get; set; }
+
         [Required(ErrorMessage = MessageConstant.RentingRequest.ShippingPriceRequired)]
         public double ShippingPrice { get; set; }
-
-        //public double DiscountShip { get; set; }
 
         public double DiscountPrice { get; set; }
 
@@ -53,7 +55,6 @@ namespace DTOs.RentingRequest
 
         [Required(ErrorMessage = MessageConstant.RentingRequest.ServiceRentingRequestsRequired)]
         public List<int> ServiceRentingRequests { get; set; } = new List<int>();
-        //public int AccountPromotionId { get; set; }
     }
 
     public class NewRentingRequestMachineDetailDto

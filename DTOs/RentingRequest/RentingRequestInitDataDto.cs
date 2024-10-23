@@ -1,5 +1,5 @@
-﻿using DTOs.MembershipRank;
-using DTOs.Machine;
+﻿using DTOs.Machine;
+using DTOs.MembershipRank;
 using DTOs.RentingService;
 using DTOs.Term;
 
@@ -32,5 +32,6 @@ namespace DTOs.RentingRequest
         public List<int> MachineIds { get; set; }
         public int NumberOfMonth { get; set; }
         public DateTime DateStart { get; set; }
+        public DateTime DateEnd { get; set; }
     }
 }

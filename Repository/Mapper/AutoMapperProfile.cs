@@ -22,6 +22,7 @@ using DTOs.Notification;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using DTOs.RentingService;
+using DTOs.Role;
 using DTOs.Term;
 
 namespace Repository.Mapper
@@ -285,6 +286,8 @@ namespace Repository.Mapper
             CreateMap<UpdateTermDto, Term>();
 
             CreateMap<ContractPayment, ContractPaymentDto>();
+
+            CreateMap<Role, RoleDto>();
         }
     }
 }

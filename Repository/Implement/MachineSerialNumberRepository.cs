@@ -44,7 +44,7 @@ namespace Repository.Implement
                             rentingRequestMachineDetailDto.MachineId,
                             rentingRequestMachineDetailDto.Quantity,
                             newRentingRequestDto.DateStart,
-                            newRentingRequestDto.NumberOfMonth);
+                            newRentingRequestDto.DateEnd);
 
                 if (!isMachineSerialNumberValid)
                 {
