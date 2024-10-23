@@ -34,6 +34,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IAccountLogRepository, AccountLogRepository>();
         services.AddScoped<ITermRepository, TermRepository>();
         services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
@@ -61,6 +62,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ILogSerevice, LogSereviceImpl>();
         services.AddScoped<ITermService, TermService>();
         services.AddScoped<IRequestResponseService, RequestResponseService>();
+        services.AddScoped<IRoleService, RoleServiceImpl>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

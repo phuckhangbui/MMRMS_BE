@@ -4,8 +4,8 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.AccountAddressDto;
-using DTOs.MembershipRank;
 using DTOs.Machine;
+using DTOs.MembershipRank;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
 using DTOs.Term;
@@ -59,7 +59,7 @@ namespace Repository.Implement
             foreach (var productId in rentingRequestMachineInRangeDto.MachineIds)
             {
                 var availableMachineSerialNumbers = await MachineSerialNumberDao.Instance
-                    .GetMachineSerialNumberValidToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.NumberOfMonth);
+                    .GetMachineSerialNumberValidToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
 
                 if (availableMachineSerialNumbers.IsNullOrEmpty())
                 {

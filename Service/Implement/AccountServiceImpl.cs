@@ -63,6 +63,8 @@ namespace Service.Implement
 
         public async Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto)
         {
+            var adminUsername = ConfigurationHelper.config.GetSection("AdminAccount:Username").Value;
+
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newEmployeeAccountDto.Email);
 
             if (isExist)
@@ -71,7 +73,7 @@ namespace Service.Implement
             }
 
             bool isUsernameExist = await _accountRepository.IsAccountExistWithUsername(newEmployeeAccountDto.Username);
-            if (isUsernameExist)
+            if (isUsernameExist || adminUsername.Equals(newEmployeeAccountDto.Username))
             {
                 throw new ServiceException(MessageConstant.Account.UsernameAlreadyExists);
             }

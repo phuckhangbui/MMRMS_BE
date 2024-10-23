@@ -10,6 +10,8 @@ public partial class RentingRequest
 
     public DateTime? DateStart { get; set; }
 
+    public DateTime? DateEnd { get; set; }
+
     public double? TotalRentPrice { get; set; }
 
     public double? TotalDepositPrice { get; set; }
