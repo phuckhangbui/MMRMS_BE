@@ -3,6 +3,7 @@
     public enum ContractPaymentStatusEnum
     {
         Pending,
-        Paid
+        Paid,
+        Canceled
     }
 }

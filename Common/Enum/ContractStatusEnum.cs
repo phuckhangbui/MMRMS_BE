@@ -4,8 +4,7 @@
     {
         NotSigned,
         Signed,
-        Shipping,
-        Shipped,
+        Renting,
         Completed,
         Terminated,
         Canceled

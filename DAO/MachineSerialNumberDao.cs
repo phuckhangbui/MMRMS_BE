@@ -1,5 +1,6 @@
 ﻿using Common.Enum;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MachineSerialNumber = BusinessObject.MachineSerialNumber;
 
 namespace DAO
@@ -152,9 +153,14 @@ namespace DAO
                 .Select(s => s.SerialNumber)
                 .ToListAsync();
 
+            if (availableSerialNumbers.IsNullOrEmpty())
+            {
+                return false;
+            }
+
             var serialNumbersInFutureContracts = await context.Contracts
                 .Where(c => availableSerialNumbers.Contains(c.SerialNumber!)
-                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
+                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Renting.ToString())
                         && (c.DateStart < endDate && c.DateEnd > startDate))
                 .Select(c => c.SerialNumber)
                 .ToListAsync();
@@ -179,7 +185,7 @@ namespace DAO
 
             var serialNumbersInFutureContracts = await context.Contracts
                 .Where(c => availableSerialNumbers.Contains(c.ContractMachineSerialNumber)
-                        && (c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
+                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Renting.ToString())
                         && (c.DateStart < endDate && c.DateEnd > startDate))
                 .Select(c => c.ContractMachineSerialNumber)
                 .ToListAsync();

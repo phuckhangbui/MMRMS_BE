@@ -41,7 +41,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
             }
 
-            if (contract.Status != ContractStatusEnum.Shipped.ToString())
+            if (contract.Status != ContractStatusEnum.Renting.ToString())
             {
                 throw new ServiceException(MessageConstant.Contract.ContractIsNotReadyForRequest);
             }

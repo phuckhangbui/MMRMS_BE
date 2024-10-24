@@ -2,9 +2,10 @@
 {
     public enum RentingRequestStatusEnum
     {
-        Pending,
+        UnPaid,
         Canceled,
-        AllSigned,
-        Completed
+        Signed,
+        Shipping,
+        Shipped
     }
 }

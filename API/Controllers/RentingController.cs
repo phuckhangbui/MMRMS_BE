@@ -1,5 +1,6 @@
 ﻿using Common;
 using DTOs.Contract;
+using DTOs.Invoice;
 using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,12 +78,12 @@ namespace API.Controllers
 
         [HttpPut("{rentingRequestId}/contracts/sign")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult> SignContract(string rentingRequestId)
+        public async Task<ActionResult<ContractInvoiceDto>> SignContract(string rentingRequestId)
         {
             try
             {
-                await _contractService.SignContract(rentingRequestId);
-                return Ok(MessageConstant.Contract.SignContractSuccessfully);
+                var contractInvoice = await _contractService.SignContract(rentingRequestId);
+                return Ok(contractInvoice);
             }
             catch (ServiceException ex)
             {

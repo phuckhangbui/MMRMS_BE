@@ -20,6 +20,12 @@ public partial class ContractPayment
 
     public string? Type { get; set; }
 
+    public DateTime? DateFrom { get; set; }
+
+    public DateTime? DateTo { get; set; }
+
+    public int? Period { get; set; }
+
     public DateTime? DateCreate { get; set; }
 
     public DateTime? DueDate { get; set; }

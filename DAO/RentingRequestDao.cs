@@ -102,7 +102,7 @@ namespace DAO
                             //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
-                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Shipping.ToString() || c.Status == ContractStatusEnum.Shipped.ToString())
+                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Renting.ToString())
                                         && (c.DateStart < rentingRequest.DateEnd && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractMachineSerialNumber)
                                 .ToListAsync();
@@ -173,6 +173,7 @@ namespace DAO
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
                 NumberOfMonth = rentingRequest.NumberOfMonth,
+                RentPeriod = numberOfDays,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,
                 DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
@@ -212,13 +213,11 @@ namespace DAO
 
             //ContractPayment
             var contractPayments = new List<ContractPayment>();
+            var depositContractPayment = InitDepositContractPayment(contract);
+            contractPayments.Add(depositContractPayment);
 
             if ((bool)rentingRequest.IsOnetimePayment)
             {
-                //ContractPayment(Deposit)
-                var depositContractPayment = InitDepositContractPayment(contract);
-
-                //ContractPayment(Rental)
                 var rentalContractPayment = new ContractPayment
                 {
                     ContractId = contract.ContractId,
@@ -226,12 +225,14 @@ namespace DAO
                     Status = ContractPaymentStatusEnum.Pending.ToString(),
                     Type = ContractPaymentTypeEnum.Rental.ToString(),
                     Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
-                    Amount = contract.RentPrice * contract.NumberOfMonth,
+                    Amount = contract.RentPrice * contract.RentPeriod,
+                    DateFrom = contract.DateStart,
+                    DateTo = contract.DateEnd,
+                    Period = contract.RentPeriod,
                     DueDate = contract.DateStart,
                     IsFirstRentalPayment = true,
                 };
 
-                contractPayments.Add(depositContractPayment);
                 contractPayments.Add(rentalContractPayment);
 
                 contract.ContractPayments = contractPayments;
@@ -250,6 +251,9 @@ namespace DAO
                 Type = ContractPaymentTypeEnum.Deposit.ToString(),
                 Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
                 Amount = contract.DepositPrice,
+                DateFrom = contract.DateStart,
+                DateTo = contract.DateEnd,
+                Period = contract.RentPeriod,
                 DueDate = contract.DateStart,
                 IsFirstRentalPayment = false,
             };
@@ -267,6 +271,7 @@ namespace DAO
                     {
                         var rentingRequest = await context.RentingRequests
                             .Include(rr => rr.Contracts)
+                                .ThenInclude(c => c.ContractPayments)
                             .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
 
                         if (rentingRequest != null)
@@ -276,6 +281,12 @@ namespace DAO
                             foreach (var contract in rentingRequest.Contracts)
                             {
                                 contract.Status = ContractStatusEnum.Canceled.ToString();
+
+                                foreach (var contractPayment in contract.ContractPayments)
+                                {
+                                    contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+                                }
+
                                 context.Contracts.Update(contract);
                             }
 

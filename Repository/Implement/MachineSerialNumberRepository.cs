@@ -37,6 +37,11 @@ namespace Repository.Implement
 
         public async Task<bool> CheckMachineSerialNumberValidToRequest(NewRentingRequestDto newRentingRequestDto)
         {
+            if (newRentingRequestDto.RentingRequestMachineDetails.IsNullOrEmpty())
+            {
+                return false;
+            }
+
             foreach (var rentingRequestMachineDetailDto in newRentingRequestDto.RentingRequestMachineDetails)
             {
                 var isMachineSerialNumberValid = await MachineSerialNumberDao.Instance
