@@ -1,5 +1,6 @@
 ﻿using Common;
 using DTOs.Contract;
+using DTOs.Invoice;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -93,7 +94,7 @@ namespace Service.Implement
             return contracts;
         }
 
-        public async Task SignContract(string rentingRequestId)
+        public async Task<ContractInvoiceDto> SignContract(string rentingRequestId)
         {
             var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
             if (rentingRequest == null)
@@ -107,7 +108,13 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
             }
 
-            await _contractRepository.SignContract(rentingRequestId);
+            var contractInvoice = await _contractRepository.SignContract(rentingRequestId);
+            if (contractInvoice == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.SignContractFail);
+            }
+
+            return contractInvoice;
         }
 
         private async Task<ContractDetailDto> CheckContractExist(string contractId)

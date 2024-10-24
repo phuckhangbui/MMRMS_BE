@@ -4,6 +4,8 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Contract;
+using DTOs.ContractPayment;
+using DTOs.Invoice;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -66,9 +68,24 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task SignContract(string rentingRequestId)
+        public async Task<ContractInvoiceDto?> SignContract(string rentingRequestId)
         {
-            await ContractDao.Instance.SignContract(rentingRequestId);
+            var depositInvoice = await ContractDao.Instance.SignContract(rentingRequestId);
+
+            if (depositInvoice != null)
+            {
+                var contractInvoice = _mapper.Map<ContractInvoiceDto>(depositInvoice);
+
+                var contractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(depositInvoice.InvoiceId);
+                if (!contractPayments.IsNullOrEmpty())
+                {
+                    contractInvoice.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(contractPayments);
+                }
+
+                return contractInvoice;
+            }
+
+            return null;
         }
 
 

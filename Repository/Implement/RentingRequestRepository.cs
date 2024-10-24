@@ -148,7 +148,7 @@ namespace Repository.Implement
 
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             rentingRequest.DateCreate = DateTime.Now;
-            rentingRequest.Status = RentingRequestStatusEnum.Pending.ToString();
+            rentingRequest.Status = RentingRequestStatusEnum.UnPaid.ToString();
             rentingRequest.TotalAmount = 0;
 
             var address = await AddressDao.Instance.GetAddressById(newRentingRequestDto.AddressId);
@@ -226,7 +226,7 @@ namespace Repository.Implement
         public async Task<bool> IsRentingRequestValidToCancel(string rentingRequestId)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
-            if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.Pending.ToString()))
+            if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
             {
                 return false;
             }

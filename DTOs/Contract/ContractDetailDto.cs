@@ -1,4 +1,5 @@
 ﻿using DTOs.AccountAddressDto;
+using DTOs.ContractPayment;
 using DTOs.RentingRequest;
 using DTOs.Term;
 
@@ -19,5 +20,6 @@ namespace DTOs.Contract
         public double? TotalRentPrice { get; set; }
         //public AddressDto Address { get; set; }
         public AccountBusinessDto AccountBusiness { get; set; }
+        public List<ContractPaymentDto> ContractPayments { get; set; }
     }
 }

@@ -16,6 +16,8 @@ public partial class Contract
 
     public int? NumberOfMonth { get; set; }
 
+    public int? RentPeriod { get; set; }
+
     public double? TotalRentPrice { get; set; }
 
     public string? Content { get; set; }
