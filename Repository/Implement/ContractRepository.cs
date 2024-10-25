@@ -38,7 +38,22 @@ namespace Repository.Implement
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
             {
-                return _mapper.Map<ContractDetailDto>(contract);
+                var contractDetail = _mapper.Map<ContractDetailDto>(contract);
+
+                var contractPayment = contractDetail.ContractPayments.FirstOrDefault(c => c.IsFirstRentalPayment == true);
+                if (contractPayment != null)
+                {
+                    var firstRentalPayment = new FirstRentalPaymentDto()
+                    {
+                        DiscountPrice = contract.RentingRequest.DiscountPrice,
+                        ShippingPrice = contract.RentingRequest.ShippingPrice,
+                        TotalServicePrice = contract.RentingRequest.TotalServicePrice,
+                    };
+
+                    contractPayment.FirstRentalPayment = firstRentalPayment;
+                }
+
+                return contractDetail;
             }
 
             return null;

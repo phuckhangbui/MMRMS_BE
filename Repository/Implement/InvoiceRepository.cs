@@ -19,7 +19,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task AddTransactionToInvoice(TransactionReturn transactionReturn, string invoiceId)
+        public async Task<InvoiceDto> AddTransactionToInvoice(TransactionReturn transactionReturn, string invoiceId)
         {
             var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
 
@@ -28,9 +28,11 @@ namespace Repository.Implement
                 throw new Exception(MessageConstant.Invoice.InvoiceNotFound);
             }
 
-            if (invoice.Type.Equals(InvoiceTypeEnum.Deposit) || invoice.Type.Equals(InvoiceTypeEnum.Rental))
+            if (invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
             {
-                await InvoiceDao.Instance.UpdateContractInvoice(transactionReturn, invoiceId);
+                invoice = await InvoiceDao.Instance.UpdateContractInvoice(transactionReturn, invoiceId);
+
+                return _mapper.Map<InvoiceDto>(invoice);
             }
 
             var digitalTransaction = _mapper.Map<DigitalTransaction>(transactionReturn);
@@ -44,7 +46,9 @@ namespace Repository.Implement
             invoice.PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString();
             invoice.DigitalTransactionId = transactionReturn.Reference;
             invoice.DatePaid = transactionReturn.TransactionDate;
-            await InvoiceDao.Instance.UpdateAsync(invoice);
+
+            invoice = await InvoiceDao.Instance.UpdateAsync(invoice);
+            return _mapper.Map<InvoiceDto>(invoice);
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAllInvoices()

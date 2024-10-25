@@ -225,7 +225,7 @@ namespace DAO
                     Status = ContractPaymentStatusEnum.Pending.ToString(),
                     Type = ContractPaymentTypeEnum.Rental.ToString(),
                     Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
-                    Amount = contract.RentPrice * contract.RentPeriod,
+                    Amount = (contract.RentPrice * contract.RentPeriod) + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - rentingRequest.DiscountPrice,
                     DateFrom = contract.DateStart,
                     DateTo = contract.DateEnd,
                     Period = contract.RentPeriod,

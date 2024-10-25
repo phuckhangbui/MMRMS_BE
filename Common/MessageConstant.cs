@@ -64,6 +64,7 @@
             public const string TaxNumberRequired = "Số thuế là bắt buộc.";
             public const string PasswordRequired = "Mật khẩu là bắt buộc.";
             public const string OtpRequired = "Mã OTP là bắt buộc.";
+            public const string AvatarUrlRequired = "Avatar là bắt buộc.";
         }
 
         public static class MembershipRank
@@ -380,6 +381,10 @@
 
         public static class Invoice
         {
+            //Controller
+            public const string PayInvoiceSuccessfully = "Thanh toán hóa đơn thành công";
+            public const string PayInvoiceFail = "Thanh toán hóa đơn thất bại";
+
             //Service
             public const string InvoiceNotFound = "Hóa đơn này không tồn tại";
             public const string IncorrectAccountIdForInvoice = "Hóa đơn này không thể được trả bởi bạn";

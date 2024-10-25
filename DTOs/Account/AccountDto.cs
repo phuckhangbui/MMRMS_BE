@@ -69,6 +69,7 @@ namespace DTOs.Account
         public string Status { get; set; }
         public int RoleId { get; set; }
         public int Gender { get; set; }
+        public string DateBirth { get; set; }
     }
 
     public class EmployeeAccountDto : AccountBaseDto

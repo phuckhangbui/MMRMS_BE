@@ -36,6 +36,9 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.AddressRequired)]
         public string Address { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.AvatarUrlRequired)]
+        public string AvatarImg { get; set; }
     }
 
     public class EmployeeAccountUpdateDto

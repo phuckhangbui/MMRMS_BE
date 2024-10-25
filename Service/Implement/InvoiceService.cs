@@ -74,7 +74,7 @@ namespace Service.Implement
             return url;
         }
 
-        public async Task PostTransactionProcess(int customerId, string invoiceId)
+        public async Task<bool> PostTransactionProcess(int customerId, string invoiceId)
         {
             InvoiceDto invoice = await _invoiceRepository.GetInvoice(invoiceId);
 
@@ -100,8 +100,29 @@ namespace Service.Implement
 
             }
 
+            invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
+            if (invoice.Status == InvoiceStatusEnum.Paid.ToString())
+            {
+                return true;
+            }
 
-            await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
+            return false;
         }
+
+        private TransactionReturn GenerateSampleTransactionReturn()
+        {
+            return new TransactionReturn
+            {
+                Reference = "TRX123456789", // Sample reference ID
+                AccountNumber = "1234567890", // Sample account number
+                AccountName = "Nguyen Van A", // Sample account name
+                BankCode = "VCB", // Sample bank code (e.g., Vietcombank)
+                BankName = "Vietcombank", // Sample bank name
+                Amount = 1500000.50, // Sample transaction amount
+                Description = "Payment for renting machinery", // Sample transaction description
+                TransactionDate = DateTime.Now // Current date and time for the transaction
+            };
+        }
+
     }
 }
