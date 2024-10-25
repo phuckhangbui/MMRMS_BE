@@ -45,7 +45,7 @@ namespace DAO
             }
         }
 
-        public async Task UpdateContractInvoice(TransactionReturn transactionReturn, string invoiceId)
+        public async Task<Invoice> UpdateContractInvoice(TransactionReturn transactionReturn, string invoiceId)
         {
             using (var context = new MmrmsContext())
             {
@@ -55,6 +55,8 @@ namespace DAO
                     {
                         var invoice = await context.Invoices
                             .Include(i => i.ContractPayments)
+                                .ThenInclude(cp => cp.Contract)
+                                .ThenInclude(c => c.RentingRequest)
                             .FirstOrDefaultAsync(i => i.InvoiceId.Equals(invoiceId));
 
                         invoice.Status = InvoiceStatusEnum.Paid.ToString();
@@ -62,7 +64,6 @@ namespace DAO
                         invoice.DigitalTransactionId = transactionReturn.Reference;
                         invoice.DatePaid = transactionReturn.TransactionDate;
 
-                        //DigitalTransaction
                         var digitalTransaction = new DigitalTransaction
                         {
                             DigitalTransactionId = transactionReturn.Reference,
@@ -77,16 +78,22 @@ namespace DAO
 
                         invoice.DigitalTransaction = digitalTransaction;
 
-                        //ContractPayment
                         foreach (var contractPayment in invoice.ContractPayments)
                         {
                             contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
                             contractPayment.CustomerPaidDate = invoice.DatePaid;
+
+                            if (contractPayment.Contract != null && contractPayment.Contract.RentingRequest != null)
+                            {
+                                contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
+                                contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+                            }
                         }
 
-                        context.Invoices.Update(invoice);
                         await context.SaveChangesAsync();
                         await transaction.CommitAsync();
+
+                        return invoice;
                     }
                     catch (Exception e)
                     {

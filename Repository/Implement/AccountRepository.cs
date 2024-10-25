@@ -277,6 +277,7 @@ namespace Repository.Implement
                 customerAccount.Phone = customerAccountUpdateDto.Phone;
                 customerAccount.Gender = customerAccountUpdateDto.Gender;
                 customerAccount.DateBirth = customerAccountUpdateDto.DateBirth;
+                customerAccount.AvatarImg = customerAccountUpdateDto.AvatarImg;
 
                 var accountBusiness = customerAccount.AccountBusiness;
                 if (accountBusiness != null)

@@ -1,4 +1,5 @@
-﻿using DTOs;
+﻿using Common;
+using DTOs;
 using DTOs.Invoice;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -99,8 +100,9 @@ namespace API.Controllers
 
             try
             {
-                await _invoiceService.PostTransactionProcess(customerId, invoiceId);
-                return NoContent();
+                var result = await _invoiceService.PostTransactionProcess(customerId, invoiceId);
+                if (result) return Ok(MessageConstant.Invoice.PayInvoiceSuccessfully);
+                return BadRequest(MessageConstant.Invoice.PayInvoiceFail);
             }
             catch (ServiceException ex)
             {
