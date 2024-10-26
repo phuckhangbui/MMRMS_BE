@@ -6,6 +6,8 @@ public partial class DeliveryTask
 
     public int? StaffId { get; set; }
 
+    public int? ManagerId { get; set; }
+
     public DateTime? DateShip { get; set; }
 
     public DateTime? DateCreate { get; set; }
@@ -22,9 +24,12 @@ public partial class DeliveryTask
 
     public string? Type { get; set; }
 
-    public virtual ICollection<ContractDelivery> ContractDeliveries { get; set; } = new List<ContractDelivery>();
-
     public virtual Account? Staff { get; set; }
 
+    public virtual Account? Manager { get; set; }
+
+    public virtual ICollection<ContractDelivery> ContractDeliveries { get; set; } = new List<ContractDelivery>();
+
     public virtual ICollection<DeliveryTaskLog> DeliveryTaskLogs { get; set; } = new List<DeliveryTaskLog>();
+
 }
