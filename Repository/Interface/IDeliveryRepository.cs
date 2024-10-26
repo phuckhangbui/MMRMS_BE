@@ -4,7 +4,7 @@ namespace Repository.Interface
 {
     public interface IDeliveryTaskRepository
     {
-        Task AssignDeliveryTaskToStaff(int managerId, AssignDeliveryTaskDto assignDeliveryTaskDto);
+        Task<DeliveryTaskDto> CreateDeliveryTaskToStaff(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesForStaff(int staffId);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip);

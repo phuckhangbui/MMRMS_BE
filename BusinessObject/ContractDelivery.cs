@@ -12,6 +12,8 @@
 
         public string? Note { get; set; }
 
+        public string? Status { get; set; }
+
         public virtual Contract? Contract { get; set; }
 
         public virtual DeliveryTask? DeliveryTask { get; set; }

@@ -37,16 +37,11 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
         [HttpGet("staff")]
-        [Authorize(Policy = "Staff")]
+        [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForStaff()
         {
             int staffId = GetLoginAccountId();
-            if (staffId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
@@ -63,19 +58,15 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("assign")]
+        [HttpPost("create")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> AssignDeliveryTask([FromBody] AssignDeliveryTaskDto assignDeliveryTaskDto)
+        public async Task<ActionResult> CreateDeliveryTask([FromBody] CreateDeliveryTaskDto createDeliveryTaskDto)
         {
             int managerId = GetLoginAccountId();
-            if (managerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
-                await _deliverService.AssignDeliveryTask(managerId, assignDeliveryTaskDto);
+                await _deliverService.CreateDeliveryTask(managerId, createDeliveryTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -89,9 +80,9 @@ namespace API.Controllers
         }
 
         //TODO:KHANG
-        [HttpPatch("{DeliveryTaskId}")]
-        [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult> UpdateDeliveryTasktatus([FromRoute] int DeliveryTaskId, [FromQuery] string status)
+        [HttpPatch("{deliveryTaskId}")]
+        [Authorize(Policy = "ManagerAndTechnicalStaff")]
+        public async Task<ActionResult> UpdateDeliveryTasktatus([FromRoute] int deliveryTaskId, [FromQuery] string status)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -102,7 +93,7 @@ namespace API.Controllers
 
             try
             {
-                await _deliverService.UpdateDeliveryTaskStatus(DeliveryTaskId, status, accountId);
+                await _deliverService.UpdateDeliveryTaskStatus(deliveryTaskId, status, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

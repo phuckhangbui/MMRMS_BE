@@ -1,11 +1,16 @@
 ﻿namespace Common.Enum
 {
-    public enum DeliveryTasktatusEnum
+    public enum DeliveryTaskStatusEnum
     {
         Created,
-        Assigned,
         Delivering,
         Completed,
         Fail
+    }
+
+    public enum DeliveryTaskTypeEnum
+    {
+        Delivery,
+        GetMachinery
     }
 }

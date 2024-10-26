@@ -16,30 +16,49 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task AssignDeliveryTaskToStaff(int managerId, AssignDeliveryTaskDto assignDeliveryTaskDto)
+        public async Task<DeliveryTaskDto> CreateDeliveryTaskToStaff(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
         {
-            var DeliveryTask = await DeliveryTaskDao.Instance.GetDeliveryTask(assignDeliveryTaskDto.DeliveryTaskId);
+            var now = DateTime.Now;
 
-            DeliveryTask.Status = DeliveryTasktatusEnum.Assigned.ToString();
-
-            DeliveryTask.StaffId = assignDeliveryTaskDto.StaffId;
-            DeliveryTask.DateShip = assignDeliveryTaskDto.DateShip;
-
-            await DeliveryTaskDao.Instance.UpdateAsync(DeliveryTask);
-
-            var account = await AccountDao.Instance.GetAccountAsyncById(assignDeliveryTaskDto.StaffId);
-
-            string action = $"Assign DeliveryTask task to staff name {account.Name}";
-
-            var DeliveryTaskLog = new DeliveryTaskLog
+            var deliveryTask = new DeliveryTask
             {
-                DeliveryTaskId = DeliveryTask.DeliveryTaskId,
+                StaffId = createDeliveryTaskDto.StaffId,
+                DateShip = createDeliveryTaskDto.DateShip,
+                DateCreate = now,
+                Status = DeliveryTaskStatusEnum.Created.ToString(),
+                Type = DeliveryTaskTypeEnum.Delivery.ToString()
+            };
+
+            var account = await AccountDao.Instance.GetAccountAsyncById(createDeliveryTaskDto.StaffId);
+
+            string action = $"Tạo và giao đơn giao cho nhân viên tên: {account.Name}";
+
+            var deliveryTaskLog = new DeliveryTaskLog
+            {
+                DeliveryTaskId = deliveryTask.DeliveryTaskId,
                 AccountTriggerId = managerId,
                 DateCreate = DateTime.Now,
                 Action = action,
             };
 
-            await DeliveryTaskLogDao.Instance.CreateAsync(DeliveryTaskLog);
+            var listContractDelivery = new List<ContractDelivery>();
+            foreach (string contractId in createDeliveryTaskDto.ContractIdList)
+            {
+                var contractDelivery = new ContractDelivery
+                {
+                    ContractId = contractId,
+                    DeliveryTaskId = deliveryTask.DeliveryTaskId,
+                    Status = ContractDeliveryStatusEnum.Pending.ToString(),
+                };
+
+                listContractDelivery.Add(contractDelivery);
+            }
+
+            deliveryTask = await DeliveryTaskDao.Instance.CreateDelivery(deliveryTask, listContractDelivery, deliveryTaskLog);
+
+            var deliveryTaskDto = _mapper.Map<DeliveryTaskDto>(deliveryTask);
+
+            return deliveryTaskDto;
         }
 
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()

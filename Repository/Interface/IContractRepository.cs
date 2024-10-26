@@ -6,6 +6,7 @@ namespace Repository.Interface
     public interface IContractRepository
     {
         Task<IEnumerable<ContractDto>> GetContracts();
+        Task<ContractDto> GetContractById(string id);
         Task<ContractDetailDto?> GetContractDetailById(string contractId);
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
         Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto);
