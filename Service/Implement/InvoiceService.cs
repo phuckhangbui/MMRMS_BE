@@ -76,7 +76,7 @@ namespace Service.Implement
 
         public async Task<bool> PostTransactionProcess(int customerId, string invoiceId)
         {
-            InvoiceDto invoice = await _invoiceRepository.GetInvoice(invoiceId);
+            InvoiceDto? invoice = await _invoiceRepository.GetInvoice(invoiceId);
 
             if (invoice == null)
             {
@@ -101,12 +101,12 @@ namespace Service.Implement
             }
 
             invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
-            if (invoice.Status == InvoiceStatusEnum.Paid.ToString())
+            if (invoice == null || invoice.Status != InvoiceStatusEnum.Paid.ToString())
             {
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         private TransactionReturn GenerateSampleTransactionReturn()

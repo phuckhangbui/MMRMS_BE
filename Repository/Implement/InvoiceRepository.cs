@@ -19,7 +19,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<InvoiceDto> AddTransactionToInvoice(TransactionReturn transactionReturn, string invoiceId)
+        public async Task<InvoiceDto?> AddTransactionToInvoice(TransactionReturn transactionReturn, string invoiceId)
         {
             var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
 
@@ -31,6 +31,10 @@ namespace Repository.Implement
             if (invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
             {
                 invoice = await InvoiceDao.Instance.UpdateContractInvoice(transactionReturn, invoiceId);
+                if (invoice == null)
+                {
+                    return null;
+                }
 
                 return _mapper.Map<InvoiceDto>(invoice);
             }

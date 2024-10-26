@@ -2,7 +2,8 @@
 {
     public interface IBackground
     {
-        void ScheduleCancelRentingRequestJob(string rentingRequestId);
-        void ScheduleCompleteContractOnTimeJob(string contractId, TimeSpan delayToStart);
+        void CancelRentingRequestJob(string rentingRequestId);
+        void CompleteContractOnTimeJob(string contractId, TimeSpan delayToStart);
+        void GenerateInvoiceJob(int nextContractPaymentId, TimeSpan delayToStart);
     }
 }

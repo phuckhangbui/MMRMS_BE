@@ -67,8 +67,9 @@ public static class ApplicationServicesExtensions
 
         //Background
         services.AddScoped<IBackground, BackgroundImpl>();
-        services.AddScoped<RentingRequestDao>();
-        services.AddScoped<ContractDao>();
+        //services.AddScoped<RentingRequestDao>();
+        //services.AddScoped<ContractDao>();
+        //services.AddScoped<InvoiceDao>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

@@ -15,7 +15,7 @@ namespace DAO
         private static RentingRequestDao instance = null;
         private static readonly object instacelock = new object();
 
-        public RentingRequestDao()
+        private RentingRequestDao()
         {
 
         }
@@ -81,84 +81,80 @@ namespace DAO
 
         public async Task<RentingRequest> CreateRentingRequest(RentingRequest rentingRequest, NewRentingRequestDto newRentingRequestDto)
         {
-            using (var context = new MmrmsContext())
+            using var context = new MmrmsContext();
+            using var transaction = context.Database.BeginTransaction();
+            try
             {
-                using (var transaction = context.Database.BeginTransaction())
+                double totalDepositPrice = 0;
+                double totalRentPrice = 0;
+                //Contract
+                foreach (var newRentingRequestMachine in newRentingRequestDto.RentingRequestMachineDetails)
                 {
-                    try
+                    var availableMachineSerialNumbers = await context.MachineSerialNumbers
+                        .Where(s => s.MachineId == newRentingRequestMachine.MachineId && s.Status!.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
+                        .Include(s => s.Machine)
+                            .ThenInclude(p => p.MachineTerms)
+                        .OrderByDescending(s => s.DateCreate)
+                        .ToListAsync();
+
+                    //Check serial number in active/signed contract
+                    //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
+                    var serialNumbersInFutureContracts = await context.Contracts
+                        .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
+                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                    c.Status == ContractStatusEnum.Signed.ToString() ||
+                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                    c.Status == ContractStatusEnum.Renting.ToString())
+                                && (c.DateStart < rentingRequest.DateEnd && c.DateEnd > rentingRequest.DateStart))
+                        .Select(c => c.ContractMachineSerialNumber)
+                        .ToListAsync();
+
+                    var suitableAvailableSerialNumbers = availableMachineSerialNumbers
+                        .Except(serialNumbersInFutureContracts)
+                        .ToList();
+
+                    var selectedSerialNumbers = suitableAvailableSerialNumbers
+                        .Take(newRentingRequestMachine.Quantity)
+                        .ToList();
+
+                    var contractTerms = await context.Terms
+                        .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
+                        .ToListAsync();
+
+                    foreach (var machineSerialNumber in selectedSerialNumbers)
                     {
-                        double totalDepositPrice = 0;
-                        double totalRentPrice = 0;
-                        //Contract
-                        foreach (var newRentingRequestMachine in newRentingRequestDto.RentingRequestMachineDetails)
-                        {
-                            var availableMachineSerialNumbers = await context.MachineSerialNumbers
-                                .Where(s => s.MachineId == newRentingRequestMachine.MachineId && s.Status!.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
-                                .Include(s => s.Machine)
-                                    .ThenInclude(p => p.MachineTerms)
-                                .OrderByDescending(s => s.DateCreate)
-                                .ToListAsync();
+                        //Assign serial number to the contract
+                        var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms);
+                        totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
+                        totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
 
-                            //Check serial number in active/signed contract
-                            //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
-                            var serialNumbersInFutureContracts = await context.Contracts
-                                .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
-                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                                            c.Status == ContractStatusEnum.Signed.ToString() ||
-                                            c.Status == ContractStatusEnum.Shipping.ToString() ||
-                                            c.Status == ContractStatusEnum.Renting.ToString())
-                                        && (c.DateStart < rentingRequest.DateEnd && c.DateEnd > rentingRequest.DateStart))
-                                .Select(c => c.ContractMachineSerialNumber)
-                                .ToListAsync();
-
-                            var suitableAvailableSerialNumbers = availableMachineSerialNumbers
-                                .Except(serialNumbersInFutureContracts)
-                                .ToList();
-
-                            var selectedSerialNumbers = suitableAvailableSerialNumbers
-                                .Take(newRentingRequestMachine.Quantity)
-                                .ToList();
-
-                            var contractTerms = await context.Terms
-                                .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
-                                .ToListAsync();
-
-                            foreach (var machineSerialNumber in selectedSerialNumbers)
-                            {
-                                //Assign serial number to the contract
-                                var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms);
-                                totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
-                                totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
-
-                                rentingRequest.Contracts.Add(contractSerialNumber);
-                            }
-                        }
-
-                        rentingRequest.TotalRentPrice = totalRentPrice;
-                        rentingRequest.TotalDepositPrice = totalDepositPrice;
-                        rentingRequest.TotalAmount = rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
-                            + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
-                            - rentingRequest.DiscountPrice;
-
-                        DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
-                        _dbSet.Add(rentingRequest);
-                        await context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-
-                        //Background
-                        ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-                        var backgroundImpl = new BackgroundImpl(logger, new RentingRequestDao(), new ContractDao());
-                        backgroundImpl.ScheduleCancelRentingRequestJob(rentingRequest.RentingRequestId);
-
-                        return rentingRequest;
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
+                        rentingRequest.Contracts.Add(contractSerialNumber);
                     }
                 }
+
+                rentingRequest.TotalRentPrice = totalRentPrice;
+                rentingRequest.TotalDepositPrice = totalDepositPrice;
+                rentingRequest.TotalAmount = rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
+                    + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
+                    - rentingRequest.DiscountPrice;
+
+                DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
+                _dbSet.Add(rentingRequest);
+                await context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                //Background
+                ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+                var backgroundImpl = new BackgroundImpl(logger);
+                backgroundImpl.CancelRentingRequestJob(rentingRequest.RentingRequestId);
+
+                return rentingRequest;
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw new Exception(e.Message);
             }
         }
 
@@ -328,48 +324,44 @@ namespace DAO
 
         public async Task<RentingRequest?> CancelRentingRequest(string rentingRequestId)
         {
-            using (var context = new MmrmsContext())
+            using var context = new MmrmsContext();
+            using var transaction = context.Database.BeginTransaction();
+            try
             {
-                using (var transaction = context.Database.BeginTransaction())
+                var rentingRequest = await context.RentingRequests
+                    .Include(rr => rr.Contracts)
+                        .ThenInclude(c => c.ContractPayments)
+                    .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
+
+                if (rentingRequest != null)
                 {
-                    try
+                    rentingRequest.Status = RentingRequestStatusEnum.Canceled.ToString();
+
+                    foreach (var contract in rentingRequest.Contracts)
                     {
-                        var rentingRequest = await context.RentingRequests
-                            .Include(rr => rr.Contracts)
-                                .ThenInclude(c => c.ContractPayments)
-                            .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
+                        contract.Status = ContractStatusEnum.Canceled.ToString();
 
-                        if (rentingRequest != null)
+                        foreach (var contractPayment in contract.ContractPayments)
                         {
-                            rentingRequest.Status = RentingRequestStatusEnum.Canceled.ToString();
-
-                            foreach (var contract in rentingRequest.Contracts)
-                            {
-                                contract.Status = ContractStatusEnum.Canceled.ToString();
-
-                                foreach (var contractPayment in contract.ContractPayments)
-                                {
-                                    contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
-                                }
-
-                                context.Contracts.Update(contract);
-                            }
-
-                            context.RentingRequests.Update(rentingRequest);
-
-                            await context.SaveChangesAsync();
-
-                            await transaction.CommitAsync();
+                            contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
                         }
 
-                        return rentingRequest;
+                        context.Contracts.Update(contract);
                     }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
-                    }
+
+                    context.RentingRequests.Update(rentingRequest);
+
+                    await context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
                 }
+
+                return rentingRequest;
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw new Exception(e.Message);
             }
         }
     }
