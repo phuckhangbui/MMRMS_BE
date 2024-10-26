@@ -107,6 +107,20 @@ namespace DAO
             }
         }
 
-
+        public async Task<DeliveryTask> GetDeliveryDetail(int deliveryTaskId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                    .Include(d => d.Staff)
+                    .Include(d => d.DeliveryTaskLogs)
+                    .ThenInclude(l => l.AccountTrigger)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
+                    .FirstOrDefaultAsync(d => d.DeliveryTaskId == deliveryTaskId);
+            }
+        }
     }
 }

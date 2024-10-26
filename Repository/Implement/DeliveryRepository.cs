@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
+using DTOs.Delivery;
 using DTOs.DeliveryTask;
 using Repository.Interface;
 
@@ -89,6 +91,29 @@ namespace Repository.Implement
             var DeliveryTask = await DeliveryTaskDao.Instance.GetDeliveryTask(DeliveryTaskId);
 
             return _mapper.Map<DeliveryTaskDto>(DeliveryTask);
+        }
+
+        public async Task<DeliveryTaskDetailDto> GetDeliveryTaskDetail(int deliveryTaskId)
+        {
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(deliveryTaskId);
+
+            if (delivery == null)
+            {
+                throw new Exception(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            var deliveryTaskDto = _mapper.Map<DeliveryTaskDto>(delivery);
+
+            var deliveryLogList = _mapper.Map<IEnumerable<DeliveryTaskLogDto>>(delivery.DeliveryTaskLogs);
+
+            var contractDeliveryList = _mapper.Map<IEnumerable<ContractDeliveryDto>>(delivery.ContractDeliveries);
+
+            return new DeliveryTaskDetailDto
+            {
+                DeliveryTask = deliveryTaskDto,
+                DeliveryTaskLogs = deliveryLogList,
+                ContractDeliveries = contractDeliveryList
+            };
         }
 
         public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)

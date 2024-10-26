@@ -1,4 +1,5 @@
-﻿using DTOs.DeliveryTask;
+﻿using DTOs.Delivery;
+using DTOs.DeliveryTask;
 
 namespace Service.Interface
 {
@@ -7,6 +8,7 @@ namespace Service.Interface
         Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries(int staffId);
+        Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId);
         Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId);
     }
 }

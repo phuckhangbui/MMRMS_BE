@@ -36,6 +36,9 @@ public static class IdentityServiceExtension
             options.AddPolicy("Manager", policy =>
                 policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Manager).ToString()));
 
+            options.AddPolicy("Employee", policy =>
+                policy.RequireClaim("RoleId", ((int)AccountRoleEnum.Manager).ToString(), ((int)AccountRoleEnum.TechnicalStaff).ToString(), ((int)AccountRoleEnum.WebsiteStaff).ToString()));
+
             options.AddPolicy("TechnicalStaff", policy =>
                 policy.RequireClaim("RoleId", ((int)AccountRoleEnum.TechnicalStaff).ToString()));
 

@@ -10,6 +10,7 @@ using DTOs.ComponentReplacementTicket;
 using DTOs.Content;
 using DTOs.Contract;
 using DTOs.ContractPayment;
+using DTOs.Delivery;
 using DTOs.DeliveryTask;
 using DTOs.Invoice;
 using DTOs.Log;
@@ -228,6 +229,11 @@ namespace Repository.Mapper
                                 .FirstOrDefault(d => d.Contract != null)
                                 .Contract.RentingRequest.RentingRequestAddress
                             : null));
+
+            CreateMap<DeliveryTaskLog, DeliveryTaskLogDto>()
+                .ForMember(dest => dest.AccountTriggerName,
+                        opt => opt.MapFrom(src => src.AccountTrigger != null ? src.AccountTrigger.Name : null));
+            CreateMap<ContractDelivery, ContractDeliveryDto>();
 
 
 

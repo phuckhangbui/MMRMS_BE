@@ -1,4 +1,5 @@
-﻿using DTOs.DeliveryTask;
+﻿using DTOs.Delivery;
+using DTOs.DeliveryTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -18,7 +19,7 @@ namespace API.Controllers
 
 
 
-        [HttpGet]
+        [HttpGet("manager")]
         [Authorize(Policy = "Manager")]
         public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForManager()
         {
@@ -37,7 +38,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("staff")]
+        [HttpGet("technical-staff")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForStaff()
         {
@@ -47,6 +48,25 @@ namespace API.Controllers
             {
                 IEnumerable<DeliveryTaskDto> list = await _deliverService.GetDeliveries(staffId);
                 return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{deliveryTaskId}")]
+        [Authorize(Policy = "Employee")]
+        public async Task<ActionResult<DeliveryTaskDetailDto>> GetDeliveryDetail([FromRoute] int deliveryTaskId)
+        {
+            try
+            {
+                var delivery = await _deliverService.GetDeliveryDetail(deliveryTaskId);
+                return Ok(delivery);
             }
             catch (ServiceException ex)
             {

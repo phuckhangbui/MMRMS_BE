@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs.Delivery;
 using DTOs.DeliveryTask;
 using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
@@ -100,6 +101,11 @@ namespace Service.Implement
             return await _deliveryTaskRepository.GetDeliveriesForStaff(staffId);
         }
 
+        public async Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId)
+        {
+            return await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+        }
+
         public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
         {
             DeliveryTaskDto DeliveryTaskDto = await _deliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);
@@ -134,5 +140,7 @@ namespace Service.Implement
 
             await _DeliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
         }
+
+
     }
 }
