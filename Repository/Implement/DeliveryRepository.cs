@@ -126,7 +126,7 @@ namespace Repository.Implement
 
             await DeliveryTaskDao.Instance.UpdateAsync(deliveryTask);
 
-            string action = $"Change status from {oldStatus} to {status}";
+            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<DeliveryTaskStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<DeliveryTaskStatusEnum>(status)}]";
 
             var DeliveryTaskLog = new DeliveryTaskLog
             {

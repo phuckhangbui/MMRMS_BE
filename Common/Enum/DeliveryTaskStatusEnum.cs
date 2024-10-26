@@ -2,9 +2,16 @@
 {
     public enum DeliveryTaskStatusEnum
     {
+        [Translation("Mới tạo")]
         Created,
+
+        [Translation("Đang giao")]
         Delivering,
+
+        [Translation("Hoàn thành")]
         Completed,
+
+        [Translation("Thất bại")]
         Fail
     }
 
