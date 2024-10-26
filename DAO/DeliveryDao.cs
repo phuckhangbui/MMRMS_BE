@@ -1,5 +1,6 @@
 ﻿using BusinessObject;
 using Microsoft.EntityFrameworkCore;
+using DeliveryTask = BusinessObject.DeliveryTask;
 
 namespace DAO
 {
@@ -31,7 +32,8 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate).ToListAsync();
@@ -44,7 +46,8 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate)
@@ -59,10 +62,64 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .FirstOrDefaultAsync(d => d.DeliveryTaskId == DeliveryTaskId);
+            }
+        }
+
+        public async Task<DeliveryTask> CreateDelivery(DeliveryTask deliveryTask, List<ContractDelivery> listContractDelivery, DeliveryTaskLog deliveryTaskLog)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.Deliveries.Add(deliveryTask);
+                        await context.SaveChangesAsync();
+
+                        foreach (var contractDelivery in listContractDelivery)
+                        {
+                            contractDelivery.DeliveryTaskId = deliveryTask.DeliveryTaskId;
+                            context.ContractDeliveries.Add(contractDelivery);
+                        }
+                        await context.SaveChangesAsync();
+
+                        deliveryTaskLog.DeliveryTaskId = deliveryTask.DeliveryTaskId;
+                        context.DeliveryTaskLogs.Add(deliveryTaskLog);
+                        await context.SaveChangesAsync();
+
+
+                        await transaction.CommitAsync();
+
+                        return deliveryTask;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction on error
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task<DeliveryTask> GetDeliveryDetail(int deliveryTaskId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                    .Include(d => d.Staff)
+                    .Include(d => d.DeliveryTaskLogs)
+                    .ThenInclude(l => l.AccountTrigger)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
+                    .FirstOrDefaultAsync(d => d.DeliveryTaskId == deliveryTaskId);
             }
         }
     }
