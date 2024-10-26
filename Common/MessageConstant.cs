@@ -304,6 +304,7 @@
             public const string StatusCannotSet = "Tình trạng giao hàng này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string ContractAreNotInTheSameRequest = "Những hợp đồng này không cùng một đơn yêu cầu";
+            public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
 
 
             //DTO

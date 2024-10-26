@@ -99,10 +99,9 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
-        [HttpPatch("{deliveryTaskId}")]
-        [Authorize(Policy = "ManagerAndTechnicalStaff")]
-        public async Task<ActionResult> UpdateDeliveryTasktatus([FromRoute] int deliveryTaskId, [FromQuery] string status)
+        [HttpPatch("{deliveryTaskId}/staff-change-to-delivering")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> UpdateStatusToDelivering([FromRoute] int deliveryTaskId)
         {
             int accountId = GetLoginAccountId();
             if (accountId == 0)
@@ -113,7 +112,33 @@ namespace API.Controllers
 
             try
             {
-                await _deliverService.UpdateDeliveryTaskStatus(deliveryTaskId, status, accountId);
+                await _deliverService.UpdateDeliveryStatusToDelivering(deliveryTaskId, accountId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{deliveryTaskId}/staff-completed")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> CompleteDelivery([FromRoute] int deliveryTaskId)
+        {
+            int accountId = GetLoginAccountId();
+            if (accountId == 0)
+            {
+                return Unauthorized();
+            }
+
+
+            try
+            {
+                await _deliverService.UpdateDeliveryStatusToDelivering(deliveryTaskId, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

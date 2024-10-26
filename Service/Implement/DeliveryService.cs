@@ -129,6 +129,29 @@ namespace Service.Implement
             }
         }
 
+        public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)
+        {
+            var delivery = await _deliveryTaskRepository.GetDeliveryTask(deliveryTaskId);
+
+            if (delivery == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            if (accountId != delivery.StaffId)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            }
+
+            if (delivery.Status != DeliveryTaskStatusEnum.Created.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
+            await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.Delivering.ToString(), accountId);
+
+        }
+
         public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
         {
             DeliveryTaskDto DeliveryTaskDto = await _deliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);

@@ -116,21 +116,21 @@ namespace Repository.Implement
             };
         }
 
-        public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
+        public async Task UpdateDeliveryTaskStatus(int deliveryTaskId, string status, int accountId)
         {
-            var DeliveryTask = await DeliveryTaskDao.Instance.GetDeliveryTask(DeliveryTaskId);
+            var deliveryTask = await DeliveryTaskDao.Instance.GetDeliveryTask(deliveryTaskId);
 
-            string oldStatus = DeliveryTask.Status;
+            string oldStatus = deliveryTask.Status;
 
-            DeliveryTask.Status = status;
+            deliveryTask.Status = status;
 
-            await DeliveryTaskDao.Instance.UpdateAsync(DeliveryTask);
+            await DeliveryTaskDao.Instance.UpdateAsync(deliveryTask);
 
             string action = $"Change status from {oldStatus} to {status}";
 
             var DeliveryTaskLog = new DeliveryTaskLog
             {
-                DeliveryTaskId = DeliveryTaskId,
+                DeliveryTaskId = deliveryTaskId,
                 AccountTriggerId = accountId,
                 DateCreate = DateTime.Now,
                 Action = action,
