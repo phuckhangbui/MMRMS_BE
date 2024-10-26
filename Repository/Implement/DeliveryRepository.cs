@@ -26,6 +26,7 @@ namespace Repository.Implement
 
             var deliveryTask = new DeliveryTask
             {
+                ManagerId = managerId,
                 StaffId = createDeliveryTaskDto.StaffId,
                 DateShip = createDeliveryTaskDto.DateShip,
                 DateCreate = now,

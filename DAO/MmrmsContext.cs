@@ -451,6 +451,10 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Staff).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.StaffId)
                 .HasConstraintName("FK_DeliveryTask_StaffID");
+
+            entity.HasOne(d => d.Manager).WithMany(p => p.DeliveryTaskGaveList)
+                .HasForeignKey(d => d.ManagerId)
+                .HasConstraintName("FK_DeliveryTask_ManagerID");
         });
 
         modelBuilder.Entity<ContractDelivery>(entity =>

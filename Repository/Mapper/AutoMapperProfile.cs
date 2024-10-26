@@ -220,6 +220,8 @@ namespace Repository.Mapper
             CreateMap<DeliveryTask, DeliveryTaskDto>()
                     .ForMember(dest => dest.StaffName,
                         opt => opt.MapFrom(src => src.Staff != null ? src.Staff.Name : null))
+                    .ForMember(dest => dest.ManagerName,
+                        opt => opt.MapFrom(src => src.Manager != null ? src.Manager.Name : null))
                     .ForMember(dest => dest.SerialNumber,
                         opt => opt.MapFrom(src =>
                             src.ContractDeliveries != null

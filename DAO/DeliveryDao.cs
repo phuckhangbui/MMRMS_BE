@@ -32,6 +32,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -46,6 +47,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -62,6 +64,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -113,6 +116,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.DeliveryTaskLogs)
                     .ThenInclude(l => l.AccountTrigger)
                     .Include(d => d.ContractDeliveries)

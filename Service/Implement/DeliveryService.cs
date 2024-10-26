@@ -97,6 +97,8 @@ namespace Service.Implement
             foreach (var contractId in createDeliveryTaskDto.ContractIdList)
             {
                 await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Shipping.ToString());
+
+                //need to send noti to customer ?
             }
 
             var contractAddress = await _contractRepository.GetContractAddressById(createDeliveryTaskDto.ContractIdList.FirstOrDefault());
@@ -153,9 +155,17 @@ namespace Service.Implement
 
             await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
 
+            foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+            {
+                var contractId = contractDelivery.ContractId;
 
-            //fix to manager
-            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated(accountId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
+                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+
+                //need to send noti to customer ?
+            }
+
+
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
         }
 
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)

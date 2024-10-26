@@ -10,6 +10,10 @@ namespace DTOs.DeliveryTask
 
         public string? StaffName { get; set; }
 
+        public int? ManagerId { get; set; }
+
+        public string? ManagerName { get; set; }
+
         public DateTime? DateShip { get; set; }
 
         public DateTime? DateCreate { get; set; }
