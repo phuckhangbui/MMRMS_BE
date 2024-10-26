@@ -44,7 +44,7 @@ public partial class Contract
 
     public virtual ICollection<ContractTerm> ContractTerms { get; set; } = new List<ContractTerm>();
 
-    public virtual ICollection<DeliveryTask> Deliveries { get; set; } = new List<DeliveryTask>();
+    public virtual ICollection<ContractDelivery> ContractDeliveries { get; set; } = new List<ContractDelivery>();
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 

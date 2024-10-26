@@ -217,14 +217,19 @@ namespace Repository.Mapper
             CreateMap<Address, AddressRequestDto>().ReverseMap();
 
             CreateMap<DeliveryTask, DeliveryTaskDto>()
-                .ForMember(dest => dest.StaffName,
-                opt => opt.MapFrom(src => src.Staff != null
-                            ? src.Staff.Name
-                            : null))
-                .ForMember(dest => dest.ContractAddress,
-                 opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
-                            ? src.Contract.RentingRequest.RentingRequestAddress
+                    .ForMember(dest => dest.StaffName,
+                        opt => opt.MapFrom(src => src.Staff != null ? src.Staff.Name : null))
+                    .ForMember(dest => dest.ContractAddress,
+                        opt => opt.MapFrom(src =>
+                            src.ContractDeliveries != null
+                            && src.ContractDeliveries.Any(d => d.Contract != null)
+                            && src.ContractDeliveries.FirstOrDefault(d => d.Contract != null).Contract.RentingRequest != null
+                            ? src.ContractDeliveries
+                                .FirstOrDefault(d => d.Contract != null)
+                                .Contract.RentingRequest.RentingRequestAddress
                             : null));
+
+
 
             CreateMap<RentingRequestAddress, ContractAddressDto>();
             CreateMap<MachineCheckRequest, MachineCheckRequestDto>()

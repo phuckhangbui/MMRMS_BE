@@ -31,7 +31,8 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate).ToListAsync();
@@ -44,7 +45,8 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .OrderByDescending(p => p.DateCreate)
@@ -59,7 +61,8 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
-                    .Include(d => d.Contract)
+                    .Include(d => d.ContractDeliveries)
+                    .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .FirstOrDefaultAsync(d => d.DeliveryTaskId == DeliveryTaskId);
