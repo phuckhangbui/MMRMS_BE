@@ -231,5 +231,28 @@ namespace Repository.Implement
 
             return contracts.All(c => c.Status.Equals(ContractStatusEnum.NotSigned.ToString()));
         }
+
+        public async Task<ContractDto> GetContractById(string id)
+        {
+            var contracts = await ContractDao.Instance.GetAllAsync();
+
+            var contract = contracts.FirstOrDefault(c => c.ContractId == id);
+
+            if (contract == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<ContractDto>(contract);
+        }
+
+        public async Task UpdateContractStatus(string contractId, string status)
+        {
+            var contract = await ContractDao.Instance.GetContractById(contractId);
+
+            contract.Status = status;
+
+            await ContractDao.Instance.UpdateAsync(contract);
+        }
     }
 }

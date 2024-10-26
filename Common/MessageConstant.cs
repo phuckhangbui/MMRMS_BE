@@ -47,6 +47,8 @@
             public const string AccountLocked = "Tài khoản đã bị khóa";
             public const string WrongOtp = "Mã OTP không hợp lệ";
             public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";
+            public const string AccountRoleIsNotSuitableToAssignForThisTask = "Tài khoản nhân viên mà bạn chọn không thể thực hiện chức năng này";
+
 
             //DTO
             public const string NameRequired = "Tên là bắt buộc.";
@@ -209,6 +211,7 @@
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
+            public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa kí";
             public const string SignContractFail = "Ký hợp đồng thất bại";
 
             //DTO
@@ -300,12 +303,15 @@
             public const string DeliveryTaskNotFound = "Mã giao hàng này không tồn tại";
             public const string StatusCannotSet = "Tình trạng giao hàng này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+            public const string ContractAreNotInTheSameRequest = "Những hợp đồng này không cùng một đơn yêu cầu";
+            public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
 
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
             public const string DateshipIsRequired = "Ngày giao là bắt buộc";
+            public const string ContractIdListRequired = "Danh sách các mã contract cần giao là bắt buộc";
 
         }
 

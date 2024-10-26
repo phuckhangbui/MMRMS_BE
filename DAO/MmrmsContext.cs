@@ -45,6 +45,8 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<DeliveryTask> Deliveries { get; set; }
 
+    public virtual DbSet<ContractDelivery> ContractDeliveries { get; set; }
+
     public virtual DbSet<Feedback> Feedbacks { get; set; }
 
     public virtual DbSet<RentingRequest> RentingRequests { get; set; }
@@ -446,13 +448,28 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Contract).WithMany(p => p.Deliveries)
-                .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_DeliveryTask_ContractID");
-
             entity.HasOne(d => d.Staff).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.StaffId)
                 .HasConstraintName("FK_DeliveryTask_StaffID");
+        });
+
+        modelBuilder.Entity<ContractDelivery>(entity =>
+        {
+            entity.HasKey(e => e.ContractDeliveryId);
+
+            entity.ToTable("ContractDelivery");
+
+            entity.Property(e => e.ContractDeliveryId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            entity.HasOne(d => d.Contract).WithMany(p => p.ContractDeliveries)
+                .HasForeignKey(d => d.ContractId)
+                .HasConstraintName("FK_Contract_ContractDelivery");
+
+            entity.HasOne(d => d.DeliveryTask).WithMany(p => p.ContractDeliveries)
+               .HasForeignKey(d => d.DeliveryTaskId)
+               .HasConstraintName("FK_DeliveryTask_ContractDelivery");
         });
 
 
