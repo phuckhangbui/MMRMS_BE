@@ -76,6 +76,7 @@ namespace Repository.Implement
             delivery.DateCompleted = now;
             delivery.ReceiverName = staffUpdateDeliveryTaskDto.ReceiverName;
             delivery.Note = staffUpdateDeliveryTaskDto.Note;
+            delivery.ConfirmationPictureUrl = staffUpdateDeliveryTaskDto.ConfirmationPictureUrl;
 
             foreach (var (old, update) in delivery.ContractDeliveries
                 .OrderBy(d => d.ContractDeliveryId)
@@ -94,9 +95,11 @@ namespace Repository.Implement
                 DateCreate = now,
                 AccountTriggerId = delivery.StaffId,
                 Action = action,
+
             };
 
-            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery);
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
 
         }
 

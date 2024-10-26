@@ -145,6 +145,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
             }
 
+            if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Delivering.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
             if (deliveryDetail.ContractDeliveries.Count() != staffUpdateDeliveryTaskDto.ContractDeliveries.Count()
                 || !deliveryDetail.ContractDeliveries.Select(d => d.ContractDeliveryId)
                     .OrderBy(id => id)

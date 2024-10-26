@@ -127,7 +127,7 @@ namespace DAO
             }
         }
 
-        public async Task UpdateDeliveryAndContractDelivery(DeliveryTask delivery)
+        public async Task UpdateDeliveryAndContractDelivery(DeliveryTask delivery, DeliveryTaskLog deliveryTaskLog)
         {
             using (var context = new MmrmsContext())
             {
@@ -143,9 +143,7 @@ namespace DAO
                         }
                         await context.SaveChangesAsync();
 
-                        var newDeliveryTaskLog = delivery.DeliveryTaskLogs.Last();
-                        newDeliveryTaskLog.DeliveryTaskId = delivery.DeliveryTaskId;
-                        context.DeliveryTaskLogs.Add(newDeliveryTaskLog);
+                        context.DeliveryTaskLogs.Add(deliveryTaskLog);
 
                         await context.SaveChangesAsync();
                         await transaction.CommitAsync();
