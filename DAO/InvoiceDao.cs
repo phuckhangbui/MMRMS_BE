@@ -2,6 +2,7 @@
 using Common.Enum;
 using DTOs.Invoice;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DAO
 {
@@ -45,6 +46,7 @@ namespace DAO
             }
         }
 
+        //TODO
         public async Task<Invoice> UpdateContractInvoice(TransactionReturn transactionReturn, string invoiceId)
         {
             using (var context = new MmrmsContext())
@@ -85,8 +87,27 @@ namespace DAO
 
                             if (contractPayment.Contract != null && contractPayment.Contract.RentingRequest != null)
                             {
-                                contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
-                                contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+                                //Deposit invoice
+                                if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()))
+                                {
+                                    contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
+                                    contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+                                }
+
+                                //First rental invoice
+                                if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) && contractPayment.IsFirstRentalPayment == true)
+                                {
+                                    contractPayment.Contract.Status = ContractStatusEnum.Renting.ToString();
+                                    contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Shipped.ToString();
+
+                                    //Background
+                                    ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+                                    var backgroundImpl = new BackgroundImpl(logger, new RentingRequestDao(), new ContractDao());
+
+                                    DateTime contractEndDate = (DateTime)contractPayment.Contract.DateEnd;
+                                    TimeSpan delayToStart = contractEndDate - DateTime.Now;
+                                    backgroundImpl.ScheduleCompleteContractOnTimeJob(contractPayment.Contract.ContractId, delayToStart);
+                                }
                             }
                         }
 

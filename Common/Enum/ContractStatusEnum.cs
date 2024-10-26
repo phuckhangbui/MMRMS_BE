@@ -4,6 +4,7 @@
     {
         NotSigned,
         Signed,
+        Shipping,
         Renting,
         Completed,
         Terminated,

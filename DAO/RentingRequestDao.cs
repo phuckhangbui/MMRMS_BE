@@ -3,6 +3,7 @@ using Common;
 using Common.Enum;
 using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Contract = BusinessObject.Contract;
 using MachineSerialNumber = BusinessObject.MachineSerialNumber;
 using RentingRequest = BusinessObject.RentingRequest;
@@ -102,7 +103,10 @@ namespace DAO
                             //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                             var serialNumbersInFutureContracts = await context.Contracts
                                 .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
-                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() || c.Status == ContractStatusEnum.Signed.ToString() || c.Status == ContractStatusEnum.Renting.ToString())
+                                        && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                            c.Status == ContractStatusEnum.Signed.ToString() ||
+                                            c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                            c.Status == ContractStatusEnum.Renting.ToString())
                                         && (c.DateStart < rentingRequest.DateEnd && c.DateEnd > rentingRequest.DateStart))
                                 .Select(c => c.ContractMachineSerialNumber)
                                 .ToListAsync();
@@ -142,6 +146,11 @@ namespace DAO
 
                         await transaction.CommitAsync();
 
+                        //Background
+                        ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+                        var backgroundImpl = new BackgroundImpl(logger, new RentingRequestDao(), new ContractDao());
+                        backgroundImpl.ScheduleCancelRentingRequestJob(rentingRequest.RentingRequestId);
+
                         return rentingRequest;
                     }
                     catch (Exception e)
@@ -156,7 +165,7 @@ namespace DAO
         private Contract InitContract(MachineSerialNumber machineSerialNumber, RentingRequest rentingRequest, List<Term> contractTerms)
         {
             var dateCreate = DateTime.Now;
-            int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days;
+            int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days + 1;
 
             var contract = new Contract
             {
@@ -234,11 +243,67 @@ namespace DAO
                 };
 
                 contractPayments.Add(rentalContractPayment);
+            }
+            else
+            {
+                var currentStartDate = rentingRequest.DateStart;
+                var remainingDays = numberOfDays;
 
-                contract.ContractPayments = contractPayments;
+                int paymentIndex = 1;
+                while (remainingDays > 0)
+                {
+                    var paymentEndDate = GetContractPaymentEndDate((DateTime)currentStartDate, (DateTime)rentingRequest.DateEnd);
+
+                    var paymentPeriod = (paymentEndDate - currentStartDate).Value.Days + 1;
+                    var paymentAmount = contract.RentPrice * paymentPeriod;
+
+                    var contractPayment = new ContractPayment
+                    {
+                        ContractId = contract.ContractId,
+                        DateCreate = DateTime.Now.Date,
+                        Status = ContractPaymentStatusEnum.Pending.ToString(),
+                        Type = ContractPaymentTypeEnum.Rental.ToString(),
+                        Title = $"Thanh toán tiền thuê cho hợp đồng {contract.ContractId} - Lần {paymentIndex}",
+                        Amount = paymentAmount,
+                        DateFrom = currentStartDate,
+                        DateTo = paymentEndDate,
+                        Period = paymentPeriod,
+                        DueDate = currentStartDate,
+                        IsFirstRentalPayment = false,
+                    };
+
+                    if (paymentIndex == 1)
+                    {
+                        contractPayment.Amount += rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
+                        contractPayment.IsFirstRentalPayment = true;
+                    }
+
+                    contractPayments.Add(contractPayment);
+
+                    // Move to the next payment period, start the next period the day after
+                    currentStartDate = paymentEndDate.AddDays(1);
+                    remainingDays -= paymentPeriod;
+                    paymentIndex++;
+                }
             }
 
+            contract.ContractPayments = contractPayments;
+
             return contract;
+        }
+
+        private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
+        {
+            if (startDate.Year == contractEndDate.Year && startDate.Month == contractEndDate.Month)
+            {
+                //DateEnd
+                return contractEndDate;
+            }
+            else
+            {
+                //Full month
+                return new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+            }
         }
 
         private ContractPayment InitDepositContractPayment(Contract contract)

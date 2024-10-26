@@ -4,7 +4,6 @@ using Hangfire;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using Repository;
 using Serilog;
 using Service;
 using Service.SignalRHub;
@@ -67,9 +66,6 @@ builder.Services.AddHangfire(configuration => configuration
 //});
 
 builder.Services.AddHangfireServer();
-
-builder.Services.AddScoped<IBackground, BackgroundImpl>();
-builder.Services.AddScoped<RentingRequestDao>();
 
 builder.Services.IdentityServices(builder.Configuration);
 builder.Services.ApplicationServices(builder.Configuration);

@@ -1,4 +1,5 @@
-﻿using Repository.Implement;
+﻿using DAO;
+using Repository.Implement;
 using Repository.Interface;
 using Service.Cloundinary;
 using Service.Implement;
@@ -63,6 +64,11 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITermService, TermService>();
         services.AddScoped<IRequestResponseService, RequestResponseService>();
         services.AddScoped<IRoleService, RoleServiceImpl>();
+
+        //Background
+        services.AddScoped<IBackground, BackgroundImpl>();
+        services.AddScoped<RentingRequestDao>();
+        services.AddScoped<ContractDao>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

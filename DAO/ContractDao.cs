@@ -12,7 +12,7 @@ namespace DAO
         private static ContractDao instance = null;
         private static readonly object instacelock = new object();
 
-        private ContractDao()
+        public ContractDao()
         {
 
         }
@@ -82,7 +82,32 @@ namespace DAO
             }
         }
 
-        //TODO: ContractPayment (DueDate)
+        public async Task<Contract?> CompleteContractOnTime(string contractId)
+        {
+            using var context = new MmrmsContext();
+            using var transaction = context.Database.BeginTransaction();
+            try
+            {
+                var contract = await context.Contracts.FirstOrDefaultAsync(c => c.ContractId.Equals(contractId));
+                if (contract != null && contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+                {
+                    contract.Status = ContractStatusEnum.Completed.ToString();
+
+                    //TODO: Send noti to manager to create delivery task for returning machine back
+
+                    return contract;
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw new Exception(e.Message);
+            }
+        }
+
+        //TODO
         public async Task<Invoice?> SignContract(string rentingRequestId)
         {
             using var context = new MmrmsContext();
@@ -149,30 +174,12 @@ namespace DAO
                             var rentalContractPayment = contract.ContractPayments.FirstOrDefault(c => c.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()));
                             rentalContractPayment.Invoice = rentalInvoice;
 
-                            //contract.Status = ContractStatusEnum.Signed.ToString();
-                            //contract.DateSign = DateTime.Now;
-
                             context.Contracts.Update(contract);
                         }
                     }
                     //IsOnetimePayment: false
                     else
                     {
-                        //var firstRentalInvoiceAmount = rentingRequest.Contracts.Select(c => c.RentPrice).Sum() * 3;
-                        //firstRentalInvoiceAmount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice +
-                        //                        rentingRequest.TotalServicePrice;
-                        //var dateCreate = DateTime.Now.Date;
-
-                        //var invoice = new Invoice
-                        //{
-                        //    InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + rentingRequest.RentingRequestId,
-                        //    Amount = firstRentalInvoiceAmount,
-                        //    Type = InvoiceTypeEnum.Rental.ToString(),
-                        //    Status = InvoiceStatusEnum.Pending.ToString(),
-                        //    DateCreate = dateCreate,
-                        //};
-
-                        //
                         foreach (var contract in rentingRequest.Contracts)
                         {
                             //var contractPayments = new List<ContractPayment>();
@@ -200,15 +207,26 @@ namespace DAO
                             //contract.Status = ContractStatusEnum.Signed.ToString();
                             //contract.DateSign = DateTime.Now;
 
+
                             var depositContractPayment = contract.ContractPayments.FirstOrDefault(c => c.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()));
                             depositContractPayment.Invoice = depositInvoice;
+
+                            var rentalContractPayment = contract.ContractPayments.FirstOrDefault(c => c.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) && c.IsFirstRentalPayment == true);
+                            var rentalInvoice = new Invoice
+                            {
+                                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                                Amount = rentalContractPayment.Amount,
+                                Type = InvoiceTypeEnum.Rental.ToString(),
+                                Status = InvoiceStatusEnum.Pending.ToString(),
+                                DateCreate = DateTime.Now.Date,
+                                AccountPaidId = rentingRequest.AccountOrderId,
+                            };
+
+                            rentalContractPayment.Invoice = rentalInvoice;
 
                             context.Contracts.Update(contract);
                         }
                     }
-
-                    //rentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
-                    //context.RentingRequests.Update(rentingRequest);
 
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
