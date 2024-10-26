@@ -27,4 +27,5 @@ public partial class DeliveryTask
     public virtual Account? Staff { get; set; }
 
     public virtual ICollection<DeliveryTaskLog> DeliveryTaskLogs { get; set; } = new List<DeliveryTaskLog>();
+
 }

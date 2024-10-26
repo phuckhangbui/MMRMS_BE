@@ -104,11 +104,6 @@ namespace API.Controllers
         public async Task<ActionResult> UpdateStatusToDelivering([FromRoute] int deliveryTaskId)
         {
             int accountId = GetLoginAccountId();
-            if (accountId == 0)
-            {
-                return Unauthorized();
-            }
-
 
             try
             {
@@ -125,20 +120,15 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{deliveryTaskId}/staff-completed")]
+        [HttpPut("complete-all")]
         [Authorize(Policy = "TechnicalStaff")]
-        public async Task<ActionResult> CompleteDelivery([FromRoute] int deliveryTaskId)
+        public async Task<ActionResult> CompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
         {
             int accountId = GetLoginAccountId();
-            if (accountId == 0)
-            {
-                return Unauthorized();
-            }
-
 
             try
             {
-                await _deliverService.UpdateDeliveryStatusToDelivering(deliveryTaskId, accountId);
+                await _deliverService.StaffCompleteDelivery(staffUpdateDeliveryTaskDto, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

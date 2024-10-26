@@ -18,6 +18,8 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
+
+
         public async Task<DeliveryTaskDto> CreateDeliveryTaskToStaff(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
         {
             var now = DateTime.Now;
@@ -61,6 +63,40 @@ namespace Repository.Implement
             var deliveryTaskDto = _mapper.Map<DeliveryTaskDto>(deliveryTask);
 
             return deliveryTaskDto;
+        }
+
+        public async Task CompleteFullyAllDeliveryTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
+        {
+            var now = DateTime.Now;
+
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(staffUpdateDeliveryTaskDto.DeliveryTaskId);
+
+            delivery.Status = DeliveryTaskStatusEnum.Completed.ToString();
+            delivery.DateCompleted = now;
+            delivery.ReceiverName = staffUpdateDeliveryTaskDto.ReceiverName;
+            delivery.Note = staffUpdateDeliveryTaskDto.Note;
+
+            foreach (var (old, update) in delivery.ContractDeliveries
+                .OrderBy(d => d.ContractDeliveryId)
+                .Zip(staffUpdateDeliveryTaskDto.ContractDeliveries.OrderBy(d => d.ContractDeliveryId), (delivery, update) => (delivery, update)))
+            {
+                old.Note = update.Note;
+                old.PictureUrl = update.PictureUrl;
+                old.Status = ContractDeliveryStatusEnum.Success.ToString();
+            }
+
+            string action = "Đơn giao hàng được hoàn thành toàn bộ";
+
+            var newLogs = new DeliveryTaskLog
+            {
+                DeliveryTaskId = delivery.DeliveryTaskId,
+                DateCreate = now,
+                AccountTriggerId = delivery.StaffId,
+                Action = action,
+            };
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery);
+
         }
 
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()

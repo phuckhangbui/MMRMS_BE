@@ -122,5 +122,43 @@ namespace DAO
                     .FirstOrDefaultAsync(d => d.DeliveryTaskId == deliveryTaskId);
             }
         }
+
+        public async Task UpdateDeliveryAndContractDelivery(DeliveryTask delivery)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.Deliveries.Update(delivery);
+
+                        foreach (var contractDelivery in delivery.ContractDeliveries)
+                        {
+                            context.Entry(contractDelivery).State = EntityState.Modified;
+                        }
+                        await context.SaveChangesAsync();
+
+                        var newDeliveryTaskLog = delivery.DeliveryTaskLogs.Last();
+                        newDeliveryTaskLog.DeliveryTaskId = delivery.DeliveryTaskId;
+                        context.DeliveryTaskLogs.Add(newDeliveryTaskLog);
+
+                        await context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction on error
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

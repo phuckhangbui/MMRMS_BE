@@ -129,6 +129,35 @@ namespace Service.Implement
             }
         }
 
+        public async Task StaffCompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, int accountId)
+        {
+            var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(staffUpdateDeliveryTaskDto.DeliveryTaskId);
+
+            if (deliveryDetail == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            if (accountId != deliveryDetail.DeliveryTask.StaffId)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            }
+
+            if (deliveryDetail.ContractDeliveries.Count() != staffUpdateDeliveryTaskDto.ContractDeliveries.Count()
+                || !deliveryDetail.ContractDeliveries.Select(d => d.ContractDeliveryId)
+                    .OrderBy(id => id)
+                    .SequenceEqual(staffUpdateDeliveryTaskDto.ContractDeliveries.Select(d => d.ContractDeliveryId).OrderBy(id => id)))
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.InvalidContractDeliveryList);
+            }
+
+            await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
+
+
+            //fix to manager
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated(accountId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
+        }
+
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)
         {
             var delivery = await _deliveryTaskRepository.GetDeliveryTask(deliveryTaskId);

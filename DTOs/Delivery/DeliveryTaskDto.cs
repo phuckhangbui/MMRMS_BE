@@ -26,6 +26,8 @@ namespace DTOs.DeliveryTask
 
         public string? Type { get; set; }
 
+        public string? SerialNumber { get; set; }
+
 
         public ContractAddressDto? ContractAddress { get; set; }
 
