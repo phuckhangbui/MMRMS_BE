@@ -14,5 +14,6 @@ namespace Repository.Interface
         Task<bool> IsContractValidToSign(string rentingRequestId);
         Task<ContractAddressDto> GetContractAddressById(string contractId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
+        Task UpdateContractStatus(string contractId, string status);
     }
 }

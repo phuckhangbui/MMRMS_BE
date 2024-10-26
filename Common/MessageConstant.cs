@@ -47,6 +47,8 @@
             public const string AccountLocked = "Tài khoản đã bị khóa";
             public const string WrongOtp = "Mã OTP không hợp lệ";
             public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";
+            public const string AccountRoleIsNotSuitableToAssignForThisTask = "Tài khoản nhân viên mà bạn chọn không thể thực hiện chức năng này";
+
 
             //DTO
             public const string NameRequired = "Tên là bắt buộc.";

@@ -245,5 +245,14 @@ namespace Repository.Implement
 
             return _mapper.Map<ContractDto>(contract);
         }
+
+        public async Task UpdateContractStatus(string contractId, string status)
+        {
+            var contract = await ContractDao.Instance.GetContractById(contractId);
+
+            contract.Status = status;
+
+            await ContractDao.Instance.UpdateAsync(contract);
+        }
     }
 }

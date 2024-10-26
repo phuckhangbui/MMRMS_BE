@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs.Contract;
 using DTOs.Delivery;
 using DTOs.DeliveryTask;
 using DTOs.MachineTask;
@@ -41,6 +42,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
+            if (accountDto.RoleId != (int)AccountRoleEnum.TechnicalStaff)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountRoleIsNotSuitableToAssignForThisTask);
+            }
+
             var taskList = await _machineTaskRepository.GetTaskOfStaffInADay(createDeliveryTaskDto.StaffId, createDeliveryTaskDto.DateShip)
                                         ?? Enumerable.Empty<MachineTaskDto>();
 
@@ -56,6 +62,7 @@ namespace Service.Implement
             }
 
             string rentingRequestId = null;
+            var contractList = new List<ContractDto>();
 
             foreach (string contractId in createDeliveryTaskDto.ContractIdList)
             {
@@ -65,6 +72,7 @@ namespace Service.Implement
                 {
                     throw new ServiceException(MessageConstant.Contract.ContractNotFound);
                 }
+
 
                 if (contract.Status != ContractStatusEnum.Signed.ToString())
                 {
@@ -80,9 +88,16 @@ namespace Service.Implement
                 {
                     throw new ServiceException(MessageConstant.DeliveryTask.ContractAreNotInTheSameRequest);
                 }
+
+                contractList.Add(contract);
             }
 
             var deliveryDto = await _deliveryTaskRepository.CreateDeliveryTaskToStaff(managerId, createDeliveryTaskDto);
+
+            foreach (var contractId in createDeliveryTaskDto.ContractIdList)
+            {
+                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Shipping.ToString());
+            }
 
             var contractAddress = await _contractRepository.GetContractAddressById(createDeliveryTaskDto.ContractIdList.FirstOrDefault());
 
@@ -103,7 +118,15 @@ namespace Service.Implement
 
         public async Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId)
         {
-            return await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+            try
+            {
+
+                return await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
+            }
         }
 
         public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
