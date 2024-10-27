@@ -79,13 +79,13 @@ namespace Repository.Implement
         }
 
 
-        public async Task UpdateRequestStatus(string MachineCheckRequestId, string status)
+        public async Task UpdateRequestStatus(string machineCheckRequestId, string status)
         {
-            var MachineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(MachineCheckRequestId);
+            var machineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(machineCheckRequestId);
 
-            MachineCheckRequest.Status = status;
+            machineCheckRequest.Status = status;
 
-            await MachineCheckRequestDao.Instance.UpdateAsync(MachineCheckRequest);
+            await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
         }
 
 

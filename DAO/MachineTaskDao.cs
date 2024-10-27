@@ -30,15 +30,19 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).OrderByDescending(p => p.DateCreate).ToListAsync();
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
+                                                 .OrderByDescending(p => p.DateCreate).ToListAsync();
             }
         }
 
-        public async Task<MachineTask> GetMachineTask(int MachineTaskId)
+        public async Task<MachineTask> GetMachineTask(int machineTaskId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).FirstOrDefaultAsync(d => d.MachineTaskId == MachineTaskId);
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
+                                                 .FirstOrDefaultAsync(d => d.MachineTaskId == machineTaskId);
             }
         }
 
@@ -46,7 +50,8 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager)
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
                                                 .Include(d => d.MachineTaskLogs)
                                                 .ThenInclude(l => l.AccountTrigger)
                                                 .Include(d => d.ComponentReplacementTicketsCreateFromTask)

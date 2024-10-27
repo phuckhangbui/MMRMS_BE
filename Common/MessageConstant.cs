@@ -343,7 +343,7 @@
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
             public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
-
+            public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";

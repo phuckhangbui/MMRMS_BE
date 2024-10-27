@@ -24,18 +24,18 @@ namespace Service.Implement
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
-        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IRequestResponseRepository requestResponseRepository)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IRequestResponseRepository requestResponseRepository)
         {
             _machineTaskRepository = MachineTaskRepository;
             _machineTaskHub = MachineTaskHub;
             _notificationService = notificationService;
             _accountRepository = accountRepository;
-            _machineCheckRequestRepository = MachineCheckRequestRepository;
             _DeliveryTaskRepository = DeliveryTaskRepository;
             _mapper = mapper;
             _contractRepository = contractRepository;
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _requestResponseRepository = requestResponseRepository;
+            _machineCheckRequestRepository = machineCheckRequestRepository;
         }
 
         private async Task CheckCreateTaskCondition(int staffId, DateTime dateStart)
@@ -184,6 +184,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
 
+            if (machineTask.StaffId != staffId)
+            {
+                throw new ServiceException(MessageConstant.MachineTask.IncorrectStaffIdToUpdate);
+            }
+
             if (machineTask.Type != MachineTaskTypeEnum.MachineryCheck.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
@@ -198,6 +203,14 @@ namespace Service.Implement
             await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
             //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
+
+            var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
+
+            if (requestResponse != null)
+            {
+                await _machineCheckRequestRepository.UpdateRequestStatus(requestResponse.MachineCheckRequestId
+                                                                           , MachineCheckRequestStatusEnum.Completed.ToString());
+            }
 
             await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
         }

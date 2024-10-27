@@ -1,9 +1,19 @@
-﻿using Repository.Interface;
+﻿using AutoMapper;
+using DAO;
+using DTOs.MachineCheckRequest;
+using Repository.Interface;
 
 namespace Repository.Implement
 {
     public class RequestResponseRepository : IRequestResponseRepository
     {
+        private readonly IMapper _mapper;
+
+        public RequestResponseRepository(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public async Task CreateResponeWhenCheckMachineTaskSuccess(int requestResponseId)
         {
             //var requestResponse = await RequestResponseDao.Instance.GetRequestResponse(requestResponseId);
@@ -18,6 +28,13 @@ namespace Repository.Implement
             //    MachineCheckRequestId = requestResponse.MachineCheckRequestId,
 
             //}
+        }
+
+        public async Task<RequestResponseDto> GetRequestResponse(int requestResponseId)
+        {
+            var requestResponse = await RequestResponseDao.Instance.GetRequestResponse(requestResponseId);
+
+            return _mapper.Map<RequestResponseDto>(requestResponse);
         }
     }
 }
