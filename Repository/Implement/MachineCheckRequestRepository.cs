@@ -76,5 +76,23 @@ namespace Repository.Implement
         {
             throw new NotImplementedException();
         }
+
+        public async Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId)
+        {
+            var requestDetail = await MachineCheckRequestDao.Instance.GetMachineCheckRequestDetail(machineCheckRequestId);
+
+            var requestDto = _mapper.Map<MachineCheckRequestDto>(requestDetail);
+
+            var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail.MachineCheckRequestCriterias);
+
+            var requestResponseList = _mapper.Map<IEnumerable<RequestResponseDto>>(requestDetail.RequestResponses);
+
+            return new MachineCheckRequestDetailDto
+            {
+                MachineCheckRequest = requestDto,
+                CheckCriteriaList = requestCriteriaList,
+                RequestResponseList = requestResponseList
+            };
+        }
     }
 }

@@ -252,10 +252,23 @@ namespace Repository.Mapper
 
             CreateMap<RentingRequestAddress, ContractAddressDto>();
             CreateMap<MachineCheckRequest, MachineCheckRequestDto>()
+                .ForMember(dest => dest.SerialNumber,
+                opt => opt.MapFrom(src => src.Contract != null
+                            ? src.Contract.SerialNumber
+                            : null))
                 .ForMember(dest => dest.ContractAddress,
                  opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
                             ? src.Contract.RentingRequest.RentingRequestAddress
-                            : null)); ;
+                            : null));
+
+            CreateMap<MachineCheckRequestCriteria, MachineCheckRequestCriteriaDto>()
+                .ForMember(dest => dest.CriteriaName,
+                opt => opt.MapFrom(src => src.MachineCheckCriteria != null
+                            ? src.MachineCheckCriteria.Name
+                            : null));
+            CreateMap<RequestResponse, RequestResponseDto>();
+
+
 
             CreateMap<MachineTask, MachineTaskDto>()
                 .ForMember(dest => dest.StaffName,

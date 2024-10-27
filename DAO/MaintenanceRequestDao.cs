@@ -1,5 +1,5 @@
-﻿using BusinessObject;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MachineCheckRequest = BusinessObject.MachineCheckRequest;
 
 namespace DAO
 {
@@ -46,6 +46,21 @@ namespace DAO
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
                     .FirstOrDefaultAsync(m => m.MachineCheckRequestId == MachineCheckRequestId);
+            }
+        }
+
+        public async Task<MachineCheckRequest> GetMachineCheckRequestDetail(string machineCheckRequestId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.MachineCheckRequests
+                    .Include(c => c.RequestResponses)
+                    .Include(c => c.MachineCheckRequestCriterias)
+                    .ThenInclude(rc => rc.MachineCheckCriteria)
+                    .Include(c => c.Contract)
+                    .ThenInclude(c => c.RentingRequest)
+                    .ThenInclude(c => c.RentingRequestAddress)
+                    .FirstOrDefaultAsync(m => m.MachineCheckRequestId == machineCheckRequestId);
             }
         }
     }

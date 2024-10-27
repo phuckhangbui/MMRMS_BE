@@ -62,6 +62,18 @@ namespace Service.Implement
             await _machineCheckRequestHub.Clients.All.SendAsync("OnCreateMachineCheckRequest");
         }
 
+        public async Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId)
+        {
+            var requestDetailDto = await _machineCheckRequestRepository.GetMachineCheckRequestDetail(machineCheckRequestId);
+
+            if (requestDetailDto == null)
+            {
+                throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
+            }
+
+            return requestDetailDto;
+        }
+
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
         {
             return await _machineCheckRequestRepository.GetMachineCheckRequests();

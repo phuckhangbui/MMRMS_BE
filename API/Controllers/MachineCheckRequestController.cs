@@ -36,13 +36,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{MachineCheckRequestId}")]
-        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequest([FromRoute] string MachineCheckRequestId)
+        [HttpGet("{machineCheckRequestId}/detail")]
+        public async Task<ActionResult<MachineCheckRequestDetailDto>> GetMachineCheckRequest([FromRoute] string machineCheckRequestId)
         {
             try
             {
-                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequests();
-                return Ok(list);
+                MachineCheckRequestDetailDto result = await _machineCheckRequestService.GetMachineCheckRequestDetail(machineCheckRequestId);
+                return Ok(result);
             }
             catch (ServiceException ex)
             {
