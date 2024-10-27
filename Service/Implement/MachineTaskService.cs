@@ -47,6 +47,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
             }
 
+            if (staff.RoleId != (int)AccountRoleEnum.TechnicalStaff)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountRoleIsNotSuitableToAssignForThisTask);
+            }
+
             var staffTaskList = await _machineTaskRepository.GetTaskOfStaffInADay(staffId, dateStart)
                                         ?? Enumerable.Empty<MachineTaskDto>();
             var staffDeliveryTaskList = await _DeliveryTaskRepository.GetDeliveriesOfStaffInADay(staffId, dateStart)
@@ -144,6 +149,13 @@ namespace Service.Implement
 
             machineTaskDetail.Address = contractAddress;
 
+            var requestDetail = await _machineCheckRequestRepository.GetMachineCheckRequestDetail(machineTaskDetail.MachineCheckRequestId);
+
+            if (requestDetail != null)
+            {
+                machineTaskDetail.MachineCheckRequest = requestDetail;
+            }
+
             return machineTaskDetail;
         }
 
@@ -177,7 +189,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
             }
 
-            if (machineTask.Status != MachineTaskStatusEnum.Assigned.ToString())
+            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
             }
@@ -187,7 +199,7 @@ namespace Service.Implement
 
             //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
 
-            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, MachineTaskStatusEnum.Completed.ToString());
+            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
         }
 
         public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)
@@ -204,7 +216,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
             }
 
-            if (machineTask.Status != MachineTaskStatusEnum.Assigned.ToString())
+            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
             }
@@ -213,7 +225,7 @@ namespace Service.Implement
 
             await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
-            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, MachineTaskStatusEnum.Completed.ToString());
+            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
         }
     }
 }

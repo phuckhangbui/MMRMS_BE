@@ -1,5 +1,6 @@
 ﻿using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
+using DTOs.MachineCheckRequest;
 
 namespace DTOs.MachineTask
 {
@@ -11,7 +12,9 @@ namespace DTOs.MachineTask
 
         public string? ContractId { get; set; }
 
-        //public string? ComponentReplacementTicketId { get; set; }
+        public int? RequestResponseId { get; set; }
+
+        public string? MachineCheckRequestId { get; set; }
 
         public string? Content { get; set; }
 
@@ -45,9 +48,11 @@ namespace DTOs.MachineTask
 
         public ContractAddressDto? Address { get; set; }
 
+        public MachineCheckRequestDetailDto? MachineCheckRequest { get; set; }
+
         public IEnumerable<ComponentReplacementTicketDto>? ComponentReplacementTicketCreateFromTaskList { get; set; }
 
-        public IEnumerable<TaskLogDto>? TaskLogs { get; set; }
+        public IEnumerable<MachineTaskLogDto>? TaskLogs { get; set; }
 
     }
 }

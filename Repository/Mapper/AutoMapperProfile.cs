@@ -284,20 +284,22 @@ namespace Repository.Mapper
                             : null));
 
             CreateMap<MachineTask, MachineTaskDisplayDetail>()
-                .ForMember(dest => dest.TaskLogs,
-                opt => opt.MapFrom(src => src.MachineTaskLogs != null
-                            ? src.MachineTaskLogs
-                            : null))
-                .ForMember(dest => dest.ComponentReplacementTicketCreateFromTaskList,
-                opt => opt.MapFrom(src => src.ComponentReplacementTicketsCreateFromTask != null
-                            ? src.ComponentReplacementTicketsCreateFromTask
+                .ForMember(dest => dest.MachineCheckRequestId,
+                opt => opt.MapFrom(src => src.RequestResponse != null
+                            ? src.RequestResponse.MachineCheckRequestId
                             : null));
+            //.ForMember(dest => dest.TaskLogs,
+            //opt => opt.MapFrom(src => src.MachineTaskLogs != null
+            //            ? src.MachineTaskLogs
+            //            : null))
+            //.ForMember(dest => dest.ComponentReplacementTicketCreateFromTaskList,
+            //opt => opt.MapFrom(src => src.ComponentReplacementTicketsCreateFromTask != null
+            //            ? src.ComponentReplacementTicketsCreateFromTask
+            //            : null));
 
-            CreateMap<MachineTaskLog, TaskLogDto>()
-                .ForMember(dest => dest.AccountTriggerName,
-                opt => opt.MapFrom(src => src.AccountTrigger != null
-                                ? src.AccountTrigger.Name
-                                : string.Empty));
+            CreateMap<MachineTaskLog, MachineTaskLogDto>()
+            .ForMember(dest => dest.AccountTriggerName,
+                   opt => opt.MapFrom(src => src.AccountTrigger != null ? src.AccountTrigger.Name : null));
 
             CreateMap<ComponentReplacementTicket, ComponentReplacementTicketDto>()
                .ForMember(dest => dest.EmployeeCreateName,

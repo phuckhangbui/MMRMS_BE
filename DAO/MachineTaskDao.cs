@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 using MachineTask = BusinessObject.MachineTask;
 
 namespace DAO
@@ -49,7 +50,44 @@ namespace DAO
                                                 .Include(d => d.MachineTaskLogs)
                                                 .ThenInclude(l => l.AccountTrigger)
                                                 .Include(d => d.ComponentReplacementTicketsCreateFromTask)
+                                                .Include(d => d.RequestResponse)
                                                 .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
+            }
+        }
+
+        public async Task CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog, RequestResponse requestResponse)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.RequestResponses.Add(requestResponse);
+                        await context.SaveChangesAsync();
+
+                        task.RequestResponseId = requestResponse.RequestResponseId;
+                        context.MachineTasks.Add(task);
+                        await context.SaveChangesAsync();
+
+                        requestResponse.MachineTaskId = task.MachineTaskId;
+                        context.RequestResponses.Update(requestResponse);
+                        await context.SaveChangesAsync();
+
+                        taskLog.MachineTaskId = task.MachineTaskId;
+                        context.MachineTaskLogs.Add(taskLog);
+                        await context.SaveChangesAsync();
+
+                        // Commit transaction
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction on error
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
             }
         }
 

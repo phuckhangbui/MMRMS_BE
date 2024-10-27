@@ -1,14 +1,14 @@
 ﻿namespace DTOs.MachineTask
 {
-    public class TaskLogDto
+    public class MachineTaskLogDto
     {
-        public int TaskLogId { get; set; }
+        public int MachineTaskLogId { get; set; }
 
         public int? MachineTaskId { get; set; }
 
         public int? AccountTriggerId { get; set; }
 
-        public int? AccountTriggerName { get; set; }
+        public string? AccountTriggerName { get; set; }
 
         public string? Action { get; set; }
 

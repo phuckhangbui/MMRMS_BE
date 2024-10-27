@@ -2,11 +2,16 @@
 {
     public enum MachineTaskStatusEnum
     {
-        Assigned,
+        [Translation("Mới tạo")]
+        Created,
+
+        [Translation("Hoàn thành")]
         Completed,
-        Failed,
-        ReAssigned,
-        CreateMaintenceTicket,
+
+        [Translation("Đang sửa")]
+        Reparing,
+
+        [Translation("Đã hủy")]
         Canceled
     }
 

@@ -17,7 +17,7 @@ namespace API.Controllers
             _machineTaskService = MachineTaskService;
         }
 
-        [HttpGet]
+        [HttpGet("manager")]
         [Authorize(Policy = "Manager")]
         public async Task<ActionResult<IEnumerable<MachineTaskDto>>> GetMachineTasksForManager()
         {
@@ -57,7 +57,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{taskId}")]
+        [HttpGet("{taskId}/detail")]
         [Authorize(Policy = "ManagerAndTechnicalStaff")]
         public async Task<ActionResult<MachineTaskDisplayDetail>> GetMachineTaskDetail([FromRoute] int taskId)
         {
@@ -118,26 +118,26 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{taskId}/replace-component-success")]
-        [Authorize(Policy = "TechnicalStaff")]
-        public async Task<IActionResult> ReplaceComponentSuccess([FromRoute] int taskId, [FromBody] PictureUrlDto confirmationPicture)
-        {
-            int staffId = GetLoginAccountId();
+        //[HttpPatch("{taskId}/replace-component-success")]
+        //[Authorize(Policy = "TechnicalStaff")]
+        //public async Task<IActionResult> ReplaceComponentSuccess([FromRoute] int taskId, [FromBody] PictureUrlDto confirmationPicture)
+        //{
+        //    int staffId = GetLoginAccountId();
 
-            try
-            {
-                await _machineTaskService.StaffReplaceComponentSuccess(taskId, staffId, confirmationPicture.Url);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        await _machineTaskService.StaffReplaceComponentSuccess(taskId, staffId, confirmationPicture.Url);
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         //[HttpPost("create/next-task")]
         //[Authorize(Policy = "TechnicalStaff")]
@@ -162,26 +162,26 @@ namespace API.Controllers
 
 
         //TODO:KHANG
-        [HttpPost("process-maintenance-ticket")]
-        [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
-        {
-            int managerId = GetLoginAccountId();
+        //[HttpPost("process-maintenance-ticket")]
+        //[Authorize(Policy = "Manager")]
+        //public async Task<IActionResult> CreateMachineTaskProcessComponentReplacementTicket([FromBody] CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
+        //{
+        //    int managerId = GetLoginAccountId();
 
-            try
-            {
-                await _machineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        await _machineTaskService.CreateMachineTaskProcessComponentReplacementTicket(managerId, createMachineTaskDto);
+        //        return NoContent();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         //[HttpPatch("{MachineTaskId}")]
         //[Authorize(Policy = "ManagerAndTechnicalStaff")]

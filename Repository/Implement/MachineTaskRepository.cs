@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
+using DTOs.ComponentReplacementTicket;
 using DTOs.MachineTask;
 using Repository.Interface;
 
@@ -35,8 +37,6 @@ namespace Repository.Implement
                 Action = $"Yêu cầu của bạn đã được giao cho một nhân viên kiểm tra"
             };
 
-            requestResponse = await RequestResponseDao.Instance.CreateAsync(requestResponse);
-
             var task = new MachineTask
             {
                 TaskTitle = createMachineTaskDto.TaskTitle,
@@ -46,7 +46,7 @@ namespace Repository.Implement
                 Type = MachineTaskTypeEnum.MachineryCheck.ToString(),
                 DateCreate = now,
                 DateStart = createMachineTaskDto.DateStart,
-                Status = MachineTaskStatusEnum.Assigned.ToString(),
+                Status = MachineTaskStatusEnum.Created.ToString(),
                 Note = createMachineTaskDto.Note,
                 RequestResponseId = requestResponse.RequestResponseId,
                 ContractId = request.ContractId
@@ -54,18 +54,12 @@ namespace Repository.Implement
 
             var taskLog = new MachineTaskLog
             {
-                MachineTaskId = task.MachineTaskId,
-                Action = $"Create and assign task to staff name {staffAccount.Name}",
+                Action = $"Tạo và giao công việc kiểm tra máy cho {staffAccount.Name}",
                 DateCreate = now,
                 AccountTriggerId = managerId,
             };
 
-            task = await MachineTaskDao.Instance.CreateAsync(task);
-
-            await MachineTaskLogDao.Instance.CreateAsync(taskLog);
-
-            requestResponse.MachineTaskId = task.MachineTaskId;
-            await RequestResponseDao.Instance.UpdateAsync(requestResponse);
+            await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog, requestResponse);
 
             request.Status = MachineCheckRequestStatusEnum.Assigned.ToString();
             await MachineCheckRequestDao.Instance.UpdateAsync(request);
@@ -96,9 +90,25 @@ namespace Repository.Implement
 
         public async Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId)
         {
-            var MachineTask = await MachineTaskDao.Instance.GetMachineTaskDetail(taskId);
+            var machineTask = await MachineTaskDao.Instance.GetMachineTaskDetail(taskId);
 
-            var taskDetail = _mapper.Map<MachineTaskDisplayDetail>(MachineTask);
+            List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask.MachineTaskLogs;
+
+            var taskLogsDto = _mapper.Map<List<MachineTaskLogDto>>(machineTaskLogs);
+
+            //var taskLogsto = new List<MachineTaskLogDto>();
+
+            //foreach (var log in machineTaskLogs)
+            //{
+            //    var logDto = _mapper.Map<MachineTaskLogDto>(log);
+            //    taskLogsto.Add(logDto);
+            //}
+
+            var componentReplacementTicketCreateFromTaskList = _mapper.Map<List<ComponentReplacementTicketDto>>(machineTask.ComponentReplacementTicketsCreateFromTask);
+
+            var taskDetail = _mapper.Map<MachineTaskDisplayDetail>(machineTask);
+            taskDetail.TaskLogs = taskLogsDto;
+            taskDetail.ComponentReplacementTicketCreateFromTaskList = componentReplacementTicketCreateFromTaskList;
 
             return taskDetail;
         }
@@ -135,7 +145,7 @@ namespace Repository.Implement
 
             await MachineTaskDao.Instance.UpdateAsync(machineTask);
 
-            string action = $"Change status from {oldStatus} to {status}";
+            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(status)}]";
 
             var taskLog = new MachineTaskLog
             {
