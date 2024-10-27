@@ -256,7 +256,7 @@ namespace DAO
                     var contractPayment = new ContractPayment
                     {
                         ContractId = contract.ContractId,
-                        DateCreate = DateTime.Now.Date,
+                        DateCreate = DateTime.Now,
                         Status = ContractPaymentStatusEnum.Pending.ToString(),
                         Type = ContractPaymentTypeEnum.Rental.ToString(),
                         Title = $"Thanh toán tiền thuê cho hợp đồng {contract.ContractId} - Lần {paymentIndex}",
@@ -307,7 +307,7 @@ namespace DAO
             var contractPaymentDeposit = new ContractPayment
             {
                 ContractId = contract.ContractId,
-                DateCreate = DateTime.Now.Date,
+                DateCreate = DateTime.Now,
                 Status = ContractPaymentStatusEnum.Pending.ToString(),
                 Type = ContractPaymentTypeEnum.Deposit.ToString(),
                 Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,

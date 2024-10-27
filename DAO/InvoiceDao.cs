@@ -75,19 +75,31 @@ namespace DAO
                     //Deposit invoice
                     if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()))
                     {
-                        contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
-                        contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+                        var isFirstRentalPaymentPaid = await context.ContractPayments
+                            .AnyAsync(cp => cp.ContractId.Equals(contractPayment.ContractId) &&
+                                         cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
+                                         cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()) &&
+                                         cp.IsFirstRentalPayment == true);
+                        if (isFirstRentalPaymentPaid)
+                        {
+                            contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
+
+                            await context.SaveChangesAsync();
+                        }
                     }
 
                     //First rental invoice
                     else if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) && contractPayment.IsFirstRentalPayment == true)
                     {
-                        contractPayment.Contract.Status = ContractStatusEnum.Renting.ToString();
-                        contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Shipped.ToString();
-
-                        if (contractPayment.Contract.RentingRequest.IsOnetimePayment == true)
+                        var isDepositPaymentPaid = await context.ContractPayments
+                            .AnyAsync(cp => cp.ContractId.Equals(contractPayment.ContractId) &&
+                                            cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
+                                            cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+                        if (isDepositPaymentPaid)
                         {
-                            ScheduleContractCompletion(contractPayment.Contract);
+                            contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
+
+                            await context.SaveChangesAsync();
                         }
                     }
 
@@ -113,6 +125,11 @@ namespace DAO
                             ScheduleContractCompletion(contractPayment.Contract);
                         }
                     }
+
+                    if (await IsRentingRequestValidToChangeStatusSigned(context, contractPayment.Contract.RentingRequestId))
+                    {
+                        contractPayment.Contract.RentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+                    }
                 }
 
                 await context.SaveChangesAsync();
@@ -125,6 +142,37 @@ namespace DAO
                 transaction.Rollback();
                 throw new Exception(e.Message);
             }
+        }
+
+        private async Task<bool> IsRentingRequestValidToChangeStatusSigned(MmrmsContext context, string rentingRequestId)
+        {
+            //using var context = new MmrmsContext();
+            var allContracts = await context.Contracts
+                .Where(c => c.RentingRequestId.Equals(rentingRequestId))
+                .ToListAsync();
+
+            bool allPaid = true;
+            foreach (var contract in allContracts)
+            {
+                var depositPaid = await context.ContractPayments
+                    .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
+                                    cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
+                                    cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+                var firstRentalPaid = await context.ContractPayments
+                    .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
+                                    cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
+                                    cp.IsFirstRentalPayment == true &&
+                                    cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+                if (!depositPaid || !firstRentalPaid)
+                {
+                    allPaid = false;
+                    break;
+                }
+            }
+
+            return allPaid;
         }
 
         private Invoice UpdateInvoiceData(Invoice invoice, TransactionReturn transactionReturn)

@@ -22,7 +22,7 @@ namespace DAO
             {
                 _logger.LogInformation($"Starting ScheduleCancelRentingRequestJob");
 
-                TimeSpan delayToStart = TimeSpan.FromSeconds(10);
+                TimeSpan delayToStart = TimeSpan.FromDays(1);
 
                 BackgroundJob.Schedule(() => CancelRentingRequestAsync(rentingRequestId), delayToStart);
                 _logger.LogInformation($"Renting request: {rentingRequestId} scheduled for status change: {RentingRequestStatusEnum.Canceled.ToString()} at {delayToStart}");
@@ -118,7 +118,7 @@ namespace DAO
                         Amount = nextContractPayment.Amount,
                         Type = InvoiceTypeEnum.Rental.ToString(),
                         Status = InvoiceStatusEnum.Pending.ToString(),
-                        DateCreate = DateTime.Now.Date,
+                        DateCreate = DateTime.Now,
                         AccountPaidId = nextContractPayment.Contract.AccountSignId,
                     };
 

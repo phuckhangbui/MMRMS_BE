@@ -82,8 +82,8 @@ namespace API.Controllers
         {
             try
             {
-                var contractInvoice = await _contractService.SignContract(rentingRequestId);
-                return Ok(contractInvoice);
+                var contractInvoices = await _contractService.SignContract(rentingRequestId);
+                return Ok(contractInvoices);
             }
             catch (ServiceException ex)
             {

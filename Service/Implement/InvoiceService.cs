@@ -113,7 +113,7 @@ namespace Service.Implement
         {
             return new TransactionReturn
             {
-                Reference = "TRX123456789", // Sample reference ID
+                Reference = "TRX" + Guid.NewGuid().ToString(), // Sample reference ID
                 AccountNumber = "1234567890", // Sample account number
                 AccountName = "Nguyen Van A", // Sample account name
                 BankCode = "VCB", // Sample bank code (e.g., Vietcombank)

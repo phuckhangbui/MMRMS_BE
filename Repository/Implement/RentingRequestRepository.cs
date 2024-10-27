@@ -79,6 +79,7 @@ namespace Repository.Implement
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
                     ThumbnailUrl = string.Empty,
                     RentPrices = prices,
+                    ShipPricePerKm = product.ShipPricePerKm ?? 0,
                 };
 
                 var productTerms = _mapper.Map<List<MachineTermDto>>(product.MachineTerms);

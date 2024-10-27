@@ -83,7 +83,7 @@ namespace DAO
         }
 
         //TODO
-        public async Task<Invoice?> SignContract(string rentingRequestId)
+        public async Task<(Invoice? depositInvoice, Invoice? rentalInvoice)> SignContract(string rentingRequestId)
         {
             using var context = new MmrmsContext();
             using var transaction = context.Database.BeginTransaction();
@@ -101,6 +101,7 @@ namespace DAO
                     //_dbSet.Add(additionalInvoice);
 
                     var depositInvoice = InitDepositInvoiceV2(rentingRequest);
+                    Invoice? rentalInvoice = null;
                     //var rentalInvoice = InitRentalInvoiceV2(rentingRequest);
                     DbSet<Invoice> _dbSet = context.Set<Invoice>();
                     _dbSet.Add(depositInvoice);
@@ -108,7 +109,7 @@ namespace DAO
                     //IsOnetimePayment: true
                     if ((bool)rentingRequest.IsOnetimePayment!)
                     {
-                        var rentalInvoice = InitRentalInvoiceV2(rentingRequest);
+                        rentalInvoice = InitRentalInvoiceV2(rentingRequest);
 
                         foreach (var contract in rentingRequest.Contracts)
                         {
@@ -155,6 +156,16 @@ namespace DAO
                     //IsOnetimePayment: false
                     else
                     {
+                        rentalInvoice = new Invoice
+                        {
+                            InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                            Amount = 0,
+                            Type = InvoiceTypeEnum.Rental.ToString(),
+                            Status = InvoiceStatusEnum.Pending.ToString(),
+                            DateCreate = DateTime.Now,
+                            AccountPaidId = rentingRequest.AccountOrderId,
+                        };
+
                         foreach (var contract in rentingRequest.Contracts)
                         {
                             //var contractPayments = new List<ContractPayment>();
@@ -187,16 +198,7 @@ namespace DAO
                             depositContractPayment.Invoice = depositInvoice;
 
                             var rentalContractPayment = contract.ContractPayments.FirstOrDefault(c => c.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) && c.IsFirstRentalPayment == true);
-                            var rentalInvoice = new Invoice
-                            {
-                                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                                Amount = rentalContractPayment.Amount,
-                                Type = InvoiceTypeEnum.Rental.ToString(),
-                                Status = InvoiceStatusEnum.Pending.ToString(),
-                                DateCreate = DateTime.Now.Date,
-                                AccountPaidId = rentingRequest.AccountOrderId,
-                            };
-
+                            rentalInvoice.Amount += rentalContractPayment.Amount;
                             rentalContractPayment.Invoice = rentalInvoice;
 
                             context.Contracts.Update(contract);
@@ -206,10 +208,10 @@ namespace DAO
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return depositInvoice;
+                    return (depositInvoice, rentalInvoice);
                 }
 
-                return null;
+                return (null, null);
             }
             catch (Exception e)
             {
@@ -236,7 +238,7 @@ namespace DAO
                 Amount = totalRentalAmount,
                 Type = InvoiceTypeEnum.Rental.ToString(),
                 Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = DateTime.Now.Date,
+                DateCreate = DateTime.Now,
                 AccountPaidId = rentingRequest.AccountOrderId,
             };
 
@@ -255,7 +257,7 @@ namespace DAO
                 Amount = rentingRequest.TotalDepositPrice,
                 Type = InvoiceTypeEnum.Deposit.ToString(),
                 Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = DateTime.Now.Date,
+                DateCreate = DateTime.Now,
                 AccountPaidId = rentingRequest.AccountOrderId,
             };
 
