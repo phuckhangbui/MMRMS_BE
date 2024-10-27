@@ -10,5 +10,17 @@ namespace DTOs.MachineCheckRequest
 
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.NoteRequired)]
         public string Note { get; set; }
+
+        public IEnumerable<CheckCriteria>? CheckCriterias { get; set; } = new List<CheckCriteria>();
+    }
+
+
+
+    public class CheckCriteria
+    {
+        [Required(ErrorMessage = MessageConstant.MachineCheckRequest.CriteriaIdRequired)]
+        public int MachineCheckCriteriaId { get; set; }
+
+        public string? CustomerNote { get; set; }
     }
 }

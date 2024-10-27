@@ -36,24 +36,6 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{MachineCheckRequestId}")]
-        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequest([FromRoute] string MachineCheckRequestId)
-        {
-            try
-            {
-                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequests();
-                return Ok(list);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
         public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForCustomer()
@@ -99,6 +81,46 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("{machineCheckRequestId}/detail")]
+        [Authorize]
+        public async Task<ActionResult<MachineCheckRequestDetailDto>> GetMachineCheckRequest([FromRoute] string machineCheckRequestId)
+        {
+            try
+            {
+                MachineCheckRequestDetailDto result = await _machineCheckRequestService.GetMachineCheckRequestDetail(machineCheckRequestId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("criterias")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MachineCheckCriteriaDto>>> GetMachineCheckCriteria()
+        {
+
+            try
+            {
+                IEnumerable<MachineCheckCriteriaDto> list = await _machineCheckRequestService.GetMachineCheckCriterias();
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         [HttpPost]
         [Authorize(Policy = "Customer")]
         public async Task<ActionResult> CreateMachineCheckRequest(CreateMachineCheckRequestDto createMachineCheckRequestDto)
@@ -123,6 +145,8 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
 
         //TODO:KHANG
         //[HttpPatch("{machineCheckRequestId}")]

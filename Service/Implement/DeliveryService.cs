@@ -20,10 +20,11 @@ namespace Service.Implement
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IContractRepository _contractRepository;
+        private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly INotificationService _notificationService;
         private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -31,6 +32,7 @@ namespace Service.Implement
             _DeliveryTaskHub = DeliveryTaskHub;
             _notificationService = notificationService;
             _contractRepository = contractRepository;
+            _rentingRequestRepository = rentingRequestRepository;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -160,13 +162,24 @@ namespace Service.Implement
 
             await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
 
+            string contractId = "";
             foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
             {
-                var contractId = contractDelivery.ContractId;
+                contractId = contractDelivery.ContractId;
 
                 await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
 
                 //need to send noti to customer ?
+            }
+
+            var contract = await _contractRepository.GetContractById(contractId);
+            if (contract != null)
+            {
+                var rentingRequest = await _rentingRequestRepository.GetRentingRequest(contract.RentingRequestId);
+
+                rentingRequest.Status = RentingRequestStatusEnum.Shipped.ToString();
+
+                await _rentingRequestRepository.UpdateRentingRequest(rentingRequest);
             }
 
 

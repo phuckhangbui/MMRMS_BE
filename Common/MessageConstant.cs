@@ -325,8 +325,11 @@
             public const string StatusCannotSet = "Tình trạng yêu cầu này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string PendingRequestStillExist = "Bạn vẫn còn một yêu cầu chưa được xử lý, không thể tạo yêu cầu mới";
+            public const string CriteriaIdNotExisted = "Mã tiêu chí kiểm tra máy không tồn tại: Mã ";
 
             //DTO
+            public const string CriteriaIdRequired = "Mã tiêu chí kiểm tra máy là bắt buộc";
+
         }
 
         public static class MachineTask
