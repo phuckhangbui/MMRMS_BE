@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
 using DTOs.MachineCheckRequest;
@@ -20,13 +21,29 @@ namespace Repository.Implement
         {
             var request = new MachineCheckRequest
             {
+                MachineCheckRequestId = GlobalConstant.MachineCheckRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
                 ContractId = createMachineCheckRequestDto.ContractId,
                 Note = createMachineCheckRequestDto.Note,
                 Status = MachineCheckRequestStatusEnum.New.ToString(),
                 DateCreate = DateTime.Now
             };
 
-            await MachineCheckRequestDao.Instance.CreateAsync(request);
+            var machineCheckRequestCriterias = new List<MachineCheckRequestCriteria>();
+
+            foreach (var criteria in createMachineCheckRequestDto.CheckCriterias)
+            {
+                var checkCriteria = new MachineCheckRequestCriteria
+                {
+                    MachineCheckCriteriaId = criteria.MachineCheckCriteriaId,
+                    CustomerNote = criteria.CustomerNote,
+                    MachineCheckRequestId = request.MachineCheckRequestId
+                };
+
+                machineCheckRequestCriterias.Add(checkCriteria);
+            }
+
+
+            await MachineCheckRequestDao.Instance.CreateMachineCheckRequest(request, machineCheckRequestCriterias);
         }
 
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
@@ -75,6 +92,31 @@ namespace Repository.Implement
         public Task UpdateRequestStatus(int MachineCheckRequestId, string status)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId)
+        {
+            var requestDetail = await MachineCheckRequestDao.Instance.GetMachineCheckRequestDetail(machineCheckRequestId);
+
+            var requestDto = _mapper.Map<MachineCheckRequestDto>(requestDetail);
+
+            var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail.MachineCheckRequestCriterias);
+
+            var requestResponseList = _mapper.Map<IEnumerable<RequestResponseDto>>(requestDetail.RequestResponses);
+
+            return new MachineCheckRequestDetailDto
+            {
+                MachineCheckRequest = requestDto,
+                CheckCriteriaList = requestCriteriaList,
+                RequestResponseList = requestResponseList
+            };
+        }
+
+        public async Task<IEnumerable<MachineCheckCriteriaDto>> GetMachineCheckCriteriaList()
+        {
+            var list = await MachineCheckCriteriaDao.Instance.GetAllAsync();
+
+            return _mapper.Map<IEnumerable<MachineCheckCriteriaDto>>(list);
         }
     }
 }

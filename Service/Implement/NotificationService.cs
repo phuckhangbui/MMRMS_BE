@@ -134,7 +134,7 @@ namespace Service.Implement
         public async Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart)
         {
             string title = "Bạn có thêm một nhiệm vụ kiểm tra máy mới";
-            string body = $"Kiểm tra máy tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateStart.Date}";
+            string body = $"Kiểm tra máy tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateStart.Date.ToString(GlobalConstant.DateOnlyFormat)}";
 
 
             string type = NotificationTypeEnum.Task.ToString();
@@ -260,7 +260,7 @@ namespace Service.Implement
         public async Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
         {
             string title = "Bạn có thêm một nhiệm vụ giao hàng mới";
-            string body = $"Giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateShip.Date}";
+            string body = $"Giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateShip.Date.ToString(GlobalConstant.DateOnlyFormat)}";
 
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();

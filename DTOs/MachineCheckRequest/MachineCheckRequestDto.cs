@@ -4,9 +4,11 @@ namespace DTOs.MachineCheckRequest
 {
     public class MachineCheckRequestDto
     {
-        public string RequestId { get; set; }
+        public string MachineCheckRequestId { get; set; }
 
         public string? ContractId { get; set; }
+
+        public string? SerialNumber { get; set; }
 
         public string? Note { get; set; }
 

@@ -235,5 +235,19 @@ namespace Repository.Implement
 
             return areContractsNotSigned;
         }
+
+        public async Task<RentingRequestDto> GetRentingRequest(string rentingRequestId)
+        {
+            var list = await GetRentingRequests();
+
+            return list.FirstOrDefault(r => r.RentingRequestId == rentingRequestId);
+        }
+
+        public async Task UpdateRentingRequest(RentingRequestDto rentingRequestDto)
+        {
+            var rentingRequest = _mapper.Map<RentingRequest>(rentingRequestDto);
+
+            await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
+        }
     }
 }

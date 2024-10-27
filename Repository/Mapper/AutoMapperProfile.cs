@@ -198,6 +198,8 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountOrder != null
                             ? src.AccountOrder.Name
                             : null));
+
+            CreateMap<RentingRequestDto, RentingRequest>();
             CreateMap<RentingRequest, NewRentingRequestDto>()
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore())
                 .ReverseMap()
@@ -250,10 +252,26 @@ namespace Repository.Mapper
 
             CreateMap<RentingRequestAddress, ContractAddressDto>();
             CreateMap<MachineCheckRequest, MachineCheckRequestDto>()
+                .ForMember(dest => dest.SerialNumber,
+                opt => opt.MapFrom(src => src.Contract != null
+                            ? src.Contract.SerialNumber
+                            : null))
                 .ForMember(dest => dest.ContractAddress,
                  opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
                             ? src.Contract.RentingRequest.RentingRequestAddress
-                            : null)); ;
+                            : null));
+
+            CreateMap<MachineCheckRequestCriteria, MachineCheckRequestCriteriaDto>()
+                .ForMember(dest => dest.CriteriaName,
+                opt => opt.MapFrom(src => src.MachineCheckCriteria != null
+                            ? src.MachineCheckCriteria.Name
+                            : null));
+
+            CreateMap<MachineCheckCriteria, MachineCheckCriteriaDto>();
+
+            CreateMap<RequestResponse, RequestResponseDto>();
+
+
 
             CreateMap<MachineTask, MachineTaskDto>()
                 .ForMember(dest => dest.StaffName,
