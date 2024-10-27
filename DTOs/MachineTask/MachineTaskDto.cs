@@ -10,10 +10,6 @@
 
         public int? RequestResponseId { get; set; }
 
-        public int? PreviousTaskId { get; set; }
-
-        public string? ComponentReplacementTicketId { get; set; }
-
         public string? Content { get; set; }
 
         public int? StaffId { get; set; }
@@ -36,6 +32,7 @@
 
         public string? Note { get; set; }
 
+        public string? ConfirmationPictureUrl { get; set; }
 
     }
 }

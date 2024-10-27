@@ -59,7 +59,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{deliveryTaskId}")]
+        [HttpGet("{deliveryTaskId}/detail")]
         [Authorize(Policy = "Employee")]
         public async Task<ActionResult<DeliveryTaskDetailDto>> GetDeliveryDetail([FromRoute] int deliveryTaskId)
         {

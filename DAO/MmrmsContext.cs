@@ -81,7 +81,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<MembershipRank> MembershipRanks { get; set; }
 
-    public virtual DbSet<Report> Reports { get; set; }
 
     public virtual DbSet<RequestResponse> RequestResponses { get; set; }
 
@@ -741,20 +740,6 @@ public partial class MmrmsContext : DbContext
 
         });
 
-        modelBuilder.Entity<Report>(entity =>
-        {
-            entity.HasKey(e => e.ReportId);
-
-            entity.ToTable("Report");
-
-            entity.Property(e => e.ReportId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.MachineTask).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.MachineTaskId)
-                .HasConstraintName("FK_Report_TaskID");
-        });
 
         modelBuilder.Entity<RequestResponse>(entity =>
         {
@@ -769,8 +754,6 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.RequestResponses)
                 .HasForeignKey(d => d.MachineCheckRequestId)
                 .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
-
-
 
             entity.HasOne(d => d.MachineTask)
                   .WithOne(t => t.RequestResponse)
@@ -802,19 +785,19 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ManagerId)
                 .HasConstraintName("FK_Task_Manager");
 
-            entity.HasOne(d => d.ComponentReplacementTicket).WithMany(p => p.MachineTasks)
-               .HasForeignKey(d => d.ComponentReplacementTicketId)
-               .HasConstraintName("FK_ComponentReplacementTicketId_Task");
+            //entity.HasOne(d => d.ComponentReplacementTicket).WithMany(p => p.MachineTasks)
+            //   .HasForeignKey(d => d.ComponentReplacementTicketId)
+            //   .HasConstraintName("FK_ComponentReplacementTicketId_Task");
 
             entity.HasOne(d => d.RequestResponse)
                   .WithOne(t => t.MachineTask)
                   .HasForeignKey<MachineTask>(t => t.RequestResponseId)
                   .HasConstraintName("FK_Task_Response");
 
-            entity.HasOne(d => d.PreviousTask)
-                .WithOne()
-                .HasForeignKey<MachineTask>(d => d.PreviousTaskId)
-                .HasConstraintName("FK_Task_PreviousTask");
+            //entity.HasOne(d => d.PreviousTask)
+            //    .WithOne()
+            //    .HasForeignKey<MachineTask>(d => d.PreviousTaskId)
+            //    .HasConstraintName("FK_Task_PreviousTask");
         });
 
         modelBuilder.Entity<MachineTaskLog>(entity =>

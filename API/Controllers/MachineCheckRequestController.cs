@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("manager")]
         [Authorize(Policy = "Manager")]
         public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForManager()
         {

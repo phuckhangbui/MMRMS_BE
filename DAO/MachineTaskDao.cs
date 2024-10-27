@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 using MachineTask = BusinessObject.MachineTask;
 
 namespace DAO
@@ -29,15 +30,19 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).OrderByDescending(p => p.DateCreate).ToListAsync();
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
+                                                 .OrderByDescending(p => p.DateCreate).ToListAsync();
             }
         }
 
-        public async Task<MachineTask> GetMachineTask(int MachineTaskId)
+        public async Task<MachineTask> GetMachineTask(int machineTaskId)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager).FirstOrDefaultAsync(d => d.MachineTaskId == MachineTaskId);
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
+                                                 .FirstOrDefaultAsync(d => d.MachineTaskId == machineTaskId);
             }
         }
 
@@ -45,11 +50,49 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.MachineTasks.Include(d => d.Staff).Include(d => d.Manager)
+                return await context.MachineTasks.Include(d => d.Staff)
+                                                 .Include(d => d.Manager)
                                                 .Include(d => d.MachineTaskLogs)
                                                 .ThenInclude(l => l.AccountTrigger)
                                                 .Include(d => d.ComponentReplacementTicketsCreateFromTask)
+                                                .Include(d => d.RequestResponse)
                                                 .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
+            }
+        }
+
+        public async Task CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog, RequestResponse requestResponse)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.RequestResponses.Add(requestResponse);
+                        await context.SaveChangesAsync();
+
+                        task.RequestResponseId = requestResponse.RequestResponseId;
+                        context.MachineTasks.Add(task);
+                        await context.SaveChangesAsync();
+
+                        requestResponse.MachineTaskId = task.MachineTaskId;
+                        context.RequestResponses.Update(requestResponse);
+                        await context.SaveChangesAsync();
+
+                        taskLog.MachineTaskId = task.MachineTaskId;
+                        context.MachineTaskLogs.Add(taskLog);
+                        await context.SaveChangesAsync();
+
+                        // Commit transaction
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction on error
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
             }
         }
 
