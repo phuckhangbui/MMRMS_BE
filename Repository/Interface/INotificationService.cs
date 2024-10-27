@@ -13,6 +13,7 @@ namespace Repository.Interface
         Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status);
         Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status);
         Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status);
+        Task SendNotificationToManagerWhenDeliveryTaskStatusUpdated(int managerId, ContractAddressDto contractAddress, string status);
         Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip);
         Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
         Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string? componentName);

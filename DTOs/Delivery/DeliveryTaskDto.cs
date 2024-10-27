@@ -10,6 +10,10 @@ namespace DTOs.DeliveryTask
 
         public string? StaffName { get; set; }
 
+        public int? ManagerId { get; set; }
+
+        public string? ManagerName { get; set; }
+
         public DateTime? DateShip { get; set; }
 
         public DateTime? DateCreate { get; set; }
@@ -25,6 +29,8 @@ namespace DTOs.DeliveryTask
         public string? ReceiverName { get; set; }
 
         public string? Type { get; set; }
+
+        public string? SerialNumber { get; set; }
 
 
         public ContractAddressDto? ContractAddress { get; set; }

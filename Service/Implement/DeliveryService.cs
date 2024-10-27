@@ -97,6 +97,8 @@ namespace Service.Implement
             foreach (var contractId in createDeliveryTaskDto.ContractIdList)
             {
                 await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Shipping.ToString());
+
+                //need to send noti to customer ?
             }
 
             var contractAddress = await _contractRepository.GetContractAddressById(createDeliveryTaskDto.ContractIdList.FirstOrDefault());
@@ -127,6 +129,48 @@ namespace Service.Implement
             {
                 throw new ServiceException(ex.Message);
             }
+        }
+
+        public async Task StaffCompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, int accountId)
+        {
+            var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(staffUpdateDeliveryTaskDto.DeliveryTaskId);
+
+            if (deliveryDetail == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            if (accountId != deliveryDetail.DeliveryTask.StaffId)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            }
+
+            if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Delivering.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
+            if (deliveryDetail.ContractDeliveries.Count() != staffUpdateDeliveryTaskDto.ContractDeliveries.Count()
+                || !deliveryDetail.ContractDeliveries.Select(d => d.ContractDeliveryId)
+                    .OrderBy(id => id)
+                    .SequenceEqual(staffUpdateDeliveryTaskDto.ContractDeliveries.Select(d => d.ContractDeliveryId).OrderBy(id => id)))
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.InvalidContractDeliveryList);
+            }
+
+            await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
+
+            foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+            {
+                var contractId = contractDelivery.ContractId;
+
+                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+
+                //need to send noti to customer ?
+            }
+
+
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
         }
 
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)

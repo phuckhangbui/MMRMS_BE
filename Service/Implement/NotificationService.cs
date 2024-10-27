@@ -215,6 +215,48 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToManagerWhenDeliveryTaskStatusUpdated(int managerId, ContractAddressDto contractAddress, string status)
+        {
+            string title = "Cập nhật trạng thái giao hàng";
+            string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
+
+
+            string type = NotificationTypeEnum.DeliveryTask.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(managerId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = managerId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", managerId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
         {
             string title = "Bạn có thêm một nhiệm vụ giao hàng mới";
@@ -349,5 +391,7 @@ namespace Service.Implement
 
             }
         }
+
+
     }
 }

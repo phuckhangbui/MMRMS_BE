@@ -32,6 +32,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -46,6 +47,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -62,6 +64,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)
                     .ThenInclude(c => c.RentingRequest)
@@ -113,6 +116,7 @@ namespace DAO
             {
                 return await context.Deliveries
                     .Include(d => d.Staff)
+                    .Include(d => d.Manager)
                     .Include(d => d.DeliveryTaskLogs)
                     .ThenInclude(l => l.AccountTrigger)
                     .Include(d => d.ContractDeliveries)
@@ -122,5 +126,41 @@ namespace DAO
                     .FirstOrDefaultAsync(d => d.DeliveryTaskId == deliveryTaskId);
             }
         }
+
+        public async Task UpdateDeliveryAndContractDelivery(DeliveryTask delivery, DeliveryTaskLog deliveryTaskLog)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.Deliveries.Update(delivery);
+
+                        foreach (var contractDelivery in delivery.ContractDeliveries)
+                        {
+                            context.Entry(contractDelivery).State = EntityState.Modified;
+                        }
+                        await context.SaveChangesAsync();
+
+                        context.DeliveryTaskLogs.Add(deliveryTaskLog);
+
+                        await context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction on error
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

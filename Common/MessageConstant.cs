@@ -305,6 +305,7 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string ContractAreNotInTheSameRequest = "Những hợp đồng này không cùng một đơn yêu cầu";
             public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
+            public const string InvalidContractDeliveryList = "Danh sách các hợp đồng của lần giao hàng này không hợp lệ";
 
 
             //DTO
@@ -312,6 +313,8 @@
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
             public const string DateshipIsRequired = "Ngày giao là bắt buộc";
             public const string ContractIdListRequired = "Danh sách các mã contract cần giao là bắt buộc";
+            public const string ReceiverNameRequired = "Tên người nhận là bắt buộc";
+            public const string ContractDeliveryListRequired = "Danh sách các hợp đồng của lần giao hàng này là bắt buộc";
 
         }
 
