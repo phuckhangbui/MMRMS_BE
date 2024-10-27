@@ -10,9 +10,9 @@ public partial class MachineTask
 
     public int? RequestResponseId { get; set; }
 
-    public string? ComponentReplacementTicketId { get; set; }
+    //public string? ComponentReplacementTicketId { get; set; }
 
-    public int? PreviousTaskId { get; set; }
+    //public int? PreviousTaskId { get; set; }
 
     public string? Content { get; set; }
 
@@ -40,15 +40,13 @@ public partial class MachineTask
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual MachineTask? PreviousTask { get; set; }
+    //public virtual MachineTask? PreviousTask { get; set; }
 
     public virtual RequestResponse? RequestResponse { get; set; }
 
-    public virtual ComponentReplacementTicket? ComponentReplacementTicket { get; set; }
+    //public virtual ComponentReplacementTicket? ComponentReplacementTicket { get; set; }
 
     public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTicketsCreateFromTask { get; set; } = new List<ComponentReplacementTicket>();
-
-    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     public virtual ICollection<MachineTaskLog> MachineTaskLogs { get; set; } = new List<MachineTaskLog>();
 }
