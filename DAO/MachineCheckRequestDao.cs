@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BusinessObject;
+using Microsoft.EntityFrameworkCore;
 using MachineCheckRequest = BusinessObject.MachineCheckRequest;
 
 namespace DAO
@@ -63,5 +64,36 @@ namespace DAO
                     .FirstOrDefaultAsync(m => m.MachineCheckRequestId == machineCheckRequestId);
             }
         }
+
+        public async Task CreateMachineCheckRequest(MachineCheckRequest request, IEnumerable<MachineCheckRequestCriteria> machineCheckRequestCriterias)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        context.MachineCheckRequests.Add(request);
+                        await context.SaveChangesAsync();
+
+                        foreach (var criteria in machineCheckRequestCriterias)
+                        {
+                            context.MachineCheckRequestCriterias.Add(criteria);
+                        }
+                        await context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new Exception("Error occurred during transaction: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

@@ -266,6 +266,9 @@ namespace Repository.Mapper
                 opt => opt.MapFrom(src => src.MachineCheckCriteria != null
                             ? src.MachineCheckCriteria.Name
                             : null));
+
+            CreateMap<MachineCheckCriteria, MachineCheckCriteriaDto>();
+
             CreateMap<RequestResponse, RequestResponseDto>();
 
 

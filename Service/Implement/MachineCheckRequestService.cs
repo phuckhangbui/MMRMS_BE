@@ -55,11 +55,27 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.PendingRequestStillExist);
             }
 
+            var criteriaList = await GetMachineCheckCriterias();
+            var validCriteriaIds = criteriaList.Select(c => c.MachineCheckCriteriaId).ToHashSet();
+
+            foreach (var criteria in createMachineCheckRequestDto.CheckCriterias)
+            {
+                if (!validCriteriaIds.Contains(criteria.MachineCheckCriteriaId))
+                {
+                    throw new ServiceException(MessageConstant.MachineCheckRequest.CriteriaIdNotExisted + criteria.MachineCheckCriteriaId);
+                }
+            }
+
             await _machineCheckRequestRepository.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
 
             await _notificationService.SendToManagerWhenCustomerCreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnCreateMachineCheckRequest");
+        }
+
+        public async Task<IEnumerable<MachineCheckCriteriaDto>> GetMachineCheckCriterias()
+        {
+            return await _machineCheckRequestRepository.GetMachineCheckCriteriaList();
         }
 
         public async Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId)
