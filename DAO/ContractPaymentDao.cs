@@ -30,7 +30,7 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.ContractPayments
-                    .Where(cp => cp.InvoiceId == invoiceId)
+                    .Where(cp => cp.InvoiceId.Equals(invoiceId))
                     .Include(cp => cp.Contract)
                     .ToListAsync();
             }

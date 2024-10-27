@@ -17,12 +17,10 @@ namespace Repository.Implement
     public class RentingRequestRepository : IRentingRequestRepository
     {
         private readonly IMapper _mapper;
-        private readonly IBackground _background;
 
-        public RentingRequestRepository(IMapper mapper, IBackground background)
+        public RentingRequestRepository(IMapper mapper)
         {
             _mapper = mapper;
-            _background = background;
         }
 
         //public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
@@ -81,6 +79,7 @@ namespace Repository.Implement
                     CategoryName = product.Category!.CategoryName ?? string.Empty,
                     ThumbnailUrl = string.Empty,
                     RentPrices = prices,
+                    ShipPricePerKm = product.ShipPricePerKm ?? 0,
                 };
 
                 var productTerms = _mapper.Map<List<MachineTermDto>>(product.MachineTerms);

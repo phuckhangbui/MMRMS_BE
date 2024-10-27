@@ -23,6 +23,7 @@ namespace DTOs.RentingRequest
         public int Quantity { get; set; }
         public string CategoryName { get; set; }
         public string ThumbnailUrl { get; set; }
+        public double ShipPricePerKm { get; set; }
         public List<double> RentPrices { get; set; }
         public List<MachineTermDto> MachineTerms { get; set; }
     }

@@ -94,7 +94,7 @@ namespace Service.Implement
             return contracts;
         }
 
-        public async Task<ContractInvoiceDto> SignContract(string rentingRequestId)
+        public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
         {
             var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
             if (rentingRequest == null)
@@ -108,13 +108,13 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
             }
 
-            var contractInvoice = await _contractRepository.SignContract(rentingRequestId);
-            if (contractInvoice == null)
+            var contractInvoices = await _contractRepository.SignContract(rentingRequestId);
+            if (contractInvoices.IsNullOrEmpty())
             {
                 throw new ServiceException(MessageConstant.Contract.SignContractFail);
             }
 
-            return contractInvoice;
+            return contractInvoices;
         }
 
         private async Task<ContractDetailDto> CheckContractExist(string contractId)

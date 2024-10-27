@@ -5,7 +5,6 @@
         UnPaid,
         Canceled,
         Signed,
-        Shipping,
         Shipped
     }
 }
