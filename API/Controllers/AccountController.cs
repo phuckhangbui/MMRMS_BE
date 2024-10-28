@@ -51,13 +51,13 @@ namespace API.Controllers
 
                 if (accountRole == (int)AccountRoleEnum.TechnicalStaff || accountRole == (int)AccountRoleEnum.WebsiteStaff || accountRole == (int)AccountRoleEnum.Manager)
                 {
-                    var account = await _accountService.GetEmployeeAccount(accountId);
+                    var account = await _accountService.GetEmployeeAccountDetail(accountId);
                     return Ok(account);
                 }
 
                 if (accountRole == (int)AccountRoleEnum.Customer)
                 {
-                    var account = await _accountService.GetCustomerAccount(accountId);
+                    var account = await _accountService.GetCustomerAccountDetail(accountId);
                     return Ok(account);
                 }
 
@@ -163,7 +163,7 @@ namespace API.Controllers
         }
 
         [HttpPost("employees")]
-        [Authorize(policy: "AdminAndManager")]
+        //[Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
             if (!ModelState.IsValid)
@@ -188,7 +188,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{accountId}/status")]
-        //[Authorize(policy: "AdminAndManager")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<IActionResult> ChangeAccountStatus(int accountId, [FromQuery, BindRequired] string status)
         {
             try
@@ -213,7 +213,7 @@ namespace API.Controllers
         {
             try
             {
-                var customerAccount = await _accountService.GetCustomerAccountById(accountId);
+                var customerAccount = await _accountService.GetCustomerAccountDetail(accountId);
                 return Ok(customerAccount);
             }
             catch (ServiceException ex)
@@ -232,7 +232,7 @@ namespace API.Controllers
         {
             try
             {
-                var staffOrManagerAccount = await _accountService.GetEmployeeAccountById(accountId);
+                var staffOrManagerAccount = await _accountService.GetEmployeeAccountDetail(accountId);
                 return Ok(staffOrManagerAccount);
             }
             catch (ServiceException ex)

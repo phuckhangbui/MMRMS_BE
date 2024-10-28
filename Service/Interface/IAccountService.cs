@@ -7,14 +7,11 @@ namespace Service.Interface
         Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts();
-        Task<CustomerAccountDto> GetCustomerAccount(int accountId);
-        Task<EmployeeAccountDto> GetEmployeeAccount(int accountId);
         Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto);
         Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> ChangeAccountStatus(int accountId, string status);
-        Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId);
-        Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId);
-        Task<AccountDto> GetAccount(int accountId);
+        Task<CustomerAccountDetailDto> GetCustomerAccountDetail(int accountId);
+        Task<EmployeeAccountDto> GetEmployeeAccountDetail(int accountId);
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
         Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);

@@ -2,6 +2,7 @@
 using Common;
 using Common.Enum;
 using DTOs.Account;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Repository.Interface;
 using Repository.Mapper;
@@ -17,6 +18,7 @@ namespace APITests.Service
     {
         private readonly Mock<IAccountRepository> _accountRepositoryMock;
         private readonly Mock<IMailService> _mailMock;
+        private readonly Mock<IConfiguration> _configurationMock;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
@@ -24,7 +26,15 @@ namespace APITests.Service
         {
             _accountRepositoryMock = new Mock<IAccountRepository>();
             _mailMock = new Mock<IMailService>();
-            _accountService = new AccountServiceImpl(_accountRepositoryMock.Object, _mailMock.Object);
+            _configurationMock = new Mock<IConfiguration>();
+
+            var mockConfigurationSection = new Mock<IConfigurationSection>();
+            mockConfigurationSection.Setup(x => x.Value).Returns("admin_mmrms");
+
+            _configurationMock.Setup(x => x.GetSection("AdminAccount:Username")).Returns(mockConfigurationSection.Object);
+
+            _accountService = new AccountServiceImpl(_configurationMock.Object, _accountRepositoryMock.Object, _mailMock.Object);
+
             _mapper = new Mapper(new MapperConfiguration(options =>
             {
                 options.AddProfile<AutoMapperProfile>();
@@ -52,7 +62,7 @@ namespace APITests.Service
             _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync(accountBase);
             _accountRepositoryMock.Setup(x => x.GetEmployeeAccountById(accountId)).ReturnsAsync(employeeAccount);
 
-            var result = await _accountService.GetEmployeeAccountById(accountId);
+            var result = await _accountService.GetEmployeeAccountDetail(accountId);
 
             Assert.NotNull(result);
             Assert.Equal(employeeAccount.Username, result.Username);
@@ -61,10 +71,10 @@ namespace APITests.Service
         [Fact]
         public async void GetEmployeeAccountById_ThrowsException_AccountNotFound()
         {
-            int accountId = 100;
+            int accountId = -100;
             _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync((AccountBaseDto)null);
 
-            var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.GetEmployeeAccountById(accountId));
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.GetEmployeeAccountDetail(accountId));
             Assert.Equal(MessageConstant.Account.AccountNotFound, exception.Message);
         }
 

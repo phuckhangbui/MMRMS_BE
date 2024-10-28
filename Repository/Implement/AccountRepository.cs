@@ -228,7 +228,9 @@ namespace Repository.Implement
         {
             var accounts = await AccountDao.Instance.GetStaffAccountsAsync();
 
-            accounts = accounts.Where(a => a.Status.Equals(AccountStatusEnum.Active.ToString())).ToList();
+            accounts = accounts
+                .Where(a => a.Status.Equals(AccountStatusEnum.Active.ToString()) && a.RoleId == (int)AccountRoleEnum.TechnicalStaff)
+                .ToList();
 
             return _mapper.Map<IEnumerable<StaffAccountDto>>(accounts);
         }

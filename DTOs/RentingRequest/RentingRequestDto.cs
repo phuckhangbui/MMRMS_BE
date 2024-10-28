@@ -15,6 +15,8 @@ namespace DTOs.RentingRequest
 
         public DateTime? DateStart { get; set; }
 
+        public DateTime? DateEnd { get; set; }
+
         public int? NumberOfMonth { get; set; }
 
         public bool? IsOnetimePayment { get; set; }
