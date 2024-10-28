@@ -108,7 +108,7 @@ namespace Repository.Implement
 
                     var firstRentalContractPayment = rentalContractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
                     var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(firstRentalContractPayment.Contract.RentingRequestId);
-                    
+
                     var firstRentalPayment = new FirstRentalPaymentDto()
                     {
                         DiscountPrice = rentingRequest.DiscountPrice,

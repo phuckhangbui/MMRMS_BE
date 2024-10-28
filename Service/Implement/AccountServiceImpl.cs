@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Account;
+using Microsoft.Extensions.Configuration;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -10,13 +11,15 @@ namespace Service.Implement
 {
     public class AccountServiceImpl : IAccountService
     {
+        private readonly IConfiguration _configuration;
         private readonly IAccountRepository _accountRepository;
         private readonly IMailService _mailService;
 
-        public AccountServiceImpl(IAccountRepository accountRepository, IMailService mailService)
+        public AccountServiceImpl(IConfiguration configuration, IAccountRepository accountRepository, IMailService mailService)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
+            _configuration = configuration;
         }
 
         public async Task<bool> ChangeAccountStatus(int accountId, string status)
@@ -36,14 +39,14 @@ namespace Service.Implement
             return await _accountRepository.GetEmployeeAccounts();
         }
 
-        public async Task<CustomerAccountDetailDto> GetCustomerAccountById(int accountId)
+        public async Task<CustomerAccountDetailDto> GetCustomerAccountDetail(int accountId)
         {
             await CheckAccountExist(accountId);
 
             return await _accountRepository.GetCustomerAccountById(accountId);
         }
 
-        public async Task<EmployeeAccountDto> GetEmployeeAccountById(int accountId)
+        public async Task<EmployeeAccountDto> GetEmployeeAccountDetail(int accountId)
         {
             await CheckAccountExist(accountId);
 
@@ -63,7 +66,7 @@ namespace Service.Implement
 
         public async Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto)
         {
-            var adminUsername = ConfigurationHelper.config.GetSection("AdminAccount:Username").Value;
+            var adminUsername = _configuration.GetSection("AdminAccount:Username").Value;
 
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newEmployeeAccountDto.Email);
 
@@ -103,29 +106,9 @@ namespace Service.Implement
             return await _accountRepository.GetCustomerAccounts();
         }
 
-        public async Task<AccountDto> GetAccount(int accountId)
-        {
-            var account = await _accountRepository.GetAccounById(accountId);
-
-            return account;
-        }
-
         public async Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts()
         {
             return await _accountRepository.GetStaffAccounts();
-        }
-
-        public async Task<CustomerAccountDto> GetCustomerAccount(int accountId)
-        {
-            var list = await _accountRepository.GetCustomerAccounts();
-            return list.FirstOrDefault(a => a.AccountId == accountId);
-
-        }
-
-        public async Task<EmployeeAccountDto> GetEmployeeAccount(int accountId)
-        {
-            var list = await _accountRepository.GetEmployeeAccounts();
-            return list.FirstOrDefault(a => a.AccountId == accountId);
         }
 
         public async Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts()
