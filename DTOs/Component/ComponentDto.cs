@@ -16,6 +16,8 @@ namespace DTOs.Component
         public DateTime? DateCreate { get; set; }
 
         public string? Status { get; set; }
+
+        public int? QuantityOnHold { get; set; }
     }
 
     public class CreateComponentDto

@@ -113,9 +113,14 @@ namespace Repository.Implement
             component.ComponentName = componentDto.ComponentName;
             component.Status = componentDto.Status;
             component.Price = componentDto.Price;
-            component.Quantity = componentDto.Quantity;
+            component.AvailableQuantity = componentDto.Quantity;
 
             await ComponentDao.Instance.UpdateAsync(component);
+        }
+
+        public Task MoveComponentQuanityFromAvailableToOnHold(int componentId, int quantity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

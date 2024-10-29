@@ -188,6 +188,7 @@
             public const string NoAvailableSerailNumberMachineForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
             public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
             public const string ComponentIdNotFound = "Mã bộ phận máy serial này không tìm thấy";
+            public const string ComponentIsNotBrokenToCreateTicket = "Bộ phận máy này chưa hư hỏng để tạo ticket";
 
             //DTO
             public const string MachineIdRequired = "ID máy là bắt buộc";
@@ -345,6 +346,7 @@
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
             public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
             public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";
+            public const string CannotCreateTicketWithThisTask = "Trạng thái nhiệm vụ này không thể tạo ticket thay thế bộ phận máy";
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
@@ -362,6 +364,9 @@
             public const string TicketNotFound = "Mã yêu cầu thay thế này không tồn tại";
             public const string StatusCannotSet = "Tình trạng yêu cầu thay thế này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
+            public const string BiggerQuantityThanMachine = "Số lượng nhập vào lớn hơn số lượng bộ phận của máy";
+            public const string NotEnoughQuantity = "Bộ phận này hiện nay không có trong kho";
+            public const string CreateFail = "Tạo ticket thay thế bộ phận máy thất bại";
 
             //DTO
             public const string MachineSerialNumberComponentIdRequired = "Mã bộ phận máy của máy serial là bắt buộc";

@@ -123,7 +123,7 @@ namespace Repository.Implement
                     Component Component = new Component
                     {
                         ComponentName = component.ComponentName.Trim(),
-                        Quantity = null,
+                        AvailableQuantity = null,
                         Price = component.Price,
                         Status = ComponentStatusEnum.NoQuantity.ToString(),
                         DateCreate = DateTime.Now,
@@ -234,7 +234,7 @@ namespace Repository.Implement
                     Component Component = new Component
                     {
                         ComponentName = component.ComponentName.Trim(),
-                        Quantity = null,
+                        AvailableQuantity = null,
                         Price = component.Price,
                         Status = ComponentStatusEnum.NoQuantity.ToString(),
                         DateCreate = DateTime.Now,

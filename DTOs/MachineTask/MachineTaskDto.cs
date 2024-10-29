@@ -8,6 +8,8 @@
 
         public string? ContractId { get; set; }
 
+        public string? SerialNumber { get; set; }
+
         public int? RequestResponseId { get; set; }
 
         public string? Content { get; set; }

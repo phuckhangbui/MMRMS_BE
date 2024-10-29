@@ -52,11 +52,12 @@ namespace DAO
             {
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
-                                                .Include(d => d.MachineTaskLogs)
-                                                .ThenInclude(l => l.AccountTrigger)
-                                                .Include(d => d.ComponentReplacementTicketsCreateFromTask)
-                                                .Include(d => d.RequestResponse)
-                                                .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
+                                                 .Include(d => d.MachineTaskLogs)
+                                                 .ThenInclude(l => l.AccountTrigger)
+                                                 .Include(d => d.ComponentReplacementTicketsCreateFromTask)
+                                                 .Include(d => d.RequestResponse)
+                                                 .Include(d => d.Contract)
+                                                 .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
             }
         }
 
