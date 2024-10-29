@@ -23,11 +23,11 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequests()
+        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequests([FromQuery] string? status = null)
         {
             try
             {
-                var rentingRequests = await _rentingService.GetAll();
+                var rentingRequests = await _rentingService.GetRentingRequests(status);
                 return Ok(rentingRequests);
             }
             catch (ServiceException ex)

@@ -4,7 +4,7 @@ namespace Service.Interface
 {
     public interface IRentingRequestService
     {
-        Task<IEnumerable<RentingRequestDto>> GetAll();
+        Task<IEnumerable<RentingRequestDto>> GetRentingRequests(string? status);
         Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto);
         Task<RentingRequestDetailDto> GetRentingRequestDetail(string rentingRequestId);
         Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto);

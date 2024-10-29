@@ -3,7 +3,8 @@
     public enum InvoiceStatusEnum
     {
         Pending,
-        Paid
+        Paid,
+        Canceled
     }
 
     public enum InvoicePaymentTypeEnum
