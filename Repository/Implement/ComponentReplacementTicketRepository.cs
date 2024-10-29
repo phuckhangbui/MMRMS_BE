@@ -50,6 +50,26 @@ namespace Repository.Implement
             return result;
         }
 
+        public async Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicketDetail(string replacementTicketId)
+        {
+            var ticket = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketDetail(replacementTicketId);
+
+            if (ticket == null)
+            {
+                throw new Exception(MessageConstant.ComponentReplacementTicket.TicketNotFound);
+            }
+
+            var ticketDto = _mapper.Map<ComponentReplacementTicketDto>(ticket);
+
+            var logs = _mapper.Map<IEnumerable<ComponentReplacementTicketLogDto>>(ticket.ComponentReplacementTicketLogs);
+
+            return new ComponentReplacementTicketDetailDto
+            {
+                ComponentReplacementTicket = ticketDto,
+                Logs = logs
+            };
+        }
+
         public async Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId)
         {
             var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTickets();

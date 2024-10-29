@@ -41,8 +41,24 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.ComponentReplacementTickets
-                    .Include(c => c.EmployeeCreate).Include(c => c.Component).Include(c => c.Contract)
-                    .FirstOrDefaultAsync(c => c.ComponentReplacementTicketId == ticketId);
+                                    .Include(c => c.EmployeeCreate)
+                                    .Include(c => c.Component)
+                                    .Include(c => c.Contract)
+                                    .FirstOrDefaultAsync(c => c.ComponentReplacementTicketId == ticketId);
+            }
+        }
+
+        public async Task<ComponentReplacementTicket> GetComponentReplacementTicketDetail(string ticketId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ComponentReplacementTickets
+                                    .Include(c => c.EmployeeCreate)
+                                    .Include(c => c.Component)
+                                    .Include(c => c.Contract)
+                                    .Include(c => c.ComponentReplacementTicketLogs)
+                                    .ThenInclude(l => l.AccountTrigger)
+                                    .FirstOrDefaultAsync(c => c.ComponentReplacementTicketId == ticketId);
             }
         }
 

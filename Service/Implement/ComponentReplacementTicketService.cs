@@ -140,6 +140,11 @@ namespace Service.Implement
             await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnCreateComponentReplacementTicket");
         }
 
+        public async Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId)
+        {
+            return await _componentReplacementTicketRepository.GetComponentReplacementTicketDetail(replacementTicketId);
+        }
+
         public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets()
         {
             return await _componentReplacementTicketRepository.GetTickets();
