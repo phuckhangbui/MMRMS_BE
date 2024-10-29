@@ -87,6 +87,14 @@ namespace DAO
             {
                 double totalDepositPrice = 0;
                 double totalRentPrice = 0;
+
+                //Invoice
+                var depositInvoice = InitDepositInvoice(rentingRequest);
+                var rentalInvoice = InitRentalInvoice(rentingRequest);
+
+                //Service
+                double totalServicePricePerContract = (double)rentingRequest.ServiceRentingRequests.Select(s => s.ServicePrice).Sum();
+
                 //Contract
                 foreach (var newRentingRequestMachine in newRentingRequestDto.RentingRequestMachineDetails)
                 {
@@ -98,7 +106,6 @@ namespace DAO
                         .ToListAsync();
 
                     //Check serial number in active/signed contract
-                    //var requestedEndDate = rentingRequest.DateStart!.Value.AddMonths((int)rentingRequest.NumberOfMonth!);
                     var serialNumbersInFutureContracts = await context.Contracts
                         .Where(c => availableMachineSerialNumbers.Contains(c.ContractMachineSerialNumber)
                                 && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
@@ -124,7 +131,7 @@ namespace DAO
                     foreach (var machineSerialNumber in selectedSerialNumbers)
                     {
                         //Assign serial number to the contract
-                        var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms);
+                        var contractSerialNumber = InitContract(machineSerialNumber, rentingRequest, contractTerms, depositInvoice, rentalInvoice, totalServicePricePerContract);
                         totalDepositPrice += (double)contractSerialNumber.DepositPrice!;
                         totalRentPrice += (double)contractSerialNumber.TotalRentPrice!;
 
@@ -134,9 +141,23 @@ namespace DAO
 
                 rentingRequest.TotalRentPrice = totalRentPrice;
                 rentingRequest.TotalDepositPrice = totalDepositPrice;
+                rentingRequest.TotalServicePrice = totalServicePricePerContract * rentingRequest.Contracts.Count;
                 rentingRequest.TotalAmount = rentingRequest.TotalDepositPrice + rentingRequest.TotalServicePrice
                     + rentingRequest.TotalRentPrice + rentingRequest.ShippingPrice
                     - rentingRequest.DiscountPrice;
+
+                //Invoice amount
+                depositInvoice.Amount = rentingRequest.TotalDepositPrice;
+
+                if(rentingRequest.IsOnetimePayment == true)
+                {
+                    rentalInvoice.Amount = rentingRequest.TotalRentPrice + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice
+                        - rentingRequest.DiscountPrice;
+                }
+                else
+                {
+                    rentalInvoice.Amount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
+                }
 
                 DbSet<RentingRequest> _dbSet = context.Set<RentingRequest>();
                 _dbSet.Add(rentingRequest);
@@ -158,7 +179,13 @@ namespace DAO
             }
         }
 
-        private Contract InitContract(MachineSerialNumber machineSerialNumber, RentingRequest rentingRequest, List<Term> contractTerms)
+        private Contract InitContract(
+            MachineSerialNumber machineSerialNumber, 
+            RentingRequest rentingRequest, 
+            List<Term> contractTerms,
+            Invoice depositInvoice,
+            Invoice rentalInvoice,
+            double servicePrice)
         {
             var dateCreate = DateTime.Now;
             int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days + 1;
@@ -216,9 +243,10 @@ namespace DAO
                 }
             }
 
-            //ContractPayment
+            //DepositContractPayment
             var contractPayments = new List<ContractPayment>();
             var depositContractPayment = InitDepositContractPayment(contract);
+            depositContractPayment.Invoice = depositInvoice;
             contractPayments.Add(depositContractPayment);
 
             if ((bool)rentingRequest.IsOnetimePayment)
@@ -230,13 +258,15 @@ namespace DAO
                     Status = ContractPaymentStatusEnum.Pending.ToString(),
                     Type = ContractPaymentTypeEnum.Rental.ToString(),
                     Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
-                    Amount = (contract.RentPrice * contract.RentPeriod) + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - rentingRequest.DiscountPrice,
+                    Amount = (contract.RentPrice * contract.RentPeriod) + servicePrice,
                     DateFrom = contract.DateStart,
                     DateTo = contract.DateEnd,
                     Period = contract.RentPeriod,
                     DueDate = contract.DateStart,
                     IsFirstRentalPayment = true,
                 };
+
+                rentalContractPayment.Invoice = rentalInvoice;
 
                 contractPayments.Add(rentalContractPayment);
             }
@@ -253,7 +283,7 @@ namespace DAO
                     var paymentPeriod = (paymentEndDate - currentStartDate).Value.Days + 1;
                     var paymentAmount = contract.RentPrice * paymentPeriod;
 
-                    var contractPayment = new ContractPayment
+                    var rentalContractPayment = new ContractPayment
                     {
                         ContractId = contract.ContractId,
                         DateCreate = DateTime.Now,
@@ -270,11 +300,14 @@ namespace DAO
 
                     if (paymentIndex == 1)
                     {
-                        contractPayment.Amount += rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
-                        contractPayment.IsFirstRentalPayment = true;
+                        rentalContractPayment.Amount += servicePrice;
+                        rentalContractPayment.IsFirstRentalPayment = true;
+
+                        rentalContractPayment.Invoice = rentalInvoice;
+                        rentalInvoice.Amount += rentalContractPayment.Amount;
                     }
 
-                    contractPayments.Add(contractPayment);
+                    contractPayments.Add(rentalContractPayment);
 
                     // Move to the next payment period, start the next period the day after
                     currentStartDate = paymentEndDate.AddDays(1);
@@ -322,6 +355,36 @@ namespace DAO
             return contractPaymentDeposit;
         }
 
+        private Invoice InitDepositInvoice(RentingRequest rentingRequest)
+        {
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "DEPOSIT" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                Amount = rentingRequest.TotalDepositPrice,
+                Type = InvoiceTypeEnum.Deposit.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = DateTime.Now,
+                AccountPaidId = rentingRequest.AccountOrderId,
+            };
+
+            return invoice;
+        }
+
+        private Invoice InitRentalInvoice(RentingRequest rentingRequest)
+        {
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                Amount = 0,
+                Type = InvoiceTypeEnum.Rental.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = DateTime.Now,
+                AccountPaidId = rentingRequest.AccountOrderId,
+            };
+
+            return invoice;
+        }
+
         public async Task<RentingRequest?> CancelRentingRequest(string rentingRequestId)
         {
             using var context = new MmrmsContext();
@@ -331,6 +394,7 @@ namespace DAO
                 var rentingRequest = await context.RentingRequests
                     .Include(rr => rr.Contracts)
                         .ThenInclude(c => c.ContractPayments)
+                        .ThenInclude(cp => cp.Invoice)
                     .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
 
                 if (rentingRequest != null)
@@ -344,6 +408,11 @@ namespace DAO
                         foreach (var contractPayment in contract.ContractPayments)
                         {
                             contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+                            
+                            if (contractPayment.Invoice != null)
+                            {
+                                contractPayment.Invoice.Status = InvoiceStatusEnum.Canceled.ToString();
+                            }
                         }
 
                         context.Contracts.Update(contract);

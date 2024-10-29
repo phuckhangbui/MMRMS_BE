@@ -166,7 +166,6 @@ namespace Repository.Implement
             }
 
             var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
-            double totalRentingServicePrice = 0;
             //Required renting services
             var requiredRentingServices = rentingServices.Where(rs => rs.IsOptional == false).ToList();
             foreach (var requiredRentingService in requiredRentingServices)
@@ -178,7 +177,6 @@ namespace Repository.Implement
                 };
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-                totalRentingServicePrice += (double)requiredRentingService.Price!;
             }
 
             //Optional renting services
@@ -198,15 +196,10 @@ namespace Repository.Implement
                     };
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-                    totalRentingServicePrice += (double)optionalRentingService.Price!;
                 }
             }
 
-            rentingRequest.TotalServicePrice = totalRentingServicePrice;
-
             rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
-
-            //_background.ScheduleCancelRentingRequestJob(rentingRequest.RentingRequestId);
 
             return rentingRequest.RentingRequestId;
         }
