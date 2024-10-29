@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
 using DTOs.ComponentReplacementTicket;
@@ -20,18 +21,22 @@ namespace Repository.Implement
         {
             var componentTicket = _mapper.Map<ComponentReplacementTicket>(componentReplacementTicketDto);
 
+            var time = componentTicket.DateCreate ?? DateTime.Now;
+
             var ticketLog = new ComponentReplacementTicketLog
             {
                 AccountTriggerId = staffId,
-                DateCreate = componentTicket.DateCreate,
+                DateCreate = time,
                 Action = "Ticket được tạo mới",
             };
 
+
             var invoice = new Invoice
             {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "TICKET" + time.ToString(GlobalConstant.DateTimeFormatPattern),
                 AccountPaidId = accountSignId,
                 Amount = componentReplacementTicketDto.TotalAmount,
-                DateCreate = ticketLog.DateCreate,
+                DateCreate = time,
                 Type = InvoiceTypeEnum.ComponentTicket.ToString(),
                 Status = InvoiceStatusEnum.Pending.ToString()
             };

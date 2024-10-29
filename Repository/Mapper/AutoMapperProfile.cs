@@ -326,6 +326,7 @@ namespace Repository.Mapper
 
             CreateMap<ComponentReplacementTicketDto, ComponentReplacementTicket>();
 
+
             CreateMap<LogDetail, LogDetailDto>()
                .ForMember(dest => dest.Name,
                opt => opt.MapFrom(src => src.Account != null

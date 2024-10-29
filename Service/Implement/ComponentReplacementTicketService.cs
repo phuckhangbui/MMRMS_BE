@@ -86,8 +86,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
             }
 
+            var now = DateTime.Now;
+
             var replacementTicket = new ComponentReplacementTicketDto
             {
+                ComponentReplacementTicketId = GlobalConstant.ComponentReplacementTicketIdPrefixPattern + now.ToString(GlobalConstant.DateTimeFormatPattern),
                 EmployeeCreateId = staffId,
                 MachineTaskCreateId = createComponentReplacementTicketDto.MachineTaskCreateId,
                 ContractId = machineTask.ContractId,
@@ -97,7 +100,7 @@ namespace Service.Implement
                 AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
                 Quantity = createComponentReplacementTicketDto.Quantity,
                 TotalAmount = createComponentReplacementTicketDto.ComponentPrice * createComponentReplacementTicketDto.Quantity + createComponentReplacementTicketDto.AdditionalFee,
-                DateCreate = DateTime.Now,
+                DateCreate = now,
                 Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString(),
                 Note = createComponentReplacementTicketDto.Note,
             };

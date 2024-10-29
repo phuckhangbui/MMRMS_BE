@@ -128,6 +128,10 @@ namespace Repository.Implement
             }
 
             component.AvailableQuantity -= quantity;
+            if (component.QuantityOnHold == null)
+            {
+                component.QuantityOnHold = 0;
+            }
             component.QuantityOnHold += quantity;
 
             if (component.AvailableQuantity < 0)
