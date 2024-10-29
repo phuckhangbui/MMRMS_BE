@@ -391,23 +391,20 @@ public partial class MmrmsContext : DbContext
         {
             entity.HasKey(e => e.InvoiceId);
 
-            // One-to-one relationship with ContractPayment
             entity.HasMany(d => d.ContractPayments)
                 .WithOne(p => p.Invoice)
-                .HasForeignKey(d => d.InvoiceId)  // Use ContractPaymentId
+                .HasForeignKey(d => d.InvoiceId)
                 .HasConstraintName("FK_Invoice_ContractPayment");
 
-            // One-to-many relationship with AccountPaid
             entity.HasOne(d => d.AccountPaid)
                 .WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.AccountPaidId)
                 .HasConstraintName("FK_Invoices_Account");
 
-            // One-to-one relationship with MaintainTicket
             entity.HasOne(d => d.ComponentReplacementTicket)
                 .WithOne(p => p.Invoice)
-                .HasForeignKey<Invoice>(d => d.MaintainTicketId)
-                .HasConstraintName("FK_Invoice_MaintainTicket");
+                .HasForeignKey<Invoice>(d => d.ComponentReplacementTicketId)
+                .HasConstraintName("FK_Invoice_ComponentReplacementTicket");
 
             entity.HasOne(d => d.DigitalTransaction)
                .WithOne(p => p.Invoice)

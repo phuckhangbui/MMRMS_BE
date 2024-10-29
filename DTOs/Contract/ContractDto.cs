@@ -21,6 +21,8 @@ namespace DTOs.Contract
         public string? SerialNumber { get; set; }
         public double? RentPrice { get; set; }
         public string? Thumbnail { get; set; }
+        public int? AccountSignId { get; set; }
+
     }
 
     public class ContractRequestDto

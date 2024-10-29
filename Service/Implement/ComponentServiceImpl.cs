@@ -54,13 +54,13 @@ namespace Service.Implement
             }
 
 
-            if (component.Quantity == null && component.Status.Equals(ComponentStatusEnum.NoQuantity.ToString()))
+            if (component.AvailableQuantity == null && component.Status.Equals(ComponentStatusEnum.NoQuantity.ToString()))
             {
                 component.Status = ComponentStatusEnum.Active.ToString();
             }
 
             component.Price = updateComponentDto.Price;
-            component.Quantity = updateComponentDto.Quantity;
+            component.AvailableQuantity = updateComponentDto.Quantity;
             component.ComponentName = updateComponentDto.ComponentName;
 
 

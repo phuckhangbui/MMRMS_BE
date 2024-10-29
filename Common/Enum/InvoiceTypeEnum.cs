@@ -4,6 +4,7 @@
     {
         Deposit,
         Rental,
-        Additional
+        Additional,
+        ComponentTicket
     }
 }

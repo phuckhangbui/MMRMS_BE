@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BusinessObject;
+using Common;
+using Common.Enum;
 using DAO;
 using DTOs.ComponentReplacementTicket;
 using Repository.Interface;
@@ -14,27 +17,31 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, ComponentReplacementTicketDto componentReplacementTicketDto)
+        public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, ComponentReplacementTicketDto componentReplacementTicketDto, int? accountSignId)
         {
-            //var ComponentReplacementTicket = new ComponentReplacementTicket
-            //{
-            //    EmployeeCreateId = staffId,
-            //    DateCreate = DateTime.Now,
-            //    ComponentId = createComponentReplacementTicketDto.ComponentId,
-            //    SerialNumber = createComponentReplacementTicketDto.MachineSerialNumber,
-            //    ComponentPrice = createComponentReplacementTicketDto.ComponentPrice,
-            //    AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
-            //    Type = createComponentReplacementTicketDto.Type,
-            //    Note = createComponentReplacementTicketDto.Note,
-            //    Quantity = createComponentReplacementTicketDto.Quantity,
-            //};
+            var componentTicket = _mapper.Map<ComponentReplacementTicket>(componentReplacementTicketDto);
 
-            //ComponentReplacementTicket.TotalAmount = ComponentReplacementTicket.ComponentPrice + ComponentReplacementTicket.AdditionalFee;
-            //ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString();
+            var time = componentTicket.DateCreate ?? DateTime.Now;
 
-            //ComponentReplacementTicket = await ComponentReplacementTicketDao.Instance.CreateAsync(ComponentReplacementTicket);
+            var ticketLog = new ComponentReplacementTicketLog
+            {
+                AccountTriggerId = staffId,
+                DateCreate = time,
+                Action = "Ticket được tạo mới",
+            };
 
-            //return _mapper.Map<ComponentReplacementTicketDto>(ComponentReplacementTicket);
+
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "TICKET" + time.ToString(GlobalConstant.DateTimeFormatPattern),
+                AccountPaidId = accountSignId,
+                Amount = componentReplacementTicketDto.TotalAmount,
+                DateCreate = time,
+                Type = InvoiceTypeEnum.ComponentTicket.ToString(),
+                Status = InvoiceStatusEnum.Pending.ToString()
+            };
+
+            await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog, invoice);
 
             return new ComponentReplacementTicketDto();
         }

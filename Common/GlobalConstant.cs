@@ -10,6 +10,7 @@
         public const string TaskIdPrefixPattern = "TK";
         public const string DateTimeFormatPattern = "yyyyMMddHHmmssfffffff";
         public const string MachineCheckRequestIdPrefixPattern = "REQ";
+        public const string ComponentReplacementTicketIdPrefixPattern = "CRT";
         public const string DateOnlyFormat = "dd/MM/yyyy";
         public const double DepositValue = 0.3;
         public const int MaxTaskLimitADayContract = 3;
