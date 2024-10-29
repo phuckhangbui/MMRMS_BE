@@ -81,7 +81,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
-            if (component.Status != ComponentStatusEnum.Active.ToString() || (component?.Quantity) < createComponentReplacementTicketDto.Quantity)
+            if (component.Status != ComponentStatusEnum.Active.ToString() || (component?.AvailableQuantity) < createComponentReplacementTicketDto.Quantity)
             {
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
             }
@@ -102,11 +102,19 @@ namespace Service.Implement
                 Note = createComponentReplacementTicketDto.Note,
             };
 
+            var contract = await _contractRepository.GetContractById(machineTask.ContractId);
+
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+
+            }
+
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    var componentReplacementTicketDto = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket);
+                    await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
 
@@ -120,8 +128,12 @@ namespace Service.Implement
                 }
             }
 
-            //await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)componentReplacementTicketDto.TotalAmount, componentReplacementTicketDto.ComponentName);
 
+
+            if (contract != null)
+            {
+                await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)replacementTicket.TotalAmount, replacementTicket.ComponentName);
+            }
             await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnCreateComponentReplacementTicket");
         }
 
