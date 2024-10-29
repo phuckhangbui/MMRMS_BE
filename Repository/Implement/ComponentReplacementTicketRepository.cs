@@ -14,7 +14,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
+        public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, ComponentReplacementTicketDto componentReplacementTicketDto)
         {
             //var ComponentReplacementTicket = new ComponentReplacementTicket
             //{

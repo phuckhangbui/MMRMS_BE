@@ -18,6 +18,8 @@
 
         public string? InvoiceId { get; set; }
 
+        public int? MachineSerialNumberComponentId { get; set; }
+
         public string? SerialNumber { get; set; }
 
         public double? ComponentPrice { get; set; }

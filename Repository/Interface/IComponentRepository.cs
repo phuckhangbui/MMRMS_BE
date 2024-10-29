@@ -20,5 +20,7 @@ namespace Repository.Interface
         Task<ComponentDto> GetComponent(int componentId);
         Task<IEnumerable<MachineComponentDto>> GetMachineComponentList(int componentId);
         Task UpdateComponent(ComponentDto component);
+
+        Task MoveComponentQuanityFromAvailableToOnHold(int componentId, int quantity);
     }
 }

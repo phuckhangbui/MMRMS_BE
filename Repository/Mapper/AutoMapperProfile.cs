@@ -156,7 +156,7 @@ namespace Repository.Mapper
                             : null))
                 .ForMember(dest => dest.ComponentInStoreQuantity,
                         opt => opt.MapFrom(src => src.Component != null
-                            ? src.Component.Component.Quantity
+                            ? src.Component.Component.AvailableQuantity
                             : null));
 
             CreateMap<Content, ContentDto>()
@@ -286,6 +286,10 @@ namespace Repository.Mapper
 
 
             CreateMap<MachineTask, MachineTaskDto>()
+                .ForMember(dest => dest.SerialNumber,
+                opt => opt.MapFrom(src => src.Contract != null
+                            ? src.Contract.SerialNumber
+                            : null))
                 .ForMember(dest => dest.StaffName,
                 opt => opt.MapFrom(src => src.Staff != null
                             ? src.Staff.Name

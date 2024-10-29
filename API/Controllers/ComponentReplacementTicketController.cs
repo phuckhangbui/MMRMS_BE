@@ -77,20 +77,15 @@ namespace API.Controllers
             }
         }
 
-        //TODO:KHANG
-        [HttpPost]
-        [Authorize(Policy = "Staff")]
+        [HttpPost("create")]
+        [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult> CreateComponentReplacementTicket(CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
             int staffId = GetLoginAccountId();
-            if (staffId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
-                await _componentReplacementTicketService.CreateComponentReplacementTicket(staffId, createComponentReplacementTicketDto);
+                await _componentReplacementTicketService.CreateComponentReplacementTicketWhenCheckMachineRenting(staffId, createComponentReplacementTicketDto);
                 return NoContent();
             }
             catch (ServiceException ex)

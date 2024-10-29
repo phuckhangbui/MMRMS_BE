@@ -6,6 +6,8 @@ namespace DTOs.DeliveryTask
     {
         public int DeliveryTaskId { get; set; }
 
+        public string? SerialNumber { get; set; }
+
         public int? StaffId { get; set; }
 
         public string? StaffName { get; set; }
@@ -30,7 +32,6 @@ namespace DTOs.DeliveryTask
 
         public string? Type { get; set; }
 
-        public string? SerialNumber { get; set; }
 
 
         public ContractAddressDto? ContractAddress { get; set; }
