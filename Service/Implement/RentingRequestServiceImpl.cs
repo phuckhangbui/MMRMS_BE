@@ -46,7 +46,7 @@ namespace Service.Implement
             return await _rentingRepository.GetRentingRequests();
         }
 
-        public async Task<RentingRequestDetailDto> GetRentingRequestDetailById(string rentingRequestId)
+        public async Task<RentingRequestDetailDto> GetRentingRequestDetail(string rentingRequestId)
         {
             var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
             if (rentingRequest == null)

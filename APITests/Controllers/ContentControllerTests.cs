@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using API.Controllers;
+using Common;
 using Common.Enum;
 using DTOs.Content;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,7 @@ using Service.Interface;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace API.Controllers.Tests
+namespace Test.Controllers
 {
     public class ContentControllerTests
     {

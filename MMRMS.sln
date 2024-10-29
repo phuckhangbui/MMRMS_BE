@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{4056EDBC-6F87-4924-BA57-9F1FD9218522}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "APITests\APITests.csproj", "{10671BFC-D1B6-4224-9E83-DEA26C504279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "APITests\Test.csproj", "{10671BFC-D1B6-4224-9E83-DEA26C504279}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -45,7 +45,7 @@ namespace API.Controllers
         {
             try
             {
-                var rentingRequest = await _rentingService.GetRentingRequestDetailById(rentingRequestId);
+                var rentingRequest = await _rentingService.GetRentingRequestDetail(rentingRequestId);
                 return Ok(rentingRequest);
             }
             catch (ServiceException ex)
