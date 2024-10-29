@@ -143,6 +143,11 @@ namespace Repository.Implement
 
             machineTask.Status = status;
 
+            if (status == MachineTaskStatusEnum.Completed.ToString())
+            {
+                machineTask.DateCompleted = DateTime.Now;
+            }
+
             await MachineTaskDao.Instance.UpdateAsync(machineTask);
 
             string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(status)}]";
@@ -157,5 +162,6 @@ namespace Repository.Implement
 
             await MachineTaskLogDao.Instance.CreateAsync(taskLog);
         }
+
     }
 }

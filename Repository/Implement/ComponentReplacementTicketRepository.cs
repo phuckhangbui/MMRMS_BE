@@ -41,9 +41,11 @@ namespace Repository.Implement
                 Status = InvoiceStatusEnum.Pending.ToString()
             };
 
-            await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog, invoice);
+            componentTicket = await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog, invoice);
 
-            return new ComponentReplacementTicketDto();
+            var result = _mapper.Map<ComponentReplacementTicketDto>(componentTicket);
+
+            return result;
         }
 
         public async Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId)

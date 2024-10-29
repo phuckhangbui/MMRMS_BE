@@ -8,6 +8,7 @@ using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 using Service.SignalRHub;
+using System.Transactions;
 
 namespace Service.Implement
 {
@@ -199,20 +200,31 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
             }
 
-            //Todo logic here
-            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
-
-            //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
-
-            var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
-
-            if (requestResponse != null)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                await _machineCheckRequestRepository.UpdateRequestStatus(requestResponse.MachineCheckRequestId
-                                                                           , MachineCheckRequestStatusEnum.Completed.ToString());
+                try
+                {
+                    //Todo logic here
+                    await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
+
+                    //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
+
+                    var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
+
+                    if (requestResponse != null)
+                    {
+                        await _machineCheckRequestRepository.UpdateRequestStatus(requestResponse.MachineCheckRequestId
+                                                                                   , MachineCheckRequestStatusEnum.Completed.ToString());
+                    }
+
+                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.CreateFail);
+                }
             }
 
-            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
         }
 
         public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)

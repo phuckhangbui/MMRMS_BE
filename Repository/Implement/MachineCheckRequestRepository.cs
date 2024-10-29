@@ -85,6 +85,8 @@ namespace Repository.Implement
 
             machineCheckRequest.Status = status;
 
+           
+
             await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
         }
 
