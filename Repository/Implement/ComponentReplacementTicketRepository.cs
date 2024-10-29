@@ -5,6 +5,8 @@ using Common.Enum;
 using DAO;
 using DTOs.ComponentReplacementTicket;
 using Repository.Interface;
+using ComponentReplacementTicket = BusinessObject.ComponentReplacementTicket;
+using Invoice = BusinessObject.Invoice;
 
 namespace Repository.Implement
 {
@@ -71,6 +73,34 @@ namespace Repository.Implement
             var resultList = list.Where(c => c.Contract?.AccountSignId == customerId).ToList();
 
             return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
+        }
+
+        public async Task UpdateTicketStatus(string componentTicketId, string status, int accountId)
+        {
+            var ticket = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicket(componentTicketId);
+
+            if (ticket == null)
+            {
+                throw new Exception(MessageConstant.ComponentReplacementTicket.TicketNotFound);
+            }
+
+            string oldStatus = ticket.Status;
+
+            ticket.Status = status;
+
+            await ComponentReplacementTicketDao.Instance.UpdateAsync(ticket);
+
+            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<ComponentReplacementTicketStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<ComponentReplacementTicketStatusEnum>(status)}]";
+
+            var ticketLog = new ComponentReplacementTicketLog
+            {
+                ComponentReplacementTicketId = componentTicketId,
+                AccountTriggerId = accountId,
+                DateCreate = DateTime.Now,
+                Action = action,
+            };
+
+            await ComponentReplacementicketLogDao.Instance.CreateAsync(ticketLog);
         }
     }
 }

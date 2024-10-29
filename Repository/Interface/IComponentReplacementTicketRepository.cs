@@ -8,5 +8,6 @@ namespace Repository.Interface
         Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketsByCustomerId(int customerId);
+        Task UpdateTicketStatus(string componentTicketId, string status, int accountId);
     }
 }

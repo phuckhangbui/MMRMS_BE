@@ -10,7 +10,7 @@
 
         public string? ContractPaymentId { get; set; }
 
-        public string? MaintainTicketId { get; set; }
+        public string? ComponentReplacementTicketId { get; set; }
 
         public string? DigitalTransactionId { get; set; }
 
