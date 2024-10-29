@@ -7,5 +7,6 @@ namespace Service.Interface
         Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId);
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTicketsForStaff(int staffId);
     }
 }

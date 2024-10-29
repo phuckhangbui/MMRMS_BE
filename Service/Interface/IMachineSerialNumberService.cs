@@ -10,7 +10,8 @@ namespace Service.Interface
         //Task UpdateStatus(string serialNumber, string status);
         Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId);
         Task<IEnumerable<MachineSerialNumberLogDto>> GetDetailLog(string serialNumber);
-        Task<IEnumerable<MachineComponentStatusDto>> GetSerialNumberComponentStatus(string serialNumber);
+        Task<IEnumerable<MachineSerialNumberComponentDto>> GetSerialNumberComponents(string serialNumber);
         Task ToggleStatus(string serialNumber, int staffId);
+        Task UpdateMachineSerialNumberComponentStatusToBroken(int machineSerialNumberComponentId, int accountId);
     }
 }

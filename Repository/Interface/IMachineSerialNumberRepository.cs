@@ -17,6 +17,6 @@ namespace Repository.Interface
         Task UpdateStatus(string serialNumber, string status, int staffId);
         Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber);
         Task<IEnumerable<MachineSerialNumberLogDto>> GetMachineSerialNumberLog(string serialNumber);
-        Task<IEnumerable<MachineComponentStatusDto>> GetMachineComponentStatus(string serialNumber);
+        Task<IEnumerable<MachineSerialNumberComponentDto>> GetMachineComponent(string serialNumber);
     }
 }

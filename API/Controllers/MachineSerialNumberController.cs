@@ -66,14 +66,35 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{serialNumber}/component-status")]
-        public async Task<ActionResult<IEnumerable<MachineComponentStatusDto>>> GetMachineSerialNumberComponentStatus([FromRoute] string serialNumber)
+        [HttpGet("{serialNumber}/components")]
+        public async Task<ActionResult<IEnumerable<MachineSerialNumberComponentDto>>> GetMachineSerialNumberComponentList([FromRoute] string serialNumber)
         {
 
             try
             {
-                IEnumerable<MachineComponentStatusDto> lists = await _machineSerialNumberService.GetSerialNumberComponentStatus(serialNumber);
+                IEnumerable<MachineSerialNumberComponentDto> lists = await _machineSerialNumberService.GetSerialNumberComponents(serialNumber);
                 return Ok(lists);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{machineSerialNumberComponentId}/update-component-status/broken")]
+        [Authorize("Employee")]
+        public async Task<ActionResult> UpdateMachineSerialNumberComponentStatusToBroken([FromRoute] int machineSerialNumberComponentId)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                await _machineSerialNumberService.UpdateMachineSerialNumberComponentStatusToBroken(machineSerialNumberComponentId, accountId);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
@@ -88,6 +109,7 @@ namespace API.Controllers
 
 
         [HttpDelete("{serialNumber}")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<IActionResult> DeleteMachineSerialNumber([FromRoute] string serialNumber)
         {
 

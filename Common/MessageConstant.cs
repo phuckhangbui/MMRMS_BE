@@ -187,6 +187,7 @@
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
             public const string NoAvailableSerailNumberMachineForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
             public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
+            public const string ComponentIdNotFound = "Mã bộ phận máy serial này không tìm thấy";
 
             //DTO
             public const string MachineIdRequired = "ID máy là bắt buộc";
@@ -363,7 +364,7 @@
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
 
             //DTO
-            public const string ComponentIdRequired = "Mã bộ phận máy là bắt buộc";
+            public const string MachineSerialNumberComponentIdRequired = "Mã bộ phận máy của máy serial là bắt buộc";
             public const string MachineSerialNumberRequired = "Mã máy là bắt buộc";
             public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
             public const string PriceRequired = "Giá tiền là bắt buộc";
@@ -373,6 +374,7 @@
             public const string AdditionFeeRequired = "Chi phí phụ thu là bắt buộc";
             public const string TypeRequired = "Loại là bắt buộc";
             public const string NoteRequired = "Ghi chú là bắt buộc";
+            public const string MachineTaskIdRequired = "Mã công việc máy là bắt buộc";
 
 
         }

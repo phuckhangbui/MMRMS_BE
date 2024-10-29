@@ -144,10 +144,19 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.AccountTrigger != null
                             ? src.AccountTrigger.Name
                             : null));
-            CreateMap<MachineComponentStatus, MachineComponentStatusDto>()
+
+            CreateMap<MachineSerialNumberComponent, MachineSerialNumberComponentDto>()
                 .ForMember(dest => dest.ComponentName,
                         opt => opt.MapFrom(src => src.Component != null
                             ? src.Component.Component.ComponentName
+                            : null))
+                .ForMember(dest => dest.ComponentPrice,
+                        opt => opt.MapFrom(src => src.Component != null
+                            ? src.Component.Component.Price
+                            : null))
+                .ForMember(dest => dest.ComponentInStoreQuantity,
+                        opt => opt.MapFrom(src => src.Component != null
+                            ? src.Component.Component.Quantity
                             : null));
 
             CreateMap<Content, ContentDto>()

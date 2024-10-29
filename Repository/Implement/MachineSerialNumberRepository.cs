@@ -74,36 +74,36 @@ namespace Repository.Implement
                 Status = MachineSerialNumberStatusEnum.Available.ToString()
             };
 
-            IList<MachineComponentStatus> productComponentStatuses = new List<MachineComponentStatus>();
+            IList<MachineSerialNumberComponent> machineSerialNumberComponents = new List<MachineSerialNumberComponent>();
 
             foreach (var componentMachine in componentMachineList)
             {
-                var productComponentStatus = new MachineComponentStatus
+                var productComponentStatus = new MachineSerialNumberComponent
                 {
                     SerialNumber = createSerialMachineNumberDto.SerialNumber,
                     ComponentId = componentMachine.MachineComponentId,
                     Quantity = componentMachine.Quantity,
-                    Status = MachineComponentStatusEnum.Normal.ToString()
+                    Status = MachineSerialNumberComponentStatusEnum.Normal.ToString()
                 };
 
-                productComponentStatuses.Add(productComponentStatus);
+                machineSerialNumberComponents.Add(productComponentStatus);
             }
 
-            if (productComponentStatuses.Count == 0)
+            if (machineSerialNumberComponents.Count == 0)
             {
-                serialMachine.MachineComponentStatuses = null;
+                serialMachine.MachineSerialNumberComponents = null;
             }
             else
             {
-                serialMachine.MachineComponentStatuses = productComponentStatuses;
+                serialMachine.MachineSerialNumberComponents = machineSerialNumberComponents;
             }
 
             MachineSerialNumberLog log = new MachineSerialNumberLog
             {
                 SerialNumber = serialMachine.SerialNumber,
                 AccountTriggerId = accountId,
-                Action = "Create new serial number product",
-                Type = MachineSerialNumberLogTypeEnum.System.ToString(),
+                Action = "Tạo mới một máy serial",
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = now
             };
 
@@ -118,16 +118,16 @@ namespace Repository.Implement
             await MachineSerialNumberDao.Instance.Delete(serialNumber);
         }
 
-        public async Task<IEnumerable<MachineComponentStatusDto>> GetMachineComponentStatus(string serialNumber)
+        public async Task<IEnumerable<MachineSerialNumberComponentDto>> GetMachineComponent(string serialNumber)
         {
             var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumberDetail(serialNumber);
 
-            if (machineSerialNumber.MachineComponentStatuses.IsNullOrEmpty())
+            if (machineSerialNumber.MachineSerialNumberComponents.IsNullOrEmpty())
             {
-                return new List<MachineComponentStatusDto>();
+                return new List<MachineSerialNumberComponentDto>();
             }
 
-            return _mapper.Map<IEnumerable<MachineComponentStatusDto>>(machineSerialNumber.MachineComponentStatuses);
+            return _mapper.Map<IEnumerable<MachineSerialNumberComponentDto>>(machineSerialNumber.MachineSerialNumberComponents);
         }
 
         public async Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber)
@@ -199,7 +199,7 @@ namespace Repository.Implement
             {
                 SerialNumber = serialNumber,
                 AccountTriggerId = accountId,
-                Type = MachineSerialNumberLogTypeEnum.UpdateStatus.ToString(),
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = DateTime.Now,
                 Action = $"Change status to {status}"
             };

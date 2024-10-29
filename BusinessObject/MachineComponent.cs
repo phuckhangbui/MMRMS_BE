@@ -10,13 +10,10 @@ public partial class MachineComponent
 
     public int? Quantity { get; set; }
 
-    public string? Status { get; set; }
-
-    public bool? IsRequiredMoney { get; set; }
-
     public Component? Component { get; set; }
+
     public Machine? Machine { get; set; }
 
-    public virtual ICollection<MachineComponentStatus> MachineComponentStatuses { get; set; } = new List<MachineComponentStatus>();
+    public virtual ICollection<MachineSerialNumberComponent> MachineSerialNumberComponents { get; set; } = new List<MachineSerialNumberComponent>();
 
 }

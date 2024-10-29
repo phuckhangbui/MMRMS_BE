@@ -5,14 +5,14 @@ namespace DTOs.ComponentReplacementTicket
 {
     public class CreateComponentReplacementTicketDto
     {
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.ComponentIdRequired)]
-        public int ComponentId { get; set; }
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineSerialNumberComponentIdRequired)]
+        public int MachineSerialNumberComponentId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineSerialNumberRequired)]
-        public string MachineSerialNumber { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.ComponentIdRequired)]
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.ContractIdRequired)]
         public string ContractId { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineTaskIdRequired)]
+        public string MachineTaskCreateId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.PriceRequired)]
         [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.ComponentReplacementTicket.PricePositiveNumberRequired)]

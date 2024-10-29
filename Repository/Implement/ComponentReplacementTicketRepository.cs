@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using BusinessObject;
-using Common.Enum;
 using DAO;
 using DTOs.ComponentReplacementTicket;
 using Repository.Interface;
@@ -18,25 +16,27 @@ namespace Repository.Implement
 
         public async Task<ComponentReplacementTicketDto> CreateTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
-            var ComponentReplacementTicket = new ComponentReplacementTicket
-            {
-                EmployeeCreateId = staffId,
-                DateCreate = DateTime.Now,
-                ComponentId = createComponentReplacementTicketDto.ComponentId,
-                SerialNumber = createComponentReplacementTicketDto.MachineSerialNumber,
-                ComponentPrice = createComponentReplacementTicketDto.ComponentPrice,
-                AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
-                Type = createComponentReplacementTicketDto.Type,
-                Note = createComponentReplacementTicketDto.Note,
-                Quantity = createComponentReplacementTicketDto.Quantity,
-            };
+            //var ComponentReplacementTicket = new ComponentReplacementTicket
+            //{
+            //    EmployeeCreateId = staffId,
+            //    DateCreate = DateTime.Now,
+            //    ComponentId = createComponentReplacementTicketDto.ComponentId,
+            //    SerialNumber = createComponentReplacementTicketDto.MachineSerialNumber,
+            //    ComponentPrice = createComponentReplacementTicketDto.ComponentPrice,
+            //    AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
+            //    Type = createComponentReplacementTicketDto.Type,
+            //    Note = createComponentReplacementTicketDto.Note,
+            //    Quantity = createComponentReplacementTicketDto.Quantity,
+            //};
 
-            ComponentReplacementTicket.TotalAmount = ComponentReplacementTicket.ComponentPrice + ComponentReplacementTicket.AdditionalFee;
-            ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString();
+            //ComponentReplacementTicket.TotalAmount = ComponentReplacementTicket.ComponentPrice + ComponentReplacementTicket.AdditionalFee;
+            //ComponentReplacementTicket.Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString();
 
-            ComponentReplacementTicket = await ComponentReplacementTicketDao.Instance.CreateAsync(ComponentReplacementTicket);
+            //ComponentReplacementTicket = await ComponentReplacementTicketDao.Instance.CreateAsync(ComponentReplacementTicket);
 
-            return _mapper.Map<ComponentReplacementTicketDto>(ComponentReplacementTicket);
+            //return _mapper.Map<ComponentReplacementTicketDto>(ComponentReplacementTicket);
+
+            return new ComponentReplacementTicketDto();
         }
 
         public async Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId)

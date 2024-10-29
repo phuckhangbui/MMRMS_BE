@@ -16,10 +16,12 @@ public partial class MachineSerialNumber
 
     public virtual Machine? Machine { get; set; }
 
-    public virtual ICollection<MachineComponentStatus> MachineComponentStatuses { get; set; } = new List<MachineComponentStatus>();
+    public virtual ICollection<MachineSerialNumberComponent> MachineSerialNumberComponents { get; set; } = new List<MachineSerialNumberComponent>();
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
+
     public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
+
     public virtual ICollection<MachineSerialNumberLog> MachineSerialNumberLogs { get; set; } = new List<MachineSerialNumberLog>();
 
 }
