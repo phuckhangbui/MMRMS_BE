@@ -93,10 +93,6 @@ namespace API.Controllers
         public async Task<ActionResult<string>> CheckPostTransaction([FromRoute] string invoiceId)
         {
             int customerId = GetLoginAccountId();
-            if (customerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {

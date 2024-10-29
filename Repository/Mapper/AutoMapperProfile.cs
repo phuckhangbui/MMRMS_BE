@@ -320,6 +320,10 @@ namespace Repository.Mapper
                    opt => opt.MapFrom(src => src.AccountTrigger != null ? src.AccountTrigger.Name : null));
 
             CreateMap<ComponentReplacementTicket, ComponentReplacementTicketDto>()
+                .ForMember(dest => dest.SerialNumber,
+               opt => opt.MapFrom(src => src.Contract != null
+                           ? src.Contract.SerialNumber
+                           : null))
                .ForMember(dest => dest.EmployeeCreateName,
                opt => opt.MapFrom(src => src.EmployeeCreate != null
                            ? src.EmployeeCreate.Name
@@ -331,6 +335,11 @@ namespace Repository.Mapper
 
             CreateMap<ComponentReplacementTicketDto, ComponentReplacementTicket>();
 
+            CreateMap<ComponentReplacementTicketLog, ComponentReplacementTicketLogDto>()
+                .ForMember(dest => dest.AccountTriggerName,
+               opt => opt.MapFrom(src => src.AccountTrigger != null
+                           ? src.AccountTrigger.Name
+                           : null));
 
             CreateMap<LogDetail, LogDetailDto>()
                .ForMember(dest => dest.Name,

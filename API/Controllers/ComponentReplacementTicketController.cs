@@ -58,7 +58,7 @@ namespace API.Controllers
 
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetMachineCheckRequestsForCustomer()
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicketsForCustomer()
         {
             int customerId = GetLoginAccountId();
 
@@ -66,6 +66,25 @@ namespace API.Controllers
             {
                 IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTickets(customerId);
                 return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{replacementTicketId}/detail")]
+        [Authorize]
+        public async Task<ActionResult<ComponentReplacementTicketDetailDto>> GetComponentReplacementTicketDetail([FromRoute] string replacementTicketId)
+        {
+            try
+            {
+                var result = await _componentReplacementTicketService.GetComponentReplacementTicket(replacementTicketId);
+                return Ok(result);
             }
             catch (ServiceException ex)
             {

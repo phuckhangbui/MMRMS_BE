@@ -12,11 +12,13 @@ namespace Service.Implement
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IPayOSService _payOSService;
+        private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, IPayOSService payOSService)
+        public InvoiceService(IInvoiceRepository invoiceRepository, IPayOSService payOSService, IComponentReplacementTicketRepository componentReplacementTicketRepository)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
+            _componentReplacementTicketRepository = componentReplacementTicketRepository;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -105,9 +107,27 @@ namespace Service.Implement
             {
                 return false;
             }
+            //switch case to process contract and transaction here
+
+            if (invoice.Type.Equals(InvoiceTypeEnum.ComponentTicket.ToString()) && invoice.ComponentReplacementTicketId != null)
+            {
+                await _componentReplacementTicketRepository.UpdateTicketStatus(invoice.ComponentReplacementTicketId, ComponentReplacementTicketStatusEnum.Paid.ToString(), customerId);
+
+                //send notification
+
+                //realtime for ticket
+            }
+
 
             return true;
         }
+
+        //private async Task UpdateComponentTicketInvoice(string componentTicketId, int accountId)
+        //{
+        //    //var ticket = await _componentReplacementTicketRepository.GetTicket(componentTicketId);
+
+
+        //}
 
         private TransactionReturn GenerateSampleTransactionReturn()
         {
