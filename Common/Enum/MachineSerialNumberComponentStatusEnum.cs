@@ -2,7 +2,10 @@
 {
     public enum MachineSerialNumberComponentStatusEnum
     {
+        [Translation("Bình thường")]
         Normal,
-        NeedReplacement,
+
+        [Translation("Hư hỏng")]
+        Broken,
     }
 }

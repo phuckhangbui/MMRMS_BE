@@ -36,15 +36,30 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("manager/new")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsNewForManager()
+        {
+            try
+            {
+                IEnumerable<MachineCheckRequestDto> list = await _machineCheckRequestService.GetMachineCheckRequestsNew();
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("customer")]
         [Authorize(Policy = "Customer")]
         public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
-            if (customerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {

@@ -100,6 +100,13 @@ namespace Service.Implement
             return await _machineCheckRequestRepository.GetMachineCheckRequestsByCustomerId(customerId);
         }
 
+        public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsNew()
+        {
+            var list = await _machineCheckRequestRepository.GetMachineCheckRequests();
+
+            return list.Where(r => r.Status == MachineCheckRequestStatusEnum.New.ToString()).ToList();
+        }
+
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsOfContract(string contractId)
         {
             return await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(contractId);
