@@ -157,5 +157,6 @@ namespace Repository.Implement
 
             await MachineTaskLogDao.Instance.CreateAsync(taskLog);
         }
+
     }
 }

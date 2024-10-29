@@ -6,7 +6,7 @@ public partial class Invoice
 
     public int? AccountPaidId { get; set; }
 
-    public string? MaintainTicketId { get; set; }
+    public string? ComponentReplacementTicketId { get; set; }
 
     public string? DigitalTransactionId { get; set; }
 

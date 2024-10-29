@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241029082600_updateComponentTable")]
+    partial class updateComponentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,6 +252,9 @@ namespace DAO.Migrations
                     b.Property<int?>("MachineSerialNumberComponentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("MachineSerialNumberSerialNumber")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("MachineTaskCreateId")
                         .HasColumnType("int");
 
@@ -280,6 +286,8 @@ namespace DAO.Migrations
                         .HasFilter("[InvoiceId] IS NOT NULL");
 
                     b.HasIndex("MachineSerialNumberComponentId");
+
+                    b.HasIndex("MachineSerialNumberSerialNumber");
 
                     b.HasIndex("MachineTaskCreateId");
 
@@ -1045,6 +1053,9 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineTaskId"));
 
+                    b.Property<string>("ComponentReplacementTicketId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ConfirmationPictureUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -1086,6 +1097,8 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MachineTaskId");
+
+                    b.HasIndex("ComponentReplacementTicketId");
 
                     b.HasIndex("ContractId");
 
@@ -1536,6 +1549,10 @@ namespace DAO.Migrations
                         .HasForeignKey("MachineSerialNumberComponentId")
                         .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumberComponent");
 
+                    b.HasOne("BusinessObject.MachineSerialNumber", null)
+                        .WithMany("ComponentReplacementTickets")
+                        .HasForeignKey("MachineSerialNumberSerialNumber");
+
                     b.HasOne("BusinessObject.MachineTask", "MachineTaskCreate")
                         .WithMany("ComponentReplacementTicketsCreateFromTask")
                         .HasForeignKey("MachineTaskCreateId")
@@ -1864,6 +1881,10 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.MachineTask", b =>
                 {
+                    b.HasOne("BusinessObject.ComponentReplacementTicket", null)
+                        .WithMany("MachineTasks")
+                        .HasForeignKey("ComponentReplacementTicketId");
+
                     b.HasOne("BusinessObject.Contract", "Contract")
                         .WithMany("MachineTasks")
                         .HasForeignKey("ContractId")
@@ -2067,6 +2088,8 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.ComponentReplacementTicket", b =>
                 {
                     b.Navigation("ComponentReplacementTicketLogs");
+
+                    b.Navigation("MachineTasks");
                 });
 
             modelBuilder.Entity("BusinessObject.Contract", b =>
@@ -2136,6 +2159,8 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.MachineSerialNumber", b =>
                 {
+                    b.Navigation("ComponentReplacementTickets");
+
                     b.Navigation("Contracts");
 
                     b.Navigation("MachineSerialNumberComponents");

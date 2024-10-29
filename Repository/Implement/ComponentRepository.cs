@@ -113,14 +113,38 @@ namespace Repository.Implement
             component.ComponentName = componentDto.ComponentName;
             component.Status = componentDto.Status;
             component.Price = componentDto.Price;
-            component.AvailableQuantity = componentDto.Quantity;
+            component.AvailableQuantity = componentDto.AvailableQuantity;
 
             await ComponentDao.Instance.UpdateAsync(component);
         }
 
-        public Task MoveComponentQuanityFromAvailableToOnHold(int componentId, int quantity)
+        public async Task MoveComponentQuanityFromAvailableToOnHold(int componentId, int quantity)
         {
-            throw new NotImplementedException();
+            var component = await ComponentDao.Instance.GetComponent(componentId);
+
+            if (component == null)
+            {
+                throw new Exception(MessageConstant.Component.ComponentNotExisted);
+            }
+
+            component.AvailableQuantity -= quantity;
+            if (component.QuantityOnHold == null)
+            {
+                component.QuantityOnHold = 0;
+            }
+            component.QuantityOnHold += quantity;
+
+            if (component.AvailableQuantity < 0)
+            {
+                throw new Exception(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
+            }
+
+            if (component.AvailableQuantity == 0)
+            {
+                component.Status = ComponentStatusEnum.OutOfStock.ToString();
+            }
+
+            await ComponentDao.Instance.UpdateAsync(component);
         }
     }
 }

@@ -81,13 +81,16 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
-            if (component.Status != ComponentStatusEnum.Active.ToString() || (component?.Quantity) < createComponentReplacementTicketDto.Quantity)
+            if (component.Status != ComponentStatusEnum.Active.ToString() || (component?.AvailableQuantity) < createComponentReplacementTicketDto.Quantity)
             {
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
             }
 
+            var now = DateTime.Now;
+
             var replacementTicket = new ComponentReplacementTicketDto
             {
+                ComponentReplacementTicketId = GlobalConstant.ComponentReplacementTicketIdPrefixPattern + now.ToString(GlobalConstant.DateTimeFormatPattern),
                 EmployeeCreateId = staffId,
                 MachineTaskCreateId = createComponentReplacementTicketDto.MachineTaskCreateId,
                 ContractId = machineTask.ContractId,
@@ -97,16 +100,24 @@ namespace Service.Implement
                 AdditionalFee = createComponentReplacementTicketDto.AdditionalFee,
                 Quantity = createComponentReplacementTicketDto.Quantity,
                 TotalAmount = createComponentReplacementTicketDto.ComponentPrice * createComponentReplacementTicketDto.Quantity + createComponentReplacementTicketDto.AdditionalFee,
-                DateCreate = DateTime.Now,
+                DateCreate = now,
                 Status = ComponentReplacementTicketStatusEnum.Unpaid.ToString(),
                 Note = createComponentReplacementTicketDto.Note,
             };
+
+            var contract = await _contractRepository.GetContractById(machineTask.ContractId);
+
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+
+            }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    var componentReplacementTicketDto = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket);
+                    var newComponentTicket = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
 
@@ -120,8 +131,12 @@ namespace Service.Implement
                 }
             }
 
-            //await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)componentReplacementTicketDto.TotalAmount, componentReplacementTicketDto.ComponentName);
 
+
+            if (contract != null)
+            {
+                await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket((int)contract.AccountSignId, (double)replacementTicket.TotalAmount, replacementTicket.ComponentName);
+            }
             await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnCreateComponentReplacementTicket");
         }
 
