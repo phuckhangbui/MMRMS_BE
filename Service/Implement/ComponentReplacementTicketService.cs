@@ -117,7 +117,7 @@ namespace Service.Implement
             {
                 try
                 {
-                    await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
+                    var newComponentTicket = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
 

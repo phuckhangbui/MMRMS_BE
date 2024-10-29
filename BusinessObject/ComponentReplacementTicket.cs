@@ -36,8 +36,6 @@ public partial class ComponentReplacementTicket
 
     public virtual Component? Component { get; set; }
 
-    public virtual ICollection<MachineTask>? MachineTasks { get; set; } = new List<MachineTask>();
-
     public virtual ICollection<ComponentReplacementTicketLog>? ComponentReplacementTicketLogs { get; set; } = new List<ComponentReplacementTicketLog>();
 
     public virtual MachineTask? MachineTaskCreate { get; set; }

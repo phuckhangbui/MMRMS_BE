@@ -38,7 +38,7 @@ namespace DAO
 
 
         //have transaction inside the service layer
-        public async Task CreateTicket(ComponentReplacementTicket componentTicket, ComponentReplacementTicketLog ticketLog, Invoice invoice)
+        public async Task<ComponentReplacementTicket> CreateTicket(ComponentReplacementTicket componentTicket, ComponentReplacementTicketLog ticketLog, Invoice invoice)
         {
             using (var context = new MmrmsContext())
             {
@@ -60,6 +60,7 @@ namespace DAO
                 context.ComponentReplacementTicketLogs.Add(ticketLog);
                 await context.SaveChangesAsync();
 
+                return componentTicket;
             }
         }
 
