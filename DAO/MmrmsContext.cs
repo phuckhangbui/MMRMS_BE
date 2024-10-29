@@ -73,7 +73,7 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<MachineImage> MachineImages { get; set; }
 
-    public virtual DbSet<MachineComponentStatus> MachineComponentStatuses { get; set; }
+    public virtual DbSet<MachineSerialNumberComponent> MachineSerialNumberComponents { get; set; }
 
     public virtual DbSet<MachineSerialNumber> MachineSerialNumbers { get; set; }
 
@@ -545,9 +545,9 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_ComponentReplacementTicket_ComponentID");
 
 
-            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.ComponentReplacementTickets)
-                .HasForeignKey(d => d.SerialNumber)
-                .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumber");
+            entity.HasOne(d => d.MachineSerialNumberComponent).WithMany(p => p.ComponentReplacementTickets)
+                .HasForeignKey(d => d.MachineSerialNumberComponentId)
+                .HasConstraintName("FK_ComponentReplacementTicket_MachineSerialNumberComponent");
 
             entity.HasOne(d => d.Contract).WithMany(p => p.ComponentReplacementTickets)
                 .HasForeignKey(d => d.ContractId)
@@ -665,24 +665,24 @@ public partial class MmrmsContext : DbContext
                 .HasConstraintName("FK_MachineImage_Machine");
         });
 
-        modelBuilder.Entity<MachineComponentStatus>(entity =>
+        modelBuilder.Entity<MachineSerialNumberComponent>(entity =>
         {
-            entity.HasKey(e => e.MachineComponentStatusId);
+            entity.HasKey(e => e.MachineSerialNumberComponentId);
 
-            entity.ToTable("MachineComponentStatus");
+            entity.ToTable("MachineSerialNumberComponent");
 
-            entity.Property(e => e.MachineComponentStatusId)
+            entity.Property(e => e.MachineSerialNumberComponentId)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Component).WithMany(p => p.MachineComponentStatuses)
+            entity.HasOne(d => d.Component).WithMany(p => p.MachineSerialNumberComponents)
                 .HasForeignKey(d => d.ComponentId)
-                .HasConstraintName("FK_MachineComponentStatus_ComponentID");
+                .HasConstraintName("FK_MachineSerialNumberComponent_ComponentID");
 
-            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.MachineComponentStatuses)
+            entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.MachineSerialNumberComponents)
                 .HasForeignKey(d => d.SerialNumber)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_MachineComponentStatus_MachineSerialNumber");
+                .HasConstraintName("FK_MachineSerialNumberComponent_MachineSerialNumber");
         });
 
         modelBuilder.Entity<MachineSerialNumberLog>(entity =>
@@ -699,6 +699,10 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.SerialNumber)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_MachineSerialNumber_Log");
+
+            entity.HasOne(d => d.MachineSerialNumberComponent).WithMany(p => p.MachineSerialNumberLogs)
+                .HasForeignKey(d => d.MachineSerialNumberComponentId)
+                .HasConstraintName("FK_MachineSerialNumberComponent_Log");
 
             entity.HasOne(d => d.AccountTrigger).WithMany(p => p.MachineSerialNumberLogs)
                 .HasForeignKey(d => d.AccountTriggerId)

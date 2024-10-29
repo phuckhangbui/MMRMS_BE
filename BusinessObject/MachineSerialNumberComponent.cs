@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject;
 
-public partial class MachineComponentStatus
+public partial class MachineSerialNumberComponent
 {
-    public int MachineComponentStatusId { get; set; }
+    public int MachineSerialNumberComponentId { get; set; }
 
     public string? SerialNumber { get; set; }
 
@@ -20,6 +20,9 @@ public partial class MachineComponentStatus
 
     public virtual MachineSerialNumber? MachineSerialNumber { get; set; }
 
-    public virtual ICollection<MachineSerialNumberLog> MachineSerialNumberLog { get; set; } = new List<MachineSerialNumberLog>();
+    public virtual ICollection<MachineSerialNumberLog> MachineSerialNumberLogs { get; set; } = new List<MachineSerialNumberLog>();
+
+    public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
+
 
 }

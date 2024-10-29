@@ -6,7 +6,7 @@
 
         public string? SerialNumber { get; set; }
 
-        public string? MachineSerialNumberComponentId { get; set; }
+        public int? MachineSerialNumberComponentId { get; set; }
 
         public int? AccountTriggerId { get; set; }
 
@@ -19,5 +19,7 @@
         public virtual MachineSerialNumber? MachineSerialNumber { get; set; }
 
         public virtual Account? AccountTrigger { get; set; }
+
+        public virtual MachineSerialNumberComponent? MachineSerialNumberComponent { get; set; }
     }
 }

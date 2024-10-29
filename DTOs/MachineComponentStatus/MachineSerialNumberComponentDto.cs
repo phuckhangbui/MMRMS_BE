@@ -1,8 +1,8 @@
 ﻿namespace DTOs.MachineSerialNumber
 {
-    public class MachineComponentStatusDto
+    public class MachineSerialNumberComponentDto
     {
-        public int MachineComponentStatusId { get; set; }
+        public int MachineSerialNumberComponentId { get; set; }
 
         public string? SerialNumber { get; set; }
 

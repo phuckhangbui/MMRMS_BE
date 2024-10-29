@@ -193,8 +193,6 @@ namespace DAO
                                     ComponentId = component.ComponentId,
                                     MachineId = product.MachineId,
                                     Quantity = quantity,
-                                    Status = MachineComponentStatusEnum.Normal.ToString(),
-                                    IsRequiredMoney = isRequireMoney,
                                 };
 
                                 // Add the MachineComponent to the product's MachineComponents
@@ -250,8 +248,6 @@ namespace DAO
                                     ComponentId = component.ComponentId,
                                     MachineId = product.MachineId,
                                     Quantity = quantity,
-                                    Status = MachineComponentStatusEnum.Normal.ToString(),
-                                    IsRequiredMoney = isRequiredMoney
                                 };
 
                                 // Add the MachineComponent to the product's MachineComponents
