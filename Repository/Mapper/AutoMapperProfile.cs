@@ -185,6 +185,9 @@ namespace Repository.Mapper
                     src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.MachineId : null))
                 .ForMember(dest => dest.MachineName, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
                     src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.Machine.MachineName : null))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
+                    src.ContractMachineSerialNumber.Machine != null &&
+                    src.ContractMachineSerialNumber.Machine.MachineImages != null ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null))
                 .ForMember(dest => dest.IsOnetimePayment, opt => opt.MapFrom(src => src.RentingRequest != null ? src.RentingRequest.IsOnetimePayment : null));
             CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();

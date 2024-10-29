@@ -12,7 +12,7 @@ using Service.Interface;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace APITests.Service
+namespace Test.Service
 {
     public class AccountServiceTest
     {
@@ -53,7 +53,7 @@ namespace APITests.Service
         }
 
         [Fact]
-        public async void GetEmployeeAccountById_ReturnSuccessfully()
+        public async void GetEmployeeAccountDetail_ReturnSuccessfully()
         {
             int accountId = 4;
             var accountBase = GetSampleAccountBaseDto(accountId, (int)AccountRoleEnum.TechnicalStaff);
@@ -69,7 +69,7 @@ namespace APITests.Service
         }
 
         [Fact]
-        public async void GetEmployeeAccountById_ThrowsException_AccountNotFound()
+        public async void GetEmployeeAccountDetail_ThrowsException_AccountNotFound()
         {
             int accountId = -100;
             _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync((AccountBaseDto)null);
@@ -182,7 +182,7 @@ namespace APITests.Service
         }
 
         [Fact]
-        public async void ChangeAccountStatus_ThrowsException_AccountNotFound()
+        public async Task ChangeAccountStatus_ThrowsException_AccountNotFound()
         {
             string validStatus = AccountStatusEnum.Active.ToString();
             int accountId = 100;
@@ -193,7 +193,7 @@ namespace APITests.Service
         }
 
         [Fact]
-        public async void ChangeAccountStatus_ThrowsException_InvalidStatusValue()
+        public async Task ChangeAccountStatus_ThrowsException_InvalidStatusValue()
         {
             string invalidStatus = "InvalidStatus";
             int accountId = 4;

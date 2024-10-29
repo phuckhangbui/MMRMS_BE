@@ -226,7 +226,7 @@ namespace DAO
                 var rentalContractPayment = new ContractPayment
                 {
                     ContractId = contract.ContractId,
-                    DateCreate = DateTime.Now.Date,
+                    DateCreate = DateTime.Now,
                     Status = ContractPaymentStatusEnum.Pending.ToString(),
                     Type = ContractPaymentTypeEnum.Rental.ToString(),
                     Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,

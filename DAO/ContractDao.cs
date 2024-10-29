@@ -41,6 +41,7 @@ namespace DAO
                     .Include(c => c.ContractPayments)
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(a => a.Machine)
+                        .ThenInclude(m => m.MachineImages)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
         }
@@ -57,6 +58,7 @@ namespace DAO
                     .Include(c => c.ContractTerms)
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(a => a.Machine)
+                        .ThenInclude(m => m.MachineImages)
                     .ToListAsync();
             }
         }
