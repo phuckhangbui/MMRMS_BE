@@ -176,10 +176,12 @@ namespace Repository.Mapper
                     src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.Machine.MachineName : null))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
                     src.ContractMachineSerialNumber.Machine != null &&
-                    src.ContractMachineSerialNumber.Machine.MachineImages != null ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null));
+                    src.ContractMachineSerialNumber.Machine.MachineImages != null &&
+                    src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true) != null
+                    ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null));
             CreateMap<Contract, ContractDetailDto>()
                 .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
-                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign.AccountBusiness))
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign!= null ? src.AccountSign.AccountBusiness : null))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms))
                 .ForMember(dest => dest.MachineId, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
                     src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.MachineId : null))

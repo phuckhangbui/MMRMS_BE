@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Enum;
 using DTOs.Contract;
 using DTOs.Invoice;
 using Microsoft.IdentityModel.Tokens;
@@ -70,25 +71,35 @@ namespace Service.Implement
             return contracts;
         }
 
-        public async Task<IEnumerable<ContractDto>> GetContracts()
+        public async Task<IEnumerable<ContractDto>> GetContracts(string? status)
         {
             var contracts = await _contractRepository.GetContracts();
 
-            if (contracts.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(status))
             {
-                throw new ServiceException(MessageConstant.Contract.ContractListEmpty);
+                if (!Enum.IsDefined(typeof(ContractStatusEnum), status))
+                {
+                    throw new ServiceException(MessageConstant.InvalidStatusValue);
+                }
+
+                contracts = contracts.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
             }
 
             return contracts;
         }
 
-        public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId)
+        public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status)
         {
             var contracts = await _contractRepository.GetContractsForCustomer(customerId);
 
-            if (contracts.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(status))
             {
-                throw new ServiceException(MessageConstant.Contract.ContractListEmpty);
+                if (!Enum.IsDefined(typeof(ContractStatusEnum), status))
+                {
+                    throw new ServiceException(MessageConstant.InvalidStatusValue);
+                }
+
+                contracts = contracts.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
             }
 
             return contracts;

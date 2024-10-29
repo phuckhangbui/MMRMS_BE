@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Enum;
 using DTOs.RentingRequest;
 using Repository.Interface;
 using Service.Exceptions;
@@ -41,9 +42,21 @@ namespace Service.Implement
             return await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
         }
 
-        public async Task<IEnumerable<RentingRequestDto>> GetAll()
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests(string? status)
         {
-            return await _rentingRepository.GetRentingRequests();
+            var rentingRequests = await _rentingRepository.GetRentingRequests();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (!Enum.IsDefined(typeof(RentingRequestStatusEnum), status))
+                {
+                    throw new ServiceException(MessageConstant.InvalidStatusValue);
+                }
+
+                rentingRequests = rentingRequests.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return rentingRequests;
         }
 
         public async Task<RentingRequestDetailDto> GetRentingRequestDetail(string rentingRequestId)
