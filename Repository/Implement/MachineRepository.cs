@@ -105,7 +105,6 @@ namespace Repository.Implement
                 foreach (AddExistedComponentToMachine component in createMachineDto.ExistedComponentList)
                 {
                     var componentMachine = _mapper.Map<MachineComponent>(component);
-                    componentMachine.Status = MachineComponentStatusEnum.Normal.ToString();
                     componentMachines.Add(componentMachine);
                 }
             }
@@ -222,7 +221,6 @@ namespace Repository.Implement
                 foreach (AddExistedComponentToMachine component in componentList.ExistedComponentList)
                 {
                     var componentMachine = _mapper.Map<MachineComponent>(component);
-                    componentMachine.Status = MachineComponentStatusEnum.Normal.ToString();
                     componentMachines.Add(componentMachine);
                 }
             }

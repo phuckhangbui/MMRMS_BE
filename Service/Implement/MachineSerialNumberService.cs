@@ -126,7 +126,7 @@ namespace Service.Implement
             return await _machineSerialNumberRepository.GetMachineSerialNumberLog(serialNumber);
         }
 
-        public async Task<IEnumerable<MachineComponentStatusDto>> GetSerialNumberComponentStatus(string serialNumber)
+        public async Task<IEnumerable<MachineSerialNumberComponentDto>> GetSerialNumberComponents(string serialNumber)
         {
             var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
 
@@ -135,7 +135,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
             }
 
-            return await _machineSerialNumberRepository.GetMachineComponentStatus(serialNumber);
+            return await _machineSerialNumberRepository.GetMachineComponent(serialNumber);
         }
 
         public async Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId)

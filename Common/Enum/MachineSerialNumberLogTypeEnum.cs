@@ -2,7 +2,7 @@
 {
     public enum MachineSerialNumberLogTypeEnum
     {
-        System,
-        UpdateStatus,
+        Machine,
+        MachineComponent,
     }
 }
