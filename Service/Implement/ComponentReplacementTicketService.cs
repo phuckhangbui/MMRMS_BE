@@ -30,15 +30,15 @@ namespace Service.Implement
 
         public async Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
-            if (!await _componentRepository.IsComponentIdExisted(createComponentReplacementTicketDto.ComponentId))
-            {
-                throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
-            }
+            //if (!await _componentRepository.IsComponentIdExisted(createComponentReplacementTicketDto.ComponentId))
+            //{
+            //    throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+            //}
 
-            if (!await _machineSerialNumberRepository.IsSerialNumberExist(createComponentReplacementTicketDto.MachineSerialNumber))
-            {
-                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
-            }
+            //if (!await _machineSerialNumberRepository.IsSerialNumberExist(createComponentReplacementTicketDto.MachineSerialNumber))
+            //{
+            //    throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+            //}
 
             var contract = await _contractRepository.GetContractDetailById(createComponentReplacementTicketDto.ContractId);
 
@@ -67,6 +67,15 @@ namespace Service.Implement
         public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId)
         {
             return await _componentReplacementTicketRepository.GetTicketsByCustomerId(customerId);
+        }
+
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTicketsForStaff(int staffId)
+        {
+            var list = await _componentReplacementTicketRepository.GetTickets();
+
+            var result = list.Where(t => t.EmployeeCreateId == staffId).ToList();
+
+            return result;
         }
     }
 }

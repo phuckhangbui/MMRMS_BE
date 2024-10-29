@@ -103,7 +103,7 @@ namespace Repository.Implement
                 SerialNumber = serialMachine.SerialNumber,
                 AccountTriggerId = accountId,
                 Action = "Create new serial number product",
-                Type = MachineSerialNumberLogTypeEnum.System.ToString(),
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = now
             };
 
@@ -199,7 +199,7 @@ namespace Repository.Implement
             {
                 SerialNumber = serialNumber,
                 AccountTriggerId = accountId,
-                Type = MachineSerialNumberLogTypeEnum.UpdateStatus.ToString(),
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = DateTime.Now,
                 Action = $"Change status to {status}"
             };

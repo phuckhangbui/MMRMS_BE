@@ -15,5 +15,10 @@
         public string? Status { get; set; }
 
         public string? Note { get; set; }
+
+        public int? ComponentInStoreQuantity { get; set; }
+
+        public double? ComponentPrice { get; set; }
+
     }
 }

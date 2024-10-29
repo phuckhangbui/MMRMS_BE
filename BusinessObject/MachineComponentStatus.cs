@@ -14,8 +14,12 @@ public partial class MachineComponentStatus
 
     public string? Note { get; set; }
 
+    public DateTime? DateModified { get; set; }
+
     public virtual MachineComponent? Component { get; set; }
 
     public virtual MachineSerialNumber? MachineSerialNumber { get; set; }
+
+    public virtual ICollection<MachineSerialNumberLog> MachineSerialNumberLog { get; set; } = new List<MachineSerialNumberLog>();
 
 }

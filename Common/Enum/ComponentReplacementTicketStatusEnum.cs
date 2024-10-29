@@ -4,7 +4,6 @@
     {
         Unpaid,
         Paid,
-        Processing,
         Completed,
         Canceled
     }

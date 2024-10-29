@@ -66,8 +66,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{serialNumber}/component-status")]
-        public async Task<ActionResult<IEnumerable<MachineComponentStatusDto>>> GetMachineSerialNumberComponentStatus([FromRoute] string serialNumber)
+        [HttpGet("{serialNumber}/components")]
+        public async Task<ActionResult<IEnumerable<MachineComponentStatusDto>>> GetMachineSerialNumberComponentList([FromRoute] string serialNumber)
         {
 
             try

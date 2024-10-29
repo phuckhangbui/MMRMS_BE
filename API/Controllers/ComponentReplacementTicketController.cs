@@ -16,14 +16,34 @@ namespace API.Controllers
             _componentReplacementTicketService = ComponentReplacementTicketService;
         }
 
-        //TODO:KHANG
-        [HttpGet]
-        [Authorize(Policy = "ManagerAndStaff")]
-        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetMachineCheckRequests()
+        [HttpGet("manager")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicket()
         {
             try
             {
                 IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTickets();
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("technical-staff")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicketForStaff()
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTicketsForStaff(staffId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -41,10 +61,6 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetMachineCheckRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
-            if (customerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
