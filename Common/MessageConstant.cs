@@ -187,6 +187,7 @@
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
             public const string NoAvailableSerailNumberMachineForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
             public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
+            public const string ComponentIdNotFound = "Mã bộ phận máy serial này không tìm thấy";
 
             //DTO
             public const string MachineIdRequired = "ID máy là bắt buộc";

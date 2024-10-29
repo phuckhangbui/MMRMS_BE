@@ -12,5 +12,6 @@ namespace Service.Interface
         Task<IEnumerable<MachineSerialNumberLogDto>> GetDetailLog(string serialNumber);
         Task<IEnumerable<MachineSerialNumberComponentDto>> GetSerialNumberComponents(string serialNumber);
         Task ToggleStatus(string serialNumber, int staffId);
+        Task UpdateMachineSerialNumberComponentStatusToBroken(int machineSerialNumberComponentId, int accountId);
     }
 }

@@ -14,13 +14,15 @@ namespace Service.Implement
     {
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineRepository _productRepository;
+        private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         private readonly IMapper _mapper;
 
-        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper)
+        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository)
         {
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _productRepository = productRepository;
             _mapper = mapper;
+            _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
         }
 
         public async Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto dto, int accountId)
@@ -192,6 +194,23 @@ namespace Service.Implement
             }
 
             await _machineSerialNumberRepository.Update(serialNumber, machineSerialNumberUpdateDto);
+        }
+
+        public async Task UpdateMachineSerialNumberComponentStatusToBroken(int machineSerialNumberComponentId, int accountId)
+        {
+            var serialComponent = await _machineSerialNumberComponentRepository.GetComponent(machineSerialNumberComponentId);
+
+            if (serialComponent == null)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
+            }
+
+            if (serialComponent.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString())
+            {
+                return;
+            }
+
+            await _machineSerialNumberComponentRepository.UpdateComponentStatus(machineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Broken.ToString(), accountId);
         }
 
         //public async Task UpdateStatus(string serialNumber, string status)

@@ -41,10 +41,6 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<MachineCheckRequestDto>>> GetMachineCheckRequestsForCustomer()
         {
             int customerId = GetLoginAccountId();
-            if (customerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {

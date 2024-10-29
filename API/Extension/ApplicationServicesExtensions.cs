@@ -36,6 +36,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITermRepository, TermRepository>();
         services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IMachineSerialNumberComponentRepository, MachineSerialNumberComponentRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();

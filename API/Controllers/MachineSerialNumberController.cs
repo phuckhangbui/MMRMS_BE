@@ -85,13 +85,16 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{serialNumber}/update-component-status/broken")]
-        public async Task<ActionResult<IEnumerable<MachineSerialNumberComponentDto>>> UpdateMachineSerialNumberComponentStatusToBroken([FromRoute] string serialNumber)
+        [HttpPatch("{machineSerialNumberComponentId}/update-component-status/broken")]
+        [Authorize("Employee")]
+        public async Task<ActionResult> UpdateMachineSerialNumberComponentStatusToBroken([FromRoute] int machineSerialNumberComponentId)
         {
+            int accountId = GetLoginAccountId();
+
             try
             {
-                IEnumerable<MachineSerialNumberComponentDto> lists = await _machineSerialNumberService.GetSerialNumberComponents(serialNumber);
-                return Ok(lists);
+                await _machineSerialNumberService.UpdateMachineSerialNumberComponentStatusToBroken(machineSerialNumberComponentId, accountId);
+                return NoContent();
             }
             catch (ServiceException ex)
             {
