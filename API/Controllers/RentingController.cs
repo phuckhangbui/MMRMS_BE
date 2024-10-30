@@ -125,6 +125,12 @@ namespace API.Controllers
         [Authorize(policy: "Customer")]
         public async Task<ActionResult<RentingRequestInitDataDto>> InitializeRentingRequest([FromBody] RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto)
         {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
             try
             {
                 int customerId = GetLoginAccountId();

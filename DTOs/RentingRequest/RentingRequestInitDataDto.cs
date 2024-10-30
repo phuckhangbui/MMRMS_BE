@@ -1,7 +1,10 @@
-﻿using DTOs.Machine;
+﻿using Common;
+using DTOs.Machine;
 using DTOs.MembershipRank;
 using DTOs.RentingService;
 using DTOs.Term;
+using DTOs.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.RentingRequest
 {
@@ -30,9 +33,15 @@ namespace DTOs.RentingRequest
 
     public class RentingRequestMachineInRangeDto
     {
+        [Required(ErrorMessage = MessageConstant.RentingRequest.RequestMachinesRequired)]
         public List<int> MachineIds { get; set; }
-        public int NumberOfMonth { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.RentingRequest.DateStartRequired)]
+        [FutureOrPresentDate(ErrorMessage = MessageConstant.RentingRequest.DateFutureOrPresent)]
         public DateTime DateStart { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.RentingRequest.DateEndRequired)]
+        [FutureOrPresentDate(ErrorMessage = MessageConstant.RentingRequest.DateFutureOrPresent)]
         public DateTime DateEnd { get; set; }
     }
 }
