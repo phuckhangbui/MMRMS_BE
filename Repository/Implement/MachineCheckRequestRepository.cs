@@ -34,7 +34,7 @@ namespace Repository.Implement
             {
                 var checkCriteria = new MachineCheckRequestCriteria
                 {
-                    MachineCheckCriteriaId = criteria.MachineCheckCriteriaId,
+                    CriteriaName = criteria.CriteriaName,
                     CustomerNote = criteria.CustomerNote,
                     MachineCheckRequestId = request.MachineCheckRequestId
                 };

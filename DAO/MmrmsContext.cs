@@ -609,10 +609,6 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.MachineCheckRequestCriterias)
                 .HasForeignKey(d => d.MachineCheckRequestId)
                 .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckRequest");
-
-            entity.HasOne(d => d.MachineCheckCriteria).WithMany(p => p.MachineCheckRequestCriterias)
-                .HasForeignKey(d => d.MachineCheckCriteriaId)
-                .HasConstraintName("FK_MachineCheckRequestCriteria_MachineCheckCriteria");
         });
 
 

@@ -46,24 +46,13 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractIsNotReadyForRequest);
             }
 
-            var MachineCheckRequestList = await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(createMachineCheckRequestDto.ContractId);
+            var machineCheckRequestList = await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(createMachineCheckRequestDto.ContractId);
 
-            bool isFailToCreateNewRequest = MachineCheckRequestList.Any(request => request.Status == MachineCheckRequestStatusEnum.New.ToString() || request.Status == MachineCheckRequestStatusEnum.Assigned.ToString());
+            bool isFailToCreateNewRequest = machineCheckRequestList.Any(request => request.Status == MachineCheckRequestStatusEnum.New.ToString() || request.Status == MachineCheckRequestStatusEnum.Assigned.ToString());
 
             if (isFailToCreateNewRequest)
             {
                 throw new ServiceException(MessageConstant.MachineCheckRequest.PendingRequestStillExist);
-            }
-
-            var criteriaList = await GetMachineCheckCriterias();
-            var validCriteriaIds = criteriaList.Select(c => c.MachineCheckCriteriaId).ToHashSet();
-
-            foreach (var criteria in createMachineCheckRequestDto.CheckCriterias)
-            {
-                if (!validCriteriaIds.Contains(criteria.MachineCheckCriteriaId))
-                {
-                    throw new ServiceException(MessageConstant.MachineCheckRequest.CriteriaIdNotExisted + criteria.MachineCheckCriteriaId);
-                }
             }
 
             await _machineCheckRequestRepository.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);

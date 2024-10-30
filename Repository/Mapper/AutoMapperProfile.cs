@@ -268,11 +268,7 @@ namespace Repository.Mapper
                             ? src.Contract.RentingRequest.RentingRequestAddress
                             : null));
 
-            CreateMap<MachineCheckRequestCriteria, MachineCheckRequestCriteriaDto>()
-                .ForMember(dest => dest.CriteriaName,
-                opt => opt.MapFrom(src => src.MachineCheckCriteria != null
-                            ? src.MachineCheckCriteria.Name
-                            : null));
+            CreateMap<MachineCheckRequestCriteria, MachineCheckRequestCriteriaDto>();
 
             CreateMap<MachineCheckCriteria, MachineCheckCriteriaDto>();
 

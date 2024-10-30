@@ -18,9 +18,8 @@ namespace DTOs.MachineCheckRequest
 
     public class CheckCriteria
     {
-        [Required(ErrorMessage = MessageConstant.MachineCheckRequest.CriteriaIdRequired)]
-        public int MachineCheckCriteriaId { get; set; }
-
+        [Required(ErrorMessage = MessageConstant.MachineCheckRequest.CriteriaNameRequired)]
+        public int CriteriaName { get; set; }
         public string? CustomerNote { get; set; }
     }
 }

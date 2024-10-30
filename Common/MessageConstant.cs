@@ -330,7 +330,7 @@
             public const string CriteriaIdNotExisted = "Mã tiêu chí kiểm tra máy không tồn tại: Mã ";
 
             //DTO
-            public const string CriteriaIdRequired = "Mã tiêu chí kiểm tra máy là bắt buộc";
+            public const string CriteriaNameRequired = "Tên tiêu chí kiểm tra máy là bắt buộc";
 
         }
 
