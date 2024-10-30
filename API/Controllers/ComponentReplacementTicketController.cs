@@ -116,5 +116,26 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPatch("{componentReplacementTicketId}/complete")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> CompleteComponentReplacementTicket([FromRoute] string componentReplacementTicketId)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _componentReplacementTicketService.CompleteComponentReplacementTicket(staffId, componentReplacementTicketId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

@@ -122,5 +122,35 @@ namespace Repository.Implement
 
             await ComponentReplacementicketLogDao.Instance.CreateAsync(ticketLog);
         }
+
+        public async Task UpdateTicketStatusToComplete(string componentReplacementTicketId, int staffId)
+        {
+            var ticket = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicket(componentReplacementTicketId);
+
+            if (ticket == null)
+            {
+                throw new Exception(MessageConstant.ComponentReplacementTicket.TicketNotFound);
+            }
+
+            string status = ComponentReplacementTicketStatusEnum.Completed.ToString();
+
+            string oldStatus = ticket.Status;
+
+            ticket.Status = status;
+
+            await ComponentReplacementTicketDao.Instance.UpdateAsync(ticket);
+
+            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<ComponentReplacementTicketStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<ComponentReplacementTicketStatusEnum>(status)}]";
+
+            var ticketLog = new ComponentReplacementTicketLog
+            {
+                ComponentReplacementTicketId = componentReplacementTicketId,
+                AccountTriggerId = staffId,
+                DateCreate = DateTime.Now,
+                Action = action,
+            };
+
+            await ComponentReplacementicketLogDao.Instance.CreateAsync(ticketLog);
+        }
     }
 }

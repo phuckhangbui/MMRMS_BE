@@ -146,5 +146,43 @@ namespace Repository.Implement
 
             await ComponentDao.Instance.UpdateAsync(component);
         }
+
+        public async Task MoveComponentQuanityFromOnHoldToAvailable(int componentId, int quantity)
+        {
+            var component = await ComponentDao.Instance.GetComponent(componentId);
+
+            if (component == null)
+            {
+                throw new Exception(MessageConstant.Component.ComponentNotExisted);
+            }
+
+            component.AvailableQuantity += quantity;
+            if (component.QuantityOnHold == null)
+            {
+                component.QuantityOnHold = 0;
+            }
+            component.QuantityOnHold -= quantity;
+
+            if (component.Status == ComponentStatusEnum.OutOfStock.ToString())
+            {
+                component.Status = ComponentStatusEnum.Active.ToString();
+            }
+
+            await ComponentDao.Instance.UpdateAsync(component);
+        }
+
+        public async Task RemoveOnHoldQuantity(int componentId, int quantity)
+        {
+            var component = await ComponentDao.Instance.GetComponent(componentId);
+
+            if (component == null)
+            {
+                throw new Exception(MessageConstant.Component.ComponentNotExisted);
+            }
+
+            component.QuantityOnHold -= quantity;
+
+            await ComponentDao.Instance.UpdateAsync(component);
+        }
     }
 }

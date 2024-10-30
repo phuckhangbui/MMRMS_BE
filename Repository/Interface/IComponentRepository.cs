@@ -22,5 +22,7 @@ namespace Repository.Interface
         Task UpdateComponent(ComponentDto component);
 
         Task MoveComponentQuanityFromAvailableToOnHold(int componentId, int quantity);
+        Task MoveComponentQuanityFromOnHoldToAvailable(int componentId, int quantity);
+        Task RemoveOnHoldQuantity(int componentId, int quantity);
     }
 }

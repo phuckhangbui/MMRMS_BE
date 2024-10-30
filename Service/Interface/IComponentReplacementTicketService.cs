@@ -4,6 +4,7 @@ namespace Service.Interface
 {
     public interface IComponentReplacementTicketService
     {
+        Task CompleteComponentReplacementTicket(int staffId, string componentReplacementTicketId);
         Task CreateComponentReplacementTicketWhenCheckMachineRenting(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
         Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets();
