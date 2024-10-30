@@ -1,4 +1,5 @@
-﻿using DTOs.Contract;
+﻿using DTOs.ComponentReplacementTicket;
+using DTOs.Contract;
 using DTOs.MachineCheckRequest;
 using DTOs.Notification;
 
@@ -17,5 +18,7 @@ namespace Repository.Interface
         Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip);
         Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
         Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string? componentName);
+        Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket);
+        Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request);
     }
 }

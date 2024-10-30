@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
 using DTOs.MachineCheckRequest;
 using DTOs.Notification;
@@ -392,6 +393,88 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket)
+        {
+            string title = "Một ticket thay thế bộ phận máy của bạn đã được khách thanh toán";
+            string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được thanh toán";
 
+
+            string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = (int)ticket.EmployeeCreateId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request)
+        {
+            string title = $"Yêu cầu kiểm tra máy của bạn đã được thay đổi trạng thái";
+            string body = $"Yêu cầu số {request.MachineCheckRequestId} của máy {request.SerialNumber} đã được đổi thành [{EnumExtensions.TranslateStatus<MachineCheckRequestStatusEnum>(request.Status.ToString())}]";
+
+
+            string type = NotificationTypeEnum.MachineCheckRequest.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(accountSignId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = accountSignId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", accountSignId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

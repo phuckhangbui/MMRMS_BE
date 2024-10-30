@@ -34,7 +34,7 @@ namespace Repository.Implement
             {
                 var checkCriteria = new MachineCheckRequestCriteria
                 {
-                    MachineCheckCriteriaId = criteria.MachineCheckCriteriaId,
+                    CriteriaName = criteria.CriteriaName,
                     CustomerNote = criteria.CustomerNote,
                     MachineCheckRequestId = request.MachineCheckRequestId
                 };
@@ -43,7 +43,7 @@ namespace Repository.Implement
             }
 
 
-            await MachineCheckRequestDao.Instance.CreateMachineCheckRequest(request, machineCheckRequestCriterias);
+            MachineCheckRequestDao.Instance.CreateMachineCheckRequest(request, machineCheckRequestCriterias);
         }
 
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
@@ -59,7 +59,7 @@ namespace Repository.Implement
 
             var resultList = list.Where(c => c.ContractId.Equals(contractId)).ToList();
 
-            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(list);
+            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(resultList);
         }
 
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByCustomerId(int customerId)
@@ -83,9 +83,12 @@ namespace Repository.Implement
         {
             var machineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(machineCheckRequestId);
 
+            if (machineCheckRequest == null)
+            {
+                throw new Exception(MessageConstant.MachineCheckRequest.RequestNotFound);
+            }
+
             machineCheckRequest.Status = status;
-
-
 
             await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
         }
@@ -116,6 +119,13 @@ namespace Repository.Implement
             var list = await MachineCheckCriteriaDao.Instance.GetAllAsync();
 
             return _mapper.Map<IEnumerable<MachineCheckCriteriaDto>>(list);
+        }
+
+        public async Task UpdateRequest(MachineCheckRequestDto requestDto)
+        {
+            var request = _mapper.Map<MachineCheckRequest>(requestDto);
+
+            await MachineCheckRequestDao.Instance.UpdateAsync(request);
         }
     }
 }

@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241030082209_deleteMachineCheckRequestCriteriaConnection")]
+    partial class deleteMachineCheckRequestCriteriaConnection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -849,9 +852,6 @@ namespace DAO.Migrations
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MachineTaskId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -873,8 +873,8 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MachineCheckRequestCriteriaId"));
 
-                    b.Property<string>("CriteriaName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CriteriaName")
+                        .HasColumnType("int");
 
                     b.Property<string>("CustomerNote")
                         .HasColumnType("nvarchar(max)");
@@ -1089,9 +1089,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ContractId");
 
-                    b.HasIndex("MachineCheckRequestId")
-                        .IsUnique()
-                        .HasFilter("[MachineCheckRequestId] IS NOT NULL");
+                    b.HasIndex("MachineCheckRequestId");
 
                     b.HasIndex("ManagerId");
 
@@ -1834,8 +1832,8 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_Task_Contract");
 
                     b.HasOne("BusinessObject.MachineCheckRequest", "MachineCheckRequest")
-                        .WithOne("MachineTask")
-                        .HasForeignKey("BusinessObject.MachineTask", "MachineCheckRequestId")
+                        .WithMany("MachineTasks")
+                        .HasForeignKey("MachineCheckRequestId")
                         .HasConstraintName("FK_Task_MachineCheckRequest");
 
                     b.HasOne("BusinessObject.Account", "Manager")
@@ -2073,7 +2071,7 @@ namespace DAO.Migrations
                 {
                     b.Navigation("MachineCheckRequestCriterias");
 
-                    b.Navigation("MachineTask");
+                    b.Navigation("MachineTasks");
                 });
 
             modelBuilder.Entity("BusinessObject.MachineComponent", b =>
