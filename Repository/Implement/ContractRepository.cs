@@ -277,5 +277,15 @@ namespace Repository.Implement
 
             await ContractDao.Instance.UpdateAsync(contract);
         }
+
+        public async Task UpdateDepositContractPayment(string invoiceId)
+        {
+            await ContractPaymentDao.Instance.UpdateDepositContractPayment(invoiceId);
+        }
+
+        public async Task UpdateRentalContractPayment(string invoiceId)
+        {
+            await ContractPaymentDao.Instance.UpdateRentalContractPayment(invoiceId);
+        }
     }
 }

@@ -5,6 +5,7 @@ using DTOs.Invoice;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using System.Transactions;
 
 namespace Service.Implement
 {
@@ -13,12 +14,17 @@ namespace Service.Implement
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IPayOSService _payOSService;
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
+        private readonly IContractRepository _contractRepository;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, IPayOSService payOSService, IComponentReplacementTicketRepository componentReplacementTicketRepository)
+        public InvoiceService(IInvoiceRepository invoiceRepository, 
+            IPayOSService payOSService, 
+            IComponentReplacementTicketRepository componentReplacementTicketRepository,
+            IContractRepository contractRepository)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
             _componentReplacementTicketRepository = componentReplacementTicketRepository;
+            _contractRepository = contractRepository;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -102,24 +108,44 @@ namespace Service.Implement
 
             }
 
-            invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
-            if (invoice == null || invoice.Status != InvoiceStatusEnum.Paid.ToString())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                return false;
+                try
+                {
+                    invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
+                    if (invoice == null || invoice.Status != InvoiceStatusEnum.Paid.ToString())
+                    {
+                        return false;
+                    }
+                    //switch case to process contract and transaction here
+                    if (invoice.Type.Equals(InvoiceTypeEnum.ComponentTicket.ToString()) && invoice.ComponentReplacementTicketId != null)
+                    {
+                        await _componentReplacementTicketRepository.UpdateTicketStatus(invoice.ComponentReplacementTicketId, ComponentReplacementTicketStatusEnum.Paid.ToString(), customerId);
+
+                        //send notification
+
+                        //realtime for ticket
+                    }
+                    else if (invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()))
+                    {
+                        await _contractRepository.UpdateDepositContractPayment(invoiceId);
+                    }
+                    else if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
+                    {
+                        await _contractRepository.UpdateRentalContractPayment(invoiceId);
+                    }
+
+                    scope.Complete();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    {
+                        throw new ServiceException(MessageConstant.Invoice.PayInvoiceFail);
+                    }
+                }
             }
-            //switch case to process contract and transaction here
-
-            if (invoice.Type.Equals(InvoiceTypeEnum.ComponentTicket.ToString()) && invoice.ComponentReplacementTicketId != null)
-            {
-                await _componentReplacementTicketRepository.UpdateTicketStatus(invoice.ComponentReplacementTicketId, ComponentReplacementTicketStatusEnum.Paid.ToString(), customerId);
-
-                //send notification
-
-                //realtime for ticket
-            }
-
-
-            return true;
         }
 
         //private async Task UpdateComponentTicketInvoice(string componentTicketId, int accountId)
