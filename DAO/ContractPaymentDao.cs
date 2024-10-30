@@ -37,16 +37,18 @@ namespace DAO
                     .ToListAsync();
             }
         }
-
-        public async Task UpdateRentalContractPayment(string invoiceId)
+        
+        public async Task<string?> UpdateContractPayments(string invoiceId)
         {
             using var context = new MmrmsContext();
 
             var invoice = await context.Invoices
-                    .Include(i => i.ContractPayments)
-                        .ThenInclude(cp => cp.Contract)
-                        .ThenInclude(c => c.RentingRequest)
-                    .FirstOrDefaultAsync(i => i.InvoiceId.Equals(invoiceId));
+                .Include(i => i.ContractPayments)
+                    .ThenInclude(cp => cp.Contract)
+                    .ThenInclude(c => c.RentingRequest)
+                .FirstOrDefaultAsync(i => i.InvoiceId.Equals(invoiceId));
+
+            if (invoice == null) return null;
 
             string rentingRequestId = null;
             foreach (var contractPayment in invoice.ContractPayments)
@@ -56,45 +58,50 @@ namespace DAO
                 rentingRequestId = contractPayment.Contract.RentingRequestId;
 
                 if (contractPayment.Contract == null || contractPayment.Contract.RentingRequest == null)
-                {
                     continue;
-                }
 
-                var isDepositPaymentPaid = await context.ContractPayments
-                        .AnyAsync(cp => cp.ContractId.Equals(contractPayment.ContractId) &&
-                                        cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
-                                        cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
-                if (isDepositPaymentPaid)
+                await context.SaveChangesAsync();
+            }
+
+            return rentingRequestId;
+        }
+
+        public async Task ScheduleNextRentalPayment(string rentingRequestId)
+        {
+            using var context = new MmrmsContext();
+
+            var contracts = await context.Contracts
+                .Include(c => c.ContractPayments)
+                .Where(c => c.RentingRequestId.Equals(rentingRequestId))
+                .ToListAsync();
+
+            foreach (var contract in contracts)
+            {
+                foreach (var contractPayment in contract.ContractPayments)
                 {
-                    contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
-                    contractPayment.Contract.DateSign = invoice.DatePaid;
+                    var nextContractPayment = await context.ContractPayments
+                        .Where(cp => cp.ContractId == contractPayment.ContractId &&
+                                     cp.Status == ContractPaymentStatusEnum.Pending.ToString() &&
+                                     cp.Type == ContractPaymentTypeEnum.Rental.ToString() &&
+                                     cp.DateFrom > contractPayment.DateFrom)
+                        .OrderBy(cp => cp.DateFrom)
+                        .FirstOrDefaultAsync();
+
+                    if (nextContractPayment != null)
+                    {
+                        DateTime oneWeekBefore = nextContractPayment.DateFrom.Value.AddDays(-7);
+                        TimeSpan delayToStart = oneWeekBefore - DateTime.Now;
+
+                        SheduleInvoiceGeneration(nextContractPayment.ContractPaymentId, delayToStart);
+                    }
+                    else
+                    {
+                        ScheduleContractCompletion(contractPayment.Contract);
+                    }
 
                     await context.SaveChangesAsync();
                 }
-
-                //
-                var nextContractPayment = await context.ContractPayments
-                    .Where(cp => cp.ContractId.Equals(contractPayment.ContractId) &&
-                        cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
-                        cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
-                        cp.DateFrom > contractPayment.DateFrom)
-                    .OrderBy(cp => cp.DateFrom)
-                    .FirstOrDefaultAsync();
-
-                if (nextContractPayment != null)
-                {
-                    DateTime oneWeekBefore = contractPayment.DateFrom.Value.AddDays(-7);
-                    TimeSpan delayToStart = oneWeekBefore - DateTime.Now;
-
-                    SheduleInvoiceGeneration(contractPayment.ContractPaymentId, delayToStart);
-                }
-                else
-                {
-                    ScheduleContractCompletion(contractPayment.Contract);
-                }
             }
-
-            await UpdateRentingRequest(context, rentingRequestId);
         }
 
         private void ScheduleContractCompletion(Contract contract)
@@ -115,58 +122,16 @@ namespace DAO
             backgroundImpl.GenerateInvoiceJob(contractPaymentId, delayToStart);
         }
 
-        public async Task UpdateDepositContractPayment(string invoiceId)
+        public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
         {
             using var context = new MmrmsContext();
 
-            var invoice = await context.Invoices
-                    .Include(i => i.ContractPayments)
-                        .ThenInclude(cp => cp.Contract)
-                        .ThenInclude(c => c.RentingRequest)
-                    .FirstOrDefaultAsync(i => i.InvoiceId.Equals(invoiceId));
-            //if (invoice == null) return null;
-
-            string rentingRequestId = null;
-            foreach (var contractPayment in invoice.ContractPayments)
-            {
-                contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
-                contractPayment.CustomerPaidDate = invoice.DatePaid;
-                rentingRequestId = contractPayment.Contract.RentingRequestId;
-
-                if (contractPayment.Contract == null || contractPayment.Contract.RentingRequest == null)
-                {
-                    continue;
-                }
-
-                var isFirstRentalPaymentPaid = await context.ContractPayments
-                    .AnyAsync(cp => cp.ContractId.Equals(contractPayment.ContractId) &&
-                                 cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
-                                 cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()) &&
-                                 cp.IsFirstRentalPayment == true);
-                if (isFirstRentalPaymentPaid)
-                {
-                    contractPayment.Contract.Status = ContractStatusEnum.Signed.ToString();
-                    contractPayment.Contract.DateSign = invoice.DatePaid;
-
-                    await context.SaveChangesAsync();
-                }
-            }
-
-            await context.SaveChangesAsync();
-
-            //return invoice;
-            await UpdateRentingRequest(context, rentingRequestId);
-        }
-
-        private async Task UpdateRentingRequest(MmrmsContext context, string rentingRequestId)
-        {
-            //using var context = new MmrmsContext();
             var rentingRequest = await context.RentingRequests
                 .Where(r => r.RentingRequestId.Equals(rentingRequestId))
                 .Include(r => r.Contracts)
                 .FirstOrDefaultAsync();
 
-            bool allPaid = true;
+            bool isAllPaid = true;
             foreach (var contract in rentingRequest.Contracts)
             {
                 var depositPaid = await context.ContractPayments
@@ -182,18 +147,12 @@ namespace DAO
 
                 if (!depositPaid || !firstRentalPaid)
                 {
-                    allPaid = false;
+                    isAllPaid = false;
                     break;
                 }
             }
 
-
-            if (allPaid)
-            {
-                rentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
-
-                await context.SaveChangesAsync();
-            }
+            return isAllPaid;
         }
     }
 }

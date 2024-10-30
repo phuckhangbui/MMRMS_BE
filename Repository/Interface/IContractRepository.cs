@@ -15,7 +15,9 @@ namespace Repository.Interface
         Task<ContractAddressDto> GetContractAddressById(string contractId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
         Task UpdateContractStatus(string contractId, string status);
-        Task UpdateDepositContractPayment(string invoiceId);
-        Task UpdateRentalContractPayment(string invoiceId);
+        Task<string?> UpdateContractPayments(string invoiceId);
+        Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
+        Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
+        Task ScheduleNextRentalPayment(string rentingRequestId);
     }
 }
