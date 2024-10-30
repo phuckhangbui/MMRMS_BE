@@ -117,22 +117,22 @@ namespace Service.Implement
                     {
                         return false;
                     }
-                    //switch case to process contract and transaction here
-                    if (invoice.Type.Equals(InvoiceTypeEnum.ComponentTicket.ToString()) && invoice.ComponentReplacementTicketId != null)
-                    {
-                        await _componentReplacementTicketRepository.UpdateTicketStatus(invoice.ComponentReplacementTicketId, ComponentReplacementTicketStatusEnum.Paid.ToString(), customerId);
 
-                        //send notification
+                    switch (invoice.Type)
+                    {
+                        case var type when type.Equals(InvoiceTypeEnum.ComponentTicket.ToString()) && invoice.ComponentReplacementTicketId != null:
+                            await _componentReplacementTicketRepository.UpdateTicketStatus(
+                                invoice.ComponentReplacementTicketId,
+                                ComponentReplacementTicketStatusEnum.Paid.ToString(),
+                                customerId
+                            );
 
-                        //realtime for ticket
-                    }
-                    else if (invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()))
-                    {
-                        await _contractRepository.UpdateDepositContractPayment(invoiceId);
-                    }
-                    else if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
-                    {
-                        await _contractRepository.UpdateRentalContractPayment(invoiceId);
+                            // Handle notification and real-time updates here
+                            break;
+
+                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || type.Equals(InvoiceTypeEnum.Rental.ToString()):
+                            await HandleContractPayment(invoice);
+                            break;
                     }
 
                     scope.Complete();
@@ -147,13 +147,22 @@ namespace Service.Implement
                 }
             }
         }
+        private async Task HandleContractPayment(InvoiceDto invoice)
+        {
+            var rentingRequestId = await _contractRepository.UpdateContractPayments(invoice.InvoiceId);
 
-        //private async Task UpdateComponentTicketInvoice(string componentTicketId, int accountId)
-        //{
-        //    //var ticket = await _componentReplacementTicketRepository.GetTicket(componentTicketId);
+            var isDepositAndFirstRentalPaid = await _contractRepository.IsDepositAndFirstRentalPaid(rentingRequestId);
 
+            if (isDepositAndFirstRentalPaid)
+            {
+                await _contractRepository.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, (DateTime)invoice.DatePaid);
 
-        //}
+                if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
+                {
+                    await _contractRepository.ScheduleNextRentalPayment(rentingRequestId);
+                }
+            }
+        }
 
         private TransactionReturn GenerateSampleTransactionReturn()
         {

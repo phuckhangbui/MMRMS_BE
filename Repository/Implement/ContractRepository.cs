@@ -278,14 +278,24 @@ namespace Repository.Implement
             await ContractDao.Instance.UpdateAsync(contract);
         }
 
-        public async Task UpdateDepositContractPayment(string invoiceId)
+        public async Task<string?> UpdateContractPayments(string invoiceId)
         {
-            await ContractPaymentDao.Instance.UpdateDepositContractPayment(invoiceId);
+            return await ContractPaymentDao.Instance.UpdateContractPayments(invoiceId);
         }
 
-        public async Task UpdateRentalContractPayment(string invoiceId)
+        public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
         {
-            await ContractPaymentDao.Instance.UpdateRentalContractPayment(invoiceId);
+            return await ContractPaymentDao.Instance.IsDepositAndFirstRentalPaid(rentingRequestId);
+        }
+
+        public async Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate)
+        {
+            await ContractDao.Instance.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, paymentDate);
+        }
+
+        public async Task ScheduleNextRentalPayment(string rentingRequestId)
+        {
+            await ContractPaymentDao.Instance.ScheduleNextRentalPayment(rentingRequestId);
         }
     }
 }

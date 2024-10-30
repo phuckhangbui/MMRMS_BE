@@ -3,6 +3,7 @@ using Common;
 using Common.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DAO
@@ -85,6 +86,29 @@ namespace DAO
                         .ThenInclude(s => s.Machine)
                     .ThenInclude(m => m.MachineImages)
                     .ToListAsync();
+            }
+        }
+
+        public async Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate)
+        {
+            using var context = new MmrmsContext();
+
+            var rentingRequest = await context.RentingRequests
+                .Include(r => r.Contracts)
+                    .ThenInclude(c => c.ContractPayments)
+                .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestId));
+
+            if (rentingRequest != null && !rentingRequest.Contracts.IsNullOrEmpty())
+            {
+                rentingRequest.Status = RentingRequestStatusEnum.Signed.ToString();
+
+                foreach (var contract in rentingRequest.Contracts)
+                {
+                    contract.Status = ContractStatusEnum.Signed.ToString();
+                    contract.DateSign = paymentDate;
+
+                    await context.SaveChangesAsync();
+                }
             }
         }
 
