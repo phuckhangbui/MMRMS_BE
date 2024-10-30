@@ -252,7 +252,7 @@
             public const string AddressIdRequired = "Địa chỉ là bắt buộc.";
             public const string DateStartRequired = "Ngày bắt đầu là bắt buộc.";
             public const string DateEndRequired = "Ngày kết thúc là bắt buộc.";
-            public const string DateStartFutureOrPresent = "Ngày bắt đầu phải là hôm nay hoặc trong tương lai.";
+            public const string DateFutureOrPresent = "Ngày phải là hôm nay hoặc trong tương lai.";
             public const string TotalRentPriceRequired = "Tổng giá thuê là bắt buộc.";
             public const string TotalDepositPriceRequired = "Tổng tiền đặt cọc là bắt buộc.";
             public const string ShippingPriceRequired = "Phí vận chuyển là bắt buộc.";
