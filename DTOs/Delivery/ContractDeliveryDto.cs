@@ -6,6 +6,8 @@
 
         public string? ContractId { get; set; }
 
+        public string? SerialNumber { get; set; }
+
         public int? DeliveryTaskId { get; set; }
 
         public string? PictureUrl { get; set; }

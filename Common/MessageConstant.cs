@@ -367,6 +367,9 @@
             public const string BiggerQuantityThanMachine = "Số lượng nhập vào lớn hơn số lượng bộ phận của máy";
             public const string NotEnoughQuantity = "Bộ phận này hiện nay không có trong kho";
             public const string CreateFail = "Tạo ticket thay thế bộ phận máy thất bại";
+            public const string NotReadyToBeCompletedWhenNotPaid = "Ticket này chưa thể hoàn thành do chưa thanh toán";
+            public const string NotCorrectStaffId = "Tài khoản này không phải là người tạo ticket, do đó không thể hoàn thành nó";
+            public const string CompleteFail = "Cập nhật trạng thái hoàn thành của ticket thất bại";
 
             //DTO
             public const string MachineSerialNumberComponentIdRequired = "Mã bộ phận máy của máy serial là bắt buộc";

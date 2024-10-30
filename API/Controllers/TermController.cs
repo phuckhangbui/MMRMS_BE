@@ -51,7 +51,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("product")]
+        [HttpGet("machine")]
         public async Task<ActionResult<IEnumerable<TermDto>>> GetMachineTerms()
         {
             try

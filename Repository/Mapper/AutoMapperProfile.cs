@@ -181,7 +181,7 @@ namespace Repository.Mapper
                     ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null));
             CreateMap<Contract, ContractDetailDto>()
                 .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
-                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign!= null ? src.AccountSign.AccountBusiness : null))
+                .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign != null ? src.AccountSign.AccountBusiness : null))
                 .ForMember(dest => dest.ContractTerms, opt => opt.MapFrom(src => src.ContractTerms))
                 .ForMember(dest => dest.MachineId, opt => opt.MapFrom(src => src.ContractMachineSerialNumber != null &&
                     src.ContractMachineSerialNumber.Machine != null ? src.ContractMachineSerialNumber.MachineId : null))
@@ -238,15 +238,6 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.Staff != null ? src.Staff.Name : null))
                     .ForMember(dest => dest.ManagerName,
                         opt => opt.MapFrom(src => src.Manager != null ? src.Manager.Name : null))
-                    .ForMember(dest => dest.SerialNumber,
-                        opt => opt.MapFrom(src =>
-                            src.ContractDeliveries != null
-                            && src.ContractDeliveries.Any(d => d.Contract != null)
-                            && src.ContractDeliveries.FirstOrDefault(d => d.Contract != null).Contract != null
-                            ? src.ContractDeliveries
-                                .FirstOrDefault(d => d.Contract != null)
-                                .Contract.SerialNumber
-                            : null))
                     .ForMember(dest => dest.ContractAddress,
                         opt => opt.MapFrom(src =>
                             src.ContractDeliveries != null
@@ -260,7 +251,9 @@ namespace Repository.Mapper
             CreateMap<DeliveryTaskLog, DeliveryTaskLogDto>()
                 .ForMember(dest => dest.AccountTriggerName,
                         opt => opt.MapFrom(src => src.AccountTrigger != null ? src.AccountTrigger.Name : null));
-            CreateMap<ContractDelivery, ContractDeliveryDto>();
+            CreateMap<ContractDelivery, ContractDeliveryDto>()
+                .ForMember(dest => dest.SerialNumber,
+                        opt => opt.MapFrom(src => src.Contract != null ? src.Contract.SerialNumber : null));
 
 
 

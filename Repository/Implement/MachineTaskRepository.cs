@@ -96,14 +96,6 @@ namespace Repository.Implement
 
             var taskLogsDto = _mapper.Map<List<MachineTaskLogDto>>(machineTaskLogs);
 
-            //var taskLogsto = new List<MachineTaskLogDto>();
-
-            //foreach (var log in machineTaskLogs)
-            //{
-            //    var logDto = _mapper.Map<MachineTaskLogDto>(log);
-            //    taskLogsto.Add(logDto);
-            //}
-
             var componentReplacementTicketCreateFromTaskList = _mapper.Map<List<ComponentReplacementTicketDto>>(machineTask.ComponentReplacementTicketsCreateFromTask);
 
             var taskDetail = _mapper.Map<MachineTaskDisplayDetail>(machineTask);
