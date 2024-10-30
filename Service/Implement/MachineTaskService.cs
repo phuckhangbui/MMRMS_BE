@@ -18,14 +18,13 @@ namespace Service.Implement
         private readonly IAccountRepository _accountRepository;
         private readonly IMachineCheckRequestRepository _machineCheckRequestRepository;
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
-        private readonly IRequestResponseRepository _requestResponseRepository;
         private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
         private readonly IContractRepository _contractRepository;
         private readonly INotificationService _notificationService;
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
-        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IRequestResponseRepository requestResponseRepository)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository)
         {
             _machineTaskRepository = MachineTaskRepository;
             _machineTaskHub = MachineTaskHub;
@@ -35,7 +34,6 @@ namespace Service.Implement
             _mapper = mapper;
             _contractRepository = contractRepository;
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
-            _requestResponseRepository = requestResponseRepository;
             _machineCheckRequestRepository = machineCheckRequestRepository;
         }
 
@@ -209,11 +207,11 @@ namespace Service.Implement
 
                     //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
 
-                    var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
+                    //var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
 
-                    if (requestResponse != null)
+                    if (machineTask.MachineCheckRequestId != null)
                     {
-                        await _machineCheckRequestRepository.UpdateRequestStatus(requestResponse.MachineCheckRequestId
+                        await _machineCheckRequestRepository.UpdateRequestStatus(machineTask.MachineCheckRequestId
                                                                                    , MachineCheckRequestStatusEnum.Completed.ToString());
                     }
 

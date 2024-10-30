@@ -10,5 +10,6 @@ namespace Repository.Interface
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketsByCustomerId(int customerId);
         Task UpdateTicketStatus(string componentTicketId, string status, int accountId);
+        Task UpdateTicketStatusToComplete(string componentReplacementTicketId, int staffId);
     }
 }

@@ -117,7 +117,7 @@ namespace DAO
                 return await context.Deliveries
                     .Include(d => d.Staff)
                     .Include(d => d.Manager)
-                    .Include(d => d.DeliveryTaskLogs)
+                    .Include(d => d.DeliveryTaskLogs.OrderByDescending(l => l.DateCreate))
                     .ThenInclude(l => l.AccountTrigger)
                     .Include(d => d.ContractDeliveries)
                     .ThenInclude(d => d.Contract)

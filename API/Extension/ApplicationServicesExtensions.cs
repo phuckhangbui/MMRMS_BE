@@ -34,7 +34,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IComponentReplacementTicketRepository, ComponentReplacementTicketRepository>();
         services.AddScoped<IAccountLogRepository, AccountLogRepository>();
         services.AddScoped<ITermRepository, TermRepository>();
-        services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
+        //services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IMachineSerialNumberComponentRepository, MachineSerialNumberComponentRepository>();
 

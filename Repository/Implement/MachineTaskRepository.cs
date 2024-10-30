@@ -29,13 +29,6 @@ namespace Repository.Implement
             var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(createMachineTaskDto.RequestId);
 
             var now = DateTime.Now;
-            var requestResponse = new RequestResponse
-            {
-                MachineCheckRequestId = createMachineTaskDto.RequestId,
-                DateCreate = now,
-                DateResponse = createMachineTaskDto.DateStart,
-                Action = $"Yêu cầu của bạn đã được giao cho một nhân viên kiểm tra"
-            };
 
             var task = new MachineTask
             {
@@ -48,7 +41,7 @@ namespace Repository.Implement
                 DateStart = createMachineTaskDto.DateStart,
                 Status = MachineTaskStatusEnum.Created.ToString(),
                 Note = createMachineTaskDto.Note,
-                RequestResponseId = requestResponse.RequestResponseId,
+                MachineCheckRequestId = createMachineTaskDto.RequestId,
                 ContractId = request.ContractId
             };
 
@@ -59,7 +52,7 @@ namespace Repository.Implement
                 AccountTriggerId = managerId,
             };
 
-            await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog, requestResponse);
+            await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog);
 
             request.Status = MachineCheckRequestStatusEnum.Assigned.ToString();
             await MachineCheckRequestDao.Instance.UpdateAsync(request);
@@ -95,14 +88,6 @@ namespace Repository.Implement
             List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask.MachineTaskLogs;
 
             var taskLogsDto = _mapper.Map<List<MachineTaskLogDto>>(machineTaskLogs);
-
-            //var taskLogsto = new List<MachineTaskLogDto>();
-
-            //foreach (var log in machineTaskLogs)
-            //{
-            //    var logDto = _mapper.Map<MachineTaskLogDto>(log);
-            //    taskLogsto.Add(logDto);
-            //}
 
             var componentReplacementTicketCreateFromTaskList = _mapper.Map<List<ComponentReplacementTicketDto>>(machineTask.ComponentReplacementTicketsCreateFromTask);
 

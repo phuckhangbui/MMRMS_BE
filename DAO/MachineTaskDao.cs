@@ -52,16 +52,16 @@ namespace DAO
             {
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
-                                                 .Include(d => d.MachineTaskLogs)
+                                                 .Include(d => d.MachineTaskLogs.OrderByDescending(l => l.DateCreate))
                                                  .ThenInclude(l => l.AccountTrigger)
                                                  .Include(d => d.ComponentReplacementTicketsCreateFromTask)
-                                                 .Include(d => d.RequestResponse)
+                                                 .Include(d => d.MachineCheckRequest)
                                                  .Include(d => d.Contract)
                                                  .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
             }
         }
 
-        public async Task CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog, RequestResponse requestResponse)
+        public async Task CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog)
         {
             using (var context = new MmrmsContext())
             {
@@ -69,15 +69,7 @@ namespace DAO
                 {
                     try
                     {
-                        context.RequestResponses.Add(requestResponse);
-                        await context.SaveChangesAsync();
-
-                        task.RequestResponseId = requestResponse.RequestResponseId;
                         context.MachineTasks.Add(task);
-                        await context.SaveChangesAsync();
-
-                        requestResponse.MachineTaskId = task.MachineTaskId;
-                        context.RequestResponses.Update(requestResponse);
                         await context.SaveChangesAsync();
 
                         taskLog.MachineTaskId = task.MachineTaskId;

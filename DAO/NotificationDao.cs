@@ -37,7 +37,10 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Notifications.Where(p => p.AccountReceiveId == receiverId).ToListAsync();
+                return await context.Notifications
+                                    .Where(p => p.AccountReceiveId == receiverId)
+                                    .OrderByDescending(p => p.DateCreate)
+                                    .ToListAsync();
             }
         }
     }

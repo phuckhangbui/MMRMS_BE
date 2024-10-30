@@ -12,6 +12,6 @@
 
         public DateTime? DateCreate { get; set; }
 
-        public int? RentTimeCounter { get; set; }
+        public int? RentDaysCounter { get; set; }
     }
 }
