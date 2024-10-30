@@ -1,4 +1,5 @@
 ﻿using DTOs.Machine;
+using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -95,7 +96,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{productId}/serial-machines")]
-        public async Task<ActionResult<DisplayMachineDetailDto>> GetSerialMachineList([FromRoute] int productId)
+        public async Task<ActionResult<MachineSerialNumberDto>> GetSerialMachineList([FromRoute] int productId)
         {
             if (!ModelState.IsValid)
             {
@@ -104,8 +105,8 @@ namespace API.Controllers
             }
             try
             {
-                var product = await _machineService.GetSerialMachineList(productId);
-                return Ok(product);
+                var list = await _machineService.GetSerialMachineList(productId);
+                return Ok(list);
             }
             catch (ServiceException ex)
             {
