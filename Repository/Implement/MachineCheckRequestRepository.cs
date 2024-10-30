@@ -83,9 +83,12 @@ namespace Repository.Implement
         {
             var machineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(machineCheckRequestId);
 
+            if (machineCheckRequest == null)
+            {
+                throw new Exception(MessageConstant.MachineCheckRequest.RequestNotFound);
+            }
+
             machineCheckRequest.Status = status;
-
-
 
             await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
         }

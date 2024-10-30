@@ -112,11 +112,11 @@ namespace Service.Implement
             return await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(contractId);
         }
 
-        public async Task UpdateRequestStatus(string MachineCheckRequestId, string status, int accountId)
+        public async Task UpdateRequestStatus(string machineCheckRequestId, string status)
         {
-            var maintenanceDto = await _machineCheckRequestRepository.GetMachineCheckRequest(MachineCheckRequestId);
+            var request = await _machineCheckRequestRepository.GetMachineCheckRequest(machineCheckRequestId);
 
-            if (maintenanceDto == null)
+            if (request == null)
             {
                 throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
             }
@@ -126,11 +126,9 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.StatusNotAvailable);
             }
 
-            //business logic here, fix later
+            await _machineCheckRequestRepository.UpdateRequestStatus(machineCheckRequestId, status);
 
-            await _machineCheckRequestRepository.UpdateRequestStatus(MachineCheckRequestId, status);
-
-            await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequestStatus", MachineCheckRequestId);
+            await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequestStatus", machineCheckRequestId);
         }
     }
 }

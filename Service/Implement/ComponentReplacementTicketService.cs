@@ -18,11 +18,12 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
+        private readonly IMachineCheckRequestService _machineCheckRequestService;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
@@ -32,6 +33,7 @@ namespace Service.Implement
             _notificationService = notificationService;
             _machineTaskRepository = machineTaskRepository;
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
+            _machineCheckRequestService = machineCheckRequestService;
         }
 
         public async Task CompleteComponentReplacementTicket(int staffId, string componentReplacementTicketId)
@@ -94,6 +96,8 @@ namespace Service.Implement
                                                                       MachineTaskStatusEnum.Completed.ToString(),
                                                                       staffId,
                                                                       null);
+
+                            await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString());
                         }
                     }
                     else
@@ -102,7 +106,11 @@ namespace Service.Implement
                                                                       MachineTaskStatusEnum.Completed.ToString(),
                                                                       staffId,
                                                                       null);
+
+                        await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString());
                     }
+
+
 
                     scope.Complete();
                 }
