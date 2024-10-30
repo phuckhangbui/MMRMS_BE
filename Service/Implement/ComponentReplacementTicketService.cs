@@ -61,6 +61,11 @@ namespace Service.Implement
 
             var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail((int)ticket.MachineTaskCreateId);
 
+            if (machineTaskDetail == null)
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+            }
+
 
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -71,7 +76,33 @@ namespace Service.Implement
 
                     await _componentRepository.RemoveOnHoldQuantity((int)ticket.ComponentId, (int)ticket.Quantity);
 
+                    if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 1)
+                    {
+                        bool isTaskComplete = true;
+                        foreach (var taskTicket in machineTaskDetail.ComponentReplacementTicketCreateFromTaskList)
+                        {
+                            if (taskTicket.Status != MachineTaskStatusEnum.Completed.ToString())
+                            {
+                                isTaskComplete = false;
+                                break;
+                            }
+                        }
 
+                        if (isTaskComplete)
+                        {
+                            await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId,
+                                                                      MachineTaskStatusEnum.Completed.ToString(),
+                                                                      staffId,
+                                                                      null);
+                        }
+                    }
+                    else
+                    {
+                        await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId,
+                                                                      MachineTaskStatusEnum.Completed.ToString(),
+                                                                      staffId,
+                                                                      null);
+                    }
 
                     scope.Complete();
                 }
