@@ -82,7 +82,7 @@ public partial class MmrmsContext : DbContext
     public virtual DbSet<MembershipRank> MembershipRanks { get; set; }
 
 
-    public virtual DbSet<RequestResponse> RequestResponses { get; set; }
+    //public virtual DbSet<RequestResponse> RequestResponses { get; set; }
 
     public virtual DbSet<RentingRequestAddress> RentingRequestAddresses { get; set; }
 
@@ -742,27 +742,27 @@ public partial class MmrmsContext : DbContext
         });
 
 
-        modelBuilder.Entity<RequestResponse>(entity =>
-        {
-            entity.HasKey(e => e.RequestResponseId);
+        //modelBuilder.Entity<RequestResponse>(entity =>
+        //{
+        //    entity.HasKey(e => e.RequestResponseId);
 
-            entity.ToTable("RequestResponse");
+        //    entity.ToTable("RequestResponse");
 
-            entity.Property(e => e.RequestResponseId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
+        //    entity.Property(e => e.RequestResponseId)
+        //        .ValueGeneratedOnAdd()
+        //        .UseIdentityColumn();
 
-            entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.RequestResponses)
-                .HasForeignKey(d => d.MachineCheckRequestId)
-                .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
+        //    entity.HasOne(d => d.MachineCheckRequest).WithMany(p => p.RequestResponses)
+        //        .HasForeignKey(d => d.MachineCheckRequestId)
+        //        .HasConstraintName("FK_RequestResponse_MachineCheckRequest");
 
-            entity.HasOne(d => d.MachineTask)
-                  .WithOne(t => t.RequestResponse)
-                  .HasForeignKey<MachineTask>(t => t.RequestResponseId)
-                  .IsRequired()
-                  .OnDelete(DeleteBehavior.Cascade)
-                  .HasConstraintName("FK_Response_Task");
-        });
+        //    entity.HasOne(d => d.MachineTask)
+        //          .WithOne(t => t.RequestResponse)
+        //          .HasForeignKey<MachineTask>(t => t.RequestResponseId)
+        //          .IsRequired()
+        //          .OnDelete(DeleteBehavior.Cascade)
+        //          .HasConstraintName("FK_Response_Task");
+        //});
 
         modelBuilder.Entity<MachineTask>(entity =>
         {
@@ -790,10 +790,10 @@ public partial class MmrmsContext : DbContext
             //   .HasForeignKey(d => d.ComponentReplacementTicketId)
             //   .HasConstraintName("FK_ComponentReplacementTicketId_Task");
 
-            entity.HasOne(d => d.RequestResponse)
-                  .WithOne(t => t.MachineTask)
-                  .HasForeignKey<MachineTask>(t => t.RequestResponseId)
-                  .HasConstraintName("FK_Task_Response");
+            entity.HasOne(d => d.MachineCheckRequest)
+                  .WithMany(t => t.MachineTasks)
+                  .HasForeignKey(t => t.MachineCheckRequestId)
+                  .HasConstraintName("FK_Task_MachineCheckRequest");
 
             //entity.HasOne(d => d.PreviousTask)
             //    .WithOne()

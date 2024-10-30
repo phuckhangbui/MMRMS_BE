@@ -10,7 +10,7 @@
 
         public string? SerialNumber { get; set; }
 
-        public int? RequestResponseId { get; set; }
+        public string? MachineCheckRequestId { get; set; }
 
         public string? Content { get; set; }
 

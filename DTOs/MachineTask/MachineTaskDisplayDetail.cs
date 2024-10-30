@@ -12,8 +12,6 @@ namespace DTOs.MachineTask
 
         public string? ContractId { get; set; }
 
-        public int? RequestResponseId { get; set; }
-
         public string? MachineCheckRequestId { get; set; }
 
         public string? Content { get; set; }

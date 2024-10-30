@@ -85,7 +85,7 @@ namespace Repository.Implement
 
             machineCheckRequest.Status = status;
 
-           
+
 
             await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
         }
@@ -104,13 +104,10 @@ namespace Repository.Implement
 
             var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail.MachineCheckRequestCriterias);
 
-            var requestResponseList = _mapper.Map<IEnumerable<RequestResponseDto>>(requestDetail.RequestResponses);
-
             return new MachineCheckRequestDetailDto
             {
                 MachineCheckRequest = requestDto,
                 CheckCriteriaList = requestCriteriaList,
-                RequestResponseList = requestResponseList
             };
         }
 

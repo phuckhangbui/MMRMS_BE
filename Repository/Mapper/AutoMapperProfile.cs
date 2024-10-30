@@ -276,10 +276,6 @@ namespace Repository.Mapper
 
             CreateMap<MachineCheckCriteria, MachineCheckCriteriaDto>();
 
-            CreateMap<RequestResponse, RequestResponseDto>();
-
-
-
             CreateMap<MachineTask, MachineTaskDto>()
                 .ForMember(dest => dest.SerialNumber,
                 opt => opt.MapFrom(src => src.Contract != null
@@ -294,11 +290,8 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
-            CreateMap<MachineTask, MachineTaskDisplayDetail>()
-                .ForMember(dest => dest.MachineCheckRequestId,
-                opt => opt.MapFrom(src => src.RequestResponse != null
-                            ? src.RequestResponse.MachineCheckRequestId
-                            : null));
+            CreateMap<MachineTask, MachineTaskDisplayDetail>();
+
             //.ForMember(dest => dest.TaskLogs,
             //opt => opt.MapFrom(src => src.MachineTaskLogs != null
             //            ? src.MachineTaskLogs

@@ -55,7 +55,6 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.MachineCheckRequests
-                    .Include(c => c.RequestResponses)
                     .Include(c => c.MachineCheckRequestCriterias)
                     .ThenInclude(rc => rc.MachineCheckCriteria)
                     .Include(c => c.Contract)
