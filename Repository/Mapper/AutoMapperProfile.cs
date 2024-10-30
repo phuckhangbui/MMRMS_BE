@@ -287,7 +287,8 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
-            CreateMap<MachineTask, MachineTaskDisplayDetail>();
+            CreateMap<MachineTask, MachineTaskDisplayDetail>()
+                .ForMember(dest => dest.MachineCheckRequest, opt => opt.Ignore());
 
             //.ForMember(dest => dest.TaskLogs,
             //opt => opt.MapFrom(src => src.MachineTaskLogs != null
