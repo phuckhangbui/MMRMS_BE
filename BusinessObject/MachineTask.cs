@@ -8,7 +8,7 @@ public partial class MachineTask
 
     public string? ContractId { get; set; }
 
-    public int? RequestResponseId { get; set; }
+    public string? MachineCheckRequestId { get; set; }
 
     //public string? ComponentReplacementTicketId { get; set; }
 
@@ -42,7 +42,7 @@ public partial class MachineTask
 
     //public virtual MachineTask? PreviousTask { get; set; }
 
-    public virtual RequestResponse? RequestResponse { get; set; }
+    public virtual MachineCheckRequest? MachineCheckRequest { get; set; }
 
     //public virtual ComponentReplacementTicket? ComponentReplacementTicket { get; set; }
 

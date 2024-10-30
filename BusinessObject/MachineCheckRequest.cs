@@ -14,7 +14,7 @@ public partial class MachineCheckRequest
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual ICollection<RequestResponse> RequestResponses { get; set; } = new List<RequestResponse>();
+    public virtual ICollection<MachineTask> MachineTasks { get; set; } = new List<MachineTask>();
 
     public virtual ICollection<MachineCheckRequestCriteria> MachineCheckRequestCriterias { get; set; } = new List<MachineCheckRequestCriteria>();
 
