@@ -9,11 +9,11 @@ namespace API.Controllers
     [Route("api/machines")]
     public class MachineController : BaseApiController
     {
-        private readonly IMachineService _productService;
+        private readonly IMachineService _machineService;
 
         public MachineController(IMachineService productService)
         {
-            _productService = productService;
+            _machineService = productService;
         }
 
         [HttpGet]
@@ -21,8 +21,8 @@ namespace API.Controllers
         {
             try
             {
-                var products = await _productService.GetMachineList();
-                return Ok(products);
+                var machines = await _machineService.GetMachineList();
+                return Ok(machines);
             }
             catch (ServiceException ex)
             {
@@ -39,8 +39,8 @@ namespace API.Controllers
         {
             try
             {
-                var products = await _productService.GetTop8LatestMachineList();
-                return Ok(products);
+                var machines = await _machineService.GetTop8LatestMachineList();
+                return Ok(machines);
             }
             catch (ServiceException ex)
             {
@@ -63,8 +63,8 @@ namespace API.Controllers
                 }
 
                 var productIdList = productIds.Split(',').Select(int.Parse).ToList();
-                var products = await _productService.GetMachineReviews(productIdList);
-                return Ok(products);
+                var machines = await _machineService.GetMachineReviews(productIdList);
+                return Ok(machines);
             }
             catch (ServiceException ex)
             {
@@ -81,7 +81,7 @@ namespace API.Controllers
         {
             try
             {
-                var product = await _productService.GetMachineDetailDto(productId);
+                var product = await _machineService.GetMachineDetailDto(productId);
                 return Ok(product);
             }
             catch (ServiceException ex)
@@ -94,7 +94,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{productId}/serial-products")]
+        [HttpGet("{productId}/serial-machines")]
         public async Task<ActionResult<DisplayMachineDetailDto>> GetSerialMachineList([FromRoute] int productId)
         {
             if (!ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace API.Controllers
             }
             try
             {
-                var product = await _productService.GetSerialMachineList(productId);
+                var product = await _machineService.GetSerialMachineList(productId);
                 return Ok(product);
             }
             catch (ServiceException ex)
@@ -129,9 +129,9 @@ namespace API.Controllers
 
             try
             {
-                var product = await _productService.CreateMachine(createMachineDto);
+                var machine = await _machineService.CreateMachine(createMachineDto);
 
-                return StatusCode(201, new { productId = product.MachineId });
+                return StatusCode(201, new { machineId = machine.MachineId });
             }
             catch (ServiceException ex)
             {
@@ -149,7 +149,7 @@ namespace API.Controllers
         {
             try
             {
-                await _productService.DeleteMachine(productId);
+                await _machineService.DeleteMachine(productId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -169,7 +169,7 @@ namespace API.Controllers
 
             try
             {
-                await _productService.ToggleLockStatus(productId);
+                await _machineService.ToggleLockStatus(productId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -193,7 +193,7 @@ namespace API.Controllers
             }
             try
             {
-                await _productService.UpdateMachineAttribute(productId, productAttributeDtos);
+                await _machineService.UpdateMachineAttribute(productId, productAttributeDtos);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -217,7 +217,7 @@ namespace API.Controllers
             }
             try
             {
-                await _productService.UpdateMachineTerm(productId, productTermDtos);
+                await _machineService.UpdateMachineTerm(productId, productTermDtos);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -241,7 +241,7 @@ namespace API.Controllers
             }
             try
             {
-                await _productService.UpdateMachineComponent(productId, componentList);
+                await _machineService.UpdateMachineComponent(productId, componentList);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -267,7 +267,7 @@ namespace API.Controllers
 
             try
             {
-                await _productService.UpdateMachineDetail(productId, updateMachineDto);
+                await _machineService.UpdateMachineDetail(productId, updateMachineDto);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -292,7 +292,7 @@ namespace API.Controllers
 
             try
             {
-                await _productService.ChangeMachineImages(productId, imageList);
+                await _machineService.ChangeMachineImages(productId, imageList);
                 return NoContent();
             }
             catch (ServiceException ex)
