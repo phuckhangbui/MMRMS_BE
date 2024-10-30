@@ -52,7 +52,7 @@ namespace DAO
             {
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
-                                                 .Include(d => d.MachineTaskLogs)
+                                                 .Include(d => d.MachineTaskLogs.OrderByDescending(l => l.DateCreate))
                                                  .ThenInclude(l => l.AccountTrigger)
                                                  .Include(d => d.ComponentReplacementTicketsCreateFromTask)
                                                  .Include(d => d.RequestResponse)

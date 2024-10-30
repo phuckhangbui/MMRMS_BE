@@ -110,7 +110,13 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                var machineSerialNumber = await context.MachineSerialNumbers.Include(c => c.MachineSerialNumberLogs).ThenInclude(l => l.AccountTrigger).Include(c => c.MachineSerialNumberComponents).ThenInclude(c => c.Component).ThenInclude(c => c.Component).FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
+                var machineSerialNumber = await context.MachineSerialNumbers
+                                                       .Include(d => d.MachineSerialNumberLogs.OrderByDescending(l => l.DateCreate))
+                                                       .ThenInclude(l => l.AccountTrigger)
+                                                       .Include(c => c.MachineSerialNumberComponents)
+                                                       .ThenInclude(c => c.Component)
+                                                       .ThenInclude(c => c.Component)
+                                                       .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
 
                 return machineSerialNumber;
             }
