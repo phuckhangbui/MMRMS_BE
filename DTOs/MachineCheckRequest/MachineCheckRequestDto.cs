@@ -6,6 +6,8 @@ namespace DTOs.MachineCheckRequest
     {
         public string MachineCheckRequestId { get; set; }
 
+        public int? MachineTaskId { get; set; }
+
         public string? ContractId { get; set; }
 
         public string? SerialNumber { get; set; }

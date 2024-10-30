@@ -11,6 +11,6 @@ namespace Service.Interface
         Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests(int customerId);
         Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsNew();
         Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsOfContract(string contractId);
-        Task UpdateRequestStatus(string MachineCheckRequestId, string status, int accountId);
+        Task UpdateRequestStatus(string MachineCheckRequestId, string status, int? machineTaskId);
     }
 }

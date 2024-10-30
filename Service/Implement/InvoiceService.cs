@@ -2,9 +2,11 @@
 using Common.Enum;
 using DTOs;
 using DTOs.Invoice;
+using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using Service.SignalRHub;
 using System.Transactions;
 
 namespace Service.Implement
@@ -15,16 +17,23 @@ namespace Service.Implement
         private readonly IPayOSService _payOSService;
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IContractRepository _contractRepository;
+        private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
+        private readonly INotificationService _notificationService;
 
-        public InvoiceService(IInvoiceRepository invoiceRepository, 
-            IPayOSService payOSService, 
+
+        public InvoiceService(IInvoiceRepository invoiceRepository,
+            IPayOSService payOSService,
             IComponentReplacementTicketRepository componentReplacementTicketRepository,
-            IContractRepository contractRepository)
+            IContractRepository contractRepository,
+            IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
+            INotificationService notificationService)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
             _componentReplacementTicketRepository = componentReplacementTicketRepository;
             _contractRepository = contractRepository;
+            _componentReplacementTicketHub = componentReplacementTicketHub;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -127,7 +136,14 @@ namespace Service.Implement
                                 customerId
                             );
 
-                            // Handle notification and real-time updates here
+                            var ticket = await _componentReplacementTicketRepository.GetTicket(invoice.ComponentReplacementTicketId);
+
+                            //send notification to staff
+                            await _notificationService.SendNotificationToStaffWhenCustomerPayTicket(ticket);
+
+                            //realtime for ticket
+                            await _componentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponentReplacementTicketStatus", invoice.ComponentReplacementTicketId);
+
                             break;
 
                         case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || type.Equals(InvoiceTypeEnum.Rental.ToString()):

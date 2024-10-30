@@ -22,7 +22,7 @@ namespace Repository.Implement
             _machineCheckRequestRepository = MachineCheckRequestRepository;
         }
 
-        public async Task CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
+        public async Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
             var staffAccount = await _accountRepository.GetAccounById(createMachineTaskDto.StaffId);
 
@@ -52,10 +52,9 @@ namespace Repository.Implement
                 AccountTriggerId = managerId,
             };
 
-            await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog);
+            task = await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog);
 
-            request.Status = MachineCheckRequestStatusEnum.Assigned.ToString();
-            await MachineCheckRequestDao.Instance.UpdateAsync(request);
+            return _mapper.Map<MachineTaskDto>(task);
         }
 
         public async Task Delete(int taskId)
@@ -146,6 +145,8 @@ namespace Repository.Implement
             };
 
             await MachineTaskLogDao.Instance.CreateAsync(taskLog);
+
+
         }
 
     }

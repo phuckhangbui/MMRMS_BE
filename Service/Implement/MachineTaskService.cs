@@ -17,6 +17,7 @@ namespace Service.Implement
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IMachineCheckRequestRepository _machineCheckRequestRepository;
+        private readonly IMachineCheckRequestService _machineCheckRequestService;
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
         private readonly IContractRepository _contractRepository;
@@ -24,7 +25,7 @@ namespace Service.Implement
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
-        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineCheckRequestService machineCheckRequestService)
         {
             _machineTaskRepository = MachineTaskRepository;
             _machineTaskHub = MachineTaskHub;
@@ -35,6 +36,7 @@ namespace Service.Implement
             _contractRepository = contractRepository;
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _machineCheckRequestRepository = machineCheckRequestRepository;
+            _machineCheckRequestService = machineCheckRequestService;
         }
 
         private async Task CheckCreateTaskCondition(int staffId, DateTime dateStart)
@@ -80,11 +82,27 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleRequestStatus);
             }
 
-            await _machineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var task = await _machineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
 
-            await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
+                    await _machineCheckRequestService.UpdateRequestStatus(createMachineTaskDto.RequestId, MachineCheckRequestStatusEnum.Assigned.ToString(), task.MachineTaskId);
 
-            await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
+
+                    await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.CreateFail);
+                }
+            }
+
+
         }
 
         public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
@@ -172,8 +190,6 @@ namespace Service.Implement
             return list;
         }
 
-        //will remove this 
-
         public async Task StaffCheckMachineSuccess(int taskId, int staffId, string? confirmationPictureUrl)
         {
             var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
@@ -202,20 +218,17 @@ namespace Service.Implement
             {
                 try
                 {
-                    //Todo logic here
                     await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
-
-                    //await _requestResponseRepository.CreateResponeWhenCheckMachineTaskSuccess((int)machineTask.RequestResponseId);
-
-                    //var requestResponse = await _requestResponseRepository.GetRequestResponse((int)machineTask.RequestResponseId);
 
                     if (machineTask.MachineCheckRequestId != null)
                     {
-                        await _machineCheckRequestRepository.UpdateRequestStatus(machineTask.MachineCheckRequestId
-                                                                                   , MachineCheckRequestStatusEnum.Completed.ToString());
+                        await _machineCheckRequestService.UpdateRequestStatus(machineTask.MachineCheckRequestId
+                                                             , MachineCheckRequestStatusEnum.Completed.ToString(), null);
                     }
 
                     await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
+
+                    scope.Complete();
                 }
                 catch (Exception ex)
                 {

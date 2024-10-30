@@ -61,40 +61,22 @@ namespace DAO
             }
         }
 
-        public async Task CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog)
+        public async Task<MachineTask> CreateMachineTaskBaseOnRequest(MachineTask task, MachineTaskLog taskLog)
         {
             using (var context = new MmrmsContext())
             {
-                using (var transaction = await context.Database.BeginTransactionAsync())
-                {
-                    try
-                    {
-                        context.MachineTasks.Add(task);
-                        await context.SaveChangesAsync();
 
-                        taskLog.MachineTaskId = task.MachineTaskId;
-                        context.MachineTaskLogs.Add(taskLog);
-                        await context.SaveChangesAsync();
+                context.MachineTasks.Add(task);
+                await context.SaveChangesAsync();
 
-                        // Commit transaction
-                        await transaction.CommitAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Rollback transaction on error
-                        await transaction.RollbackAsync();
-                        throw new Exception("Error occurred during transaction: " + ex.Message);
-                    }
-                }
+                taskLog.MachineTaskId = task.MachineTaskId;
+                context.MachineTaskLogs.Add(taskLog);
+                await context.SaveChangesAsync();
+
+                return task;
+
             }
         }
-
-        //public async Task CreateTaskWithRequest(MachineTask task, RequestResponse requestResponse)
-        //{
-        //    using (var context = new MmrmsContext())
-        //    {
-
-        //    }
-        //}
     }
+
 }

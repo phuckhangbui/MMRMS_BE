@@ -56,7 +56,6 @@ namespace DAO
             {
                 return await context.MachineCheckRequests
                     .Include(c => c.MachineCheckRequestCriterias)
-                    .ThenInclude(rc => rc.MachineCheckCriteria)
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)

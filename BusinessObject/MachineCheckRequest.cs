@@ -6,6 +6,8 @@ public partial class MachineCheckRequest
 
     public string? ContractId { get; set; }
 
+    public int? MachineTaskId { get; set; }
+
     public string? Note { get; set; }
 
     public string? Status { get; set; }
@@ -14,7 +16,7 @@ public partial class MachineCheckRequest
 
     public virtual Contract? Contract { get; set; }
 
-    public virtual ICollection<MachineTask> MachineTasks { get; set; } = new List<MachineTask>();
+    public virtual MachineTask? MachineTask { get; set; }
 
     public virtual ICollection<MachineCheckRequestCriteria> MachineCheckRequestCriterias { get; set; } = new List<MachineCheckRequestCriteria>();
 
