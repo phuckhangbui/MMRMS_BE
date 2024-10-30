@@ -586,6 +586,12 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.Contract).WithMany(p => p.MachineCheckRequests)
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_MachineCheckRequest_Contract");
+
+            entity.HasOne(d => d.MachineTask)
+                 .WithOne(t => t.MachineCheckRequest)
+                 .HasForeignKey<MachineTask>(t => t.MachineCheckRequestId)
+                 .IsRequired(false)
+                 .HasConstraintName("FK_MachineCheckRequest_Task");
         });
 
         modelBuilder.Entity<MachineCheckCriteria>(entity =>
@@ -782,14 +788,15 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ManagerId)
                 .HasConstraintName("FK_Task_Manager");
 
+            entity.HasOne(d => d.MachineCheckRequest)
+                  .WithOne(t => t.MachineTask)
+                  .HasForeignKey<MachineTask>(t => t.MachineCheckRequestId)
+                  .IsRequired(false)
+                  .HasConstraintName("FK_Task_MachineCheckRequest");
+
             //entity.HasOne(d => d.ComponentReplacementTicket).WithMany(p => p.MachineTasks)
             //   .HasForeignKey(d => d.ComponentReplacementTicketId)
             //   .HasConstraintName("FK_ComponentReplacementTicketId_Task");
-
-            entity.HasOne(d => d.MachineCheckRequest)
-                  .WithMany(t => t.MachineTasks)
-                  .HasForeignKey(t => t.MachineCheckRequestId)
-                  .HasConstraintName("FK_Task_MachineCheckRequest");
 
             //entity.HasOne(d => d.PreviousTask)
             //    .WithOne()
