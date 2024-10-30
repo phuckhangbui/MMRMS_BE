@@ -13,7 +13,8 @@
         Billing,
         DeliveryTask,
         RequestMaintenance,
-        ComponentReplacementTicket
+        ComponentReplacementTicket,
+        MachineCheckRequest
     }
 
 }

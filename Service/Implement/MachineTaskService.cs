@@ -82,11 +82,27 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleRequestStatus);
             }
 
-            await _machineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var task = await _machineTaskRepository.CreateMachineTaskWithRequest(managerId, createMachineTaskDto);
 
-            await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
+                    await _machineCheckRequestService.UpdateRequestStatus(createMachineTaskDto.RequestId, MachineCheckRequestStatusEnum.Assigned.ToString(), task.MachineTaskId);
 
-            await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
+
+                    await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.CreateFail);
+                }
+            }
+
+
         }
 
         public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
@@ -207,10 +223,12 @@ namespace Service.Implement
                     if (machineTask.MachineCheckRequestId != null)
                     {
                         await _machineCheckRequestService.UpdateRequestStatus(machineTask.MachineCheckRequestId
-                                                                                   , MachineCheckRequestStatusEnum.Completed.ToString());
+                                                             , MachineCheckRequestStatusEnum.Completed.ToString(), null);
                     }
 
                     await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
+
+                    scope.Complete();
                 }
                 catch (Exception ex)
                 {

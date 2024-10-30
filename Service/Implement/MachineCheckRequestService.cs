@@ -101,7 +101,7 @@ namespace Service.Implement
             return await _machineCheckRequestRepository.GetMachineCheckRequestsByContractId(contractId);
         }
 
-        public async Task UpdateRequestStatus(string machineCheckRequestId, string status)
+        public async Task UpdateRequestStatus(string machineCheckRequestId, string status, int? machineTaskId)
         {
             var request = await _machineCheckRequestRepository.GetMachineCheckRequest(machineCheckRequestId);
 
@@ -115,7 +115,23 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.StatusNotAvailable);
             }
 
-            await _machineCheckRequestRepository.UpdateRequestStatus(machineCheckRequestId, status);
+            request.Status = status;
+
+            var contract = await _contractRepository.GetContractById(request.ContractId);
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (machineTaskId != null && status == MachineCheckRequestStatusEnum.Assigned.ToString())
+            {
+                request.MachineTaskId = machineTaskId;
+            }
+
+            await _machineCheckRequestRepository.UpdateRequest(request);
+
+            //send notification here
+            await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request);
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequestStatus", machineCheckRequestId);
         }

@@ -434,5 +434,47 @@ namespace Service.Implement
 
             }
         }
+
+        public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request)
+        {
+            string title = $"Yêu cầu kiểm tra máy của bạn đã được thay đổi trạng thái";
+            string body = $"Yêu cầu số {request.MachineCheckRequestId} của máy {request.SerialNumber} đã được đổi thành [{EnumExtensions.TranslateStatus<MachineCheckRequestStatusEnum>(request.Status.ToString())}]";
+
+
+            string type = NotificationTypeEnum.MachineCheckRequest.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById(accountSignId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = accountSignId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", accountSignId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

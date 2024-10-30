@@ -97,7 +97,7 @@ namespace Service.Implement
                                                                       staffId,
                                                                       null);
 
-                            await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString());
+                            await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString(), null);
                         }
                     }
                     else
@@ -107,7 +107,7 @@ namespace Service.Implement
                                                                       staffId,
                                                                       null);
 
-                        await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString());
+                        await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString(), null);
                     }
 
 

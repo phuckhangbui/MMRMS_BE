@@ -267,6 +267,7 @@ namespace Repository.Mapper
                  opt => opt.MapFrom(src => src.Contract != null && src.Contract.RentingRequest != null && src.Contract.RentingRequest.RentingRequestAddress != null
                             ? src.Contract.RentingRequest.RentingRequestAddress
                             : null));
+            CreateMap<MachineCheckRequestDto, MachineCheckRequest>();
 
             CreateMap<MachineCheckRequestCriteria, MachineCheckRequestCriteriaDto>();
 
