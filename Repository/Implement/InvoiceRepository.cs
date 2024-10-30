@@ -28,17 +28,6 @@ namespace Repository.Implement
                 throw new Exception(MessageConstant.Invoice.InvoiceNotFound);
             }
 
-            if (invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
-            {
-                invoice = await InvoiceDao.Instance.UpdateContractInvoice(transactionReturn, invoiceId);
-                if (invoice == null)
-                {
-                    return null;
-                }
-
-                return _mapper.Map<InvoiceDto>(invoice);
-            }
-
             var digitalTransaction = _mapper.Map<DigitalTransaction>(transactionReturn);
 
             digitalTransaction.InvoiceId = invoiceId;
