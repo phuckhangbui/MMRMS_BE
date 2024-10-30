@@ -124,16 +124,6 @@ namespace Service.Implement
 
         public async Task CreateComponentReplacementTicketWhenCheckMachineRenting(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
         {
-            //if (!await _componentRepository.IsComponentIdExisted(createComponentReplacementTicketDto.ComponentId))
-            //{
-            //    throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
-            //}
-
-            //if (!await _machineSerialNumberRepository.IsSerialNumberExist(createComponentReplacementTicketDto.MachineSerialNumber))
-            //{
-            //    throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
-            //}
-
             var machineTask = await _machineTaskRepository.GetMachineTask(createComponentReplacementTicketDto.MachineTaskCreateId);
 
             if (machineTask == null)
