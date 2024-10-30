@@ -31,8 +31,11 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.ComponentReplacementTickets
-                    .Include(c => c.EmployeeCreate).Include(c => c.Component).Include(c => c.Contract)
-                    .ToListAsync();
+                                    .Include(c => c.EmployeeCreate)
+                                    .Include(c => c.Component)
+                                    .Include(c => c.Contract)
+                                    .OrderByDescending(c => c.DateCreate)
+                                    .ToListAsync();
             }
         }
 
@@ -56,7 +59,7 @@ namespace DAO
                                     .Include(c => c.EmployeeCreate)
                                     .Include(c => c.Component)
                                     .Include(c => c.Contract)
-                                    .Include(c => c.ComponentReplacementTicketLogs)
+                                    .Include(d => d.ComponentReplacementTicketLogs.OrderByDescending(l => l.DateCreate))
                                     .ThenInclude(l => l.AccountTrigger)
                                     .FirstOrDefaultAsync(c => c.ComponentReplacementTicketId == ticketId);
             }
