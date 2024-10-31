@@ -97,6 +97,18 @@ namespace DAO
                                     DateOnly.FromDateTime((DateTime)d.DateStart) == (date)).ToListAsync();
             }
         }
+
+        public async Task<IEnumerable<MachineTask>> GetMachineTaskStaff(int staffId, DateOnly dateStart, DateOnly dateEnd)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.MachineTasks
+                         .Where(d => d.StaffId == staffId
+                                    && DateOnly.FromDateTime((DateTime)d.DateStart) >= dateStart
+                                    && DateOnly.FromDateTime((DateTime)d.DateStart) <= dateEnd)
+                         .ToListAsync();
+            }
+        }
     }
 
 }

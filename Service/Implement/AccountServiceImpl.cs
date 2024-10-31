@@ -143,7 +143,7 @@ namespace Service.Implement
             return await _accountRepository.UpdateCustomerAccount(accountId, customerAccountUpdateDto);
         }
 
-        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId)
+        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId, DateOnly dateStart, DateOnly dateEnd)
         {
             var staff = await _accountRepository.GetAccounById(staffId);
 
@@ -152,9 +152,9 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
             }
 
-            var machineTaskList = await _machineTaskRepository.GetMachineTasksFromNowOnForStaff(staffId);
+            var machineTaskList = await _machineTaskRepository.GetMachineTasksForStaff(staffId, dateStart, dateEnd);
 
-            var deliveryList = await _deliveryTaskRepository.GetDeliveryTasksFromNowOnForStaff(staffId);
+            var deliveryList = await _deliveryTaskRepository.GetDeliveryTasksForStaff(staffId, dateStart, dateEnd);
 
             var taskAndDeliveryList = new List<TaskAndDeliveryScheduleDto>();
 
@@ -189,7 +189,7 @@ namespace Service.Implement
             return taskAndDeliveryList.OrderBy(s => s.DateStart);
         }
 
-        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule()
+        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(DateOnly dateStart, DateOnly dateEnd)
         {
             var staffList = await _accountRepository.GetActiveStaffAccounts();
 
@@ -197,7 +197,7 @@ namespace Service.Implement
 
             foreach (var staff in staffList)
             {
-                var schedule = await GetStaffSchedule(staff.AccountId);
+                var schedule = await GetStaffSchedule(staff.AccountId, dateStart, dateEnd);
 
                 taskAndDeliveryList.AddRange(schedule);
             }

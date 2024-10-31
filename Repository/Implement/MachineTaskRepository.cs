@@ -104,9 +104,9 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
 
-        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasksFromNowOnForStaff(int staffId)
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasksForStaff(int staffId, DateOnly dateStart, DateOnly dateEnd)
         {
-            var list = await MachineTaskDao.Instance.GetMachineTaskFromNowForStaff(staffId);
+            var list = await MachineTaskDao.Instance.GetMachineTaskStaff(staffId, dateStart, dateEnd);
 
             if (list == null)
             {

@@ -268,11 +268,19 @@ namespace API.Controllers
 
         [HttpGet("{staffId}/schedule")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetIndividualStaffSchedule([FromRoute] int staffId)
+        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetIndividualStaffSchedule([FromRoute] int staffId,
+                                                                                                            [FromQuery] string dateStart,
+                                                                                                            [FromQuery] string dateEnd)
         {
+            if (!DateOnly.TryParse(dateStart, out var parsedDateStart) ||
+            !DateOnly.TryParse(dateEnd, out var parsedDateEnd))
+            {
+                return BadRequest("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
             try
             {
-                var result = await _accountService.GetStaffSchedule(staffId);
+                var result = await _accountService.GetStaffSchedule(staffId, parsedDateStart, parsedDateEnd);
                 return Ok(result);
             }
             catch (ServiceException ex)
@@ -287,11 +295,16 @@ namespace API.Controllers
 
         [HttpGet("/schedule")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetStaffSchedule()
+        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetStaffSchedule([FromQuery] string dateStart, [FromQuery] string dateEnd)
         {
+            if (!DateOnly.TryParse(dateStart, out var parsedDateStart) ||
+            !DateOnly.TryParse(dateEnd, out var parsedDateEnd))
+            {
+                return BadRequest("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
             try
             {
-                var result = await _accountService.GetStaffSchedule();
+                var result = await _accountService.GetStaffSchedule(parsedDateStart, parsedDateEnd);
                 return Ok(result);
             }
             catch (ServiceException ex)

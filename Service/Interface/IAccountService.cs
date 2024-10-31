@@ -16,8 +16,8 @@ namespace Service.Interface
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
         Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
-        Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId);
-        Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule();
+        Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId, DateOnly dateStart, DateOnly dateEnd);
+        Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(DateOnly dateStart, DateOnly dateEnd);
         Task<IEnumerable<StaffScheduleCounterDto>> GetStaffScheduleFromADate(DateOnly date);
     }
 }

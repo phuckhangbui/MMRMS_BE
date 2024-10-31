@@ -179,9 +179,9 @@ namespace Repository.Implement
             await DeliveryTaskLogDao.Instance.CreateAsync(DeliveryTaskLog);
         }
 
-        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksFromNowOnForStaff(int staffId)
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksForStaff(int staffId, DateOnly dateStart, DateOnly dateEnd)
         {
-            var list = await DeliveryTaskDao.Instance.GetDeliverTaskFromNowForStaff(staffId);
+            var list = await DeliveryTaskDao.Instance.GetDeliverTaskStaff(staffId, dateStart, dateEnd);
 
             if (list == null)
             {
