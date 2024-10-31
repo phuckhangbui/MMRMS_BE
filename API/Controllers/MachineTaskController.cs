@@ -76,6 +76,8 @@ namespace API.Controllers
             }
         }
 
+
+
         [HttpPost("check-machine")]
         [Authorize(Policy = "Manager")]
         public async Task<IActionResult> CreateMachineTaskCheckMachine([FromBody] CreateMachineTaskCheckMachineDto createMachineTaskDto)
@@ -117,6 +119,8 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
 
         //[HttpPatch("{taskId}/replace-component-success")]
         //[Authorize(Policy = "TechnicalStaff")]
