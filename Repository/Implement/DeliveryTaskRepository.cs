@@ -178,5 +178,17 @@ namespace Repository.Implement
 
             await DeliveryTaskLogDao.Instance.CreateAsync(DeliveryTaskLog);
         }
+
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksFromNowOnForStaff(int staffId)
+        {
+            var list = await DeliveryTaskDao.Instance.GetDeliverTaskFromNowForStaff(staffId);
+
+            if (list == null)
+            {
+                return new List<DeliveryTaskDto>();
+            }
+
+            return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
+        }
     }
 }

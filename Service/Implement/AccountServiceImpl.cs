@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Account;
+using DTOs.MachineTask;
 using Microsoft.Extensions.Configuration;
 using Repository.Interface;
 using Service.Exceptions;
@@ -14,12 +15,16 @@ namespace Service.Implement
         private readonly IConfiguration _configuration;
         private readonly IAccountRepository _accountRepository;
         private readonly IMailService _mailService;
+        private readonly IDeliveryTaskRepository _deliveryTaskRepository;
+        private readonly IMachineTaskRepository _machineTaskRepository;
 
-        public AccountServiceImpl(IConfiguration configuration, IAccountRepository accountRepository, IMailService mailService)
+        public AccountServiceImpl(IConfiguration configuration, IAccountRepository accountRepository, IMailService mailService, IDeliveryTaskRepository deliveryTaskRepository, IMachineTaskRepository machineTaskRepository)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
             _configuration = configuration;
+            _deliveryTaskRepository = deliveryTaskRepository;
+            _machineTaskRepository = machineTaskRepository;
         }
 
         public async Task<bool> ChangeAccountStatus(int accountId, string status)
@@ -136,6 +141,52 @@ namespace Service.Implement
             }
 
             return await _accountRepository.UpdateCustomerAccount(accountId, customerAccountUpdateDto);
+        }
+
+        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId)
+        {
+            var staff = await _accountRepository.GetAccounById(staffId);
+
+            if (staff.RoleId != (int)AccountRoleEnum.TechnicalStaff)
+            {
+                throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
+            }
+
+            var machineTaskList = await _machineTaskRepository.GetMachineTasksFromNowOnForStaff(staffId);
+
+            var deliveryList = await _deliveryTaskRepository.GetDeliveryTasksFromNowOnForStaff(staffId);
+
+            var taskAndDeliveryList = new List<TaskAndDeliveryScheduleDto>();
+
+            foreach (var task in machineTaskList)
+            {
+                var schedule = new TaskAndDeliveryScheduleDto
+                {
+                    StaffId = staffId,
+                    MachineTaskId = task.MachineTaskId,
+                    Type = TaskAndDeliveryScheduleDtoTypeEnum.MachineTask.ToString(),
+                    Status = task.Status,
+                    DateStart = DateOnly.FromDateTime((DateTime)task.DateStart),
+                };
+
+                taskAndDeliveryList.Add(schedule);
+            }
+
+            foreach (var delivery in deliveryList)
+            {
+                var schedule = new TaskAndDeliveryScheduleDto
+                {
+                    StaffId = staffId,
+                    DeliveryTaskId = delivery.DeliveryTaskId,
+                    Type = TaskAndDeliveryScheduleDtoTypeEnum.DeliveryTask.ToString(),
+                    Status = delivery.Status,
+                    DateStart = DateOnly.FromDateTime((DateTime)delivery.DateShip),
+                };
+
+                taskAndDeliveryList.Add(schedule);
+            }
+
+            return taskAndDeliveryList.OrderBy(s => s.DateStart);
         }
     }
 }

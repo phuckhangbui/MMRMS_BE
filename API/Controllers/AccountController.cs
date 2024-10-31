@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Account;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -254,6 +255,25 @@ namespace API.Controllers
                 var result = await _accountService.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
                 if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
                 return BadRequest(MessageConstant.Account.UpdateAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{staffId}/schedule")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetStaffSchedule([FromRoute] int staffId)
+        {
+            try
+            {
+                var result = await _accountService.GetStaffSchedule(staffId);
+                return Ok(result);
             }
             catch (ServiceException ex)
             {

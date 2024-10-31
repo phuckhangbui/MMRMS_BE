@@ -77,6 +77,16 @@ namespace DAO
 
             }
         }
+
+        public async Task<IEnumerable<MachineTask>> GetMachineTaskFromNowForStaff(int staffId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.MachineTasks
+                    .Where(d => d.StaffId == staffId
+                    && DateOnly.FromDateTime((DateTime)d.DateStart) >= DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
+            }
+        }
     }
 
 }

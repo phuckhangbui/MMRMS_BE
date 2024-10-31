@@ -1,4 +1,5 @@
 ﻿using DTOs.Account;
+using DTOs.MachineTask;
 
 namespace Service.Interface
 {
@@ -15,5 +16,6 @@ namespace Service.Interface
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
         Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
+        Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId);
     }
 }
