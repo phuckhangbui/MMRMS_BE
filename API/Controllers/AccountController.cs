@@ -293,7 +293,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("/schedule")]
+        [HttpGet("schedules")]
         [Authorize(Policy = "Manager")]
         public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetStaffSchedule([FromQuery] string dateStart, [FromQuery] string dateEnd)
         {
