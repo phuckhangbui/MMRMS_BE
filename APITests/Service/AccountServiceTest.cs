@@ -17,6 +17,8 @@ namespace Test.Service
     public class AccountServiceTest
     {
         private readonly Mock<IAccountRepository> _accountRepositoryMock;
+        private readonly Mock<IMachineTaskRepository> _machineTaskRepositoryMock;
+        private readonly Mock<IDeliveryTaskRepository> _deliveryTaskRepositoryMock;
         private readonly Mock<IMailService> _mailMock;
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly IAccountService _accountService;
@@ -25,6 +27,8 @@ namespace Test.Service
         public AccountServiceTest()
         {
             _accountRepositoryMock = new Mock<IAccountRepository>();
+            _machineTaskRepositoryMock = new Mock<IMachineTaskRepository>();
+            _deliveryTaskRepositoryMock = new Mock<IDeliveryTaskRepository>();
             _mailMock = new Mock<IMailService>();
             _configurationMock = new Mock<IConfiguration>();
 
@@ -33,7 +37,11 @@ namespace Test.Service
 
             _configurationMock.Setup(x => x.GetSection("AdminAccount:Username")).Returns(mockConfigurationSection.Object);
 
-            _accountService = new AccountServiceImpl(_configurationMock.Object, _accountRepositoryMock.Object, _mailMock.Object);
+            _accountService = new AccountServiceImpl(_configurationMock.Object,
+                                                     _accountRepositoryMock.Object,
+                                                     _mailMock.Object,
+                                                     _deliveryTaskRepositoryMock.Object,
+                                                     _machineTaskRepositoryMock.Object);
 
             _mapper = new Mapper(new MapperConfiguration(options =>
             {

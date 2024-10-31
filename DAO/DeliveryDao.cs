@@ -160,7 +160,36 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<DeliveryTask>> GetDeliverTaskFromNowForStaff(int staffId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                    .Where(d => d.StaffId == staffId
+                    && DateOnly.FromDateTime((DateTime)d.DateShip) >= DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
+            }
+        }
 
+        public async Task<IEnumerable<DeliveryTask>> GetDeliveryTasksInADate(DateOnly date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                        .Where(d =>
+                                    DateOnly.FromDateTime((DateTime)d.DateShip) == (date)).ToListAsync();
+            }
+        }
 
+        public async Task<IEnumerable<DeliveryTask>> GetDeliverTaskStaff(int staffId, DateOnly dateStart, DateOnly dateEnd)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                         .Where(d => d.StaffId == staffId
+                                    && DateOnly.FromDateTime((DateTime)d.DateShip) >= dateStart
+                                    && DateOnly.FromDateTime((DateTime)d.DateShip) <= dateEnd)
+                         .ToListAsync();
+            }
+        }
     }
 }

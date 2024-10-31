@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Account;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -254,6 +255,81 @@ namespace API.Controllers
                 var result = await _accountService.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
                 if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
                 return BadRequest(MessageConstant.Account.UpdateAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{staffId}/schedule")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetIndividualStaffSchedule([FromRoute] int staffId,
+                                                                                                            [FromQuery] string dateStart,
+                                                                                                            [FromQuery] string dateEnd)
+        {
+            if (!DateOnly.TryParse(dateStart, out var parsedDateStart) ||
+            !DateOnly.TryParse(dateEnd, out var parsedDateEnd))
+            {
+                return BadRequest("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
+            try
+            {
+                var result = await _accountService.GetStaffSchedule(staffId, parsedDateStart, parsedDateEnd);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("schedules")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<TaskAndDeliveryScheduleDto>>> GetStaffSchedule([FromQuery] string dateStart, [FromQuery] string dateEnd)
+        {
+            if (!DateOnly.TryParse(dateStart, out var parsedDateStart) ||
+            !DateOnly.TryParse(dateEnd, out var parsedDateEnd))
+            {
+                return BadRequest("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+            try
+            {
+                var result = await _accountService.GetStaffSchedule(parsedDateStart, parsedDateEnd);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{date}/staff-schedule")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<StaffScheduleCounterDto>>> GetStaffScheduleByDate([FromRoute] string date)
+        {
+            try
+            {
+                if (!DateOnly.TryParse(date, out var parsedDate))
+                {
+                    return BadRequest("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+                }
+
+                var result = await _accountService.GetStaffScheduleFromADate(parsedDate);
+                return Ok(result);
             }
             catch (ServiceException ex)
             {
