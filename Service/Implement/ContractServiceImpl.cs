@@ -25,33 +25,6 @@ namespace Service.Implement
             _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
-        //TODO: Remove
-        public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
-        {
-            //Check renting request valid
-            //var isRentingRequestValid = await _rentingRepository.CheckRentingRequestValidToRent(contractRequestDto.RentingRequestId);
-            //if (!isRentingRequestValid)
-            //{
-            //    throw new ServiceException(MessageConstant.Contract.RentingRequestInvalid);
-            //}
-
-            //Check account rent valid (Exist + Active)
-            //var rentAccount = await _accountRepository.GetAccounById(contractRequestDto.AccountSignId);
-            //if (rentAccount == null || !rentAccount.Status!.Equals(AccountStatusEnum.Active.ToString()))
-            //{
-            //    throw new ServiceException(MessageConstant.Contract.AccountRentInvalid);
-            //}
-
-            //Check list rent serail number valid (Available)
-            var isMachineSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumbersValidToRent(contractRequestDto.MachineSerialNumbers);
-            if (!isMachineSerialNumbersValid)
-            {
-                throw new ServiceException(MessageConstant.Contract.MachineSerialNumbersInvalid);
-            }
-
-            return await _contractRepository.CreateContract(managerId, contractRequestDto);
-        }
-
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
         {
             var contract = await CheckContractExist(contractId);
@@ -107,25 +80,25 @@ namespace Service.Implement
 
         public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
         {
-            var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
-            if (rentingRequest == null)
-            {
-                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
-            }
+            //var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+            //if (rentingRequest == null)
+            //{
+            //    throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
+            //}
 
-            var isValidToSign = await _contractRepository.IsContractValidToSign(rentingRequestId);
-            if (!isValidToSign)
-            {
-                throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
-            }
+            //var isValidToSign = await _contractRepository.IsContractValidToSign(rentingRequestId);
+            //if (!isValidToSign)
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
+            //}
 
-            var contractInvoices = await _contractRepository.SignContract(rentingRequestId);
-            if (contractInvoices.IsNullOrEmpty())
-            {
-                throw new ServiceException(MessageConstant.Contract.SignContractFail);
-            }
+            //var contractInvoices = await _contractRepository.SignContract(rentingRequestId);
+            //if (contractInvoices.IsNullOrEmpty())
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.SignContractFail);
+            //}
 
-            return contractInvoices;
+            return null;
         }
 
         private async Task<ContractDetailDto> CheckContractExist(string contractId)

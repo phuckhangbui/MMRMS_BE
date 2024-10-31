@@ -1,6 +1,5 @@
 ﻿using Common.Enum;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using MachineSerialNumber = BusinessObject.MachineSerialNumber;
 
 namespace DAO
@@ -33,17 +32,6 @@ namespace DAO
             {
                 return await context.MachineSerialNumbers
                     .FirstOrDefaultAsync(s => s.MachineId == productId && s.SerialNumber.Equals(serialNumber));
-            }
-        }
-
-        public async Task<bool> IsMachineSerialNumberValidToRent(string serialNumber, int productId)
-        {
-            using (var context = new MmrmsContext())
-            {
-                return await context.MachineSerialNumbers
-                    .AnyAsync(s => s.MachineId == productId
-                            && s.SerialNumber.Equals(serialNumber)
-                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString());
             }
         }
 
@@ -91,9 +79,6 @@ namespace DAO
                 }
             }
         }
-
-
-
 
         public async Task<MachineSerialNumber> GetMachineSerialNumber(string serialNumber)
         {
@@ -147,66 +132,46 @@ namespace DAO
         //    }
         //}
 
-        public async Task<bool> IsMachineSerialNumberValidToRent(int productId, int quantity, DateTime startDate, DateTime endDate)
+        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
 
-            //var requestedEndDate = startDate.AddMonths(numberOfMonth);
-
-            var availableSerialNumbers = await context.MachineSerialNumbers
-                .Where(s => s.MachineId == productId
-                        && s.Status == MachineSerialNumberStatusEnum.Available.ToString())
-                .Select(s => s.SerialNumber)
+            var availableSerialNumbersToRent = await context.MachineSerialNumbers
+                .Where(s => s.MachineId == machineId
+                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
+                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
+                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                    c.Status == ContractStatusEnum.Signed.ToString() ||
+                                    c.Status == ContractStatusEnum.Renting.ToString())
+                                && (c.DateStart < endDate && c.DateEnd > startDate)))
+                .Include(s => s.Machine)
+                    .ThenInclude(p => p.MachineTerms)
+                .OrderByDescending(s => s.DateCreate)
                 .ToListAsync();
 
-            if (availableSerialNumbers.IsNullOrEmpty())
-            {
-                return false;
-            }
-
-            var serialNumbersInFutureContracts = await context.Contracts
-                .Where(c => availableSerialNumbers.Contains(c.SerialNumber!)
-                        && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                            c.Status == ContractStatusEnum.Signed.ToString() ||
-                            c.Status == ContractStatusEnum.Shipping.ToString() ||
-                            c.Status == ContractStatusEnum.Renting.ToString())
-                        && (c.DateStart < endDate && c.DateEnd > startDate))
-                .Select(c => c.SerialNumber)
-                .ToListAsync();
-
-            var suitableAvailableSerialNumbers = availableSerialNumbers
-                .Except(serialNumbersInFutureContracts)
-                .ToList();
-
-            return suitableAvailableSerialNumbers.Count >= quantity;
+            return availableSerialNumbersToRent;
         }
 
-        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberValidToRent(int productId, DateTime startDate, DateTime endDate)
+        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
 
-            //var requestedEndDate = startDate.AddMonths(numberOfMonth);
-
-            var availableSerialNumbers = await context.MachineSerialNumbers
-                .Where(s => s.MachineId == productId
-                        && s.Status == MachineSerialNumberStatusEnum.Available.ToString())
+            var availableSerialNumbersToRent = await context.MachineSerialNumbers
+                .Where(s => machineIds.Contains((int)s.MachineId)
+                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
+                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
+                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                    c.Status == ContractStatusEnum.Signed.ToString() ||
+                                    c.Status == ContractStatusEnum.Renting.ToString())
+                                && (c.DateStart < endDate && c.DateEnd > startDate)))
+                .Include(s => s.Machine)
+                    .ThenInclude(p => p.MachineTerms)
+                .OrderByDescending(s => s.DateCreate)
                 .ToListAsync();
 
-            var serialNumbersInFutureContracts = await context.Contracts
-                .Where(c => availableSerialNumbers.Contains(c.ContractMachineSerialNumber)
-                        && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                            c.Status == ContractStatusEnum.Shipping.ToString() ||
-                            c.Status == ContractStatusEnum.Signed.ToString() ||
-                            c.Status == ContractStatusEnum.Renting.ToString())
-                        && (c.DateStart < endDate && c.DateEnd > startDate))
-                .Select(c => c.ContractMachineSerialNumber)
-                .ToListAsync();
-
-            var suitableAvailableSerialNumbers = availableSerialNumbers
-                .Except(serialNumbersInFutureContracts)
-                .ToList();
-
-            return suitableAvailableSerialNumbers;
+            return availableSerialNumbersToRent;
         }
     }
 }

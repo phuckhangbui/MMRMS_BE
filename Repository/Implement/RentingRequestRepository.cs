@@ -57,7 +57,7 @@ namespace Repository.Implement
             foreach (var productId in rentingRequestMachineInRangeDto.MachineIds)
             {
                 var availableMachineSerialNumbers = await MachineSerialNumberDao.Instance
-                    .GetMachineSerialNumberValidToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
+                    .GetMachineSerialNumberAvailablesToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
 
                 if (availableMachineSerialNumbers.IsNullOrEmpty())
                 {
@@ -140,7 +140,7 @@ namespace Repository.Implement
         }
 
         //TODO
-        public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
+        public async Task<RentingRequestDto> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
             rentingRequest.AccountOrderId = customerId;
@@ -148,6 +148,9 @@ namespace Repository.Implement
             rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             rentingRequest.DateCreate = DateTime.Now;
             rentingRequest.Status = RentingRequestStatusEnum.UnPaid.ToString();
+            rentingRequest.TotalDepositPrice = 0;
+            rentingRequest.TotalRentPrice = 0;
+            rentingRequest.TotalServicePrice = 0;
             rentingRequest.TotalAmount = 0;
 
             var address = await AddressDao.Instance.GetAddressById(newRentingRequestDto.AddressId);
@@ -199,9 +202,13 @@ namespace Repository.Implement
                 }
             }
 
-            rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
+            rentingRequest.TotalAmount += newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
 
-            return rentingRequest.RentingRequestId;
+            //rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
+            rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
+
+            //return rentingRequest.RentingRequestId;
+            return _mapper.Map<RentingRequestDto>(rentingRequest);
         }
 
         public async Task<bool> CancelRentingRequest(string rentingRequestId)

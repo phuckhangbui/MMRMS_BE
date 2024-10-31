@@ -1,5 +1,7 @@
 ﻿using DTOs.Contract;
 using DTOs.Invoice;
+using DTOs.MachineSerialNumber;
+using DTOs.RentingRequest;
 
 namespace Repository.Interface
 {
@@ -9,9 +11,11 @@ namespace Repository.Interface
         Task<ContractDto> GetContractById(string id);
         Task<ContractDetailDto?> GetContractDetailById(string contractId);
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
-        Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto);
-        Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId);
-        Task<bool> IsContractValidToSign(string rentingRequestId);
+        Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> CreateContract(
+            RentingRequestDto rentingRequestDto,
+            MachineSerialNumberDto machineSerialNumberDto,
+            InvoiceDto depositInvoice,
+            InvoiceDto rentalInvoice);
         Task<ContractAddressDto> GetContractAddressById(string contractId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
         Task UpdateContractStatus(string contractId, string status);

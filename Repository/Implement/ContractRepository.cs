@@ -6,6 +6,9 @@ using DAO;
 using DTOs.Contract;
 using DTOs.ContractPayment;
 using DTOs.Invoice;
+using DTOs.MachineSerialNumber;
+using DTOs.RentingRequest;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -83,159 +86,256 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
+        //public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
+        //{
+        //    var (depositInvoice, rentalInvoice) = await ContractDao.Instance.SignContract(rentingRequestId);
+        //    var invoiceDtos = new List<ContractInvoiceDto>();
+
+        //    if (depositInvoice != null && rentalInvoice != null)
+        //    {
+        //        var depositInvoiceDto = _mapper.Map<ContractInvoiceDto>(depositInvoice);
+        //        var depositContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(depositInvoice.InvoiceId);
+        //        if (!depositContractPayments.IsNullOrEmpty())
+        //        {
+        //            depositInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(depositContractPayments);
+        //        }
+
+        //        invoiceDtos.Add(depositInvoiceDto);
+
+        //        //
+        //        var rentalInvoiceDto = _mapper.Map<ContractInvoiceDto>(rentalInvoice);
+        //        var rentalContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(rentalInvoice.InvoiceId);
+        //        if (!rentalContractPayments.IsNullOrEmpty())
+        //        {
+        //            rentalInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(rentalContractPayments);
+
+        //            var firstRentalContractPayment = rentalContractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
+        //            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(firstRentalContractPayment.Contract.RentingRequestId);
+
+        //            var firstRentalPayment = new FirstRentalPaymentDto()
+        //            {
+        //                DiscountPrice = rentingRequest.DiscountPrice,
+        //                ShippingPrice = rentingRequest.ShippingPrice,
+        //                TotalServicePrice = rentingRequest.TotalServicePrice,
+        //            };
+        //            rentalInvoiceDto.ContractPayments[0].FirstRentalPayment = firstRentalPayment;
+        //        }
+
+        //        invoiceDtos.Add(rentalInvoiceDto);
+
+        //        return invoiceDtos;
+        //    }
+
+        //    return [];
+        //}
+
+        public async Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> CreateContract(RentingRequestDto rentingRequestDto,
+            MachineSerialNumberDto machineSerialNumberDto,
+            InvoiceDto depositInvoice,
+            InvoiceDto rentalInvoice)
         {
-            var (depositInvoice, rentalInvoice) = await ContractDao.Instance.SignContract(rentingRequestId);
-            var invoiceDtos = new List<ContractInvoiceDto>();
+            using var context = new MmrmsContext();
 
-            if (depositInvoice != null && rentalInvoice != null)
-            {
-                var depositInvoiceDto = _mapper.Map<ContractInvoiceDto>(depositInvoice);
-                var depositContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(depositInvoice.InvoiceId);
-                if (!depositContractPayments.IsNullOrEmpty())
-                {
-                    depositInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(depositContractPayments);
-                }
+            var contractTerms = await context.Terms
+                .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
+                .ToListAsync();
 
-                invoiceDtos.Add(depositInvoiceDto);
+            var machineSerialNumber = await context.MachineSerialNumbers
+                .Include(m => m.Machine)
+                    .ThenInclude(m => m.MachineTerms)
+                .FirstOrDefaultAsync(m => m.SerialNumber.Equals(machineSerialNumberDto.SerialNumber));
 
-                //
-                var rentalInvoiceDto = _mapper.Map<ContractInvoiceDto>(rentalInvoice);
-                var rentalContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(rentalInvoice.InvoiceId);
-                if (!rentalContractPayments.IsNullOrEmpty())
-                {
-                    rentalInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(rentalContractPayments);
+            var rentingRequest = await context.RentingRequests
+                .Include(r => r.ServiceRentingRequests)
+                .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestDto.RentingRequestId));
+            double totalServicePricePerContract = (double)rentingRequest.ServiceRentingRequests.Select(s => s.ServicePrice).Sum();
 
-                    var firstRentalContractPayment = rentalContractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
-                    var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(firstRentalContractPayment.Contract.RentingRequestId);
+            var contract = InitContract(rentingRequestDto, contractTerms, machineSerialNumber, totalServicePricePerContract, depositInvoice, rentalInvoice);
 
-                    var firstRentalPayment = new FirstRentalPaymentDto()
-                    {
-                        DiscountPrice = rentingRequest.DiscountPrice,
-                        ShippingPrice = rentingRequest.ShippingPrice,
-                        TotalServicePrice = rentingRequest.TotalServicePrice,
-                    };
-                    rentalInvoiceDto.ContractPayments[0].FirstRentalPayment = firstRentalPayment;
-                }
+            rentingRequestDto.TotalDepositPrice += contract.DepositPrice;
+            rentingRequestDto.TotalRentPrice += contract.TotalRentPrice;
+            rentingRequestDto.TotalServicePrice += totalServicePricePerContract;
+            rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice + totalServicePricePerContract;
 
-                invoiceDtos.Add(rentalInvoiceDto);
+            rentingRequest.Contracts.Add(contract);
+            await context.SaveChangesAsync();
 
-                return invoiceDtos;
-            }
-
-            return [];
+            return (depositInvoice, rentalInvoice);
         }
 
-
-        //TODO: Remove
-        public async Task<string> CreateContract(int managerId, ContractRequestDto contractRequestDto)
+        private Contract InitContract(RentingRequestDto rentingRequest,
+            List<Term> contractTerms,
+            MachineSerialNumber machineSerialNumber,
+            double servicePrice,
+            InvoiceDto depositInvoice,
+            InvoiceDto rentalInvoice)
         {
-            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractRequestDto.RentingRequestId);
+            var dateCreate = DateTime.Now;
+            int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days + 1;
 
-            //Contract
-            var contract = InitContract(managerId, contractRequestDto, rentingRequest);
-
-            //Contract Address
-            //var address = await AddressDao.Instance.GetAddressById((int)rentingRequest.AddressId!);
-            //var contractAddress = new ContractAddress()
-            //{
-            //    AddressBody = address.AddressBody,
-            //    City = address.City,
-            //    District = address.District,
-            //};
-            //contract.ContractAddress = contractAddress;
-
-            var isOneTimePayment = rentingRequest.IsOnetimePayment;
-            if ((bool)isOneTimePayment!)
-            {
-                var contractPayment = new ContractPayment
-                {
-                    Title = string.Empty,
-                    Amount = 0,
-                    //CustomerPaidDate = DateTime.Now,
-                    //SystemPaidDate = DateTime.Now,
-                    Status = string.Empty,
-                    DateCreate = DateTime.Now,
-                };
-
-                var invoice = new Invoice
-                {
-                    InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                    AccountPaidId = rentingRequest.AccountOrderId,
-                    Amount = contractPayment.Amount,
-                    PaymentMethod = string.Empty,
-                    Type = string.Empty,
-                    Note = string.Empty,
-                    DateCreate = contractPayment.DateCreate,
-                    Status = string.Empty,
-                    //ContractPayment = contractPayment
-                };
-
-                contractPayment.InvoiceId = invoice.InvoiceId;
-                contract.ContractPayments.Add(contractPayment);
-            }
-            else
-            {
-                var rentingPeriod = rentingRequest.NumberOfMonth;
-                for (int i = 0; i < rentingPeriod!.Value; i++)
-                {
-                    var contractPayment = new ContractPayment
-                    {
-                        Title = string.Empty,
-                        Amount = 0,
-                        CustomerPaidDate = DateTime.Now,
-                        //SystemPaidDate = DateTime.Now,
-                        Status = string.Empty,
-                        DateCreate = DateTime.Now,
-                    };
-
-                    contract.ContractPayments.Add(contractPayment);
-                }
-            }
-
-            await ContractDao.Instance.CreateContract(contract, contractRequestDto);
-
-            //Update renting request
-            //rentingRequest.ContractId = contract.ContractId;
-            //rentingRequest.Status = RentingRequestStatusEnum.Approved.ToString();
-            await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
-
-            return contract.ContractId;
-        }
-
-        private Contract InitContract(int managerId, ContractRequestDto contractRequestDto, RentingRequest rentingRequest)
-        {
-            //Contract
-            var contract = new Contract()
+            var contract = new Contract
             {
                 ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                DateCreate = DateTime.Now,
+                SerialNumber = machineSerialNumber.SerialNumber,
+
+                DateCreate = dateCreate,
                 Status = ContractStatusEnum.NotSigned.ToString(),
 
-                ContractName = contractRequestDto.ContractName,
-                DateStart = contractRequestDto.DateStart,
-                DateEnd = contractRequestDto.DateEnd,
-                Content = contractRequestDto.Content,
-                RentingRequestId = contractRequestDto.RentingRequestId,
-                //AccountCreateId = managerId,
+                ContractName = GlobalConstant.ContractName + machineSerialNumber.SerialNumber,
+                DateStart = rentingRequest.DateStart,
+                DateEnd = rentingRequest.DateEnd,
+                Content = string.Empty,
+                RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
+                NumberOfMonth = rentingRequest.NumberOfMonth,
+                RentPeriod = numberOfDays,
+
+                RentPrice = machineSerialNumber.ActualRentPrice,
+                DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
+                TotalRentPrice = machineSerialNumber.ActualRentPrice * numberOfDays,
             };
 
             //Contract Term
-            foreach (var contractTerm in contractRequestDto.ContractTerms)
+            foreach (var productTerm in machineSerialNumber.Machine.MachineTerms)
             {
-                var term = new ContractTerm()
+                if (productTerm != null)
                 {
-                    Content = contractTerm.Content,
-                    Title = contractTerm.Title,
+                    var term = new ContractTerm()
+                    {
+                        Content = productTerm.Content,
+                        Title = productTerm.Title,
+                        DateCreate = dateCreate,
+                    };
+
+                    contract.ContractTerms.Add(term);
+                }
+            }
+
+            foreach (var contractTerm in contractTerms)
+            {
+                if (contractTerm != null)
+                {
+                    var term = new ContractTerm()
+                    {
+                        Content = contractTerm.Content,
+                        Title = contractTerm.Title,
+                        DateCreate = dateCreate,
+                    };
+
+                    contract.ContractTerms.Add(term);
+                }
+            }
+
+            var contractPayments = new List<ContractPayment>();
+            var depositContractPayment = InitDepositContractPayment(contract);
+            depositContractPayment.InvoiceId = depositInvoice.InvoiceId;
+            contractPayments.Add(depositContractPayment);
+
+            if ((bool)rentingRequest.IsOnetimePayment)
+            {
+                var rentalContractPayment = new ContractPayment
+                {
+                    ContractId = contract.ContractId,
                     DateCreate = DateTime.Now,
+                    Status = ContractPaymentStatusEnum.Pending.ToString(),
+                    Type = ContractPaymentTypeEnum.Rental.ToString(),
+                    Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
+                    Amount = (contract.RentPrice * contract.RentPeriod) + servicePrice,
+                    DateFrom = contract.DateStart,
+                    DateTo = contract.DateEnd,
+                    Period = contract.RentPeriod,
+                    DueDate = contract.DateStart,
+                    IsFirstRentalPayment = true,
                 };
 
-                contract.ContractTerms.Add(term);
+                rentalContractPayment.InvoiceId = rentalInvoice.InvoiceId;
+
+                contractPayments.Add(rentalContractPayment);
             }
+            else
+            {
+                var currentStartDate = rentingRequest.DateStart;
+                var remainingDays = numberOfDays;
+
+                int paymentIndex = 1;
+                while (remainingDays > 0)
+                {
+                    var paymentEndDate = GetContractPaymentEndDate((DateTime)currentStartDate, (DateTime)rentingRequest.DateEnd);
+
+                    var paymentPeriod = (paymentEndDate - currentStartDate).Value.Days + 1;
+                    var paymentAmount = contract.RentPrice * paymentPeriod;
+
+                    var rentalContractPayment = new ContractPayment
+                    {
+                        ContractId = contract.ContractId,
+                        DateCreate = DateTime.Now,
+                        Status = ContractPaymentStatusEnum.Pending.ToString(),
+                        Type = ContractPaymentTypeEnum.Rental.ToString(),
+                        Title = $"Thanh toán tiền thuê cho hợp đồng {contract.ContractId} - Lần {paymentIndex}",
+                        Amount = paymentAmount,
+                        DateFrom = currentStartDate,
+                        DateTo = paymentEndDate,
+                        Period = paymentPeriod,
+                        DueDate = currentStartDate,
+                        IsFirstRentalPayment = false,
+                    };
+
+                    if (paymentIndex == 1)
+                    {
+                        rentalContractPayment.Amount += servicePrice;
+                        rentalContractPayment.IsFirstRentalPayment = true;
+
+                        rentalContractPayment.InvoiceId = rentalInvoice.InvoiceId;
+                        rentalInvoice.Amount += rentalContractPayment.Amount;
+                    }
+
+                    contractPayments.Add(rentalContractPayment);
+
+                    currentStartDate = paymentEndDate.AddDays(1);
+                    remainingDays -= paymentPeriod;
+                    paymentIndex++;
+                }
+            }
+
+            contract.ContractPayments = contractPayments;
 
             return contract;
         }
+
+        private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
+        {
+            if (startDate.Year == contractEndDate.Year && startDate.Month == contractEndDate.Month)
+            {
+                //DateEnd
+                return contractEndDate;
+            }
+            else
+            {
+                //Full month
+                return new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+            }
+        }
+
+        private ContractPayment InitDepositContractPayment(Contract contract)
+        {
+            var contractPaymentDeposit = new ContractPayment
+            {
+                ContractId = contract.ContractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Deposit.ToString(),
+                Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
+                Amount = contract.DepositPrice,
+                DateFrom = contract.DateStart,
+                DateTo = contract.DateEnd,
+                Period = contract.RentPeriod,
+                DueDate = contract.DateStart,
+                IsFirstRentalPayment = false,
+            };
+
+            return contractPaymentDeposit;
+        }
+
         public async Task<ContractAddressDto> GetContractAddressById(string contractId)
         {
             var address = await ContractDao.Instance.GetRentingRequestAddressByContractId(contractId);
@@ -246,13 +346,6 @@ namespace Repository.Implement
             }
 
             return _mapper.Map<ContractAddressDto>(address);
-        }
-
-        public async Task<bool> IsContractValidToSign(string rentingRequestId)
-        {
-            var contracts = await ContractDao.Instance.GetContractsByRentingRequestId(rentingRequestId);
-
-            return contracts.All(c => c.Status.Equals(ContractStatusEnum.NotSigned.ToString()));
         }
 
         public async Task<ContractDto> GetContractById(string id)

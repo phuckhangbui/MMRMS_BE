@@ -4,23 +4,8 @@ using DTOs.RentingRequestAddress;
 
 namespace DTOs.RentingRequest
 {
-    public class RentingRequestDetailDto
+    public class RentingRequestDetailDto : RentingRequestDto
     {
-        public string? RentingRequestId { get; set; }
-        public int? AccountOrderId { get; set; }
-        public DateTime? DateCreate { get; set; }
-        public DateTime? DateStart { get; set; }
-        public DateTime? DateEnd { get; set; }
-        public double? TotalRentPrice { get; set; }
-        public double? TotalDepositPrice { get; set; }
-        public double? TotalServicePrice { get; set; }
-        public double? ShippingPrice { get; set; }
-        public double? DiscountPrice { get; set; }
-        public int? NumberOfMonth { get; set; }
-        public double? TotalAmount { get; set; }
-        public bool? IsOnetimePayment { get; set; }
-        public string? Note { get; set; }
-        public string? Status { get; set; }
         public List<ServiceRentingRequestDto> ServiceRentingRequests { get; set; }
         public AccountOrderDto AccountOrder { get; set; }
         public RentingRequestAddressDto RentingRequestAddress { get; set; }

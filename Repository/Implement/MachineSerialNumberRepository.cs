@@ -19,20 +19,18 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<bool> CheckMachineSerialNumbersValidToRent(List<MachineSerialNumberRentRequestDto> machineSerialNumberRentRequestDtos)
+        public async Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate)
         {
-            foreach (var machineSerialNumberRentRequestDto in machineSerialNumberRentRequestDtos)
-            {
-                var isMachineSerialNumberValid = await MachineSerialNumberDao.Instance.IsMachineSerialNumberValidToRent(
-                    machineSerialNumberRentRequestDto.SerialNumber, machineSerialNumberRentRequestDto.MachineId);
+            var result = await MachineSerialNumberDao.Instance.GetMachineSerialNumberAvailablesToRent(machineId, startDate, endDate);
 
-                if (!isMachineSerialNumberValid)
-                {
-                    return false;
-                }
-            }
+            return _mapper.Map<List<MachineSerialNumberDto>>(result);
+        }
 
-            return true;
+        public async Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate)
+        {
+            var result = await MachineSerialNumberDao.Instance.GetMachineSerialNumberAvailablesToRent(machineIds, startDate, endDate);
+
+            return _mapper.Map<List<MachineSerialNumberDto>>(result);
         }
 
         public async Task<bool> CheckMachineSerialNumberValidToRequest(NewRentingRequestDto newRentingRequestDto)
@@ -44,14 +42,12 @@ namespace Repository.Implement
 
             foreach (var rentingRequestMachineDetailDto in newRentingRequestDto.RentingRequestMachineDetails)
             {
-                var isMachineSerialNumberValid = await MachineSerialNumberDao.Instance
-                    .IsMachineSerialNumberValidToRent(
-                            rentingRequestMachineDetailDto.MachineId,
-                            rentingRequestMachineDetailDto.Quantity,
-                            newRentingRequestDto.DateStart,
-                            newRentingRequestDto.DateEnd);
+                var availableSerialNumbers = await GetMachineSerialNumberAvailablesToRent(
+                    rentingRequestMachineDetailDto.MachineId,
+                    newRentingRequestDto.DateStart,
+                    newRentingRequestDto.DateEnd);
 
-                if (!isMachineSerialNumberValid)
+                if (availableSerialNumbers.Count < rentingRequestMachineDetailDto.Quantity)
                 {
                     return false;
                 }

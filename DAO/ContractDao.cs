@@ -3,7 +3,6 @@ using Common;
 using Common.Enum;
 using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DAO

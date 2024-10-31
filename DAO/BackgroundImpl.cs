@@ -150,7 +150,7 @@ namespace DAO
                         .ThenInclude(c => c.ContractPayments)
                     .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
 
-                if (rentingRequest != null)
+                if (rentingRequest != null && rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
                 {
                     rentingRequest.Status = RentingRequestStatusEnum.Canceled.ToString();
 
