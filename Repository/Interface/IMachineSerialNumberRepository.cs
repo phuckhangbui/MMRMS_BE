@@ -6,7 +6,6 @@ namespace Repository.Interface
 {
     public interface IMachineSerialNumberRepository
     {
-        Task<bool> CheckMachineSerialNumbersValidToRent(List<MachineSerialNumberRentRequestDto> machineSerialNumberRentRequestDtos);
         Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto createSerialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, double price, int accountId);
         Task Delete(string serialNumber);
         Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId);
@@ -18,5 +17,7 @@ namespace Repository.Interface
         Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber);
         Task<IEnumerable<MachineSerialNumberLogDto>> GetMachineSerialNumberLog(string serialNumber);
         Task<IEnumerable<MachineSerialNumberComponentDto>> GetMachineComponent(string serialNumber);
+        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate);
+        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate);
     }
 }

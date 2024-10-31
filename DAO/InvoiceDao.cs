@@ -1,8 +1,5 @@
 ﻿using BusinessObject;
-using Common.Enum;
-using DTOs.Invoice;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace DAO
 {

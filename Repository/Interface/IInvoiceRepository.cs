@@ -1,4 +1,5 @@
 ﻿using DTOs.Invoice;
+using DTOs.RentingRequest;
 
 namespace Repository.Interface
 {
@@ -9,5 +10,6 @@ namespace Repository.Interface
         Task<InvoiceDto> GetInvoice(string invoiceId);
         Task UpdateInvoice(InvoiceDto invoice);
         Task<object?> GetInvoiceDetail(string invoiceId);
+        Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> InitInvoices(RentingRequestDto rentingRequest);
     }
 }

@@ -37,7 +37,7 @@ namespace DAO
                     .ToListAsync();
             }
         }
-        
+
         public async Task<string?> UpdateContractPayments(string invoiceId)
         {
             using var context = new MmrmsContext();
@@ -96,7 +96,7 @@ namespace DAO
                     }
                     else
                     {
-                        ScheduleContractCompletion(contractPayment.Contract);
+                        //ScheduleContractCompletion(contractPayment.Contract);
                     }
 
                     await context.SaveChangesAsync();

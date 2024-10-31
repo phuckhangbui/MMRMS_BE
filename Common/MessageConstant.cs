@@ -247,6 +247,7 @@
             public const string RentingRequestCanNotCancel = "Yêu cầu thuê không tồn tại hoặc không thể hủy";
             public const string RentingRequestCancelSuccessfully = "Hủy yêu cầu thuê thành công";
             public const string RentingRequestCancelFail = "Hủy yêu cầu thuê thất bại";
+            public const string CreateRentingRequestFail = "Tạo yêu cầu thuê thất bại";
 
             //DTO
             public const string AddressIdRequired = "Địa chỉ là bắt buộc.";

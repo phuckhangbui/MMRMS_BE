@@ -4,9 +4,6 @@ using Common.Enum;
 using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Contract = BusinessObject.Contract;
-using MachineSerialNumber = BusinessObject.MachineSerialNumber;
-using RentingRequest = BusinessObject.RentingRequest;
 
 namespace DAO
 {
@@ -56,16 +53,6 @@ namespace DAO
                 return await context.RentingRequests.Include(h => h.AccountOrder).ToListAsync();
             }
         }
-
-        //public async Task<RentingRequest> GetRentingRequestByIdAndStatus(string rentingRequestId, string status)
-        //{
-        //    using (var context = new MmrmsContext())
-        //    {
-        //        return await context.RentingRequests
-        //            .FirstOrDefaultAsync(h => h.RentingRequestId.Equals(rentingRequestId)
-        //                && h.Status.Equals(status));
-        //    }
-        //}
 
         public async Task<IEnumerable<RentingRequest>> GetRentingRequestsForCustomer(int customerId)
         {
@@ -149,7 +136,7 @@ namespace DAO
                 //Invoice amount
                 depositInvoice.Amount = rentingRequest.TotalDepositPrice;
 
-                if(rentingRequest.IsOnetimePayment == true)
+                if (rentingRequest.IsOnetimePayment == true)
                 {
                     rentalInvoice.Amount = rentingRequest.TotalRentPrice + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice
                         - rentingRequest.DiscountPrice;
@@ -180,8 +167,8 @@ namespace DAO
         }
 
         private Contract InitContract(
-            MachineSerialNumber machineSerialNumber, 
-            RentingRequest rentingRequest, 
+            MachineSerialNumber machineSerialNumber,
+            RentingRequest rentingRequest,
             List<Term> contractTerms,
             Invoice depositInvoice,
             Invoice rentalInvoice,
@@ -408,7 +395,7 @@ namespace DAO
                         foreach (var contractPayment in contract.ContractPayments)
                         {
                             contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
-                            
+
                             if (contractPayment.Invoice != null)
                             {
                                 contractPayment.Invoice.Status = InvoiceStatusEnum.Canceled.ToString();
