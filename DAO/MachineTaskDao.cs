@@ -87,6 +87,16 @@ namespace DAO
                     && DateOnly.FromDateTime((DateTime)d.DateStart) >= DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
             }
         }
+
+        public async Task<IEnumerable<MachineTask>> GetMachineTasksInADate(DateOnly date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.MachineTasks
+                        .Where(d =>
+                                    DateOnly.FromDateTime((DateTime)d.DateStart) == (date)).ToListAsync();
+            }
+        }
     }
 
 }

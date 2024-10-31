@@ -116,6 +116,18 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
 
+        public async Task<IEnumerable<MachineTaskDto>> GetMachineTasksInADate(DateOnly date)
+        {
+            var list = await MachineTaskDao.Instance.GetMachineTasksInADate(date);
+
+            if (list == null)
+            {
+                return new List<MachineTaskDto>();
+            }
+
+            return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
+        }
+
         public async Task<IEnumerable<MachineTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date)
         {
             var list = await MachineTaskDao.Instance.GetMachineTasks();

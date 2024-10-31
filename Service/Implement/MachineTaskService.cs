@@ -60,7 +60,7 @@ namespace Service.Implement
 
             int taskCounter = staffDeliveryTaskList.Count() + staffTaskList.Count();
 
-            if (taskCounter >= GlobalConstant.MaxTaskLimitADayContract)
+            if (taskCounter >= GlobalConstant.MaxTaskLimitADay)
             {
                 throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
             }

@@ -190,5 +190,17 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
         }
+
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksInADate(DateOnly date)
+        {
+            var list = await DeliveryTaskDao.Instance.GetDeliveryTasksInADate(date);
+
+            if (list == null)
+            {
+                return new List<DeliveryTaskDto>();
+            }
+
+            return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Repository.Interface
         Task<DeliveryTaskDto> GetDeliveryTask(int DeliveryTaskId);
         Task<DeliveryTaskDetailDto> GetDeliveryTaskDetail(int deliveryTaskId);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksFromNowOnForStaff(int staffId);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksInADate(DateOnly date);
         Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId);
     }
 }

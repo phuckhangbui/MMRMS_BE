@@ -188,5 +188,80 @@ namespace Service.Implement
 
             return taskAndDeliveryList.OrderBy(s => s.DateStart);
         }
+
+        public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule()
+        {
+            var staffList = await _accountRepository.GetActiveStaffAccounts();
+
+            var taskAndDeliveryList = new List<TaskAndDeliveryScheduleDto>();
+
+            foreach (var staff in staffList)
+            {
+                var schedule = await GetStaffSchedule(staff.AccountId);
+
+                taskAndDeliveryList.AddRange(schedule);
+            }
+
+            return taskAndDeliveryList.OrderBy(s => s.DateStart);
+        }
+
+        public async Task<IEnumerable<StaffScheduleCounterDto>> GetStaffScheduleFromADate(DateOnly date)
+        {
+            var machineTaskDateList = await _machineTaskRepository.GetMachineTasksInADate(date);
+            var deliveryTaskDateList = await _deliveryTaskRepository.GetDeliveryTasksInADate(date);
+
+            var taskAndDeliveryList = new List<TaskAndDeliveryScheduleDto>();
+
+            foreach (var task in machineTaskDateList)
+            {
+                var schedule = new TaskAndDeliveryScheduleDto
+                {
+                    StaffId = task.StaffId,
+                    MachineTaskId = task.MachineTaskId,
+                    Type = TaskAndDeliveryScheduleDtoTypeEnum.MachineTask.ToString(),
+                    Status = task.Status,
+                    DateStart = DateOnly.FromDateTime((DateTime)task.DateStart)
+                };
+                taskAndDeliveryList.Add(schedule);
+            }
+
+            foreach (var delivery in deliveryTaskDateList)
+            {
+                var schedule = new TaskAndDeliveryScheduleDto
+                {
+                    StaffId = delivery.StaffId,
+                    DeliveryTaskId = delivery.DeliveryTaskId,
+                    Type = TaskAndDeliveryScheduleDtoTypeEnum.DeliveryTask.ToString(),
+                    Status = delivery.Status,
+                    DateStart = DateOnly.FromDateTime((DateTime)delivery.DateShip)
+                };
+                taskAndDeliveryList.Add(schedule);
+            }
+
+            var staffIds = taskAndDeliveryList.Select(t => t.StaffId).Distinct().ToList();
+
+            var staffList = await _accountRepository.GetActiveStaffAccounts();
+
+            var filteredStaffList = staffList.Where(s => staffIds.Contains(s.AccountId)).ToList();
+
+            var staffNames = filteredStaffList.ToDictionary(s => s.AccountId, s => s.Name);
+
+
+            var staffScheduleCounters = taskAndDeliveryList
+                .GroupBy(s => s.StaffId)
+                .Select(group => new StaffScheduleCounterDto
+                {
+                    StaffId = group.Key,
+                    StaffName = staffNames.ContainsKey((int)group.Key) ? staffNames[(int)group.Key] : string.Empty,
+                    DateStart = date,
+                    TaskCounter = group.Count(),
+                    CanReceiveMoreTask = group.Count() < GlobalConstant.MaxTaskLimitADay,
+                    TaskAndDeliverySchedules = group.OrderBy(s => s.DateStart)
+                });
+
+            return staffScheduleCounters;
+        }
+
+
     }
 }

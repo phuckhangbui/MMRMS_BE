@@ -169,5 +169,17 @@ namespace DAO
                     && DateOnly.FromDateTime((DateTime)d.DateShip) >= DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
             }
         }
+
+        public async Task<IEnumerable<DeliveryTask>> GetDeliveryTasksInADate(DateOnly date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                        .Where(d =>
+                                    DateOnly.FromDateTime((DateTime)d.DateShip) == (date)).ToListAsync();
+            }
+        }
+
+
     }
 }

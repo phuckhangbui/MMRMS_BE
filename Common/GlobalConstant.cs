@@ -13,7 +13,7 @@
         public const string ComponentReplacementTicketIdPrefixPattern = "CRT";
         public const string DateOnlyFormat = "dd/MM/yyyy";
         public const double DepositValue = 0.3;
-        public const int MaxTaskLimitADayContract = 3;
+        public const int MaxTaskLimitADay = 3;
         public const string ContractName = "Hợp đồng thuê máy ";
     }
 }
