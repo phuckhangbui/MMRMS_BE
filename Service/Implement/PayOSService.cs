@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using Service.Exceptions;
 using Service.Interface;
 using Service.PayOS;
+using System.Globalization;
 
 namespace Service.Implement
 {
@@ -26,14 +27,17 @@ namespace Service.Implement
             var item = new ItemData(invoiceId, 1, amount);
             List<ItemData> items = [item];
 
-            int testAmount = amount / 1000;
-            if (testAmount < 10000)
-            {
-                testAmount = 10000;
-            }
+            int testAmount = 10000;
 
-            PaymentData paymentData = new PaymentData(invoiceTimeStamp, testAmount, $"For {amount} VND",
-                                                                                            items, urlCancel, urlReturn);
+            string formattedAmount = string.Format(new CultureInfo("vi-VN"), "{0:N0}", amount);
+            PaymentData paymentData = new PaymentData(
+                invoiceTimeStamp,
+                testAmount,
+                $"{string.Format(new CultureInfo("vi-VN"), "{0:N0}", amount)} VND",
+                items,
+                urlCancel,
+                urlReturn
+            );
 
             CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
             return createPayment.checkoutUrl;
