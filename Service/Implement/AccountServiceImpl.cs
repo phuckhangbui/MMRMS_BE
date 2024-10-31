@@ -163,6 +163,7 @@ namespace Service.Implement
                 var schedule = new TaskAndDeliveryScheduleDto
                 {
                     StaffId = staffId,
+                    StaffName = staff.Name,
                     MachineTaskId = task.MachineTaskId,
                     Type = TaskAndDeliveryScheduleDtoTypeEnum.MachineTask.ToString(),
                     Status = task.Status,
@@ -177,6 +178,7 @@ namespace Service.Implement
                 var schedule = new TaskAndDeliveryScheduleDto
                 {
                     StaffId = staffId,
+                    StaffName = staff.Name,
                     DeliveryTaskId = delivery.DeliveryTaskId,
                     Type = TaskAndDeliveryScheduleDtoTypeEnum.DeliveryTask.ToString(),
                     Status = delivery.Status,

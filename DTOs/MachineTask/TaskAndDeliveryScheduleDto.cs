@@ -4,6 +4,8 @@
     {
         public int? StaffId { get; set; }
 
+        public string? StaffName { get; set; }
+
         public DateOnly? DateStart { get; set; }
 
         public string? Type { get; set; }
