@@ -35,7 +35,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: "Manager")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto)
         {
             if (!ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{categoryId}")]
-        [Authorize(policy: "Manager")]
+        [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequestDto categoryRequestDto)
         {
             if (!ModelState.IsValid)

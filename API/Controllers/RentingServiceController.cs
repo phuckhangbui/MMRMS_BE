@@ -53,7 +53,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> CreateRentingService([FromBody] RentingServiceRequestDto rentingServiceRequestDto)
         {
             if (!ModelState.IsValid)
@@ -78,7 +78,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{rentingServiceId}")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> UpdateRentingService(int rentingServiceId, [FromBody] RentingServiceRequestDto rentingServiceRequestDto)
         {
             if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{rentingServiceId}")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "WebsiteStaff")]
         public async Task<ActionResult> DeleteRentingService(int rentingServiceId)
         {
             try

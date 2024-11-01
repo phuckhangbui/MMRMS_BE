@@ -176,7 +176,7 @@ namespace DAO
             }
         }
 
-        public async Task<bool> IsCustomerAccountValidToUpdate(int accountId, CustomerAccountUpdateDto updateDto)
+        public async Task<bool> IsAccountValidToUpdate(int accountId, string email, string phone)
         {
             using (var context = new MmrmsContext())
             {
@@ -187,10 +187,10 @@ namespace DAO
                 }
 
                 bool emailExists = await context.Accounts
-                    .AnyAsync(a => a.Email == updateDto.Email && a.AccountId != accountId && a.IsDelete == false);
+                    .AnyAsync(a => a.Email == email && a.AccountId != accountId && a.IsDelete == false);
 
                 bool phoneExists = await context.Accounts
-                    .AnyAsync(a => a.Phone == updateDto.Phone && a.AccountId != accountId && a.IsDelete == false);
+                    .AnyAsync(a => a.Phone == phone && a.AccountId != accountId && a.IsDelete == false);
 
                 if (emailExists || phoneExists)
                 {
