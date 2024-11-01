@@ -18,7 +18,7 @@ namespace DTOs.MachineTask
         public string TaskContent { get; set; }
 
         [Required(ErrorMessage = MessageConstant.MachineTask.DateStartRequired)]
-        public DateTime DateStart { get; set; }
+        public string DateStart { get; set; }
 
         public string? Note { get; set; }
     }

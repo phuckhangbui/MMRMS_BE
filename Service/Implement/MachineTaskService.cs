@@ -8,6 +8,7 @@ using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 using Service.SignalRHub;
+using System.Globalization;
 using System.Transactions;
 
 namespace Service.Implement
@@ -68,7 +69,13 @@ namespace Service.Implement
 
         public async Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
-            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, createMachineTaskDto.DateStart);
+
+            if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
+            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, parsedDate);
 
             var requestDto = await _machineCheckRequestRepository.GetMachineCheckRequest(createMachineTaskDto.RequestId);
 
@@ -90,7 +97,7 @@ namespace Service.Implement
 
                     await _machineCheckRequestService.UpdateRequestStatus(createMachineTaskDto.RequestId, MachineCheckRequestStatusEnum.Assigned.ToString(), task.MachineTaskId);
 
-                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, createMachineTaskDto.DateStart);
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, parsedDate);
 
                     await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
 
