@@ -12,7 +12,7 @@ namespace DTOs.DeliveryTask
         public int StaffId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.DeliveryTask.DateshipIsRequired)]
-        public DateTime DateShip { get; set; }
+        public string DateShip { get; set; }
 
         [Required(ErrorMessage = MessageConstant.DeliveryTask.ContractIdListRequired)]
         public List<string> ContractIdList { get; set; }

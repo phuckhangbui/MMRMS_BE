@@ -11,6 +11,7 @@ using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 using Service.SignalRHub;
+using System.Globalization;
 using System.Transactions;
 
 namespace Service.Implement
@@ -43,6 +44,12 @@ namespace Service.Implement
         {
             var accountDto = await _accountRepository.GetAccounById(createDeliveryTaskDto.StaffId);
 
+            if (!DateTime.TryParseExact(createDeliveryTaskDto.DateShip, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
+
             if (accountDto == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
@@ -53,10 +60,10 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountRoleIsNotSuitableToAssignForThisTask);
             }
 
-            var taskList = await _machineTaskRepository.GetTaskOfStaffInADay(createDeliveryTaskDto.StaffId, createDeliveryTaskDto.DateShip)
+            var taskList = await _machineTaskRepository.GetTaskOfStaffInADay(createDeliveryTaskDto.StaffId, parsedDate)
                                         ?? Enumerable.Empty<MachineTaskDto>();
 
-            var deliveryTaskList = await _deliveryTaskRepository.GetDeliveriesOfStaffInADay(createDeliveryTaskDto.StaffId, createDeliveryTaskDto.DateShip)
+            var deliveryTaskList = await _deliveryTaskRepository.GetDeliveriesOfStaffInADay(createDeliveryTaskDto.StaffId, parsedDate)
                                         ?? Enumerable.Empty<DeliveryTaskDto>();
 
             int taskCounter = taskList.Count() + deliveryTaskList.Count();
