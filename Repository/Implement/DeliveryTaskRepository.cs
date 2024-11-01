@@ -6,6 +6,7 @@ using DAO;
 using DTOs.Delivery;
 using DTOs.DeliveryTask;
 using Repository.Interface;
+using System.Globalization;
 
 namespace Repository.Implement
 {
@@ -24,11 +25,16 @@ namespace Repository.Implement
         {
             var now = DateTime.Now;
 
+            if (!DateTime.TryParseExact(createDeliveryTaskDto.DateShip, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new Exception("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
             var deliveryTask = new DeliveryTask
             {
                 ManagerId = managerId,
                 StaffId = createDeliveryTaskDto.StaffId,
-                DateShip = createDeliveryTaskDto.DateShip,
+                DateShip = parsedDate,
                 DateCreate = now,
                 Status = DeliveryTaskStatusEnum.Created.ToString(),
                 Type = DeliveryTaskTypeEnum.Delivery.ToString()

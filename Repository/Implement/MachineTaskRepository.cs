@@ -6,6 +6,7 @@ using DAO;
 using DTOs.ComponentReplacementTicket;
 using DTOs.MachineTask;
 using Repository.Interface;
+using System.Globalization;
 
 namespace Repository.Implement
 {
@@ -24,6 +25,12 @@ namespace Repository.Implement
 
         public async Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
         {
+
+            if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new Exception("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
             var staffAccount = await _accountRepository.GetAccounById(createMachineTaskDto.StaffId);
 
             var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(createMachineTaskDto.RequestId);
@@ -38,7 +45,7 @@ namespace Repository.Implement
                 ManagerId = managerId,
                 Type = MachineTaskTypeEnum.MachineryCheck.ToString(),
                 DateCreate = now,
-                DateStart = createMachineTaskDto.DateStart,
+                DateStart = parsedDate,
                 Status = MachineTaskStatusEnum.Created.ToString(),
                 Note = createMachineTaskDto.Note,
                 MachineCheckRequestId = createMachineTaskDto.RequestId,
