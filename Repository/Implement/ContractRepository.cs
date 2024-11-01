@@ -146,16 +146,14 @@ namespace Repository.Implement
                 .FirstOrDefaultAsync(m => m.SerialNumber.Equals(machineSerialNumberDto.SerialNumber));
 
             var rentingRequest = await context.RentingRequests
-                .Include(r => r.ServiceRentingRequests)
                 .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestDto.RentingRequestId));
-            double totalServicePricePerContract = (double)rentingRequest.ServiceRentingRequests.Select(s => s.ServicePrice).Sum();
 
-            var contract = InitContract(rentingRequestDto, contractTerms, machineSerialNumber, totalServicePricePerContract, depositInvoice, rentalInvoice);
+            var contract = InitContract(rentingRequestDto, contractTerms, machineSerialNumber, depositInvoice, rentalInvoice);
 
             rentingRequestDto.TotalDepositPrice += contract.DepositPrice;
             rentingRequestDto.TotalRentPrice += contract.TotalRentPrice;
-            rentingRequestDto.TotalServicePrice += totalServicePricePerContract;
-            rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice + totalServicePricePerContract;
+            //rentingRequestDto.TotalServicePrice += totalServicePricePerContract;
+            rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice;
 
             rentingRequest.Contracts.Add(contract);
             await context.SaveChangesAsync();
@@ -166,7 +164,6 @@ namespace Repository.Implement
         private Contract InitContract(RentingRequestDto rentingRequest,
             List<Term> contractTerms,
             MachineSerialNumber machineSerialNumber,
-            double servicePrice,
             InvoiceDto depositInvoice,
             InvoiceDto rentalInvoice)
         {
@@ -239,8 +236,8 @@ namespace Repository.Implement
                     DateCreate = DateTime.Now,
                     Status = ContractPaymentStatusEnum.Pending.ToString(),
                     Type = ContractPaymentTypeEnum.Rental.ToString(),
-                    Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId,
-                    Amount = (contract.RentPrice * contract.RentPeriod) + servicePrice,
+                    Title = GlobalConstant.RentalContractPaymentTitle + contract.ContractId,
+                    Amount = contract.RentPrice * contract.RentPeriod,
                     DateFrom = contract.DateStart,
                     DateTo = contract.DateEnd,
                     Period = contract.RentPeriod,
@@ -271,7 +268,7 @@ namespace Repository.Implement
                         DateCreate = DateTime.Now,
                         Status = ContractPaymentStatusEnum.Pending.ToString(),
                         Type = ContractPaymentTypeEnum.Rental.ToString(),
-                        Title = $"Thanh toán tiền thuê cho hợp đồng {contract.ContractId} - Lần {paymentIndex}",
+                        Title = $"{GlobalConstant.RentalContractPaymentTitle}{contract.ContractId} - Lần {paymentIndex}",
                         Amount = paymentAmount,
                         DateFrom = currentStartDate,
                         DateTo = paymentEndDate,
@@ -282,7 +279,7 @@ namespace Repository.Implement
 
                     if (paymentIndex == 1)
                     {
-                        rentalContractPayment.Amount += servicePrice;
+                        //rentalContractPayment.Amount += servicePrice;
                         rentalContractPayment.IsFirstRentalPayment = true;
 
                         rentalContractPayment.InvoiceId = rentalInvoice.InvoiceId;
@@ -324,7 +321,7 @@ namespace Repository.Implement
                 DateCreate = DateTime.Now,
                 Status = ContractPaymentStatusEnum.Pending.ToString(),
                 Type = ContractPaymentTypeEnum.Deposit.ToString(),
-                Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
+                Title = GlobalConstant.DepositContractPaymentTitle + contract.ContractId,
                 Amount = contract.DepositPrice,
                 DateFrom = contract.DateStart,
                 DateTo = contract.DateEnd,

@@ -180,6 +180,7 @@ namespace Repository.Implement
                 };
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
+                rentingRequest.TotalServicePrice += requiredRentingService.Price * newRentingRequestDto.RentingRequestMachineDetails.Sum(m => m.Quantity);
             }
 
             //Optional renting services
@@ -199,10 +200,11 @@ namespace Repository.Implement
                     };
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
+                    rentingRequest.TotalServicePrice += optionalRentingService.Price * newRentingRequestDto.RentingRequestMachineDetails.Sum(m => m.Quantity);
                 }
             }
 
-            rentingRequest.TotalAmount += newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
+            rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
 
             //rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
@@ -254,6 +256,13 @@ namespace Repository.Implement
             request.Status = status;
 
             await RentingRequestDao.Instance.UpdateAsync(request);
+        }
+
+        public async Task UpdateRentingRequest(RentingRequestDto rentingRequestDto)
+        {
+            var rentingRequest = _mapper.Map<RentingRequest>(rentingRequestDto);
+
+            await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
         }
     }
 }
