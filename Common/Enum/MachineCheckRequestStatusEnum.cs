@@ -8,6 +8,9 @@
         [Translation("Đã giao nhiệm vụ")]
         Assigned,
 
+        [Translation("Đang sử lý")]
+        Processing,
+
         [Translation("Hoàn thành")]
         Completed,
 

@@ -220,6 +220,9 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore());
             CreateMap<RentingRequestMachineDetail, NewRentingRequestMachineDetailDto>().ReverseMap();
             CreateMap<RentingRequest, RentingRequestDetailDto>();
+
+            CreateMap<RentingRequestDetailDto, RentingRequestDto>();
+
             CreateMap<ServiceRentingRequest, ServiceRentingRequestDto>()
                 .ForMember(dest => dest.RentingServiceName, opt => opt.MapFrom(src => src.RentingService.RentingServiceName));
             CreateMap<Notification, NotificationDto>().ReverseMap();

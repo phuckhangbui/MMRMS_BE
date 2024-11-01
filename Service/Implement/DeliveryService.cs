@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using AutoMapper;
+using Common;
 using Common.Enum;
 using DTOs.Contract;
 using DTOs.Delivery;
@@ -10,6 +11,7 @@ using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 using Service.SignalRHub;
+using System.Transactions;
 
 namespace Service.Implement
 {
@@ -23,8 +25,9 @@ namespace Service.Implement
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly INotificationService _notificationService;
         private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
+        private readonly IMapper _mapper;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMapper mapper)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -33,6 +36,7 @@ namespace Service.Implement
             _notificationService = notificationService;
             _contractRepository = contractRepository;
             _rentingRequestRepository = rentingRequestRepository;
+            _mapper = mapper;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -160,30 +164,43 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.DeliveryTask.InvalidContractDeliveryList);
             }
 
-            await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
 
-            string contractId = "";
-            foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                contractId = contractDelivery.ContractId;
+                try
+                {
+                    await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
 
-                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                    string contractId = "";
+                    foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+                    {
+                        contractId = contractDelivery.ContractId;
 
-                //need to send noti to customer ?
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                    }
+
+                    var contract = await _contractRepository.GetContractById(contractId);
+                    if (contract != null)
+                    {
+                        var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
+
+                        if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == RentingRequestStatusEnum.Shipped.ToString()))
+                        {
+                            await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequest.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
+
+                            //need to send noti to customer ?
+                        }
+                    }
+
+                    await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(ex.ToString());
+                }
             }
-
-            var contract = await _contractRepository.GetContractById(contractId);
-            if (contract != null)
-            {
-                var rentingRequest = await _rentingRequestRepository.GetRentingRequest(contract.RentingRequestId);
-
-                rentingRequest.Status = RentingRequestStatusEnum.Shipped.ToString();
-
-                await _rentingRequestRepository.UpdateRentingRequest(rentingRequest);
-            }
-
-
-            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
         }
 
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)

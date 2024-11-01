@@ -242,11 +242,18 @@ namespace Repository.Implement
             return list.FirstOrDefault(r => r.RentingRequestId == rentingRequestId);
         }
 
-        public async Task UpdateRentingRequest(RentingRequestDto rentingRequestDto)
+        public async Task UpdateRentingRequestStatus(string rentingRequestId, string status)
         {
-            var rentingRequest = _mapper.Map<RentingRequest>(rentingRequestDto);
+            var request = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
 
-            await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
+            if (request == null)
+            {
+                throw new Exception(MessageConstant.RentingRequest.RentingRequestNotFound);
+            }
+
+            request.Status = status;
+
+            await RentingRequestDao.Instance.UpdateAsync(request);
         }
     }
 }

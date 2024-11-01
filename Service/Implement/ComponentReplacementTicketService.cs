@@ -204,6 +204,8 @@ namespace Service.Implement
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
 
+                    await _machineCheckRequestService.UpdateRequestStatus(machineTask?.MachineCheckRequestId, MachineCheckRequestStatusEnum.Processing.ToString(), null);
+
                     await _componentRepository.MoveComponentQuanityFromAvailableToOnHold(component.ComponentId, createComponentReplacementTicketDto.Quantity);
 
                     scope.Complete();

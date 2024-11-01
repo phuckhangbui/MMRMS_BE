@@ -13,6 +13,6 @@ namespace Repository.Interface
         Task<bool> IsRentingRequestValidToCancel(string rentingRequestId);
         Task<bool> CancelRentingRequest(string rentingRequestId);
         Task<RentingRequestDto> GetRentingRequest(string rentingRequestId);
-        Task UpdateRentingRequest(RentingRequestDto rentingRequest);
+        Task UpdateRentingRequestStatus(string rentingRequestId, string status);
     }
 }
