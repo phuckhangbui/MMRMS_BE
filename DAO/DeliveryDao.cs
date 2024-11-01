@@ -131,32 +131,17 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                using (var transaction = await context.Database.BeginTransactionAsync())
+                context.Deliveries.Update(delivery);
+
+                foreach (var contractDelivery in delivery.ContractDeliveries)
                 {
-                    try
-                    {
-                        context.Deliveries.Update(delivery);
-
-                        foreach (var contractDelivery in delivery.ContractDeliveries)
-                        {
-                            context.Entry(contractDelivery).State = EntityState.Modified;
-                        }
-                        await context.SaveChangesAsync();
-
-                        context.DeliveryTaskLogs.Add(deliveryTaskLog);
-
-                        await context.SaveChangesAsync();
-                        await transaction.CommitAsync();
-
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        // Rollback transaction on error
-                        await transaction.RollbackAsync();
-                        throw new Exception("Error occurred during transaction: " + ex.Message);
-                    }
+                    context.Entry(contractDelivery).State = EntityState.Modified;
                 }
+                await context.SaveChangesAsync();
+
+                context.DeliveryTaskLogs.Add(deliveryTaskLog);
+
+                await context.SaveChangesAsync();
             }
         }
 

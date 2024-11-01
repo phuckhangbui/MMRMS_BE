@@ -309,7 +309,6 @@
             public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
             public const string InvalidContractDeliveryList = "Danh sách các hợp đồng của lần giao hàng này không hợp lệ";
 
-
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
             public const string StaffIdRequired = "Mã nhân viên là bắt buộc";
