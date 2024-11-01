@@ -113,6 +113,8 @@ namespace Repository.Implement
                 return new List<MachineTaskDto>();
             }
 
+            list = list.Where(t => t.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
+
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
 
@@ -125,6 +127,8 @@ namespace Repository.Implement
                 return new List<MachineTaskDto>();
             }
 
+            list = list.Where(t => t.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
+
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
 
@@ -134,7 +138,7 @@ namespace Repository.Implement
 
             var staffList = list.Where(t => t.StaffId == staffId).ToList();
 
-            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date).ToList();
+            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date && d.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
 
             return _mapper.Map<IEnumerable<MachineTaskDto>>(filteredList);
         }

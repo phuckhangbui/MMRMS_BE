@@ -240,29 +240,26 @@ namespace Service.Implement
                 taskAndDeliveryList.Add(schedule);
             }
 
-            var staffIds = taskAndDeliveryList.Select(t => t.StaffId).Distinct().ToList();
-
             var staffList = await _accountRepository.GetActiveStaffAccounts();
 
-            var filteredStaffList = staffList.Where(s => staffIds.Contains(s.AccountId)).ToList();
+            var staffNames = staffList.ToDictionary(s => s.AccountId, s => s.Name);
 
-            var staffNames = filteredStaffList.ToDictionary(s => s.AccountId, s => s.Name);
-
-
-            var staffScheduleCounters = taskAndDeliveryList
-                .GroupBy(s => s.StaffId)
-                .Select(group => new StaffScheduleCounterDto
-                {
-                    StaffId = group.Key,
-                    StaffName = staffNames.ContainsKey((int)group.Key) ? staffNames[(int)group.Key] : string.Empty,
-                    DateStart = date,
-                    TaskCounter = group.Count(),
-                    CanReceiveMoreTask = group.Count() < GlobalConstant.MaxTaskLimitADay,
-                    TaskAndDeliverySchedules = group.OrderBy(s => s.DateStart)
-                });
+            var staffScheduleCounters = staffList.Select(staff => new StaffScheduleCounterDto
+            {
+                StaffId = staff.AccountId,
+                StaffName = staffNames[staff.AccountId],
+                DateStart = date,
+                TaskCounter = taskAndDeliveryList.Count(t => t.StaffId == staff.AccountId),
+                CanReceiveMoreTask = taskAndDeliveryList.Count(t => t.StaffId == staff.AccountId) < GlobalConstant.MaxTaskLimitADay,
+                TaskAndDeliverySchedules = taskAndDeliveryList
+                    .Where(t => t.StaffId == staff.AccountId)
+                    .OrderBy(t => t.DateStart)
+                    .ToList()
+            });
 
             return staffScheduleCounters;
         }
+
 
 
     }
