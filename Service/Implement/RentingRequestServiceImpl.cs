@@ -97,7 +97,7 @@ namespace Service.Implement
                             rentalInvoice.Amount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
                         }
 
-                        //await _rentingRepository.UpdateRentingRequest(rentingRequest);
+                        await _rentingRepository.UpdateRentingRequest(rentingRequest);
                         await _invoiceRepository.UpdateInvoice(depositInvoice);
                         await _invoiceRepository.UpdateInvoice(rentalInvoice);
 

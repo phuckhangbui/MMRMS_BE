@@ -148,6 +148,7 @@ namespace DAO
                 .Include(s => s.Machine)
                     .ThenInclude(p => p.MachineTerms)
                 .OrderByDescending(s => s.DateCreate)
+                .ThenByDescending(s => s.RentDaysCounter)
                 .ToListAsync();
 
             return availableSerialNumbersToRent;
@@ -169,6 +170,7 @@ namespace DAO
                 .Include(s => s.Machine)
                     .ThenInclude(p => p.MachineTerms)
                 .OrderByDescending(s => s.DateCreate)
+                .ThenByDescending(s => s.RentDaysCounter)
                 .ToListAsync();
 
             return availableSerialNumbersToRent;

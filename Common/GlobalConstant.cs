@@ -15,5 +15,7 @@
         public const double DepositValue = 0.3;
         public const int MaxTaskLimitADay = 3;
         public const string ContractName = "Hợp đồng thuê máy ";
+        public const string DepositContractPaymentTitle = "Thanh toán tiền đặt cọc cho hợp đồng ";
+        public const string RentalContractPaymentTitle = "Thanh toán tiền thuê cho hợp đồng ";
     }
 }
