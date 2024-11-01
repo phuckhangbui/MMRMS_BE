@@ -12,7 +12,7 @@ namespace Repository.Interface
         Task<IEnumerable<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId);
         Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
         Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status);
-        Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status);
+        Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, int taskId, string status);
         Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status);
         Task SendNotificationToManagerWhenDeliveryTaskStatusUpdated(int managerId, ContractAddressDto contractAddress, string status);
         Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip);

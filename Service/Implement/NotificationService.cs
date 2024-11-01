@@ -90,10 +90,10 @@ namespace Service.Implement
 
 
 
-        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status)
+        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, int taskId, string status)
         {
             string title = "Cập nhật trạng thái công việc";
-            string body = $"Trạng thái công việc của {taskTitle} đã được đổi thành [{status}]";
+            string body = $"Trạng thái công việc số {taskId} đã được đổi thành [{status}]";
 
 
             string type = NotificationTypeEnum.Task.ToString();

@@ -4,6 +4,7 @@ namespace Service.Interface
 {
     public interface IMachineCheckRequestService
     {
+        Task CancelMachineCheckRequestDetail(string machineCheckRequestId, int customerId);
         Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
         Task<IEnumerable<MachineCheckCriteriaDto>> GetMachineCheckCriterias();
         Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId);

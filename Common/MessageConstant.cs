@@ -327,7 +327,9 @@
             public const string StatusCannotSet = "Tình trạng yêu cầu này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string PendingRequestStillExist = "Bạn vẫn còn một yêu cầu chưa được xử lý, không thể tạo yêu cầu mới";
-            public const string CriteriaIdNotExisted = "Mã tiêu chí kiểm tra máy không tồn tại: Mã ";
+            public const string NotCorrectCustomer = "Bạn không thể thực hiện hành động này do đây không phải là yêu cầu của bạn";
+            public const string RequestCannotCancel = "Yêu cầu này không thể hủy do quá trình sửa máy đã bắt đầu";
+            public const string CancelRequestFail = "Quá trình hủy yêu cầu này đã xảy ra lỗi";
 
             //DTO
             public const string CriteriaNameRequired = "Tên tiêu chí kiểm tra máy là bắt buộc";

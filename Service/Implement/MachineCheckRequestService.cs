@@ -1,11 +1,13 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.MachineCheckRequest;
+using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
 using Service.SignalRHub;
+using System.Transactions;
 
 namespace Service.Implement
 {
@@ -17,14 +19,83 @@ namespace Service.Implement
 
         private readonly INotificationService _notificationService;
 
+        private readonly IMachineTaskRepository _machineTaskRepository;
+
         private readonly IHubContext<MachineCheckRequestHub> _machineCheckRequestHub;
 
-        public MachineCheckRequestService(IMachineCheckRequestRepository MachineCheckRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MachineCheckRequestHub> MachineCheckRequestHub)
+        private readonly IHubContext<MachineTaskHub> _machineTaskHub;
+
+        public MachineCheckRequestService(IMachineCheckRequestRepository MachineCheckRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MachineCheckRequestHub> MachineCheckRequestHub, IMachineTaskRepository machineTaskRepository, IHubContext<MachineTaskHub> machineTaskHub)
         {
             _machineCheckRequestRepository = MachineCheckRequestRepository;
             _contractRepository = contractRepository;
             _notificationService = notificationService;
             _machineCheckRequestHub = MachineCheckRequestHub;
+            _machineTaskRepository = machineTaskRepository;
+            _machineTaskHub = machineTaskHub;
+        }
+
+        public async Task CancelMachineCheckRequestDetail(string machineCheckRequestId, int customerId)
+        {
+            var request = await _machineCheckRequestRepository.GetMachineCheckRequest(machineCheckRequestId);
+
+            if (request == null)
+            {
+                throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
+            }
+
+            var contract = await _contractRepository.GetContractById(request.ContractId);
+
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (contract.AccountSignId != customerId)
+            {
+                throw new ServiceException(MessageConstant.MachineCheckRequest.NotCorrectCustomer);
+            }
+
+            if (request.Status != MachineCheckRequestStatusEnum.New.ToString() &&
+               request.Status != MachineCheckRequestStatusEnum.Assigned.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineCheckRequest.RequestCannotCancel);
+            }
+
+            MachineTaskDto machineTask = null;
+
+            if (request.MachineTaskId != null)
+            {
+                machineTask = await _machineTaskRepository.GetMachineTask((int)request.MachineTaskId);
+
+                if (machineTask != null && machineTask?.DateStart <= DateTime.Now)
+                {
+                    throw new ServiceException(MessageConstant.MachineCheckRequest.RequestCannotCancel);
+                }
+            }
+
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await this.UpdateRequestStatus(request.MachineCheckRequestId, MachineCheckRequestStatusEnum.Canceled.ToString(), null);
+
+                    await _machineTaskRepository.UpdateTaskStatus((int)request.MachineTaskId, MachineTaskStatusEnum.Canceled.ToString(), customerId, null);
+
+                    if (machineTask != null)
+                    {
+                        await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)machineTask.StaffId, machineTask.MachineTaskId, MachineTaskStatusEnum.Canceled.ToVietnamese());
+                    }
+                    await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineTask", (int)request.MachineTaskId);
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.MachineCheckRequest.CancelRequestFail);
+                }
+            }
         }
 
         public async Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
@@ -133,7 +204,7 @@ namespace Service.Implement
             //send notification here
             await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request);
 
-            await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequestStatus", machineCheckRequestId);
+            await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequest", machineCheckRequestId);
         }
     }
 }
