@@ -50,7 +50,7 @@ namespace Test.Service
         }
 
         [Fact]
-        public async void GetEmployeeAccounts_ReturnSuccessfully()
+        public async Task GetEmployeeAccounts_ReturnSuccessfully()
         {
             var employeeAccounts = GetSampleEmployeeAccounts();
             _accountRepositoryMock.Setup(x => x.GetEmployeeAccounts()).ReturnsAsync(employeeAccounts);
@@ -61,7 +61,7 @@ namespace Test.Service
         }
 
         [Fact]
-        public async void GetEmployeeAccountDetail_ReturnSuccessfully()
+        public async Task GetEmployeeAccountDetail_ReturnSuccessfully()
         {
             int accountId = 4;
             var accountBase = GetSampleAccountBaseDto(accountId, (int)AccountRoleEnum.TechnicalStaff);
@@ -77,7 +77,7 @@ namespace Test.Service
         }
 
         [Fact]
-        public async void GetEmployeeAccountDetail_ThrowsException_AccountNotFound()
+        public async Task GetEmployeeAccountDetail_ThrowsException_AccountNotFound()
         {
             int accountId = -100;
             _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync((AccountBaseDto)null);
