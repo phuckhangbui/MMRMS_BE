@@ -8,7 +8,7 @@ namespace Repository.Interface
     public interface IContractRepository
     {
         Task<IEnumerable<ContractDto>> GetContracts();
-        Task<ContractDto> GetContractById(string id);
+        Task<ContractDto?> GetContractById(string contractId);
         Task<ContractDetailDto?> GetContractDetailById(string contractId);
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
         Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> CreateContract(
@@ -23,5 +23,6 @@ namespace Repository.Interface
         Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
         Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
         Task ScheduleNextRentalPayment(string rentingRequestId);
+        Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
     }
 }

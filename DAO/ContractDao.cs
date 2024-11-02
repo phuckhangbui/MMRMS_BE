@@ -29,7 +29,7 @@ namespace DAO
             }
         }
 
-        public async Task<Contract> GetContractById(string contractId)
+        public async Task<Contract> GetContractDetailById(string contractId)
         {
             using (var context = new MmrmsContext())
             {
@@ -44,6 +44,15 @@ namespace DAO
                         .ThenInclude(m => m.MachineImages)
                     .FirstOrDefaultAsync(c => c.ContractId == contractId);
             }
+        }
+
+        public async Task<Contract?> GetContractById(string contractId)
+        {
+            using var context = new MmrmsContext();
+            return await context.Contracts
+                .Include(c => c.ContractPayments)
+                .Include(c => c.ContractMachineSerialNumber)
+                .FirstOrDefaultAsync(c => c.ContractId == contractId);
         }
 
         public async Task<IEnumerable<Contract>> GetContractsByRentingRequestId(string rentingRequestId)
