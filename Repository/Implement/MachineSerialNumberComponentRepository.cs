@@ -33,6 +33,13 @@ namespace Repository.Implement
                 throw new Exception(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
+            var oldStatus = serialComponent.Status;
+
+            if (oldStatus == status)
+            {
+                return;
+            }
+
             var now = DateTime.Now;
 
             serialComponent.Status = status;
@@ -47,7 +54,7 @@ namespace Repository.Implement
                 AccountTriggerId = accountId,
                 DateCreate = now,
                 Type = MachineSerialNumberLogTypeEnum.MachineComponent.ToString(),
-                Action = $"Thay đổi trạng thái của bộ phận {serialComponent?.Component?.Component?.ComponentName ?? string.Empty} thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]",
+                Action = $"Thay đổi trạng thái của bộ phận {serialComponent?.Component?.Component?.ComponentName ?? string.Empty} từ [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]",
             };
 
             await MachineSerialNumberLogDao.Instance.CreateAsync(log);

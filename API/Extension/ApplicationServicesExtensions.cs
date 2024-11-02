@@ -1,6 +1,7 @@
 ﻿using DAO;
 using Repository.Implement;
 using Repository.Interface;
+using Service;
 using Service.Cloundinary;
 using Service.Implement;
 using Service.Interface;
@@ -37,6 +38,7 @@ public static class ApplicationServicesExtensions
         //services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IMachineSerialNumberComponentRepository, MachineSerialNumberComponentRepository>();
+        services.AddScoped<IMachineSerialNumberLogRepository, MachineSerialNumberLogRepository>();
 
         //Service
         services.AddScoped<IMailService, MailService>();
