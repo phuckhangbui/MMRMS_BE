@@ -195,7 +195,7 @@ namespace Service.Implement
                     {
                         var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
 
-                        if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == RentingRequestStatusEnum.Shipped.ToString()))
+                        if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.Renting.ToString()))
                         {
                             await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequest.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
 
