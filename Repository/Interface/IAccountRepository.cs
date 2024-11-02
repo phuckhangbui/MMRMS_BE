@@ -24,9 +24,8 @@ namespace Repository.Interface
         Task ChangeAccountPassword(AccountDto accountDto, string password);
         Task<AccountDto> FirebaseTokenExisted(string firebaseToken);
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
+        Task<bool> IsAccountValidToUpdate(int accountId, string email, string phone);
         Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
-        Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
-        Task<bool> IsCustomerAccountValidToUpdate(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
-        Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto);
+        Task<int> UpdateAccount(int accountId, IAccountUpdateDto accountUpdateDto);
     }
 }

@@ -123,24 +123,36 @@ namespace Service.Implement
 
         public async Task<int> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
         {
+            var allowedRoles = new List<AccountRoleEnum>
+            {
+                AccountRoleEnum.Manager,
+                AccountRoleEnum.TechnicalStaff,
+                AccountRoleEnum.WebsiteStaff
+            };
+
+            if (!allowedRoles.Contains((AccountRoleEnum)employeeAccountUpdateDto.RoleId) || !Enum.IsDefined(typeof(AccountRoleEnum), employeeAccountUpdateDto.RoleId))
+            {
+                throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
+            }
+
             var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
             if (!isValid)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
             }
 
-            return await _accountRepository.UpdateEmployeeAccount(accountId, employeeAccountUpdateDto);
+            return await _accountRepository.UpdateAccount(accountId, employeeAccountUpdateDto);
         }
 
         public async Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto)
         {
-            var isValid = await _accountRepository.IsCustomerAccountValidToUpdate(accountId, customerAccountUpdateDto);
+            var isValid = await _accountRepository.IsAccountValidToUpdate(accountId, customerAccountUpdateDto.Email, customerAccountUpdateDto.Phone);
             if (!isValid)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
             }
 
-            return await _accountRepository.UpdateCustomerAccount(accountId, customerAccountUpdateDto);
+            return await _accountRepository.UpdateAccount(accountId, customerAccountUpdateDto);
         }
 
         public async Task<IEnumerable<TaskAndDeliveryScheduleDto>> GetStaffSchedule(int staffId, DateOnly dateStart, DateOnly dateEnd)
@@ -260,7 +272,15 @@ namespace Service.Implement
             return staffScheduleCounters;
         }
 
+        public async Task<int> UpdateEmployeeProfile(int accountId, EmployeeProfileUpdateDto employeeProfileUpdateDto)
+        {
+            var isValid = await _accountRepository.IsAccountValidToUpdate(accountId, employeeProfileUpdateDto.Email, employeeProfileUpdateDto.Phone);
+            if (!isValid)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
+            }
 
-
+            return await _accountRepository.UpdateAccount(accountId, employeeProfileUpdateDto);
+        }
     }
 }

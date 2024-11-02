@@ -362,5 +362,27 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPut("employees")]
+        [Authorize(policy: "Employee")]
+        public async Task<ActionResult> UpdateEmployeeProfile(EmployeeProfileUpdateDto employeeProfileUpdateDto)
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+
+                var result = await _accountService.UpdateEmployeeProfile(accountId, employeeProfileUpdateDto);
+                if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
+                return BadRequest(MessageConstant.Account.UpdateAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
