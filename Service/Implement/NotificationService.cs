@@ -435,6 +435,48 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket)
+        {
+            string title = "Một ticket thay thế bộ phận máy của bạn đã bị khách từ chối thanh toán";
+            string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được khách hủy";
+
+
+            string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = (int)ticket.EmployeeCreateId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request)
         {
             string title = $"Yêu cầu kiểm tra máy của bạn đã được thay đổi trạng thái";

@@ -372,6 +372,11 @@
             public const string NotReadyToBeCompletedWhenNotPaid = "Ticket này chưa thể hoàn thành do chưa thanh toán";
             public const string NotCorrectStaffId = "Tài khoản này không phải là người tạo ticket, do đó không thể hoàn thành nó";
             public const string CompleteFail = "Cập nhật trạng thái hoàn thành của ticket thất bại";
+            public const string CannotCancelAlreadyPaid = "Không thể hủy ticket này do đã thanh toán";
+            public const string NotCorrectCustomerId = "Bạn không thể hủy ticket này do đây không phải là ticket của bạn";
+            public const string ErrorWhenCancel = "Có lỗi xảy ra khi hủy ticket";
+
+
 
             //DTO
             public const string MachineSerialNumberComponentIdRequired = "Mã bộ phận máy của máy serial là bắt buộc";

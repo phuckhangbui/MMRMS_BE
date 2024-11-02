@@ -19,6 +19,7 @@ namespace Repository.Interface
         Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart);
         Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string? componentName);
         Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket);
+        Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket);
         Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request);
     }
 }
