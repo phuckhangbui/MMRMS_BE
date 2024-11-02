@@ -29,7 +29,7 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Invoices.Include(i => i.AccountPaid)
+                return await context.Invoices.Include(i => i.AccountPaid).OrderByDescending(i => i.DateCreate)
                     .ToListAsync();
             }
         }
