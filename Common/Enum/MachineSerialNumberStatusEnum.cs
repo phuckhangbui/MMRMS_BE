@@ -2,9 +2,16 @@
 {
     public enum MachineSerialNumberStatusEnum
     {
+        [Translation("Sẵn sàng")]
         Available,
-        Rented,
+
+        [Translation("Đang thuê")]
+        Renting,
+
+        [Translation("Đang sửa chữa")]
         Maintenance,
+
+        [Translation("Đã khóa")]
         Locked
     }
 }

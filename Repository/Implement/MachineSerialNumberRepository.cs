@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Machine;
@@ -187,20 +188,30 @@ namespace Repository.Implement
 
         public async Task UpdateStatus(string serialNumber, string status, int accountId)
         {
-            var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
+            var serialMachine = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
 
-            machineSerialNumber.Status = status;
+            if (serialMachine == null)
+            {
+                throw new Exception(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+            }
+
+            if (serialMachine.Status == status)
+            {
+                return;
+            }
+
+            var oldStatus = serialMachine.Status;
 
             var log = new MachineSerialNumberLog
             {
                 SerialNumber = serialNumber,
                 AccountTriggerId = accountId,
-                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = DateTime.Now,
-                Action = $"Change status to {status}"
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
+                Action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(status)}]",
             };
 
-            await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
+            await MachineSerialNumberDao.Instance.UpdateAsync(serialMachine);
 
             await MachineSerialNumberLogDao.Instance.CreateAsync(log);
         }

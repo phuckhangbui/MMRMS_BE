@@ -15,6 +15,7 @@ namespace Service.Implement
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
+        private readonly IMachineSerialNumberLogRepository _machineSerialNumberLogRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
@@ -110,6 +111,10 @@ namespace Service.Implement
                     //update task status and request status
                     await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
 
+                    string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã bị hủy";
+
+                    await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, customerId);
+
                     //notify staff
                     await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket);
 
@@ -155,6 +160,22 @@ namespace Service.Implement
             {
                 try
                 {
+                    var serialComponent = await _machineSerialNumberComponentRepository.GetComponent((int)ticket.MachineSerialNumberComponentId);
+
+                    if (serialComponent == null)
+                    {
+                        throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
+                    }
+
+                    if (serialComponent.Status != MachineSerialNumberComponentStatusEnum.Broken.ToString())
+                    {
+                        string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã được hoàn tất, bộ phận đã được thay thế";
+
+                        await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, staffId);
+
+                        await _machineSerialNumberComponentRepository.UpdateComponentStatus(serialComponent.MachineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Normal.ToString(), staffId);
+                    }
+
                     await _componentReplacementTicketRepository.UpdateTicketStatusToComplete(componentReplacementTicketId, staffId);
 
                     await _componentRepository.RemoveOnHoldQuantity((int)ticket.ComponentId, (int)ticket.Quantity);
@@ -273,6 +294,10 @@ namespace Service.Implement
                     var newComponentTicket = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
+
+                    string action = $"Tạo ticket thay thế bộ phận [{serialComponent.ComponentName}]";
+
+                    await _machineSerialNumberLogRepository.WriteComponentLog(serialComponent.SerialNumber, createComponentReplacementTicketDto.MachineSerialNumberComponentId, action, staffId);
 
                     var machineCheckRequest = await _machineCheckRequestService.GetMachineCheckRequestDetail(machineTask.MachineCheckRequestId);
 
