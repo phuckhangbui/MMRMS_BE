@@ -38,7 +38,7 @@ namespace Repository.Implement
 
         public async Task<ContractDetailDto?> GetContractDetailById(string contractId)
         {
-            var contract = await ContractDao.Instance.GetContractById(contractId);
+            var contract = await ContractDao.Instance.GetContractDetailById(contractId);
             if (contract != null)
             {
                 var contractDetail = _mapper.Map<ContractDetailDto>(contract);
@@ -345,12 +345,9 @@ namespace Repository.Implement
             return _mapper.Map<ContractAddressDto>(address);
         }
 
-        public async Task<ContractDto> GetContractById(string id)
+        public async Task<ContractDto?> GetContractById(string contractId)
         {
-            var contracts = await ContractDao.Instance.GetAllAsync();
-
-            var contract = contracts.FirstOrDefault(c => c.ContractId == id);
-
+            var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract == null)
             {
                 return null;
@@ -361,7 +358,7 @@ namespace Repository.Implement
 
         public async Task UpdateContractStatus(string contractId, string status)
         {
-            var contract = await ContractDao.Instance.GetContractById(contractId);
+            var contract = await ContractDao.Instance.GetContractDetailById(contractId);
 
             contract.Status = status;
 
@@ -386,6 +383,31 @@ namespace Repository.Implement
         public async Task ScheduleNextRentalPayment(string rentingRequestId)
         {
             await ContractPaymentDao.Instance.ScheduleNextRentalPayment(rentingRequestId);
+        }
+
+        public async Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
+        {
+            var contract = await ContractDao.Instance.GetContractById(contractId);
+            if (contract != null)
+            {
+                contract.Status = status;
+                contract.RentPeriod = actualRentPeriod;
+                contract.DateEnd = actualDateEnd;
+
+                var outstandingContractPayments = contract.ContractPayments
+                    .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()))
+                    .ToList();
+
+                if (!outstandingContractPayments.IsNullOrEmpty())
+                {
+                    foreach (var payment in outstandingContractPayments)
+                    {
+                        payment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+                    }
+                }
+
+                await ContractDao.Instance.UpdateAsync(contract);
+            }
         }
 
         public async Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId)

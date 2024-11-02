@@ -8,8 +8,6 @@
 
         public string? AccountPaidName { get; set; }
 
-        public string? ContractPaymentId { get; set; }
-
         public string? ComponentReplacementTicketId { get; set; }
 
         public string? DigitalTransactionId { get; set; }

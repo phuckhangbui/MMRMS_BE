@@ -127,5 +127,44 @@ namespace Repository.Implement
 
             await MachineCheckRequestDao.Instance.UpdateAsync(request);
         }
+
+        public async Task CreateMachineCheckCriteria(string name)
+        {
+            var machineCheckCriteria = new MachineCheckCriteria
+            {
+                Name = name
+            };
+
+            await MachineCheckCriteriaDao.Instance.CreateAsync(machineCheckCriteria);
+        }
+
+        public async Task<bool> UpdateMachineCheckCriteria(int id, string name)
+        {
+            var machineCheckCriterias = await MachineCheckCriteriaDao.Instance.GetAllAsync();
+            var machineCheckCriteria = machineCheckCriterias.FirstOrDefault(m => m.MachineCheckCriteriaId == id);
+            if (machineCheckCriteria == null)
+            {
+                return false;
+            }
+
+            machineCheckCriteria.Name = name;
+            await MachineCheckCriteriaDao.Instance.UpdateAsync(machineCheckCriteria);
+
+            return true;
+        }
+
+        public async Task<bool> DeleteMachineCheckCriteria(int id)
+        {
+            var machineCheckCriterias = await MachineCheckCriteriaDao.Instance.GetAllAsync();
+            var machineCheckCriteria = machineCheckCriterias.FirstOrDefault(m => m.MachineCheckCriteriaId == id);
+            if (machineCheckCriteria == null)
+            {
+                return false;
+            }
+
+            await MachineCheckCriteriaDao.Instance.RemoveAsync(machineCheckCriteria);
+
+            return true;
+        }
     }
 }

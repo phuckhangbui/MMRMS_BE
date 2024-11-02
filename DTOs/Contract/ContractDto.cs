@@ -8,7 +8,7 @@ namespace DTOs.Contract
 {
     public class ContractDto
     {
-        public string ContractId { get; set; } = null!;
+        public string ContractId { get; set; }
         public string? ContractName { get; set; }
         public string? RentingRequestId { get; set; }
         public DateTime? DateCreate { get; set; }
@@ -16,6 +16,10 @@ namespace DTOs.Contract
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public string? Status { get; set; }
+        public double? DepositPrice { get; set; }
+        public int? NumberOfMonth { get; set; }
+        public int? RentPeriod { get; set; }
+        public double? TotalRentPrice { get; set; }
         public int? MachineId { get; set; }
         public string? MachineName { get; set; }
         public string? SerialNumber { get; set; }

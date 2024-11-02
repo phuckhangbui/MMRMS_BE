@@ -213,5 +213,20 @@ namespace Service.Implement
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequest", machineCheckRequestId);
         }
+
+        public async Task CreateMachineCheckCriteria(string name)
+        {
+            await _machineCheckRequestRepository.CreateMachineCheckCriteria(name);
+        }
+
+        public async Task<bool> UpdateMachineCheckCriteria(int id, string name)
+        {
+            return await _machineCheckRequestRepository.UpdateMachineCheckCriteria(id, name);
+        }
+
+        public async Task<bool> DeleteMachineCheckCriteria(int id)
+        {
+            return await _machineCheckRequestRepository.DeleteMachineCheckCriteria(id);
+        }
     }
 }

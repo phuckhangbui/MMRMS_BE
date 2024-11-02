@@ -5,6 +5,7 @@
         Deposit,
         Rental,
         Additional,
-        ComponentTicket
+        ComponentTicket,
+        Refund
     }
 }

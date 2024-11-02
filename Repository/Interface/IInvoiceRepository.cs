@@ -11,6 +11,7 @@ namespace Repository.Interface
         Task UpdateInvoice(InvoiceDto invoice);
         Task<object?> GetInvoiceDetail(string invoiceId);
         Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> InitInvoices(RentingRequestDto rentingRequest);
+        Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId);
         Task UpdateInvoiceStatus(string invoiceId, string status);
     }
 }

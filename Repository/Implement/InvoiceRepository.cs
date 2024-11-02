@@ -140,6 +140,23 @@ namespace Repository.Implement
             );
         }
 
+        public async Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId)
+        {
+            var invoice = new Invoice
+            {
+                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                Amount = amount,
+                Type = type,
+                Status = InvoiceStatusEnum.Pending.ToString(),
+                DateCreate = DateTime.Now,
+                AccountPaidId = accountPaidId,
+            };
+
+            await InvoiceDao.Instance.CreateAsync(invoice);
+
+            return _mapper.Map<InvoiceDto>(invoice);
+        }
+
         public async Task UpdateInvoiceStatus(string invoiceId, string status)
         {
             var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);

@@ -1,6 +1,7 @@
 ﻿using DTOs.MachineCheckRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -124,6 +125,65 @@ namespace API.Controllers
             {
                 IEnumerable<MachineCheckCriteriaDto> list = await _machineCheckRequestService.GetMachineCheckCriterias();
                 return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("criterias")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<ActionResult> CreateMachineCheckCriteria([FromForm, BindRequired] string name)
+        {
+            try
+            {
+                await _machineCheckRequestService.CreateMachineCheckCriteria(name);
+                return Created("", name);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("criterias")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<ActionResult> UpdateMachineCheckCriteria(int id, [FromForm, BindRequired] string name)
+        {
+            try
+            {
+                var result = await _machineCheckRequestService.UpdateMachineCheckCriteria(id, name);
+                if (result) return NoContent();
+                return BadRequest();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("criterias")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<ActionResult> DeleteMachineCheckCriteria(int id)
+        {
+            try
+            {
+                var result = await _machineCheckRequestService.DeleteMachineCheckCriteria(id);
+                if (result) return NoContent();
+                return BadRequest();
             }
             catch (ServiceException ex)
             {

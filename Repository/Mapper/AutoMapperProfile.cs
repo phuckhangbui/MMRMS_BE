@@ -203,7 +203,11 @@ namespace Repository.Mapper
                             ? src.AccountPaid.Name
                             : null));
             CreateMap<InvoiceDto, Invoice>();
-            CreateMap<Invoice, ContractInvoiceDto>();
+            CreateMap<Invoice, ContractInvoiceDto>()
+                 .ForMember(dest => dest.AccountPaidName,
+                        opt => opt.MapFrom(src => src.AccountPaid != null
+                            ? src.AccountPaid.Name
+                            : null));
 
             CreateMap<DigitalTransaction, TransactionReturn>().ReverseMap();
 

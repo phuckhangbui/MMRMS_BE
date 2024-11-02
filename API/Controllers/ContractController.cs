@@ -1,4 +1,5 @@
-﻿using DTOs.Contract;
+﻿using Common;
+using DTOs.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -72,6 +73,27 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("end-contract")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult> EndContract([FromQuery] string contractId)
+        {
+            try
+            {
+                var result = await _contractService.EndContract(contractId);
+                if (result) return Ok(MessageConstant.Contract.EndContractSuccessfully);
+                return BadRequest(MessageConstant.Contract.EndContractFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         //[HttpPost]
         //[Authorize(Policy = "Manager")]

@@ -202,7 +202,10 @@
 
         public static class Contract
         {
+            //Controller
             public const string SignContractSuccessfully = "Ký hợp đồng thành công";
+            public const string EndContractSuccessfully = "Kết thúc hợp đồng thành công";
+            public const string EndContractFail = "Kết thúc hợp đồng thất bại";
 
             //Service
             public const string ContractListEmpty = "Danh sách hợp đồng trống.";
@@ -215,6 +218,7 @@
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
             public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa kí";
             public const string SignContractFail = "Ký hợp đồng thất bại";
+            public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
