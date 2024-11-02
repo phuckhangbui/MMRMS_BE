@@ -137,5 +137,26 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPatch("{componentReplacementTicketId}/cancel")]
+        [Authorize(Policy = "Customer")]
+        public async Task<ActionResult> CancleComponentReplacementTicket([FromRoute] string componentReplacementTicketId)
+        {
+            int customerId = GetLoginAccountId();
+
+            try
+            {
+                await _componentReplacementTicketService.CancelComponentReplacementTicket(customerId, componentReplacementTicketId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

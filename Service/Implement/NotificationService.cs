@@ -90,10 +90,10 @@ namespace Service.Implement
 
 
 
-        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, string taskTitle, string status)
+        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, int taskId, string status)
         {
             string title = "Cập nhật trạng thái công việc";
-            string body = $"Trạng thái công việc của {taskTitle} đã được đổi thành [{status}]";
+            string body = $"Trạng thái công việc số {taskId} đã được đổi thành [{status}]";
 
 
             string type = NotificationTypeEnum.Task.ToString();
@@ -397,6 +397,48 @@ namespace Service.Implement
         {
             string title = "Một ticket thay thế bộ phận máy của bạn đã được khách thanh toán";
             string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được thanh toán";
+
+
+            string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = (int)ticket.EmployeeCreateId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket)
+        {
+            string title = "Một ticket thay thế bộ phận máy của bạn đã bị khách từ chối thanh toán";
+            string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được khách hủy";
 
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
