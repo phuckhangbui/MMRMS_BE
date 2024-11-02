@@ -40,6 +40,25 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("delivery")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequestsStillDelivery()
+        {
+            try
+            {
+                var rentingRequests = await _rentingService.GetRentingRequestsThatStillHaveContractNeedDelivery();
+                return Ok(rentingRequests);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{rentingRequestId}")]
         public async Task<ActionResult<RentingRequestDetailDto>> GetRentingRequesteDetailById(string rentingRequestId)
         {

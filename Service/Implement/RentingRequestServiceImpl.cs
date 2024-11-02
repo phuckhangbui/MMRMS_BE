@@ -165,5 +165,31 @@ namespace Service.Implement
 
             return await _rentingRepository.CancelRentingRequest(rentingRequestId);
         }
+
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsThatStillHaveContractNeedDelivery()
+        {
+            var rentingRequests = await _rentingRepository.GetRentingRequests();
+
+            rentingRequests = rentingRequests
+                .Where(r => r.Status == RentingRequestStatusEnum.Signed.ToString())
+                .ToList();
+
+            var requestsWithPendingContracts = new List<RentingRequestDto>();
+
+            foreach (var request in rentingRequests)
+            {
+                var contractList = await _contractRepository.GetContractListOfRequest(request.RentingRequestId);
+
+                bool hasNonShippingContract = contractList.Any(contract => contract.Status != ContractStatusEnum.Shipping.ToString());
+
+                if (hasNonShippingContract)
+                {
+                    requestsWithPendingContracts.Add(request);
+                }
+            }
+
+            return requestsWithPendingContracts;
+        }
+
     }
 }

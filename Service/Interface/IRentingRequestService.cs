@@ -10,5 +10,6 @@ namespace Service.Interface
         Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
         Task<bool> CancelRentingRequest(string rentingRequestId);
+        Task<IEnumerable<RentingRequestDto>> GetRentingRequestsThatStillHaveContractNeedDelivery();
     }
 }
