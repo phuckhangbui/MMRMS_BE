@@ -375,6 +375,7 @@
             public const string CannotCancelAlreadyPaid = "Không thể hủy ticket này do đã thanh toán";
             public const string NotCorrectCustomerId = "Bạn không thể hủy ticket này do đây không phải là ticket của bạn";
             public const string ErrorWhenCancel = "Có lỗi xảy ra khi hủy ticket";
+            public const string DuplicateComponentTicketForThisTask = "Công việc này đã có một ticket thay thế bộ phận này, vì thế không thể tạo thêm";
 
 
 

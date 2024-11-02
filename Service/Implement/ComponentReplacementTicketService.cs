@@ -19,6 +19,7 @@ namespace Service.Implement
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         private readonly IMachineCheckRequestService _machineCheckRequestService;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly INotificationService _notificationService;
 
@@ -100,6 +101,11 @@ namespace Service.Implement
                 try
                 {
                     await _componentReplacementTicketRepository.UpdateTicketStatus(componentReplacementTicketId, ComponentReplacementTicketStatusEnum.Canceled.ToString(), customerId);
+
+                    await _componentRepository.MoveComponentQuanityFromOnHoldToAvailable((int)ticket.ComponentId, (int)ticket.Quantity);
+
+                    //update invoice status
+                    await _invoiceRepository.UpdateInvoiceStatus(ticket.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
 
                     //update task status and request status
                     await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
@@ -209,6 +215,24 @@ namespace Service.Implement
             }
 
             //prevent duplicated component in 2 different ticket
+            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(createComponentReplacementTicketDto.MachineTaskCreateId);
+
+            if (machineTaskDetail == null)
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+            }
+
+            if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
+            {
+                var isComponentAlreadyHaveTicketForThisSerialNumber = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Any(
+                                                                      componentReplacementTicket
+                                                                      => componentReplacementTicket.ComponentId == component?.ComponentId);
+
+                if (isComponentAlreadyHaveTicketForThisSerialNumber)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.DuplicateComponentTicketForThisTask);
+                }
+            }
 
             var now = DateTime.Now;
 
@@ -249,6 +273,8 @@ namespace Service.Implement
                     var newComponentTicket = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
+
+                    var machineCheckRequest = await _machineCheckRequestService.GetMachineCheckRequestDetail(machineTask.MachineCheckRequestId);
 
                     await _machineCheckRequestService.UpdateRequestStatus(machineTask?.MachineCheckRequestId, MachineCheckRequestStatusEnum.Processing.ToString(), null);
 

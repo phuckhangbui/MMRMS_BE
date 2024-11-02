@@ -186,6 +186,13 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.StatusNotAvailable);
             }
 
+            var oldStatus = request.Status;
+
+            if (oldStatus == status)
+            {
+                return;
+            }
+
             request.Status = status;
 
             var contract = await _contractRepository.GetContractById(request.ContractId);
