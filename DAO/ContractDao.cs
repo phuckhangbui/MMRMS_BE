@@ -460,7 +460,7 @@ namespace DAO
                             //totalDepositPrice += (double)contractMachineSerialNumber.DepositPrice!;
                             //totalRentPrice += (double)contractMachineSerialNumber.RentPrice;
 
-                            machineSerialNumber!.Status = MachineSerialNumberStatusEnum.Rented.ToString();
+                            machineSerialNumber!.Status = MachineSerialNumberStatusEnum.Renting.ToString();
                             //machineSerialNumber.RentTimeCounter++;
 
                             context.MachineSerialNumbers.Update(machineSerialNumber);

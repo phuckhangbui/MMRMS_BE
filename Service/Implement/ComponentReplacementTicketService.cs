@@ -15,10 +15,12 @@ namespace Service.Implement
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
+        private readonly IMachineSerialNumberLogRepository _machineSerialNumberLogRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IMachineTaskRepository _machineTaskRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         private readonly IMachineCheckRequestService _machineCheckRequestService;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly INotificationService _notificationService;
 
@@ -34,6 +36,98 @@ namespace Service.Implement
             _machineTaskRepository = machineTaskRepository;
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
             _machineCheckRequestService = machineCheckRequestService;
+        }
+
+        private async Task UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus(int machineTaskId, int activatorId)
+        {
+            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(machineTaskId);
+
+            if (machineTaskDetail == null)
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+            }
+
+            if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() == 1)
+            {
+                await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
+            }
+            else
+            {
+                var isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
+                                                            componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
+                                                            componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
+
+                if (isAllTicketCompleted)
+                {
+                    await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
+                }
+            }
+        }
+
+        private async Task UpdateTaskAndRequestStatusToCompleted(int machineTaskId, string machineCheckRequestId, int activatorId)
+        {
+            await _machineTaskRepository.UpdateTaskStatus(machineTaskId,
+                                                          MachineTaskStatusEnum.Completed.ToString(),
+                                                          activatorId,
+                                                          null);
+
+            await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId,
+                                                                  MachineCheckRequestStatusEnum.Completed.ToString(),
+                                                                  null);
+        }
+
+        public async Task CancelComponentReplacementTicket(int customerId, string componentReplacementTicketId)
+        {
+            var ticket = await _componentReplacementTicketRepository.GetTicket(componentReplacementTicketId);
+
+            if (ticket == null)
+            {
+                throw new ServiceException(MessageConstant.ComponentReplacementTicket.TicketNotFound);
+            }
+
+            if (ticket.Status != ComponentReplacementTicketStatusEnum.Unpaid.ToString())
+            {
+                throw new ServiceException(MessageConstant.ComponentReplacementTicket.CannotCancelAlreadyPaid);
+            }
+
+            var contract = await _contractRepository.GetContractById(ticket.ContractId);
+
+            if (contract?.AccountSignId != customerId)
+            {
+                throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotCorrectCustomerId);
+            }
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await _componentReplacementTicketRepository.UpdateTicketStatus(componentReplacementTicketId, ComponentReplacementTicketStatusEnum.Canceled.ToString(), customerId);
+
+                    await _componentRepository.MoveComponentQuanityFromOnHoldToAvailable((int)ticket.ComponentId, (int)ticket.Quantity);
+
+                    //update invoice status
+                    await _invoiceRepository.UpdateInvoiceStatus(ticket.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
+
+                    //update task status and request status
+                    await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
+
+                    string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã bị hủy";
+
+                    await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, customerId);
+
+                    //notify staff
+                    await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket);
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.ErrorWhenCancel);
+                }
+            }
+
+            await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponenentReplacementTicket", componentReplacementTicketId);
+
         }
 
         public async Task CompleteComponentReplacementTicket(int staffId, string componentReplacementTicketId)
@@ -61,56 +155,32 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
-            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail((int)ticket.MachineTaskCreateId);
-
-            if (machineTaskDetail == null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-            }
-
-
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
+                    var serialComponent = await _machineSerialNumberComponentRepository.GetComponent((int)ticket.MachineSerialNumberComponentId);
+
+                    if (serialComponent == null)
+                    {
+                        throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
+                    }
+
+                    if (serialComponent.Status != MachineSerialNumberComponentStatusEnum.Broken.ToString())
+                    {
+                        string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã được hoàn tất, bộ phận đã được thay thế";
+
+                        await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, staffId);
+
+                        await _machineSerialNumberComponentRepository.UpdateComponentStatus(serialComponent.MachineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Normal.ToString(), staffId);
+                    }
+
                     await _componentReplacementTicketRepository.UpdateTicketStatusToComplete(componentReplacementTicketId, staffId);
 
                     await _componentRepository.RemoveOnHoldQuantity((int)ticket.ComponentId, (int)ticket.Quantity);
 
-                    if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 1)
-                    {
-                        bool isTaskComplete = true;
-                        foreach (var taskTicket in machineTaskDetail.ComponentReplacementTicketCreateFromTaskList)
-                        {
-                            if (taskTicket.Status != MachineTaskStatusEnum.Completed.ToString())
-                            {
-                                isTaskComplete = false;
-                                break;
-                            }
-                        }
-
-                        if (isTaskComplete)
-                        {
-                            await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId,
-                                                                      MachineTaskStatusEnum.Completed.ToString(),
-                                                                      staffId,
-                                                                      null);
-
-                            await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString(), null);
-                        }
-                    }
-                    else
-                    {
-                        await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId,
-                                                                      MachineTaskStatusEnum.Completed.ToString(),
-                                                                      staffId,
-                                                                      null);
-
-                        await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId, MachineCheckRequestStatusEnum.Completed.ToString(), null);
-                    }
-
-
+                    await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, staffId);
 
                     scope.Complete();
                 }
@@ -120,6 +190,7 @@ namespace Service.Implement
                 }
             }
 
+            await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponenentReplacementTicket", componentReplacementTicketId);
         }
 
         public async Task CreateComponentReplacementTicketWhenCheckMachineRenting(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto)
@@ -131,7 +202,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
 
-            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString() || machineTask.Status != MachineTaskStatusEnum.Reparing.ToString())
+            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString() && machineTask.Status != MachineTaskStatusEnum.Reparing.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.CannotCreateTicketWithThisTask);
             }
@@ -162,6 +233,26 @@ namespace Service.Implement
             if (component.Status != ComponentStatusEnum.Active.ToString() || (component?.AvailableQuantity) < createComponentReplacementTicketDto.Quantity)
             {
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
+            }
+
+            //prevent duplicated component in 2 different ticket
+            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(createComponentReplacementTicketDto.MachineTaskCreateId);
+
+            if (machineTaskDetail == null)
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+            }
+
+            if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
+            {
+                var isComponentAlreadyHaveTicketForThisSerialNumber = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Any(
+                                                                      componentReplacementTicket
+                                                                      => componentReplacementTicket.ComponentId == component?.ComponentId);
+
+                if (isComponentAlreadyHaveTicketForThisSerialNumber)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.DuplicateComponentTicketForThisTask);
+                }
             }
 
             var now = DateTime.Now;
@@ -203,6 +294,12 @@ namespace Service.Implement
                     var newComponentTicket = await _componentReplacementTicketRepository.CreateTicket(staffId, replacementTicket, contract.AccountSignId);
 
                     await _machineTaskRepository.UpdateTaskStatus(machineTask.MachineTaskId, MachineTaskStatusEnum.Reparing.ToString(), staffId, null);
+
+                    string action = $"Tạo ticket thay thế bộ phận [{serialComponent.ComponentName}]";
+
+                    await _machineSerialNumberLogRepository.WriteComponentLog(serialComponent.SerialNumber, createComponentReplacementTicketDto.MachineSerialNumberComponentId, action, staffId);
+
+                    var machineCheckRequest = await _machineCheckRequestService.GetMachineCheckRequestDetail(machineTask.MachineCheckRequestId);
 
                     await _machineCheckRequestService.UpdateRequestStatus(machineTask?.MachineCheckRequestId, MachineCheckRequestStatusEnum.Processing.ToString(), null);
 

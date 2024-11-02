@@ -331,7 +331,9 @@
             public const string StatusCannotSet = "Tình trạng yêu cầu này không thể được cài đặt";
             public const string StatusNotAvailable = "Trạng thái này không tồn tại";
             public const string PendingRequestStillExist = "Bạn vẫn còn một yêu cầu chưa được xử lý, không thể tạo yêu cầu mới";
-            public const string CriteriaIdNotExisted = "Mã tiêu chí kiểm tra máy không tồn tại: Mã ";
+            public const string NotCorrectCustomer = "Bạn không thể thực hiện hành động này do đây không phải là yêu cầu của bạn";
+            public const string RequestCannotCancel = "Yêu cầu này không thể hủy do quá trình sửa máy đã bắt đầu";
+            public const string CancelRequestFail = "Quá trình hủy yêu cầu này đã xảy ra lỗi";
 
             //DTO
             public const string CriteriaNameRequired = "Tên tiêu chí kiểm tra máy là bắt buộc";
@@ -374,6 +376,12 @@
             public const string NotReadyToBeCompletedWhenNotPaid = "Ticket này chưa thể hoàn thành do chưa thanh toán";
             public const string NotCorrectStaffId = "Tài khoản này không phải là người tạo ticket, do đó không thể hoàn thành nó";
             public const string CompleteFail = "Cập nhật trạng thái hoàn thành của ticket thất bại";
+            public const string CannotCancelAlreadyPaid = "Không thể hủy ticket này do đã thanh toán";
+            public const string NotCorrectCustomerId = "Bạn không thể hủy ticket này do đây không phải là ticket của bạn";
+            public const string ErrorWhenCancel = "Có lỗi xảy ra khi hủy ticket";
+            public const string DuplicateComponentTicketForThisTask = "Công việc này đã có một ticket thay thế bộ phận này, vì thế không thể tạo thêm";
+
+
 
             //DTO
             public const string MachineSerialNumberComponentIdRequired = "Mã bộ phận máy của máy serial là bắt buộc";

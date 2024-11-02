@@ -156,5 +156,19 @@ namespace Repository.Implement
 
             return _mapper.Map<InvoiceDto>(invoice);
         }
+
+        public async Task UpdateInvoiceStatus(string invoiceId, string status)
+        {
+            var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
+
+            if (invoice == null)
+            {
+                throw new Exception(MessageConstant.Invoice.InvoiceNotFound);
+            }
+
+            invoice.Status = status;
+
+            await InvoiceDao.Instance.UpdateAsync(invoice);
+        }
     }
 }

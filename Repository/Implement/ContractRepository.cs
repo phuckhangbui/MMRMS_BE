@@ -409,5 +409,12 @@ namespace Repository.Implement
                 await ContractDao.Instance.UpdateAsync(contract);
             }
         }
+
+        public async Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId)
+        {
+            var contractList = await ContractDao.Instance.GetContractsByRentingRequestId(rentingRequestId);
+
+            return _mapper.Map<IEnumerable<ContractDto>>(contractList);
+        }
     }
 }

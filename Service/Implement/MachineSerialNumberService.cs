@@ -162,7 +162,7 @@ namespace Service.Implement
             }
 
             if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintenance.ToString()
-               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Rented.ToString())
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineStateNotSuitableForModifyStatus);
             }
@@ -177,8 +177,6 @@ namespace Service.Implement
             }
 
             await _machineSerialNumberRepository.UpdateStatus(serialNumber, machineSerialNumber.Status, staffId);
-
-
         }
 
         public async Task Update(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto)

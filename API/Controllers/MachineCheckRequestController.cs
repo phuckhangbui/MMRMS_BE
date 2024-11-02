@@ -141,14 +141,30 @@ namespace API.Controllers
         public async Task<ActionResult> CreateMachineCheckRequest(CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
             int customerId = GetLoginAccountId();
-            if (customerId == 0)
-            {
-                return Unauthorized();
-            }
 
             try
             {
                 await _machineCheckRequestService.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("customer/{machineCheckRequestId}/cancel")]
+        [Authorize(Policy = "Customer")]
+        public async Task<ActionResult> CancelMachineCheckRequest([FromRoute] string machineCheckRequestId)
+        {
+            int customerId = GetLoginAccountId();
+            try
+            {
+                await _machineCheckRequestService.CancelMachineCheckRequestDetail(machineCheckRequestId, customerId);
                 return NoContent();
             }
             catch (ServiceException ex)
