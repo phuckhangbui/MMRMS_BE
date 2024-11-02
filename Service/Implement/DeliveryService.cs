@@ -25,10 +25,11 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly INotificationService _notificationService;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
         private readonly IMapper _mapper;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMapper mapper)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMapper mapper, IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -38,6 +39,7 @@ namespace Service.Implement
             _contractRepository = contractRepository;
             _rentingRequestRepository = rentingRequestRepository;
             _mapper = mapper;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -184,6 +186,8 @@ namespace Service.Implement
                         contractId = contractDelivery.ContractId;
 
                         await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+
+                        await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
                     }
 
                     var contract = await _contractRepository.GetContractById(contractId);

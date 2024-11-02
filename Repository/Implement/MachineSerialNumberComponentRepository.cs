@@ -59,5 +59,7 @@ namespace Repository.Implement
 
             await MachineSerialNumberLogDao.Instance.CreateAsync(log);
         }
+
+
     }
 }
