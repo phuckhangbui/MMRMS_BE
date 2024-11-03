@@ -1,6 +1,4 @@
-﻿using DTOs.DeliveryTask;
-
-namespace DTOs.Delivery
+﻿namespace DTOs.Delivery
 {
     public class DeliveryTaskDetailDto
     {

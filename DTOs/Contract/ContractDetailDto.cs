@@ -1,7 +1,7 @@
-﻿using DTOs.AccountAddressDto;
+﻿using DTOs.AccountBusiness;
 using DTOs.ContractPayment;
+using DTOs.ContractTerm;
 using DTOs.RentingRequest;
-using DTOs.Term;
 
 namespace DTOs.Contract
 {

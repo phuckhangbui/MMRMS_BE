@@ -4,7 +4,7 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Machine;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -144,23 +144,6 @@ namespace Repository.Implement
             }
 
             return _mapper.Map<List<MachineSerialNumberLogDto>>(machineSerialNumber.MachineSerialNumberLogs);
-        }
-
-        public async Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId)
-        {
-            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
-
-            var allMachineSerialNumbers = new List<MachineSerialNumber>();
-
-            foreach (var rentingRequestMachineDetail in rentingRequest.RentingRequestMachineDetails)
-            {
-                var machineSerialNumbers = await MachineSerialNumberDao.Instance
-                    .GetMachineSerialNumbersByMachineIdAndStatus((int)rentingRequestMachineDetail.MachineId!, MachineSerialNumberStatusEnum.Available.ToString());
-
-                allMachineSerialNumbers.AddRange(machineSerialNumbers);
-            }
-
-            return _mapper.Map<IEnumerable<MachineSerialNumberOptionDto>>(allMachineSerialNumbers);
         }
 
         public async Task<bool> IsSerialNumberExist(string serialNumber)

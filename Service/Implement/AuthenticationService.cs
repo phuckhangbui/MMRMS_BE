@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Common;
 using Common.Enum;
-using DTOs;
 using DTOs.Account;
 using DTOs.Authentication;
 using Repository.Interface;
 using Service.Exceptions;
+using Service.Helper;
 using Service.Interface;
 using Service.Mail;
 using System.Security.Cryptography;

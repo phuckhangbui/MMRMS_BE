@@ -1,6 +1,6 @@
 ﻿using DTOs.Contract;
 
-namespace DTOs.DeliveryTask
+namespace DTOs.Delivery
 {
     public class DeliveryTaskDto
     {

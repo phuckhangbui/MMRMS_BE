@@ -1,5 +1,5 @@
 ﻿using DTOs.Machine;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 
 namespace Repository.Interface
 {

@@ -2,7 +2,7 @@
 using Common;
 using Common.Enum;
 using DTOs.Machine;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -138,18 +138,6 @@ namespace Service.Implement
             }
 
             return await _machineSerialNumberRepository.GetMachineComponent(serialNumber);
-        }
-
-        public async Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId)
-        {
-            var machineSerialNumbers = await _machineSerialNumberRepository.GetSerialMachineNumbersAvailableForRenting(rentingRequestId);
-
-            if (machineSerialNumbers.IsNullOrEmpty())
-            {
-                throw new ServiceException(MessageConstant.MachineSerialNumber.NoAvailableSerailNumberMachineForRenting);
-            }
-
-            return machineSerialNumbers;
         }
 
         public async Task ToggleStatus(string serialNumber, int staffId)

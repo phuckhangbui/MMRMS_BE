@@ -1,6 +1,6 @@
 ﻿using Common;
-using DTOs.MachineSerialNumber;
-using DTOs.Term;
+using DTOs.ContractTerm;
+using DTOs.MachineComponentStatus;
 using DTOs.Validation;
 using System.ComponentModel.DataAnnotations;
 
@@ -26,7 +26,6 @@ namespace DTOs.Contract
         public double? RentPrice { get; set; }
         public string? Thumbnail { get; set; }
         public int? AccountSignId { get; set; }
-
     }
 
     public class ContractRequestDto

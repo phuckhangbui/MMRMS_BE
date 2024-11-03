@@ -3,7 +3,6 @@ using Common;
 using Common.Enum;
 using DTOs.Contract;
 using DTOs.Delivery;
-using DTOs.DeliveryTask;
 using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;

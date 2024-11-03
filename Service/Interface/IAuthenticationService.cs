@@ -1,5 +1,4 @@
-﻿using DTOs;
-using DTOs.Account;
+﻿using DTOs.Account;
 using DTOs.Authentication;
 
 namespace Service.Interface

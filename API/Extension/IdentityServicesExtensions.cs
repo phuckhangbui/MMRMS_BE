@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace HostelManagementWebAPI.Extensions;
+namespace API.Extension;
 
 public static class IdentityServiceExtension
 {

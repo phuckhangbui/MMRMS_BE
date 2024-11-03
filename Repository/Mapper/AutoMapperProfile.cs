@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DTOs.Account;
-using DTOs.AccountAddressDto;
+using DTOs.AccountBusiness;
 using DTOs.Address;
 using DTOs.Authentication;
 using DTOs.Category;
@@ -10,13 +10,13 @@ using DTOs.ComponentReplacementTicket;
 using DTOs.Content;
 using DTOs.Contract;
 using DTOs.ContractPayment;
+using DTOs.ContractTerm;
 using DTOs.Delivery;
-using DTOs.DeliveryTask;
 using DTOs.Invoice;
-using DTOs.Log;
+using DTOs.LogDto;
 using DTOs.Machine;
 using DTOs.MachineCheckRequest;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using DTOs.MachineTask;
 using DTOs.MembershipRank;
 using DTOs.Notification;
@@ -138,7 +138,6 @@ namespace Repository.Mapper
             CreateMap<CreateComponentDto, Component>();
 
             CreateMap<MachineSerialNumber, MachineSerialNumberDto>();
-            CreateMap<MachineSerialNumber, MachineSerialNumberOptionDto>();
             CreateMap<MachineSerialNumberLog, MachineSerialNumberLogDto>()
                 .ForMember(dest => dest.AccountTriggerName,
                         opt => opt.MapFrom(src => src.AccountTrigger != null
@@ -191,7 +190,7 @@ namespace Repository.Mapper
                     src.ContractMachineSerialNumber.Machine != null &&
                     src.ContractMachineSerialNumber.Machine.MachineImages != null ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null))
                 .ForMember(dest => dest.IsOnetimePayment, opt => opt.MapFrom(src => src.RentingRequest != null ? src.RentingRequest.IsOnetimePayment : null));
-            CreateMap<Contract, ContractRequestDto>().ReverseMap();
+            //CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
 

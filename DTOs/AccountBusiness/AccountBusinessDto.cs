@@ -1,4 +1,4 @@
-﻿namespace DTOs.AccountAddressDto
+﻿namespace DTOs.AccountBusiness
 {
     public class AccountBusinessDto
     {

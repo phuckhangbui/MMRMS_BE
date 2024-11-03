@@ -1,4 +1,4 @@
-﻿namespace DTOs.MachineSerialNumber
+﻿namespace DTOs.MachineComponentStatus
 {
     public class MachineSerialNumberLogDto
     {

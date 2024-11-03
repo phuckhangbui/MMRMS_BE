@@ -1,4 +1,4 @@
-﻿using DTOs.MachineSerialNumber;
+﻿using DTOs.MachineComponentStatus;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -161,24 +161,6 @@ namespace API.Controllers
             {
                 await _machineSerialNumberService.Update(serialNumber, machineSerialNumberUpdateDto);
                 return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpGet("renting-requests/{rentingRequestId}")]
-        public async Task<IActionResult> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId)
-        {
-            try
-            {
-                var machineSerialNumbers = await _machineSerialNumberService.GetSerialMachineNumbersAvailableForRenting(rentingRequestId);
-                return Ok(machineSerialNumbers);
             }
             catch (ServiceException ex)
             {

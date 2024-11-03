@@ -1,4 +1,4 @@
-﻿namespace DTOs.Log
+﻿namespace DTOs.LogDto
 {
     public class LogDetailDto
     {

@@ -3,7 +3,7 @@ using BusinessObject;
 using Common.Enum;
 using DAO;
 using DTOs.Machine;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -65,14 +65,14 @@ namespace Repository.Implement
             var productDetail = _mapper.Map<DisplayMachineDetailDto>(product);
 
             //Quantity availble
-            var machineSerialNumbers = await MachineSerialNumberDao.Instance.GetMachineSerialNumbersByMachineIdAndStatus(productId, MachineSerialNumberStatusEnum.Available.ToString());
-            productDetail.Quantity = machineSerialNumbers.Count();
+            //var machineSerialNumbers = await MachineSerialNumberDao.Instance.GetMachineSerialNumbersByMachineIdAndStatus(productId, MachineSerialNumberStatusEnum.Available.ToString());
+            //productDetail.Quantity = machineSerialNumbers.Count();
 
-            var prices = machineSerialNumbers
-                .Select(s => s.ActualRentPrice ?? 0)
-                .OrderBy(s => s)
-                .ToList();
-            productDetail.RentPrices = prices;
+            //var prices = machineSerialNumbers
+            //    .Select(s => s.ActualRentPrice ?? 0)
+            //    .OrderBy(s => s)
+            //    .ToList();
+            //productDetail.RentPrices = prices;
 
             return productDetail;
         }

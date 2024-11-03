@@ -1,4 +1,4 @@
-﻿using DTOs.MachineSerialNumber;
+﻿using DTOs.MachineComponentStatus;
 
 namespace Repository.Interface
 {

@@ -1,7 +1,6 @@
 ﻿using BusinessObject;
 using Common;
 using Common.Enum;
-using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -430,65 +429,6 @@ namespace DAO
             };
 
             return invoice;
-        }
-
-
-        public async Task CreateContract(Contract contract, ContractRequestDto contractRequestDto)
-        {
-            using (var context = new MmrmsContext())
-            {
-                using (var transaction = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        double totalDepositPrice = 0;
-                        double totalRentPrice = 0;
-
-                        foreach (var rentMachineSerialNumber in contractRequestDto.MachineSerialNumbers)
-                        {
-                            var machineSerialNumber = await context.MachineSerialNumbers
-                                .Include(s => s.Machine)
-                                .FirstOrDefaultAsync(s => s.MachineId == rentMachineSerialNumber.MachineId && s.SerialNumber.Equals(rentMachineSerialNumber.SerialNumber));
-
-                            //var contractMachineSerialNumber = new ContractMachineSerialNumber()
-                            //{
-                            //    SerialNumber = rentMachineSerialNumber.SerialNumber,
-                            //    DepositPrice = machineSerialNumber!.Machine!.MachinePrice * GlobalConstant.DepositValue,
-                            //    RentPrice = machineSerialNumber!.ActualRentPrice ?? 0,
-                            //};
-                            //contract.ContractMachineSerialNumbers.Add(contractMachineSerialNumber);
-                            //totalDepositPrice += (double)contractMachineSerialNumber.DepositPrice!;
-                            //totalRentPrice += (double)contractMachineSerialNumber.RentPrice;
-
-                            machineSerialNumber!.Status = MachineSerialNumberStatusEnum.Renting.ToString();
-                            //machineSerialNumber.RentTimeCounter++;
-
-                            context.MachineSerialNumbers.Update(machineSerialNumber);
-                        }
-
-                        var rentingRequest = await context.RentingRequests.FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(contract.RentingRequestId));
-
-                        contract.DepositPrice = totalDepositPrice;
-                        contract.RentPrice = totalRentPrice;
-                        //contract.ShippingPrice = rentingRequest!.ShippingPrice;
-                        //contract.DiscountPrice = rentingRequest.DiscountPrice;
-                        //contract.DiscountShip = rentingRequest!.DiscountShip;
-                        //contract.TotalRentPrice = contract.DepositPrice + contract.RentPrice + contract.ShippingPrice
-                        //    - contract.DiscountPrice - contract.DiscountShip;
-
-                        DbSet<Contract> _dbSet = context.Set<Contract>();
-                        _dbSet.Add(contract);
-                        await context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
-                    }
-                }
-            }
         }
     }
 }

@@ -1,11 +1,10 @@
 using API.Extension;
 using DAO;
 using Hangfire;
-using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Service;
+using Service.Helper;
 using Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Common;
 using Common.Enum;
-using DTOs.AccountAddressDto;
+using DTOs.AccountBusiness;
 using DTOs.Contract;
 using DTOs.Invoice;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using Moq;

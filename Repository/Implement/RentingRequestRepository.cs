@@ -3,7 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
-using DTOs.AccountAddressDto;
+using DTOs.AccountBusiness;
 using DTOs.Machine;
 using DTOs.MembershipRank;
 using DTOs.RentingRequest;
