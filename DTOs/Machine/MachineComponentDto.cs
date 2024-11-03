@@ -11,10 +11,6 @@
         public int? ComponentId { get; set; }
 
         public int? Quantity { get; set; }
-
-        public string? Status { get; set; }
-
-        public bool? IsRequiredMoney { get; set; }
     }
 
 

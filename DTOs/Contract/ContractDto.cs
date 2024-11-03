@@ -1,6 +1,6 @@
 ﻿using Common;
 using DTOs.ContractTerm;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using DTOs.Validation;
 using System.ComponentModel.DataAnnotations;
 

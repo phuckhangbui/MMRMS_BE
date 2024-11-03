@@ -1,5 +1,4 @@
 ﻿using BusinessObject;
-using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Component = BusinessObject.Component;
@@ -79,6 +78,7 @@ namespace DAO
                     .Include(p => p.Category)
                     .Include(p => p.MachineImages)
                     .Include(p => p.MachineSerialNumbers)
+                    .OrderByDescending(p => p.DateCreate)
                     .ToListAsync();
 
                 return list;
@@ -381,20 +381,6 @@ namespace DAO
                         throw new Exception(e.Message);
                     }
                 }
-            }
-        }
-
-        public async Task<IEnumerable<Machine>> GetTop8LatestMachines()
-        {
-            using (var context = new MmrmsContext())
-            {
-                return await context.Machines
-                    .Where(p => p.Status!.Equals(MachineStatusEnum.Active.ToString()))
-                    .Include(p => p.MachineImages)
-                    .Include(p => p.Category)
-                    .OrderByDescending(p => p.DateCreate)
-                    .Take(8)
-                    .ToListAsync();
             }
         }
 

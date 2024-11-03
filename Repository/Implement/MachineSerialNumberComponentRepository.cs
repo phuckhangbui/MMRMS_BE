@@ -3,7 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using Repository.Interface;
 
 namespace Repository.Implement

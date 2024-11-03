@@ -1,5 +1,5 @@
 ﻿using DTOs.Machine;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -18,11 +18,29 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachines()
+        public async Task<ActionResult<IEnumerable<MachineViewDto>>> GetMachines()
         {
             try
             {
                 var machines = await _machineService.GetMachineList();
+                return Ok(machines);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<MachineDto>>> GetActiveMachines()
+        {
+            try
+            {
+                var machines = await _machineService.GetActiveMachines();
                 return Ok(machines);
             }
             catch (ServiceException ex)
@@ -78,11 +96,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{productId}")]
-        public async Task<ActionResult<DisplayMachineDetailDto>> GetMachineDetail([FromRoute] int productId)
+        public async Task<ActionResult<MachineDetailDto>> GetMachineDetail([FromRoute] int productId)
         {
             try
             {
-                var product = await _machineService.GetMachineDetailDto(productId);
+                var product = await _machineService.GetMachineDetail(productId);
                 return Ok(product);
             }
             catch (ServiceException ex)

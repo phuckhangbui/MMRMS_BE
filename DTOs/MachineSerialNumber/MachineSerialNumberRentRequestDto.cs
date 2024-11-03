@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.MachineComponentStatus
+namespace DTOs.MachineSerialNumber
 {
     public class MachineSerialNumberRentRequestDto
     {

@@ -6,7 +6,7 @@ using DAO;
 using DTOs.Contract;
 using DTOs.ContractPayment;
 using DTOs.Invoice;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

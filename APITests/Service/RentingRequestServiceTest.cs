@@ -4,7 +4,7 @@ using Common.Enum;
 using DTOs.AccountBusiness;
 using DTOs.Contract;
 using DTOs.Invoice;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using Moq;

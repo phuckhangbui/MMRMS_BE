@@ -1,4 +1,4 @@
-﻿using DTOs.MachineComponentStatus;
+﻿using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
