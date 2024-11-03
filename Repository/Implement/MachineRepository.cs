@@ -3,7 +3,7 @@ using BusinessObject;
 using Common.Enum;
 using DAO;
 using DTOs.Machine;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -19,28 +19,34 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-
-        public async Task<IEnumerable<MachineDto>> GetMachineList()
+        public async Task<IEnumerable<MachineViewDto>> GetMachineList()
         {
-            var list = await MachineDao.Instance.GetMachineListWithCategory();
+            var machines = await MachineDao.Instance.GetMachineListWithCategory();
 
-            var resultList = new List<MachineDto>();
-
-            if (list.IsNullOrEmpty())
+            return machines?.Select(machine =>
             {
-                return null;
-            }
+                var machineViewDto = _mapper.Map<MachineViewDto>(machine);
+                machineViewDto.Quantity = machine.MachineSerialNumbers?.Count ?? 0;
+                machineViewDto.Thumbnail = machine.MachineImages?
+                    .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
 
-            foreach (var product in list)
+                return machineViewDto;
+            }).ToList() ?? [];
+        }
+
+        public async Task<IEnumerable<MachineDto>> GetActiveMachines()
+        {
+            var machines = await MachineDao.Instance.GetMachineListWithCategory();
+            machines = machines.Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString())).ToList();
+
+            return machines?.Select(machine =>
             {
-                var productDto = _mapper.Map<MachineDto>(product);
+                var machineViewDto = _mapper.Map<MachineDto>(machine);
+                machineViewDto.Thumbnail = machine.MachineImages?
+                    .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
 
-                productDto.Quantity = product.MachineSerialNumbers?.Count;
-
-                resultList.Add(productDto);
-            }
-
-            return resultList;
+                return machineViewDto;
+            }).ToList() ?? [];
         }
 
         public async Task<MachineDto> GetMachine(int productId)
@@ -53,17 +59,18 @@ namespace Repository.Implement
             return _mapper.Map<MachineDto>(product);
         }
 
-        public async Task<DisplayMachineDetailDto> GetMachineDetail(int productId)
+        public async Task<MachineDetailDto?> GetMachineDetail(int machineId)
         {
-            var product = await MachineDao.Instance.GetMachineDetail(productId);
+            var machine = await MachineDao.Instance.GetMachineDetail(machineId);
 
-            if (product == null)
+            if (machine == null)
             {
                 return null;
             }
 
-            var productDetail = _mapper.Map<DisplayMachineDetailDto>(product);
-
+            var machineDetail = _mapper.Map<MachineDetailDto>(machine);
+            machineDetail.Thumbnail = machine.MachineImages?
+                .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
             //Quantity availble
             //var machineSerialNumbers = await MachineSerialNumberDao.Instance.GetMachineSerialNumbersByMachineIdAndStatus(productId, MachineSerialNumberStatusEnum.Available.ToString());
             //productDetail.Quantity = machineSerialNumbers.Count();
@@ -74,7 +81,7 @@ namespace Repository.Implement
             //    .ToList();
             //productDetail.RentPrices = prices;
 
-            return productDetail;
+            return machineDetail;
         }
 
         public async Task<IEnumerable<MachineSerialNumberDto>> GetMachineNumberList(int productId)
@@ -304,13 +311,20 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<MachineDto>> GetTop8LatestMachineList()
         {
-            var products = await MachineDao.Instance.GetTop8LatestMachines();
-            if (!products.IsNullOrEmpty())
-            {
-                return _mapper.Map<IEnumerable<MachineDto>>(products);
-            }
+            var machines = await MachineDao.Instance.GetMachineListWithCategory();
+            machines = machines
+                .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()))
+                .Take(8)
+                .ToList();
 
-            return [];
+            return machines?.Select(machine =>
+            {
+                var machineViewDto = _mapper.Map<MachineDto>(machine);
+                machineViewDto.Thumbnail = machine.MachineImages?
+                    .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
+
+                return machineViewDto;
+            }).ToList() ?? [];
         }
 
         public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds)

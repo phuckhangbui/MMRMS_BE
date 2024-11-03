@@ -16,7 +16,7 @@ using DTOs.Invoice;
 using DTOs.LogDto;
 using DTOs.Machine;
 using DTOs.MachineCheckRequest;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using DTOs.MachineTask;
 using DTOs.MembershipRank;
 using DTOs.Notification;
@@ -84,17 +84,18 @@ namespace Repository.Mapper
                      .ForMember(dest => dest.CategoryName,
                          opt => opt.MapFrom(src => src.Category != null
                              ? src.Category.CategoryName
-                             : null))
-                     .ForMember(dest => dest.MachineImageList,
-                         opt => opt.MapFrom(src => src.MachineImages != null && src.MachineImages.Any()
-                             ? src.MachineImages
+                             : null));
+            CreateMap<Machine, MachineViewDto>()
+                     .ForMember(dest => dest.CategoryName,
+                         opt => opt.MapFrom(src => src.Category != null
+                             ? src.Category.CategoryName
                              : null));
             CreateMap<MachineDto, Machine>();
             CreateMap<Machine, MachineReviewDto>();
 
             CreateMap<UpdateMachineDto, MachineDto>();
 
-            CreateMap<Machine, DisplayMachineDetailDto>()
+            CreateMap<Machine, MachineDetailDto>()
                     .ForMember(dest => dest.CategoryName,
                         opt => opt.MapFrom(src => src.Category != null
                             ? src.Category.CategoryName
@@ -116,7 +117,7 @@ namespace Repository.Mapper
                             ? src.MachineTerms
                             : null));
 
-            CreateMap<DisplayMachineDetailDto, MachineDto>();
+            CreateMap<MachineDetailDto, MachineDto>();
 
 
             CreateMap<MachineImage, MachineImageDto>();

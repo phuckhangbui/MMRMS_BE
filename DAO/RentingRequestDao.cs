@@ -420,5 +420,13 @@ namespace DAO
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task<int> GetTotalRentingRequestByDate(DateTime date)
+        {
+            using var context = new MmrmsContext();
+            return await context.RentingRequests
+                .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
+                .CountAsync();
+        }
     }
 }

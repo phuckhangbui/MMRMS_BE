@@ -1,4 +1,4 @@
-﻿namespace DTOs.MachineComponentStatus
+﻿namespace DTOs.MachineSerialNumber
 {
     public class MachineSerialNumberDto
     {
@@ -13,5 +13,10 @@
         public DateTime? DateCreate { get; set; }
 
         public int? RentDaysCounter { get; set; }
+    }
+
+    public class MachineSerialNumberDetailDto : MachineSerialNumberDto
+    {
+
     }
 }

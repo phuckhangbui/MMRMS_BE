@@ -323,112 +323,12 @@ namespace DAO
             }
         }
 
-
-        //TODO: Remove
-        private Invoice InitDepositInvoice(Contract contract)
+        public async Task<int> GetTotalContractByDate(DateTime date)
         {
-            var totalDepositAmount = contract.ContractPayments
-                .Where(cp => cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()))
-                .Select(cp => cp.Amount)
-                .Sum();
-            var dateCreate = DateTime.Now.Date;
-
-            var invoice = new Invoice
-            {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + contract.ContractId,
-                Amount = totalDepositAmount,
-                Type = InvoiceTypeEnum.Deposit.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = dateCreate,
-            };
-
-            return invoice;
-        }
-
-        //private ContractPayment InitDepositContractPayment(Contract contract)
-        //{
-        //    var contractPaymentDeposit = new ContractPayment
-        //    {
-        //        ContractId = contract.ContractId,
-        //        DateCreate = DateTime.Now.Date,
-        //        Status = ContractPaymentStatusEnum.Pending.ToString(),
-        //        Type = ContractPaymentTypeEnum.Deposit.ToString(),
-        //        Title = "Thanh toán tiền đặt cọc cho hợp đồng " + contract.ContractId,
-        //        Amount = contract.DepositPrice,
-        //        DueDate = contract.DateStart,
-        //        IsFirstRentalPayment = false,
-        //    };
-
-        //    return contractPaymentDeposit;
-        //}
-
-        private List<ContractPayment> InitRentalContractPaymentByTime(Contract contract, int time, RentingRequest rentingRequest, Invoice invoice)
-        {
-            var list = new List<ContractPayment>();
-            for (int i = 0; i < time; i++)
-            {
-                int monthsToAdd = (i + 1) * 3;
-
-                var rentalContractPayment = new ContractPayment
-                {
-                    ContractId = contract.ContractId,
-                    DateCreate = DateTime.Now.Date,
-                    Status = ContractPaymentStatusEnum.Pending.ToString(),
-                    Type = ContractPaymentTypeEnum.Rental.ToString(),
-                    Title = "Thanh toán tiền thuê cho hợp đồng " + contract.ContractId + " lần " + (i + 1),
-                    Amount = (contract.RentPrice * 3),
-                    DueDate = contract.DateStart!.Value.AddMonths(monthsToAdd),
-                    IsFirstRentalPayment = false,
-                };
-
-                if (i == 0)
-                {
-                    rentalContractPayment.Invoice = invoice;
-                    rentalContractPayment.IsFirstRentalPayment = true;
-                }
-
-                list.Add(rentalContractPayment);
-            }
-
-            return list;
-        }
-
-        private Invoice InitAdditionalInvoice(RentingRequest rentingRequest)
-        {
-            var additionalAmount = rentingRequest.ShippingPrice - rentingRequest.DiscountPrice +
-                                rentingRequest.TotalServicePrice;
-            var dateCreate = DateTime.Now.Date;
-
-            var invoice = new Invoice
-            {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + rentingRequest.RentingRequestId,
-                Amount = additionalAmount,
-                Type = InvoiceTypeEnum.Additional.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = dateCreate,
-            };
-
-            return invoice;
-        }
-
-        private Invoice InitRentalInvoice(Contract contract, RentingRequest rentingRequest)
-        {
-            var totalRentalAmount = contract.ContractPayments
-                .Where(cp => cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()))
-                .Select(cp => cp.Amount)
-                .Sum();
-            var dateCreate = DateTime.Now.Date;
-
-            var invoice = new Invoice
-            {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + 1 + contract.ContractId,
-                Amount = totalRentalAmount,
-                Type = InvoiceTypeEnum.Rental.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = dateCreate,
-            };
-
-            return invoice;
+            using var context = new MmrmsContext();
+            return await context.Contracts
+                .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
+                .CountAsync();
         }
     }
 }

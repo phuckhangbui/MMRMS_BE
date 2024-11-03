@@ -1,6 +1,8 @@
 ﻿using Common;
 using Common.Enum;
+using DAO;
 using DTOs.RentingRequest;
+using Microsoft.Extensions.Logging;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -100,6 +102,10 @@ namespace Service.Implement
                         await _rentingRepository.UpdateRentingRequest(rentingRequest);
                         await _invoiceRepository.UpdateInvoice(depositInvoice);
                         await _invoiceRepository.UpdateInvoice(rentalInvoice);
+
+                        ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+                        var backgroundImpl = new BackgroundImpl(logger);
+                        backgroundImpl.CancelRentingRequestJob(rentingRequest.RentingRequestId);
 
                         scope.Complete();
 

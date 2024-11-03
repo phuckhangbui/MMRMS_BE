@@ -23,12 +23,6 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        //public async Task<bool> CheckRentingRequestValidToRent(string rentingRequestId)
-        //{
-        //    var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByIdAndStatus(rentingRequestId, RentingRequestStatusEnum.Approved.ToString());
-        //    return rentingRequest != null;
-        //}
-
         public async Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId)
         {
             var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
@@ -145,7 +139,7 @@ namespace Repository.Implement
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
             rentingRequest.AccountOrderId = customerId;
 
-            rentingRequest.RentingRequestId = GlobalConstant.RentingRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            rentingRequest.RentingRequestId = await GenerateRentingRequestId();
             rentingRequest.DateCreate = DateTime.Now;
             rentingRequest.Status = RentingRequestStatusEnum.UnPaid.ToString();
             rentingRequest.TotalDepositPrice = 0;
@@ -211,6 +205,14 @@ namespace Repository.Implement
 
             //return rentingRequest.RentingRequestId;
             return _mapper.Map<RentingRequestDto>(rentingRequest);
+        }
+
+        private async Task<string> GenerateRentingRequestId()
+        {
+            int currentTotalRentingRequests = await RentingRequestDao.Instance.GetTotalRentingRequestByDate(DateTime.UtcNow);
+            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            string sequencePart = (currentTotalRentingRequests + 1).ToString("D4");
+            return $"{GlobalConstant.RentingRequestIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
         }
 
         public async Task<bool> CancelRentingRequest(string rentingRequestId)

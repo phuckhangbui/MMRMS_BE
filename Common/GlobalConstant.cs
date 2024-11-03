@@ -8,7 +8,7 @@
         public const string RentingRequestIdPrefixPattern = "REH";
         public const string InvoiceIdPrefixPattern = "INV";
         public const string TaskIdPrefixPattern = "TK";
-        public const string DateTimeFormatPattern = "yyyyMMddHHmmssfffffff";
+        public const string DateTimeFormatPattern = "yyyyMMdd";
         public const string MachineCheckRequestIdPrefixPattern = "REQ";
         public const string ComponentReplacementTicketIdPrefixPattern = "CRT";
         public const string DateOnlyFormat = "dd/MM/yyyy";
@@ -17,5 +17,6 @@
         public const string ContractName = "Hợp đồng thuê máy ";
         public const string DepositContractPaymentTitle = "Thanh toán tiền đặt cọc cho hợp đồng ";
         public const string RentalContractPaymentTitle = "Thanh toán tiền thuê cho hợp đồng ";
+        public const string SequenceSeparator = "NO";
     }
 }

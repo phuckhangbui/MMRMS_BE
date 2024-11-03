@@ -2,7 +2,7 @@
 using Common;
 using Common.Enum;
 using DTOs.Machine;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -12,51 +12,53 @@ namespace Service.Implement
 {
     public class MachineServiceImpl : IMachineService
     {
-        private readonly IMachineRepository _productRepository;
+        private readonly IMachineRepository _machineRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public MachineServiceImpl(IMachineRepository productRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
-            _productRepository = productRepository;
+            _machineRepository = machineRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<MachineDto>> GetMachineList()
+        public async Task<IEnumerable<MachineViewDto>> GetMachineList()
         {
-            var list = await _productRepository.GetMachineList();
-
-
-            if (list.IsNullOrEmpty())
-            {
-                return null;
-            }
-
-            return list;
+            return await _machineRepository.GetMachineList();
         }
 
-        public async Task<DisplayMachineDetailDto> GetMachineDetailDto(int productId)
+        public async Task<IEnumerable<MachineDto>> GetActiveMachines()
         {
-            var productDetail = await _productRepository.GetMachineDetail(productId);
+            return await _machineRepository.GetActiveMachines();
+        }
 
-            if (productDetail == null)
+        public async Task<IEnumerable<MachineDto>> GetTop8LatestMachineList()
+        {
+            return await _machineRepository.GetTop8LatestMachineList();
+        }
+
+        public async Task<MachineDetailDto> GetMachineDetail(int machineId)
+        {
+            var machine = await _machineRepository.GetMachineDetail(machineId);
+
+            if (machine == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            return productDetail;
+            return machine;
         }
 
         public async Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int productId)
         {
-            var isMachineExisted = await _productRepository.IsMachineExisted(productId);
+            var isMachineExisted = await _machineRepository.IsMachineExisted(productId);
 
             if (isMachineExisted)
             {
-                var list = await _productRepository.GetMachineNumberList(productId);
+                var list = await _machineRepository.GetMachineNumberList(productId);
                 return _mapper.Map<IEnumerable<MachineSerialNumberDto>>(list);
             }
 
@@ -66,12 +68,12 @@ namespace Service.Implement
 
         public async Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto)
         {
-            if (await _productRepository.IsMachineExisted(createMachineDto.MachineName))
+            if (await _machineRepository.IsMachineExisted(createMachineDto.MachineName))
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNameDuplicated);
             }
 
-            if (await _productRepository.IsMachineModelExisted(createMachineDto.Model))
+            if (await _machineRepository.IsMachineModelExisted(createMachineDto.Model))
             {
                 throw new ServiceException(MessageConstant.Machine.MachineModelDuplicated);
             }
@@ -129,16 +131,16 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
 
-            var productDto = await _productRepository.CreateMachine(createMachineDto);
+            var productDto = await _machineRepository.CreateMachine(createMachineDto);
 
             return productDto;
         }
 
         public async Task DeleteMachine(int productId)
         {
-            var productDto = await _productRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(productId);
 
-            var productNumberList = await _productRepository.GetMachineNumberList(productId);
+            var productNumberList = await _machineRepository.GetMachineNumberList(productId);
 
             if (productDto == null)
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
@@ -149,7 +151,7 @@ namespace Service.Implement
 
             }
 
-            await _productRepository.DeleteMachine(productId);
+            await _machineRepository.DeleteMachine(productId);
             //else productDto.IsDelete = true;
 
             //await _productRepository.UpdateMachine(productDto);
@@ -162,19 +164,19 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.StatusNotAvailable);
             }
 
-            var productDto = await _productRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(productId);
 
             if (productDto == null)
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
 
             productDto.Status = status;
 
-            await _productRepository.UpdateMachine(productDto);
+            await _machineRepository.UpdateMachine(productDto);
         }
 
         public async Task UpdateMachineDetail(int productId, UpdateMachineDto updateMachineDto)
         {
-            var productDto = await _productRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(productId);
             if (productDto == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
@@ -182,14 +184,14 @@ namespace Service.Implement
 
             if (!productDto.MachineName.ToLower().Equals(updateMachineDto.MachineName.ToLower()))
             {
-                if (await _productRepository.IsMachineExisted(updateMachineDto.MachineName))
+                if (await _machineRepository.IsMachineExisted(updateMachineDto.MachineName))
                 {
                     throw new ServiceException(MessageConstant.Machine.MachineNameDuplicated);
                 }
             }
             if (!productDto.Model.ToLower().Equals(updateMachineDto.Model.ToLower()))
             {
-                if (await _productRepository.IsMachineModelExisted(updateMachineDto.Model))
+                if (await _machineRepository.IsMachineModelExisted(updateMachineDto.Model))
                 {
                     throw new ServiceException(MessageConstant.Machine.MachineModelDuplicated);
                 }
@@ -211,31 +213,31 @@ namespace Service.Implement
             productDto.Origin = updateMachineDto.Origin;
             productDto.CategoryId = updateMachineDto.CategoryId;
 
-            await _productRepository.UpdateMachine(productDto);
+            await _machineRepository.UpdateMachine(productDto);
         }
 
         public async Task UpdateMachineAttribute(int productId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos)
         {
-            var product = await _productRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(productId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            await _productRepository.UpdateMachineAttribute(productId, productAttributeDtos);
+            await _machineRepository.UpdateMachineAttribute(productId, productAttributeDtos);
         }
 
         public async Task UpdateMachineComponent(int productId, ComponentList componentList)
         {
-            var product = await _productRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(productId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            var serialMachines = await _productRepository.GetMachineNumberList(productId);
+            var serialMachines = await _machineRepository.GetMachineNumberList(productId);
 
             if (!serialMachines.IsNullOrEmpty())
             {
@@ -259,13 +261,13 @@ namespace Service.Implement
                     }
                 }
 
-            await _productRepository.UpdateMachineComponent(productId, componentList);
+            await _machineRepository.UpdateMachineComponent(productId, componentList);
         }
 
 
         public async Task ChangeMachineImages(int productId, List<ImageList> imageList)
         {
-            var product = await _productRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(productId);
 
             if (product == null)
             {
@@ -278,36 +280,31 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
 
-            await _productRepository.UpdateMachineImage(productId, imageList);
+            await _machineRepository.UpdateMachineImage(productId, imageList);
 
         }
 
         public async Task UpdateMachineTerm(int productId, IEnumerable<CreateMachineTermDto> productTermDtos)
         {
-            var product = await _productRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(productId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            await _productRepository.UpdateMachineTerm(productId, productTermDtos);
-        }
-
-        public async Task<IEnumerable<MachineDto>> GetTop8LatestMachineList()
-        {
-            return await _productRepository.GetTop8LatestMachineList();
+            await _machineRepository.UpdateMachineTerm(productId, productTermDtos);
         }
 
         public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds)
         {
-            return await _productRepository.GetMachineReviews(productIds);
+            return await _machineRepository.GetMachineReviews(productIds);
         }
 
         public async Task ToggleLockStatus(int productId)
         {
 
-            var productDto = await _productRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(productId);
 
             if (productDto == null)
             {
@@ -323,7 +320,7 @@ namespace Service.Implement
             {
                 productDto.Status = MachineStatusEnum.Locked.ToString();
 
-                await _productRepository.UpdateMachine(productDto);
+                await _machineRepository.UpdateMachine(productDto);
 
                 return;
             }
@@ -342,7 +339,7 @@ namespace Service.Implement
                 {
                     productDto.Status = MachineStatusEnum.Active.ToString();
 
-                    await _productRepository.UpdateMachine(productDto);
+                    await _machineRepository.UpdateMachine(productDto);
 
                     return;
                 }
@@ -350,7 +347,7 @@ namespace Service.Implement
 
             productDto.Status = MachineStatusEnum.OutOfStock.ToString();
 
-            await _productRepository.UpdateMachine(productDto);
+            await _machineRepository.UpdateMachine(productDto);
         }
     }
 }

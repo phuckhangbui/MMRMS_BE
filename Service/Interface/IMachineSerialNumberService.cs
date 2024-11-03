@@ -1,4 +1,4 @@
-﻿using DTOs.MachineComponentStatus;
+﻿using DTOs.MachineSerialNumber;
 
 namespace Service.Interface
 {

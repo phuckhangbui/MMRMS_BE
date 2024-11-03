@@ -1,6 +1,6 @@
 ﻿using DTOs.Contract;
 using DTOs.Invoice;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
 
 namespace Repository.Interface

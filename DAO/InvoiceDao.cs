@@ -42,5 +42,13 @@ namespace DAO
                     .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
             }
         }
+
+        public async Task<int> GetTotalInvoiceByDate(DateTime date)
+        {
+            using var context = new MmrmsContext();
+            return await context.Invoices
+                .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
+                .CountAsync();
+        }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using DTOs.Machine;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 
 namespace Service.Interface
 {
     public interface IMachineService
     {
-        Task<IEnumerable<MachineDto>> GetMachineList();
+        Task<IEnumerable<MachineViewDto>> GetMachineList();
+        Task<IEnumerable<MachineDto>> GetActiveMachines();
         Task<IEnumerable<MachineDto>> GetTop8LatestMachineList();
         Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds);
-        Task<DisplayMachineDetailDto> GetMachineDetailDto(int productId);
+        Task<MachineDetailDto> GetMachineDetail(int machineId);
         Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int productId);
         Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto);
         Task DeleteMachine(int productId);

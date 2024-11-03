@@ -1,7 +1,7 @@
 ﻿using Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.MachineComponentStatus
+namespace DTOs.MachineSerialNumber
 {
     public class MachineSerialNumberCreateRequestDto
     {

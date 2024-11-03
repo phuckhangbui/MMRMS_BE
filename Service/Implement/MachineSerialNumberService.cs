@@ -2,7 +2,7 @@
 using Common;
 using Common.Enum;
 using DTOs.Machine;
-using DTOs.MachineComponentStatus;
+using DTOs.MachineSerialNumber;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
