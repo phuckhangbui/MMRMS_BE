@@ -1,4 +1,4 @@
-﻿namespace DTOs.Term
+﻿namespace DTOs.ContractTerm
 {
     public class ContractTermDto
     {

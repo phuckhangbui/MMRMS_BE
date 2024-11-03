@@ -1,5 +1,5 @@
 ﻿using DTOs.Machine;
-using DTOs.MachineSerialNumber;
+using DTOs.MachineComponentStatus;
 using DTOs.RentingRequest;
 
 namespace Repository.Interface
@@ -8,7 +8,6 @@ namespace Repository.Interface
     {
         Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto createSerialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, double price, int accountId);
         Task Delete(string serialNumber);
-        Task<IEnumerable<MachineSerialNumberOptionDto>> GetSerialMachineNumbersAvailableForRenting(string rentingRequestId);
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsMachineSerialNumberHasContract(string serialNumber);
         Task Update(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto);

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject;
 using DAO;
-using DTOs.Log;
+using DTOs.LogDto;
 using Repository.Interface;
 
 namespace Repository.Implement

@@ -1,4 +1,4 @@
-﻿using DTOs.Log;
+﻿using DTOs.LogDto;
 using Repository.Interface;
 using Service.Interface;
 

@@ -1,7 +1,7 @@
 ﻿using Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace DTOs.DeliveryTask
+namespace DTOs.Delivery
 {
     public class CreateDeliveryTaskDto
     {

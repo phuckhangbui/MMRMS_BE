@@ -1,4 +1,4 @@
-﻿using DTOs.Log;
+﻿using DTOs.LogDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Common;
 using Common.Enum;
-using DTOs.DeliveryTask;
+using DTOs.Delivery;
 using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
 using Repository.Interface;

@@ -1,5 +1,4 @@
 ﻿using DTOs.Delivery;
-using DTOs.DeliveryTask;
 
 namespace Repository.Interface
 {
