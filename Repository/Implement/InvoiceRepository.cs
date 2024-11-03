@@ -113,25 +113,25 @@ namespace Repository.Implement
         {
             var depositInvoice = new Invoice
             {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "DEPOSIT" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                InvoiceId = await GenerateInvoiceId(),
                 Amount = 0,
                 Type = InvoiceTypeEnum.Deposit.ToString(),
                 Status = InvoiceStatusEnum.Pending.ToString(),
                 DateCreate = DateTime.Now,
                 AccountPaidId = rentingRequest.AccountOrderId,
             };
+            await InvoiceDao.Instance.CreateAsync(depositInvoice);
+
 
             var rentalInvoice = new Invoice
             {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                InvoiceId = await GenerateInvoiceId(),
                 Amount = 0,
                 Type = InvoiceTypeEnum.Rental.ToString(),
                 Status = InvoiceStatusEnum.Pending.ToString(),
                 DateCreate = DateTime.Now,
                 AccountPaidId = rentingRequest.AccountOrderId,
             };
-
-            await InvoiceDao.Instance.CreateAsync(depositInvoice);
             await InvoiceDao.Instance.CreateAsync(rentalInvoice);
 
             return (
@@ -144,7 +144,7 @@ namespace Repository.Implement
         {
             var invoice = new Invoice
             {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                InvoiceId = await GenerateInvoiceId(),
                 Amount = amount,
                 Type = type,
                 Status = InvoiceStatusEnum.Pending.ToString(),
@@ -169,6 +169,14 @@ namespace Repository.Implement
             invoice.Status = status;
 
             await InvoiceDao.Instance.UpdateAsync(invoice);
+        }
+
+        private async Task<string> GenerateInvoiceId()
+        {
+            int currentTotalInvoices = await InvoiceDao.Instance.GetTotalInvoiceByDate(DateTime.UtcNow);
+            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            string sequencePart = (currentTotalInvoices + 1).ToString("D4");
+            return $"{GlobalConstant.InvoiceIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
         }
     }
 }

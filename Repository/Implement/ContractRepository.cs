@@ -148,7 +148,7 @@ namespace Repository.Implement
             var rentingRequest = await context.RentingRequests
                 .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestDto.RentingRequestId));
 
-            var contract = InitContract(rentingRequestDto, contractTerms, machineSerialNumber, depositInvoice, rentalInvoice);
+            var contract = await InitContract(rentingRequestDto, contractTerms, machineSerialNumber, depositInvoice, rentalInvoice);
 
             rentingRequestDto.TotalDepositPrice += contract.DepositPrice;
             rentingRequestDto.TotalRentPrice += contract.TotalRentPrice;
@@ -161,7 +161,7 @@ namespace Repository.Implement
             return (depositInvoice, rentalInvoice);
         }
 
-        private Contract InitContract(RentingRequestDto rentingRequest,
+        private async Task<Contract> InitContract(RentingRequestDto rentingRequest,
             List<Term> contractTerms,
             MachineSerialNumber machineSerialNumber,
             InvoiceDto depositInvoice,
@@ -172,7 +172,7 @@ namespace Repository.Implement
 
             var contract = new Contract
             {
-                ContractId = GlobalConstant.ContractIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                ContractId = await GenerateContractId(),
                 SerialNumber = machineSerialNumber.SerialNumber,
 
                 DateCreate = dateCreate,
@@ -297,6 +297,14 @@ namespace Repository.Implement
             contract.ContractPayments = contractPayments;
 
             return contract;
+        }
+
+        private async Task<string> GenerateContractId()
+        {
+            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.UtcNow);
+            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            string sequencePart = (currentTotalContracts + 1).ToString("D4");
+            return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
         }
 
         private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
