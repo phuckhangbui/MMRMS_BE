@@ -424,5 +424,151 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<ContractDto>>(contractList);
         }
+
+        public async Task CreateContract(RentingRequestDto rentingRequestDto, RentingRequestSerialNumberDto rentingRequestSerialNumber)
+        {
+            var contractTerms = await TermDao.Instance.GetTermsByTermType(TermTypeEnum.Contract);
+
+            var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(rentingRequestSerialNumber.SerialNumber);
+
+            var contract = await InitContract(rentingRequestDto, (List<Term>)contractTerms, machineSerialNumber, rentingRequestSerialNumber.DateStart, rentingRequestSerialNumber.DateEnd);
+
+            rentingRequestDto.TotalDepositPrice += contract.DepositPrice;
+            rentingRequestDto.TotalRentPrice += contract.TotalRentPrice;
+            rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice;
+
+            await ContractDao.Instance.CreateAsync(contract);
+        }
+
+        private async Task<Contract> InitContract(RentingRequestDto rentingRequest,
+            List<Term> contractTerms,
+            MachineSerialNumber machineSerialNumber,
+            DateTime dateStart,
+            DateTime dateEnd)
+        {
+            var dateCreate = DateTime.Now;
+            int numberOfDays = (dateEnd - dateStart).Days + 1;
+
+            var contract = new Contract
+            {
+                ContractId = await GenerateContractId(),
+                SerialNumber = machineSerialNumber.SerialNumber,
+
+                DateCreate = dateCreate,
+                Status = ContractStatusEnum.NotSigned.ToString(),
+
+                ContractName = GlobalConstant.ContractName + machineSerialNumber.SerialNumber,
+                DateStart = dateStart,
+                DateEnd = dateEnd,
+                Content = string.Empty,
+                RentingRequestId = rentingRequest.RentingRequestId,
+                AccountSignId = rentingRequest.AccountOrderId,
+                NumberOfMonth = rentingRequest.NumberOfMonth,
+                RentPeriod = numberOfDays,
+
+                RentPrice = machineSerialNumber.ActualRentPrice,
+                DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
+                TotalRentPrice = machineSerialNumber.ActualRentPrice * numberOfDays,
+            };
+
+            //Contract Term
+            foreach (var productTerm in machineSerialNumber.Machine.MachineTerms)
+            {
+                if (productTerm != null)
+                {
+                    var term = new ContractTerm()
+                    {
+                        Content = productTerm.Content,
+                        Title = productTerm.Title,
+                        DateCreate = dateCreate,
+                    };
+
+                    contract.ContractTerms.Add(term);
+                }
+            }
+
+            foreach (var contractTerm in contractTerms)
+            {
+                if (contractTerm != null)
+                {
+                    var term = new ContractTerm()
+                    {
+                        Content = contractTerm.Content,
+                        Title = contractTerm.Title,
+                        DateCreate = dateCreate,
+                    };
+
+                    contract.ContractTerms.Add(term);
+                }
+            }
+
+            var contractPayments = new List<ContractPayment>();
+            var depositContractPayment = InitDepositContractPayment(contract);
+            contractPayments.Add(depositContractPayment);
+
+            if ((bool)rentingRequest.IsOnetimePayment)
+            {
+                var rentalContractPayment = new ContractPayment
+                {
+                    ContractId = contract.ContractId,
+                    DateCreate = DateTime.Now,
+                    Status = ContractPaymentStatusEnum.Pending.ToString(),
+                    Type = ContractPaymentTypeEnum.Rental.ToString(),
+                    Title = GlobalConstant.RentalContractPaymentTitle + contract.ContractId,
+                    Amount = contract.RentPrice * contract.RentPeriod,
+                    DateFrom = contract.DateStart,
+                    DateTo = contract.DateEnd,
+                    Period = contract.RentPeriod,
+                    DueDate = contract.DateStart,
+                    IsFirstRentalPayment = true,
+                };
+
+                contractPayments.Add(rentalContractPayment);
+            }
+            else
+            {
+                var currentStartDate = contract.DateStart;
+                var remainingDays = numberOfDays;
+
+                int paymentIndex = 1;
+                while (remainingDays > 0)
+                {
+                    var paymentEndDate = GetContractPaymentEndDate((DateTime)currentStartDate, (DateTime)contract.DateEnd);
+
+                    var paymentPeriod = (paymentEndDate - currentStartDate).Value.Days + 1;
+                    var paymentAmount = contract.RentPrice * paymentPeriod;
+
+                    var rentalContractPayment = new ContractPayment
+                    {
+                        ContractId = contract.ContractId,
+                        DateCreate = DateTime.Now,
+                        Status = ContractPaymentStatusEnum.Pending.ToString(),
+                        Type = ContractPaymentTypeEnum.Rental.ToString(),
+                        Title = $"{GlobalConstant.RentalContractPaymentTitle}{contract.ContractId} - Lần {paymentIndex}",
+                        Amount = paymentAmount,
+                        DateFrom = currentStartDate,
+                        DateTo = paymentEndDate,
+                        Period = paymentPeriod,
+                        DueDate = currentStartDate,
+                        IsFirstRentalPayment = false,
+                    };
+
+                    if (paymentIndex == 1)
+                    {
+                        rentalContractPayment.IsFirstRentalPayment = true;
+                    }
+
+                    contractPayments.Add(rentalContractPayment);
+
+                    currentStartDate = paymentEndDate.AddDays(1);
+                    remainingDays -= paymentPeriod;
+                    paymentIndex++;
+                }
+            }
+
+            contract.ContractPayments = contractPayments;
+
+            return contract;
+        }
     }
 }

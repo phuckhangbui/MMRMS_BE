@@ -16,6 +16,7 @@ namespace Repository.Interface
             MachineSerialNumberDto machineSerialNumberDto,
             InvoiceDto depositInvoice,
             InvoiceDto rentalInvoice);
+        Task CreateContract(RentingRequestDto rentingRequestDto, RentingRequestSerialNumberDto rentingRequestSerialNumber);
         Task<ContractAddressDto> GetContractAddressById(string contractId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
         Task UpdateContractStatus(string contractId, string status);

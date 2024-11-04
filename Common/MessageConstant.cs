@@ -266,6 +266,8 @@
             public const string IsOnetimePaymentRequired = "Hình thức thanh toán một lần là bắt buộc.";
             public const string RequestMachinesRequired = "Danh sách máy yêu cầu thuê là bắt buộc.";
             public const string ServiceRentingRequestsRequired = "Danh sách dịch vụ thuê là bắt buộc.";
+            public const string MachineIdRequired = "Mã máy là bắt buộc.";
+            public const string SerialRequired = "Serial là bắt buộc.";
         }
 
         public static class RentingService

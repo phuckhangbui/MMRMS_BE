@@ -1,8 +1,7 @@
 ﻿using Common;
 using Common.Enum;
-using DAO;
 using DTOs.RentingRequest;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -34,14 +33,15 @@ namespace Service.Implement
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
-            newRentingRequestDto.RentingRequestMachineDetails = newRentingRequestDto.RentingRequestMachineDetails
-                .GroupBy(m => m.MachineId)
-                .Select(g => new NewRentingRequestMachineDetailDto
-                {
-                    MachineId = g.Key,
-                    Quantity = g.Sum(m => m.Quantity)
-                })
-                .ToList();
+            var duplicateSerials = newRentingRequestDto.RentingRequestSerialNumbers
+                    .GroupBy(r => r.SerialNumber)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+            if (!duplicateSerials.IsNullOrEmpty())
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
+            }
 
             //Check address valid
             var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
@@ -59,53 +59,62 @@ namespace Service.Implement
 
                     if (rentingRequest != null)
                     {
-                        var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
-                        var allAvailableSerialNumbers = await _machineSerialNumberRepository.GetMachineSerialNumberAvailablesToRent(machineIds, newRentingRequestDto.DateStart, newRentingRequestDto.DateEnd);
+                        var isSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRent(newRentingRequestDto.RentingRequestSerialNumbers);
+                        if (!isSerialNumbersValid)
+                        {
+                            throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
+                        }
 
-                        var (depositInvoice, rentalInvoice) = await _invoiceRepository.InitInvoices(rentingRequest);
+                        //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
+                        //var allAvailableSerialNumbers = await _machineSerialNumberRepository.GetMachineSerialNumberAvailablesToRent(machineIds, newRentingRequestDto.DateStart, newRentingRequestDto.DateEnd);
+
+                        //var (depositInvoice, rentalInvoice) = await _invoiceRepository.InitInvoices(rentingRequest);
 
                         //Loop create contract
-                        foreach (var newRentingRequestMachine in newRentingRequestDto.RentingRequestMachineDetails)
+                        foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
                         {
                             //var availaleSerialNumbers = await _machineSerialNumberRepository.GetMachineSerialNumberAvailablesToRent(newRentingRequestMachine.MachineId, newRentingRequestDto.DateStart, newRentingRequestDto.DateEnd);
                             //var selectedSerialNumbers = availaleSerialNumbers
                             //    .Take(newRentingRequestMachine.Quantity)
                             //    .ToList();
 
-                            var selectedSerialNumbers = allAvailableSerialNumbers
-                                .Where(s => s.MachineId == newRentingRequestMachine.MachineId)
-                                .Take(newRentingRequestMachine.Quantity)
-                                .ToList();
+                            //var selectedSerialNumbers = allAvailableSerialNumbers
+                            //    .Where(s => s.MachineId == newRentingRequestMachine.MachineId)
+                            //    .Take(newRentingRequestMachine.Quantity)
+                            //    .ToList();
 
-                            if (selectedSerialNumbers.Count < newRentingRequestMachine.Quantity)
-                            {
-                                throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
-                            }
+                            //if (selectedSerialNumbers.Count < newRentingRequestMachine.Quantity)
+                            //{
+                            //    throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
+                            //}
 
-                            foreach (var machineSerialNumber in selectedSerialNumbers)
-                            {
-                                (depositInvoice, rentalInvoice) = await _contractRepository.CreateContract(rentingRequest, machineSerialNumber, depositInvoice, rentalInvoice);
-                            }
+                            //foreach (var machineSerialNumber in selectedSerialNumbers)
+                            //{
+                            //    (depositInvoice, rentalInvoice) = await _contractRepository.CreateContract(rentingRequest, machineSerialNumber, depositInvoice, rentalInvoice);
+                            //}
+
+                            await _contractRepository.CreateContract(rentingRequest, rentingRequestSerialNumber);
                         }
 
-                        depositInvoice.Amount = rentingRequest.TotalDepositPrice;
-                        if (rentingRequest.IsOnetimePayment == true)
-                        {
-                            rentalInvoice.Amount = rentingRequest.TotalRentPrice + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice
-                                - rentingRequest.DiscountPrice;
-                        }
-                        else
-                        {
-                            rentalInvoice.Amount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
-                        }
+                        //depositInvoice.Amount = rentingRequest.TotalDepositPrice;
+                        //if (rentingRequest.IsOnetimePayment == true)
+                        //{
+                        //    rentalInvoice.Amount = rentingRequest.TotalRentPrice + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice
+                        //        - rentingRequest.DiscountPrice;
+                        //}
+                        //else
+                        //{
+                        //    rentalInvoice.Amount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
+                        //}
 
                         await _rentingRepository.UpdateRentingRequest(rentingRequest);
-                        await _invoiceRepository.UpdateInvoice(depositInvoice);
-                        await _invoiceRepository.UpdateInvoice(rentalInvoice);
+                        await _invoiceRepository.CreateInvoice(rentingRequest.RentingRequestId);
+                        //await _invoiceRepository.UpdateInvoice(depositInvoice);
+                        //await _invoiceRepository.UpdateInvoice(rentalInvoice);
 
-                        ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-                        var backgroundImpl = new BackgroundImpl(logger);
-                        backgroundImpl.CancelRentingRequestJob(rentingRequest.RentingRequestId);
+                        //ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+                        //var backgroundImpl = new BackgroundImpl(logger);
+                        //backgroundImpl.CancelRentingRequestJob(rentingRequest.RentingRequestId);
 
                         scope.Complete();
 

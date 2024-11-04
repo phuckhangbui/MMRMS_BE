@@ -175,7 +175,8 @@ namespace Service.Implement
 
                 if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
                 {
-                    await _contractRepository.ScheduleNextRentalPayment(rentingRequestId);
+                    //await _contractRepository.ScheduleNextRentalPayment(rentingRequestId);
+                    await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
                 }
             }
         }

@@ -11,7 +11,7 @@ namespace Repository.Interface
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsMachineSerialNumberHasContract(string serialNumber);
         Task Update(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto);
-        Task<bool> CheckMachineSerialNumberValidToRequest(NewRentingRequestDto newRentingRequestDto);
+        Task<bool> CheckMachineSerialNumberValidToRent(List<RentingRequestSerialNumberDto> rentingRequestSerialNumbers);
         Task UpdateStatus(string serialNumber, string status, int staffId);
         Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber);
         Task<IEnumerable<MachineSerialNumberLogDto>> GetMachineSerialNumberLog(string serialNumber);
