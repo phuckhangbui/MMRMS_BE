@@ -34,21 +34,21 @@ namespace Repository.Implement
             return _mapper.Map<List<MachineSerialNumberDto>>(result);
         }
 
-        public async Task<bool> CheckMachineSerialNumberValidToRequest(NewRentingRequestDto newRentingRequestDto)
+        public async Task<bool> CheckMachineSerialNumberValidToRent(List<RentingRequestSerialNumberDto> rentingRequestSerialNumbers)
         {
-            if (newRentingRequestDto.RentingRequestMachineDetails.IsNullOrEmpty())
+            if (rentingRequestSerialNumbers.IsNullOrEmpty())
             {
                 return false;
             }
 
-            foreach (var rentingRequestMachineDetailDto in newRentingRequestDto.RentingRequestMachineDetails)
+            foreach (var rentingRequestSerialNumber in rentingRequestSerialNumbers)
             {
-                var availableSerialNumbers = await GetMachineSerialNumberAvailablesToRent(
-                    rentingRequestMachineDetailDto.MachineId,
-                    newRentingRequestDto.DateStart,
-                    newRentingRequestDto.DateEnd);
+                var isValid = await MachineSerialNumberDao.Instance.IsMachineSerialNumberValidToRent(
+                    rentingRequestSerialNumber.SerialNumber,
+                    rentingRequestSerialNumber.DateStart,
+                    rentingRequestSerialNumber.DateEnd);
 
-                if (availableSerialNumbers.Count < rentingRequestMachineDetailDto.Quantity)
+                if (!isValid)
                 {
                     return false;
                 }

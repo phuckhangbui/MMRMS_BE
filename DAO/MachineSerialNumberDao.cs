@@ -1,6 +1,6 @@
-﻿using Common.Enum;
+﻿using BusinessObject;
+using Common.Enum;
 using Microsoft.EntityFrameworkCore;
-using MachineSerialNumber = BusinessObject.MachineSerialNumber;
 
 namespace DAO
 {
@@ -23,15 +23,6 @@ namespace DAO
                     instance = new MachineSerialNumberDao();
                 }
                 return instance;
-            }
-        }
-
-        public async Task<MachineSerialNumber> GetMachineSerialNumberBySerialNumberAndMachineId(string serialNumber, int productId)
-        {
-            using (var context = new MmrmsContext())
-            {
-                return await context.MachineSerialNumbers
-                    .FirstOrDefaultAsync(s => s.MachineId == productId && s.SerialNumber.Equals(serialNumber));
             }
         }
 
@@ -85,6 +76,8 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 var machineSerialNumber = await context.MachineSerialNumbers
+                    .Include(m => m.Machine)
+                        .ThenInclude(m => m.MachineTerms)
                     .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
 
                 return machineSerialNumber;
@@ -132,6 +125,22 @@ namespace DAO
         //    }
         //}
 
+        public async Task<bool> IsMachineSerialNumberValidToRent(string serialNumber, DateTime startDate, DateTime endDate)
+        {
+            using var context = new MmrmsContext();
+
+            return await context.MachineSerialNumbers
+                .Where(s => s.SerialNumber == serialNumber
+                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
+                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
+                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                    c.Status == ContractStatusEnum.Signed.ToString() ||
+                                    c.Status == ContractStatusEnum.Renting.ToString())
+                                && (c.DateStart < endDate && c.DateEnd > startDate)))
+                .AnyAsync();
+        }
+
         public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
@@ -161,6 +170,27 @@ namespace DAO
             var availableSerialNumbersToRent = await context.MachineSerialNumbers
                 .Where(s => machineIds.Contains((int)s.MachineId)
                             && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
+                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
+                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
+                                    c.Status == ContractStatusEnum.Signed.ToString() ||
+                                    c.Status == ContractStatusEnum.Renting.ToString())
+                                && (c.DateStart < endDate && c.DateEnd > startDate)))
+                .Include(s => s.Machine)
+                    .ThenInclude(p => p.MachineTerms)
+                .OrderByDescending(s => s.DateCreate)
+                .ThenByDescending(s => s.RentDaysCounter)
+                .ToListAsync();
+
+            return availableSerialNumbersToRent;
+        }
+
+        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(DateTime startDate, DateTime endDate)
+        {
+            using var context = new MmrmsContext();
+
+            var availableSerialNumbersToRent = await context.MachineSerialNumbers
+                .Where(s => s.Status == MachineSerialNumberStatusEnum.Available.ToString()
                             && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
                                 && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
                                     c.Status == ContractStatusEnum.Shipping.ToString() ||

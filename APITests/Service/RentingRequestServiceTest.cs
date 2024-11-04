@@ -83,7 +83,7 @@ namespace Test.Service
             //Arrange
             var customerId = 1;
             var newRentingRequestDto = GetSampleNewRentingRequest();
-            var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
+            //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
             var rentingRequestDto = GetSampleRentingRequestDto();
             var allAvailableSerialNumbers = GetSampleMachineSerialNumberDtoList();
             var (depositInvoice, rentalInvoice) = GetSampleInvoiceDtos(customerId);
@@ -112,7 +112,7 @@ namespace Test.Service
             //Arrange
             var customerId = 1;
             var newRentingRequestDto = GetSampleNewRentingRequest();
-            var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
+            //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
             var rentingRequestDto = GetSampleRentingRequestDto();
             var allAvailableSerialNumbers = GetSampleMachineSerialNumberDtoList();
             var (depositInvoice, rentalInvoice) = GetSampleInvoiceDtos(customerId);
@@ -433,14 +433,14 @@ namespace Test.Service
                 NumberOfMonth = 12,
                 IsOnetimePayment = true,
                 Note = "This is a sample note.",
-                RentingRequestMachineDetails = new List<NewRentingRequestMachineDetailDto>
-                {
-                    new NewRentingRequestMachineDetailDto
-                    {
-                        MachineId = 1,
-                        Quantity = 1
-                    }
-                },
+                //RentingRequestMachineDetails = new List<NewRentingRequestMachineDetailDto>
+                //{
+                //    new NewRentingRequestMachineDetailDto
+                //    {
+                //        MachineId = 1,
+                //        Quantity = 1
+                //    }
+                //},
                 ServiceRentingRequests = new List<int> { 201, 202 }
             };
         }

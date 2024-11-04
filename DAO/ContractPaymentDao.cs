@@ -125,34 +125,54 @@ namespace DAO
         public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
         {
             using var context = new MmrmsContext();
+            var requiredPayments = await context.ContractPayments
+                .Where(cp => cp.Contract.RentingRequestId == rentingRequestId &&
+                     cp.Status == ContractPaymentStatusEnum.Paid.ToString() &&
+                     (cp.Type == ContractPaymentTypeEnum.Deposit.ToString() ||
+                      (cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true)))
+                .GroupBy(cp => cp.ContractId)
+                .ToListAsync();
 
-            var rentingRequest = await context.RentingRequests
-                .Where(r => r.RentingRequestId.Equals(rentingRequestId))
-                .Include(r => r.Contracts)
-                .FirstOrDefaultAsync();
-
-            bool isAllPaid = true;
-            foreach (var contract in rentingRequest.Contracts)
+            foreach (var contractGroup in requiredPayments)
             {
-                var depositPaid = await context.ContractPayments
-                    .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
-                                    cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
-                                    cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+                var hasDepositPaid = contractGroup.Any(cp => cp.Type == ContractPaymentTypeEnum.Deposit.ToString());
+                var hasFirstRentalPaid = contractGroup.Any(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true);
 
-                var firstRentalPaid = await context.ContractPayments
-                    .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
-                                    cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
-                                    cp.IsFirstRentalPayment == true &&
-                                    cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
-
-                if (!depositPaid || !firstRentalPaid)
+                if (!hasDepositPaid || !hasFirstRentalPaid)
                 {
-                    isAllPaid = false;
-                    break;
+                    return false;
                 }
             }
 
-            return isAllPaid;
+            return true;
+
+            //var rentingRequest = await context.RentingRequests
+            //    .Where(r => r.RentingRequestId.Equals(rentingRequestId))
+            //    .Include(r => r.Contracts)
+            //    .FirstOrDefaultAsync();
+
+            //bool isAllPaid = true;
+            //foreach (var contract in rentingRequest.Contracts)
+            //{
+            //    var depositPaid = await context.ContractPayments
+            //        .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
+            //                        cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
+            //                        cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+            //    var firstRentalPaid = await context.ContractPayments
+            //        .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
+            //                        cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
+            //                        cp.IsFirstRentalPayment == true &&
+            //                        cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+            //    if (!depositPaid || !firstRentalPaid)
+            //    {
+            //        isAllPaid = false;
+            //        break;
+            //    }
+            //}
+
+            //return isAllPaid;
         }
     }
 }

@@ -5,6 +5,7 @@ using Common.Enum;
 using DAO;
 using DTOs.AccountBusiness;
 using DTOs.Machine;
+using DTOs.MachineSerialNumber;
 using DTOs.MembershipRank;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
@@ -48,45 +49,60 @@ namespace Repository.Implement
 
             //Machine data
             var rentingRequestMachineDatas = new List<RentingRequestMachineDataDto>();
-            foreach (var productId in rentingRequestMachineInRangeDto.MachineIds)
+
+            var machineSerialNumbers = await MachineSerialNumberDao.Instance
+                    .GetMachineSerialNumberAvailablesToRent(rentingRequestMachineInRangeDto.MachineIds, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
+            if (machineSerialNumbers.IsNullOrEmpty())
             {
-                var availableMachineSerialNumbers = await MachineSerialNumberDao.Instance
-                    .GetMachineSerialNumberAvailablesToRent(productId, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
-
-                if (availableMachineSerialNumbers.IsNullOrEmpty())
-                {
-                    continue;
-                }
-
-                var product = await MachineDao.Instance.GetMachine(productId);
-                var prices = availableMachineSerialNumbers
-                    .Select(s => s.ActualRentPrice ?? 0)
-                    .ToList();
-
-                var rentingRequestMachineDataDto = new RentingRequestMachineDataDto()
-                {
-                    MachineId = productId,
-                    MachineName = product.MachineName,
-                    MachinePrice = product.MachinePrice ?? 0,
-                    Quantity = availableMachineSerialNumbers.Count,
-                    RentPrice = product.RentPrice ?? 0,
-                    CategoryName = product.Category!.CategoryName ?? string.Empty,
-                    ThumbnailUrl = string.Empty,
-                    RentPrices = prices,
-                    ShipPricePerKm = product.ShipPricePerKm ?? 0,
-                };
-
-                var productTerms = _mapper.Map<List<MachineTermDto>>(product.MachineTerms);
-                rentingRequestMachineDataDto.MachineTerms = productTerms;
-
-                if (!product.MachineImages.IsNullOrEmpty())
-                {
-                    rentingRequestMachineDataDto.ThumbnailUrl = product.MachineImages.First(p => p.IsThumbnail == true).MachineImageUrl ?? string.Empty;
-                }
-
-                rentingRequestMachineDatas.Add(rentingRequestMachineDataDto);
+                rentingRequestInitDataDto.RentingRequestMachineDatas = [];
             }
-            rentingRequestInitDataDto.RentingRequestMachineDatas = rentingRequestMachineDatas;
+            else
+            {
+                var groupedMachineSerialNumbers = machineSerialNumbers
+                .GroupBy(msn => msn.MachineId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+                foreach (var group in groupedMachineSerialNumbers)
+                {
+                    var machine = await MachineDao.Instance.GetMachine((int)group.Key);
+
+                    var rentingRequestMachineDataDto = new RentingRequestMachineDataDto()
+                    {
+                        MachineId = group.Key ?? 0,
+                        MachineName = machine.MachineName,
+                        MachinePrice = machine.MachinePrice ?? 0,
+                        Quantity = 0,
+                        RentPrice = machine.RentPrice ?? 0,
+                        CategoryName = machine.Category!.CategoryName ?? string.Empty,
+                        ThumbnailUrl = string.Empty,
+                        RentPrices = [],
+                        ShipPricePerKm = machine.ShipPricePerKm ?? 0,
+                        MachineSerialNumbers = group.Value.Select(sn => new MachineSerialNumberDto
+                        {
+                            MachineId = sn.MachineId,
+                            ActualRentPrice = sn.ActualRentPrice,
+                            SerialNumber = sn.SerialNumber,
+                            RentDaysCounter = sn.RentDaysCounter,
+                            Status = sn.Status,
+                            DateCreate = sn.DateCreate
+                        }).ToList(),
+                    };
+
+                    rentingRequestMachineDataDto.Quantity = rentingRequestMachineDataDto.MachineSerialNumbers.Count;
+
+                    var productTerms = _mapper.Map<List<MachineTermDto>>(machine.MachineTerms);
+                    rentingRequestMachineDataDto.MachineTerms = productTerms;
+
+                    if (!machine.MachineImages.IsNullOrEmpty())
+                    {
+                        rentingRequestMachineDataDto.ThumbnailUrl = machine.MachineImages.First(p => p.IsThumbnail == true).MachineImageUrl ?? string.Empty;
+                    }
+
+                    rentingRequestMachineDatas.Add(rentingRequestMachineDataDto);
+                }
+
+                rentingRequestInitDataDto.RentingRequestMachineDatas = rentingRequestMachineDatas;
+            }
 
             //Promotion data
             //var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
@@ -137,8 +153,8 @@ namespace Repository.Implement
         public async Task<RentingRequestDto> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
             var rentingRequest = _mapper.Map<RentingRequest>(newRentingRequestDto);
-            rentingRequest.AccountOrderId = customerId;
 
+            rentingRequest.AccountOrderId = customerId;
             rentingRequest.RentingRequestId = await GenerateRentingRequestId();
             rentingRequest.DateCreate = DateTime.Now;
             rentingRequest.Status = RentingRequestStatusEnum.UnPaid.ToString();
@@ -162,6 +178,8 @@ namespace Repository.Implement
                 rentingRequest.RentingRequestAddress = rentingRequestAddress;
             }
 
+            var totalRentSerialNumbers = newRentingRequestDto.RentingRequestSerialNumbers.Count;
+
             var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
             //Required renting services
             var requiredRentingServices = rentingServices.Where(rs => rs.IsOptional == false).ToList();
@@ -174,7 +192,7 @@ namespace Repository.Implement
                 };
 
                 rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-                rentingRequest.TotalServicePrice += requiredRentingService.Price * newRentingRequestDto.RentingRequestMachineDetails.Sum(m => m.Quantity);
+                rentingRequest.TotalServicePrice += requiredRentingService.Price * totalRentSerialNumbers;
             }
 
             //Optional renting services
@@ -194,7 +212,7 @@ namespace Repository.Implement
                     };
 
                     rentingRequest.ServiceRentingRequests.Add(serviceRentingRequest);
-                    rentingRequest.TotalServicePrice += optionalRentingService.Price * newRentingRequestDto.RentingRequestMachineDetails.Sum(m => m.Quantity);
+                    rentingRequest.TotalServicePrice += optionalRentingService.Price * totalRentSerialNumbers;
                 }
             }
 

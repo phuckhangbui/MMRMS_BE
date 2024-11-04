@@ -1,5 +1,6 @@
 ﻿using Common;
 using DTOs.Machine;
+using DTOs.MachineSerialNumber;
 using DTOs.MembershipRank;
 using DTOs.RentingService;
 using DTOs.Term;
@@ -24,11 +25,12 @@ namespace DTOs.RentingRequest
         public double MachinePrice { get; set; }
         public double RentPrice { get; set; }
         public int Quantity { get; set; }
-        public string CategoryName { get; set; }
-        public string ThumbnailUrl { get; set; }
+        public string? CategoryName { get; set; }
+        public string? ThumbnailUrl { get; set; }
         public double ShipPricePerKm { get; set; }
         public List<double> RentPrices { get; set; }
-        public List<MachineTermDto> MachineTerms { get; set; }
+        public List<MachineTermDto> MachineTerms { get; set; } = new List<MachineTermDto>();
+        public List<MachineSerialNumberDto> MachineSerialNumbers { get; set; } = new List<MachineSerialNumberDto>();
     }
 
     public class RentingRequestMachineInRangeDto
