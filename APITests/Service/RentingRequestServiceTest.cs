@@ -54,7 +54,7 @@ namespace Test.Service
             //Arrange
             string validStatus = "Signed";
             var expected = GetSampleRentingRequestDtos();
-            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequests()).ReturnsAsync(expected);
+            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequests(validStatus)).ReturnsAsync(expected);
 
             //Act
             var result = await _rentingRequestService.GetRentingRequests(validStatus);
@@ -426,11 +426,11 @@ namespace Test.Service
             return new NewRentingRequestDto
             {
                 AddressId = 1,
-                DateStart = new DateTime(2024, 10, 1),
-                DateEnd = new DateTime(2025, 10, 1),
+                //DateStart = new DateTime(2024, 10, 1),
+                //DateEnd = new DateTime(2025, 10, 1),
                 ShippingPrice = 100.50,
                 DiscountPrice = 10.0,
-                NumberOfMonth = 12,
+                //NumberOfMonth = 12,
                 IsOnetimePayment = true,
                 Note = "This is a sample note.",
                 //RentingRequestMachineDetails = new List<NewRentingRequestMachineDetailDto>

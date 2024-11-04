@@ -7,10 +7,10 @@ namespace Repository.Interface
 {
     public interface IContractRepository
     {
-        Task<IEnumerable<ContractDto>> GetContracts();
+        Task<IEnumerable<ContractDto>> GetContracts(string? status);
         Task<ContractDto?> GetContractById(string contractId);
         Task<ContractDetailDto?> GetContractDetailById(string contractId);
-        Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId);
+        Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status);
         Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> CreateContract(
             RentingRequestDto rentingRequestDto,
             MachineSerialNumberDto machineSerialNumberDto,
