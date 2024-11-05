@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum MachineTaskStatusEnum
+    public enum MachineTaskEnum
     {
         [Translation("Mới tạo")]
         Created,
@@ -17,7 +17,7 @@
 
     public enum MachineTaskTypeEnum
     {
-        MachineryCheck,
-        ComponentReplacement
+        MachineryCheckRequest,
+        ContractTerminationCheck
     }
 }

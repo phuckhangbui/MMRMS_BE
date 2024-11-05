@@ -17,11 +17,19 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
+        private async Task<string> GenerateCheckRequestId()
+        {
+            int currentTotalRequest = await MachineCheckRequestDao.Instance.GetTotalRequestByDate(DateTime.UtcNow);
+            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            string sequencePart = (currentTotalRequest + 1).ToString("D3");
+            return $"{GlobalConstant.MachineCheckRequestIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
+        }
+
         public async Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
             var request = new MachineCheckRequest
             {
-                MachineCheckRequestId = GlobalConstant.MachineCheckRequestIdPrefixPattern + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
+                MachineCheckRequestId = await GenerateCheckRequestId(),
                 ContractId = createMachineCheckRequestDto.ContractId,
                 Note = createMachineCheckRequestDto.Note,
                 Status = MachineCheckRequestStatusEnum.New.ToString(),

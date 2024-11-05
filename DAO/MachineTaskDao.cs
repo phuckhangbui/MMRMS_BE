@@ -32,6 +32,7 @@ namespace DAO
             {
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
+                                                 .Include(d => d.Contract)
                                                  .OrderByDescending(p => p.DateCreate).ToListAsync();
             }
         }
@@ -42,6 +43,7 @@ namespace DAO
             {
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
+                                                 .Include(d => d.Contract)
                                                  .FirstOrDefaultAsync(d => d.MachineTaskId == machineTaskId);
             }
         }

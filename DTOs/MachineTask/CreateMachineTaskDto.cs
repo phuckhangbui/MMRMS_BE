@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.MachineTask
 {
-    public class CreateMachineTaskCheckMachineDto
+    public abstract class CreateMachineTaskDtoBase
     {
-        [Required(ErrorMessage = MessageConstant.MachineTask.RequestIdRequired)]
-        public string RequestId { get; set; }
-
         [Required(ErrorMessage = MessageConstant.MachineTask.StaffIdRequired)]
         public int StaffId { get; set; }
 
@@ -21,5 +18,17 @@ namespace DTOs.MachineTask
         public string DateStart { get; set; }
 
         public string? Note { get; set; }
+    }
+
+    public class CreateMachineTaskCheckRequestDto : CreateMachineTaskDtoBase
+    {
+        [Required(ErrorMessage = MessageConstant.MachineTask.RequestIdRequired)]
+        public string RequestId { get; set; }
+    }
+
+    public class CreateMachineTaskContractTerminationDto : CreateMachineTaskDtoBase
+    {
+        [Required(ErrorMessage = MessageConstant.MachineTask.ContractIdRequired)]
+        public string ContractId { get; set; }
     }
 }

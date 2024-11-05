@@ -351,10 +351,13 @@
             public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
+            public const string TaskNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy đáo hạn hợp đồng";
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
             public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
             public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";
             public const string CannotCreateTicketWithThisTask = "Trạng thái nhiệm vụ này không thể tạo ticket thay thế bộ phận máy";
+            public const string CreateFail = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
+            public const string TaskCannotCompleteDueToTicketListUnfulfill = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
@@ -363,6 +366,7 @@
             public const string TaskContentRequired = "Nội dung công việc là bắt buộc";
             public const string TitleRequired = "Tên công việc là bắt buộc";
             public const string DateStartRequired = "Ngày làm việc là bắt buộc";
+            public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
 
         }
 
@@ -382,6 +386,7 @@
             public const string NotCorrectCustomerId = "Bạn không thể hủy ticket này do đây không phải là ticket của bạn";
             public const string ErrorWhenCancel = "Có lỗi xảy ra khi hủy ticket";
             public const string DuplicateComponentTicketForThisTask = "Công việc này đã có một ticket thay thế bộ phận này, vì thế không thể tạo thêm";
+            public const string DuplicateComponentTicketForThisContractWhenTerminate = "Hợp đồng này đã có một ticket thay thế bộ phận này khi đáo hạn, vì thế không thể tạo thêm";
 
 
 

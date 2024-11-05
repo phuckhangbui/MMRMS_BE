@@ -80,13 +80,34 @@ namespace API.Controllers
 
         [HttpPost("check-machine")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateMachineTaskCheckMachine([FromBody] CreateMachineTaskCheckMachineDto createMachineTaskDto)
+        public async Task<IActionResult> CreateMachineTaskCheckMachine([FromBody] CreateMachineTaskCheckRequestDto createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
 
             try
             {
                 await _machineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("check-machine-termination")]
+        [Authorize(Policy = "Manager")]
+        public async Task<IActionResult> CreateMachineTaskCheckMachineTermination([FromBody] CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        {
+            int managerId = GetLoginAccountId();
+
+            try
+            {
+                await _machineTaskService.CreateMachineTaskCheckMachineContractTermination(managerId, createMachineTaskDto);
                 return NoContent();
             }
             catch (ServiceException ex)

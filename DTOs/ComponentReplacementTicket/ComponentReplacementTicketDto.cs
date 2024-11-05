@@ -34,7 +34,7 @@
 
         public DateTime? DateRepair { get; set; }
 
-        public int? Type { get; set; }
+        public string? Type { get; set; }
 
         public string? Note { get; set; }
 

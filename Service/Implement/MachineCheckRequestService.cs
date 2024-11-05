@@ -81,11 +81,11 @@ namespace Service.Implement
                 {
                     await this.UpdateRequestStatus(request.MachineCheckRequestId, MachineCheckRequestStatusEnum.Canceled.ToString(), null);
 
-                    await _machineTaskRepository.UpdateTaskStatus((int)request.MachineTaskId, MachineTaskStatusEnum.Canceled.ToString(), customerId, null);
+                    await _machineTaskRepository.UpdateTaskStatus((int)request.MachineTaskId, MachineTaskEnum.Canceled.ToString(), customerId, null);
 
                     if (machineTask != null)
                     {
-                        await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)machineTask.StaffId, machineTask.MachineTaskId, MachineTaskStatusEnum.Canceled.ToVietnamese());
+                        await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)machineTask.StaffId, machineTask.MachineTaskId, MachineTaskEnum.Canceled.ToVietnamese());
                     }
                     await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineTask", (int)request.MachineTaskId);
 
