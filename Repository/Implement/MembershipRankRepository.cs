@@ -69,12 +69,20 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task<MembershipRankDto?> GetMembershipRankForCustomer(int customerId)
+        public async Task<MembershipRankDetailDto?> GetMembershipRankForCustomer(int customerId)
         {
             var membershipRank = await MembershipRankDao.Instance.GetMembershipRanksForCustomer(customerId);
             if (membershipRank != null)
             {
-                return _mapper.Map<MembershipRankDto>(membershipRank);
+                var membershipRankDetail = _mapper.Map<MembershipRankDetailDto>(membershipRank);
+                var membershipRankLogs = await MembershipRankLogDao.Instance.GetMembershipRankLogsByAccountId(customerId);
+
+                if (!membershipRankLogs.IsNullOrEmpty())
+                {
+                    membershipRankDetail.MembershipRankLogs = _mapper.Map<List<MembershipRankLogDto>>(membershipRankLogs);
+                }
+
+                return membershipRankDetail;
             }
 
             return null;
@@ -92,6 +100,19 @@ namespace Repository.Implement
 
                 await MembershipRankDao.Instance.UpdateAsync(membershipRank);
             }
+        }
+
+        public async Task AddMembershipRankLog(int customerId, int membershipRankId, string action)
+        {
+            var memberhipRankLog = new MembershipRankLog
+            {
+                MembershipRankId = membershipRankId,
+                AccountId = customerId,
+                Action = action,
+                DateCreate = DateTime.UtcNow,
+            };
+
+            await MembershipRankLogDao.Instance.CreateAsync(memberhipRankLog);
         }
     }
 }

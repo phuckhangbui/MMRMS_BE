@@ -80,6 +80,7 @@ namespace DAO
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(a => a.Machine)
                         .ThenInclude(m => m.MachineImages)
+                    .OrderByDescending(c => c.DateCreate)
                     .ToListAsync();
             }
         }
@@ -92,6 +93,7 @@ namespace DAO
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(s => s.Machine)
                     .ThenInclude(m => m.MachineImages)
+                    .OrderByDescending(c => c.DateCreate)
                     .ToListAsync();
             }
         }

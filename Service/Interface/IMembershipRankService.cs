@@ -10,6 +10,7 @@ namespace Service.Interface
         Task UpdateMembershipRank(int membershipRankId, MembershipRankRequestDto membershipRankRequestDto);
         Task DeleteMembershipRank(int membershipRankId);
         Task ChangeMembershipRankStatus(int membershipRankId, string status);
-        Task<MembershipRankDto> GetMembershipRankForCustomer(int customerId);
+        Task<MembershipRankDetailDto> GetMembershipRankForCustomer(int customerId);
+        Task UpdateMembershipRankForCustomer(int customerId, double amount);
     }
 }

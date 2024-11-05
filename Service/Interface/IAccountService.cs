@@ -9,7 +9,7 @@ namespace Service.Interface
         Task<IEnumerable<EmployeeAccountDto>> GetEmployeeAccounts();
         Task<IEnumerable<EmployeeAccountDto>> GetStaffAccounts();
         Task<int> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto);
-        Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
+        Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto);
         Task<bool> ChangeAccountStatus(int accountId, string status);
         Task<CustomerAccountDetailDto> GetCustomerAccountDetail(int accountId);
         Task<EmployeeAccountDto> GetEmployeeAccountDetail(int accountId);

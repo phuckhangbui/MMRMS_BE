@@ -3,7 +3,6 @@ using Common.Enum;
 using DTOs.Contract;
 using DTOs.Invoice;
 using DTOs.MachineSerialNumber;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -14,18 +13,15 @@ namespace Service.Implement
     public class ContractServiceImpl : IContractService
     {
         private readonly IContractRepository _contractRepository;
-        private readonly IRentingRequestRepository _rentingRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
-            IRentingRequestRepository rentingRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
             IInvoiceRepository invoiceRepository)
         {
             _contractRepository = contractRepository;
-            _rentingRepository = rentingRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
         }
@@ -39,48 +35,27 @@ namespace Service.Implement
 
         public async Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId)
         {
-            var contracts = await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
-
-            if (contracts.IsNullOrEmpty())
-            {
-                throw new ServiceException(MessageConstant.Contract.ContractListEmpty);
-            }
-
-            return contracts;
+            return await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
         }
 
         public async Task<IEnumerable<ContractDto>> GetContracts(string? status)
         {
-            var contracts = await _contractRepository.GetContracts();
-
-            if (!string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(status) && !Enum.IsDefined(typeof(ContractStatusEnum), status))
             {
-                if (!Enum.IsDefined(typeof(ContractStatusEnum), status))
-                {
-                    throw new ServiceException(MessageConstant.InvalidStatusValue);
-                }
-
-                contracts = contracts.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
-            return contracts;
+            return await _contractRepository.GetContracts(status);
         }
 
         public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status)
         {
-            var contracts = await _contractRepository.GetContractsForCustomer(customerId);
-
-            if (!string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(status) && !Enum.IsDefined(typeof(ContractStatusEnum), status))
             {
-                if (!Enum.IsDefined(typeof(ContractStatusEnum), status))
-                {
-                    throw new ServiceException(MessageConstant.InvalidStatusValue);
-                }
-
-                contracts = contracts.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
-            return contracts;
+            return await _contractRepository.GetContractsForCustomer(customerId, status);
         }
 
         public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)

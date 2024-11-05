@@ -18,5 +18,7 @@
         public const string DepositContractPaymentTitle = "Thanh toán tiền đặt cọc cho hợp đồng ";
         public const string RentalContractPaymentTitle = "Thanh toán tiền thuê cho hợp đồng ";
         public const string SequenceSeparator = "NO";
+        public const string MembershipRankLogPaymentMadeAction = "Tổng số tiền đã thanh toán là ";
+        public const string MembershipRankLogRankUpgradedAction = "Hạng thành viên đã được nâng cấp lên ";
     }
 }

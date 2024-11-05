@@ -94,7 +94,7 @@ namespace Service.Implement
             return accountDto.AccountId;
         }
 
-        public async Task CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
+        public async Task<AccountDto> CreateCustomerAccount(NewCustomerAccountDto newCustomerAccountDto)
         {
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newCustomerAccountDto.Email);
 
@@ -103,7 +103,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
-            await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
+            return await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
         }
 
         public async Task<IEnumerable<CustomerAccountDto>> GetCustomerAccounts()

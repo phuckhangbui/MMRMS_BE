@@ -143,7 +143,7 @@ namespace API.Controllers
 
         [HttpGet("customer")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult<MembershipRankDto>> GetMembershipRankForCustomer()
+        public async Task<ActionResult<MembershipRankDetailDto>> GetMembershipRankForCustomer()
         {
             try
             {

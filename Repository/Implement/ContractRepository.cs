@@ -23,13 +23,19 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ContractDto>> GetContracts()
+        public async Task<IEnumerable<ContractDto>> GetContracts(string? status)
         {
             var contracts = await ContractDao.Instance.GetContracts();
 
             if (!contracts.IsNullOrEmpty())
             {
                 var contractDtos = _mapper.Map<IEnumerable<ContractDto>>(contracts);
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    contractDtos = contractDtos.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                }
+
                 return contractDtos;
             }
 
@@ -74,13 +80,20 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId)
+        public async Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status)
         {
             var contracts = await ContractDao.Instance.GetContractsForCustomer(customerId);
 
             if (!contracts.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+                var contractDtos = _mapper.Map<IEnumerable<ContractDto>>(contracts);
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    contractDtos = contractDtos.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return contractDtos;
             }
 
             return [];

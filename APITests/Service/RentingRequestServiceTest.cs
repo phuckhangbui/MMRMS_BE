@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using Common;
-using Common.Enum;
 using DTOs.AccountBusiness;
 using DTOs.Contract;
-using DTOs.Invoice;
-using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using Moq;
@@ -54,7 +51,7 @@ namespace Test.Service
             //Arrange
             string validStatus = "Signed";
             var expected = GetSampleRentingRequestDtos();
-            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequests()).ReturnsAsync(expected);
+            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequests(It.IsAny<string>())).ReturnsAsync(expected);
 
             //Act
             var result = await _rentingRequestService.GetRentingRequests(validStatus);
@@ -83,26 +80,28 @@ namespace Test.Service
             //Arrange
             var customerId = 1;
             var newRentingRequestDto = GetSampleNewRentingRequest();
-            //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
             var rentingRequestDto = GetSampleRentingRequestDto();
-            var allAvailableSerialNumbers = GetSampleMachineSerialNumberDtoList();
-            var (depositInvoice, rentalInvoice) = GetSampleInvoiceDtos(customerId);
 
             _addressRepositoryMock.Setup(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(true);
+            _machineSerialNumberRepositoryMock.Setup(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>())).ReturnsAsync(true);
             _rentingRequestRepositoryMock.Setup(x => x.CreateRentingRequest(It.IsAny<int>(), It.IsAny<NewRentingRequestDto>())).ReturnsAsync(rentingRequestDto);
-            _machineSerialNumberRepositoryMock.Setup(x => x.GetMachineSerialNumberAvailablesToRent(It.Is<List<int>>(list => list != null && list.Count > 0), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(allAvailableSerialNumbers);
-            _invoiceRepositoryMock.Setup(x => x.InitInvoices(It.IsAny<RentingRequestDto>())).ReturnsAsync(((depositInvoice, rentalInvoice)));
-            _contractRepositoryMock.Setup(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<MachineSerialNumberDto>(), It.IsAny<InvoiceDto>(), It.IsAny<InvoiceDto>())).ReturnsAsync((depositInvoice, rentalInvoice));
+            _contractRepositoryMock.Setup(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<RentingRequestSerialNumberDto>()));
+            _rentingRequestRepositoryMock.Setup(x => x.UpdateRentingRequest(It.IsAny<RentingRequestDto>()));
+            _invoiceRepositoryMock.Setup(x => x.CreateInvoice(It.IsAny<string>()));
+            _rentingRequestRepositoryMock.Setup(x => x.ScheduleCancelRentingRequest(It.IsAny<string>()));
 
             //Act
             var result = await _rentingRequestService.CreateRentingRequest(customerId, newRentingRequestDto);
 
             //Assert
             _addressRepositoryMock.Verify(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _machineSerialNumberRepositoryMock.Verify(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>()), Times.Once);
             _rentingRequestRepositoryMock.Verify(x => x.CreateRentingRequest(It.IsAny<int>(), It.IsAny<NewRentingRequestDto>()), Times.Once);
-            _machineSerialNumberRepositoryMock.Verify(x => x.GetMachineSerialNumberAvailablesToRent(It.Is<List<int>>(list => list != null && list.Count > 0), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once);
-            _invoiceRepositoryMock.Verify(x => x.InitInvoices(It.IsAny<RentingRequestDto>()), Times.Once);
-            _contractRepositoryMock.Verify(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<MachineSerialNumberDto>(), It.IsAny<InvoiceDto>(), It.IsAny<InvoiceDto>()), Times.Once);
+            _contractRepositoryMock.Verify(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<RentingRequestSerialNumberDto>()), Times.Exactly(2));
+            _rentingRequestRepositoryMock.Verify(x => x.UpdateRentingRequest(It.IsAny<RentingRequestDto>()), Times.Once);
+            _invoiceRepositoryMock.Verify(x => x.CreateInvoice(It.IsAny<string>()), Times.Once);
+            _rentingRequestRepositoryMock.Verify(x => x.ScheduleCancelRentingRequest(It.IsAny<string>()), Times.Once);
+
             Assert.NotNull(result);
         }
 
@@ -112,24 +111,17 @@ namespace Test.Service
             //Arrange
             var customerId = 1;
             var newRentingRequestDto = GetSampleNewRentingRequest();
-            //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
-            var rentingRequestDto = GetSampleRentingRequestDto();
-            var allAvailableSerialNumbers = GetSampleMachineSerialNumberDtoList();
-            var (depositInvoice, rentalInvoice) = GetSampleInvoiceDtos(customerId);
 
             _addressRepositoryMock.Setup(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(true);
-            _rentingRequestRepositoryMock.Setup(x => x.CreateRentingRequest(It.IsAny<int>(), It.IsAny<NewRentingRequestDto>())).ReturnsAsync(rentingRequestDto);
-            _machineSerialNumberRepositoryMock.Setup(x => x.GetMachineSerialNumberAvailablesToRent(It.Is<List<int>>(list => list != null && list.Count > 0), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync([]);
-            _invoiceRepositoryMock.Setup(x => x.InitInvoices(It.IsAny<RentingRequestDto>())).ReturnsAsync(((depositInvoice, rentalInvoice)));
+            _machineSerialNumberRepositoryMock.Setup(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>())).ReturnsAsync(false);
 
             //Act
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _rentingRequestService.CreateRentingRequest(customerId, newRentingRequestDto));
 
             //Assert
             _addressRepositoryMock.Verify(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            _rentingRequestRepositoryMock.Verify(x => x.CreateRentingRequest(It.IsAny<int>(), It.IsAny<NewRentingRequestDto>()), Times.Once);
-            _machineSerialNumberRepositoryMock.Verify(x => x.GetMachineSerialNumberAvailablesToRent(It.Is<List<int>>(list => list != null && list.Count > 0), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once);
-            _invoiceRepositoryMock.Verify(x => x.InitInvoices(It.IsAny<RentingRequestDto>()), Times.Once);
+            _machineSerialNumberRepositoryMock.Verify(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>()), Times.Once);
+
             Assert.Equal(MessageConstant.RentingRequest.RequestMachinesInvalid, exception.Message);
         }
 
@@ -213,49 +205,6 @@ namespace Test.Service
             Assert.Equal(MessageConstant.RentingRequest.RentingRequestNotFound, exception.Message);
         }
 
-        public (InvoiceDto DepositInvoice, InvoiceDto RentalInvoice) GetSampleInvoiceDtos(int accountPaidId)
-        {
-            var depositInvoiceDto = new InvoiceDto
-            {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "DEPOSIT" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                Amount = 0,
-                AccountPaidId = accountPaidId,
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                Type = InvoiceTypeEnum.Deposit.ToString(),
-                DateCreate = DateTime.Now,
-                Note = "Sample deposit invoice",
-            };
-
-            var rentalInvoiceDto = new InvoiceDto
-            {
-                InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                Amount = 0,
-                AccountPaidId = accountPaidId,
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                Type = InvoiceTypeEnum.Rental.ToString(),
-                DateCreate = DateTime.Now,
-                Note = "Sample rental invoice",
-            };
-
-            return (depositInvoiceDto, rentalInvoiceDto);
-        }
-
-        public List<MachineSerialNumberDto> GetSampleMachineSerialNumberDtoList()
-        {
-            return new List<MachineSerialNumberDto>
-            {
-                new MachineSerialNumberDto
-                {
-                    SerialNumber = "SN001",
-                    MachineId = 1,
-                    ActualRentPrice = 500000.0,
-                    Status = "Available",
-                    DateCreate = DateTime.Parse("2024-09-29T17:00:00.000Z"),
-                    RentDaysCounter = 0
-                }
-            };
-        }
-
         public RentingRequestDto GetSampleRentingRequestDto()
         {
             return new RentingRequestDto
@@ -321,25 +270,6 @@ namespace Test.Service
                     Note = "NOTE 2",
                     Status = "Signed"
                 },
-                new RentingRequestDto
-                {
-                    RentingRequestId = "REH202411011529528422715",
-                    AccountOrderId = 17,
-                    AccountOrderName = "LAN",
-                    DateCreate = DateTime.Parse("2024-11-01T08:31:00.000Z"),
-                    DateStart = DateTime.Parse("2024-11-11T17:00:00.000Z"),
-                    DateEnd = DateTime.Parse("2025-02-11T17:00:00.000Z"),
-                    TotalRentPrice = 100000000.0,
-                    TotalDepositPrice = 5000000.0,
-                    TotalServicePrice = 2000000.0,
-                    ShippingPrice = 400000.0,
-                    DiscountPrice = 100000.0,
-                    NumberOfMonth = 4,
-                    TotalAmount = 99000000.0,
-                    IsOnetimePayment = true,
-                    Note = "NOTE 3",
-                    Status = "Canceled"
-                }
             };
         }
 
@@ -426,21 +356,27 @@ namespace Test.Service
             return new NewRentingRequestDto
             {
                 AddressId = 1,
-                DateStart = new DateTime(2024, 10, 1),
-                DateEnd = new DateTime(2025, 10, 1),
                 ShippingPrice = 100.50,
                 DiscountPrice = 10.0,
-                NumberOfMonth = 12,
                 IsOnetimePayment = true,
                 Note = "This is a sample note.",
-                //RentingRequestMachineDetails = new List<NewRentingRequestMachineDetailDto>
-                //{
-                //    new NewRentingRequestMachineDetailDto
-                //    {
-                //        MachineId = 1,
-                //        Quantity = 1
-                //    }
-                //},
+                RentingRequestSerialNumbers = new List<RentingRequestSerialNumberDto>
+                {
+                    new RentingRequestSerialNumberDto
+                    {
+                        MachineId = 1,
+                        SerialNumber = "SN001",
+                        DateStart = new DateTime(2024, 11, 10),
+                        DateEnd = new DateTime(2025, 02, 10)
+                    },
+                    new RentingRequestSerialNumberDto
+                    {
+                        MachineId = 1,
+                        SerialNumber = "SN002",
+                        DateStart = new DateTime(2024, 11, 10),
+                        DateEnd = new DateTime(2025, 02, 10)
+                    }
+                },
                 ServiceRentingRequests = new List<int> { 201, 202 }
             };
         }

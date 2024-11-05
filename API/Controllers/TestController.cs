@@ -14,12 +14,32 @@ namespace API.Controllers
         private readonly ICloudinaryService _cloudinaryService;
         private readonly INotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
+        private readonly IMembershipRankService _membershipRankService;
 
-        public TestController(ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService)
+        public TestController(ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService)
         {
             _cloudinaryService = cloudinaryService;
             _firebaseMessagingService = firebaseMessagingService;
             _notificationService = notificationService;
+            _membershipRankService = membershipRankService;
+        }
+
+        [HttpPost("update-customer-rank")]
+        public async Task<IActionResult> UpdateCustomerRank(int customerId, double amount)
+        {
+            try
+            {
+                await _membershipRankService.UpdateMembershipRankForCustomer(customerId, amount);
+                return Ok(new { message = "Customer membership rank updated successfully." });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the customer rank.", details = ex.Message });
+            }
         }
 
         [HttpGet("datetime")]

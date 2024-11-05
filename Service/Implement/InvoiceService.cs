@@ -19,14 +19,15 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
-
+        private readonly IMembershipRankService _membershipRankService;
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
             IComponentReplacementTicketRepository componentReplacementTicketRepository,
             IContractRepository contractRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IMembershipRankService membershipRankService)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -34,6 +35,7 @@ namespace Service.Implement
             _contractRepository = contractRepository;
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
+            _membershipRankService = membershipRankService;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -126,6 +128,8 @@ namespace Service.Implement
                     {
                         return false;
                     }
+
+                    await _membershipRankService.UpdateMembershipRankForCustomer((int)invoice.AccountPaidId, invoice.Amount ?? 0);
 
                     switch (invoice.Type)
                     {
