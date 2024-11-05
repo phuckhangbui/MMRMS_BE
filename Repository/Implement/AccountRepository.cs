@@ -49,8 +49,8 @@ namespace Repository.Implement
             account.IsDelete = false;
             account.AvatarImg = GlobalConstant.DefaultAvatarUrl;
             account.OtpNumber = otp;
+            account.MoneySpent = 0;
 
-            //account.RoleId = (int)AccountRoleEnum.Customer;
             var customerRole = await RoleDao.Instance.GetRoleByRoleName(AccountRoleEnum.Customer);
             if (customerRole != null)
             {
@@ -67,28 +67,30 @@ namespace Repository.Implement
 
             account.AccountBusiness = accountBusiness;
 
-            //Init promotion
-            //var promotions = await PromotionDao.Instance.GetAllAsync();
-            //var activePromotions = promotions.Where(p => p.Status!.Equals(PromotionStatusEnum.Active.ToString()));
-            //if (!activePromotions.IsNullOrEmpty())
-            //{
-            //    foreach (var activePromotion in activePromotions)
-            //    {
-            //        var accountPromotion = new AccountPromotion
-            //        {
-            //            Account = account,
-            //            DateReceive = DateTime.Now,
-            //            Status = AccountPromotionStatusEnum.Active.ToString(),
-            //            PromotionId = activePromotion.PromotionId,
-            //        };
+            var membershipRanks = await MembershipRankDao.Instance.GetAllAsync();
+            var defaultMembershipRank = membershipRanks.OrderBy(m => m.MoneySpent).FirstOrDefault();
+            if (defaultMembershipRank != null)
+            {
+                account.MembershipRankId = defaultMembershipRank.MembershipRankId;
+            }
 
-            //        account.AccountPromotions.Add(accountPromotion);
-            //    }
-            //}
+            var newAccount = await AccountDao.Instance.CreateAsync(account);
 
-            await AccountDao.Instance.CreateAsync(account);
+            if (defaultMembershipRank != null)
+            {
+                var memberhipRankLog = new MembershipRankLog
+                {
+                    MembershipRankId = defaultMembershipRank.MembershipRankId,
+                    AccountId = newAccount.AccountId,
+                    Action = $"{GlobalConstant.MembershipRankLogRankUpgradedAction}{defaultMembershipRank.MembershipRankName}",
+                    DateCreate = DateTime.UtcNow,
+                };
 
-            return _mapper.Map<AccountDto>(account);
+                await MembershipRankLogDao.Instance.CreateAsync(memberhipRankLog);
+
+            }
+
+            return _mapper.Map<AccountDto>(newAccount);
         }
 
         public async Task<EmployeeAccountDto> CreateEmployeeAccount(NewEmployeeAccountDto newEmployeeAccountDto)

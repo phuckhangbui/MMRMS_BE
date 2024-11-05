@@ -150,8 +150,8 @@ namespace API.Controllers
 
             try
             {
-                await _accountService.CreateCustomerAccount(newCustomerAccountDto);
-                return Created("", newCustomerAccountDto);
+                var result = await _accountService.CreateCustomerAccount(newCustomerAccountDto);
+                return Created("", result);
             }
             catch (ServiceException ex)
             {

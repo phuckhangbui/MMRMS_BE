@@ -36,8 +36,6 @@ namespace DTOs.Account
 
         public DateTime? TokenDateExpire { get; set; }
 
-        public int? AccountPromotionId { get; set; }
-
         public int? MembershipRankId { get; set; }
 
         public double? MoneySpent { get; set; }

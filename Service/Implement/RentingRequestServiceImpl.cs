@@ -33,6 +33,12 @@ namespace Service.Implement
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
+            var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
+            if (!isAddressValid)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
+            }
+
             var duplicateSerials = newRentingRequestDto.RentingRequestSerialNumbers
                     .GroupBy(r => r.SerialNumber)
                     .Where(g => g.Count() > 1)
@@ -43,78 +49,28 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
-            //Check address valid
-            var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
-            if (!isAddressValid)
+            var isSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRent(newRentingRequestDto.RentingRequestSerialNumbers);
+            if (!isSerialNumbersValid)
             {
-                throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
+                throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    //Create renting request
                     var rentingRequest = await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
 
                     if (rentingRequest != null)
                     {
-                        var isSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRent(newRentingRequestDto.RentingRequestSerialNumbers);
-                        if (!isSerialNumbersValid)
-                        {
-                            throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
-                        }
-
-                        //var machineIds = newRentingRequestDto.RentingRequestMachineDetails.Select(m => m.MachineId).Distinct().ToList();
-                        //var allAvailableSerialNumbers = await _machineSerialNumberRepository.GetMachineSerialNumberAvailablesToRent(machineIds, newRentingRequestDto.DateStart, newRentingRequestDto.DateEnd);
-
-                        //var (depositInvoice, rentalInvoice) = await _invoiceRepository.InitInvoices(rentingRequest);
-
-                        //Loop create contract
                         foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
                         {
-                            //var availaleSerialNumbers = await _machineSerialNumberRepository.GetMachineSerialNumberAvailablesToRent(newRentingRequestMachine.MachineId, newRentingRequestDto.DateStart, newRentingRequestDto.DateEnd);
-                            //var selectedSerialNumbers = availaleSerialNumbers
-                            //    .Take(newRentingRequestMachine.Quantity)
-                            //    .ToList();
-
-                            //var selectedSerialNumbers = allAvailableSerialNumbers
-                            //    .Where(s => s.MachineId == newRentingRequestMachine.MachineId)
-                            //    .Take(newRentingRequestMachine.Quantity)
-                            //    .ToList();
-
-                            //if (selectedSerialNumbers.Count < newRentingRequestMachine.Quantity)
-                            //{
-                            //    throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
-                            //}
-
-                            //foreach (var machineSerialNumber in selectedSerialNumbers)
-                            //{
-                            //    (depositInvoice, rentalInvoice) = await _contractRepository.CreateContract(rentingRequest, machineSerialNumber, depositInvoice, rentalInvoice);
-                            //}
-
                             await _contractRepository.CreateContract(rentingRequest, rentingRequestSerialNumber);
                         }
 
-                        //depositInvoice.Amount = rentingRequest.TotalDepositPrice;
-                        //if (rentingRequest.IsOnetimePayment == true)
-                        //{
-                        //    rentalInvoice.Amount = rentingRequest.TotalRentPrice + rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice
-                        //        - rentingRequest.DiscountPrice;
-                        //}
-                        //else
-                        //{
-                        //    rentalInvoice.Amount += rentingRequest.ShippingPrice - rentingRequest.DiscountPrice;
-                        //}
-
                         await _rentingRepository.UpdateRentingRequest(rentingRequest);
                         await _invoiceRepository.CreateInvoice(rentingRequest.RentingRequestId);
-                        //await _invoiceRepository.UpdateInvoice(depositInvoice);
-                        //await _invoiceRepository.UpdateInvoice(rentalInvoice);
-
-                        //ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-                        //var backgroundImpl = new BackgroundImpl(logger);
-                        //backgroundImpl.CancelRentingRequestJob(rentingRequest.RentingRequestId);
+                        _rentingRepository.ScheduleCancelRentingRequest(rentingRequest.RentingRequestId);
 
                         scope.Complete();
 
@@ -134,19 +90,12 @@ namespace Service.Implement
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests(string? status)
         {
-            var rentingRequests = await _rentingRepository.GetRentingRequests();
-
-            if (!string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(status) && !Enum.IsDefined(typeof(RentingRequestStatusEnum), status))
             {
-                if (!Enum.IsDefined(typeof(RentingRequestStatusEnum), status))
-                {
-                    throw new ServiceException(MessageConstant.InvalidStatusValue);
-                }
-
-                rentingRequests = rentingRequests.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
-            return rentingRequests;
+            return await _rentingRepository.GetRentingRequests(status);
         }
 
         public async Task<RentingRequestDetailDto> GetRentingRequestDetail(string rentingRequestId)
@@ -183,11 +132,7 @@ namespace Service.Implement
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsThatStillHaveContractNeedDelivery()
         {
-            var rentingRequests = await _rentingRepository.GetRentingRequests();
-
-            rentingRequests = rentingRequests
-                .Where(r => r.Status == RentingRequestStatusEnum.Signed.ToString())
-                .ToList();
+            var rentingRequests = await _rentingRepository.GetRentingRequests(RentingRequestStatusEnum.Signed.ToString());
 
             var requestsWithPendingContracts = new List<RentingRequestDto>();
 

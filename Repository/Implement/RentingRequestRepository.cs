@@ -10,6 +10,7 @@ using DTOs.MembershipRank;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
 using DTOs.Term;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -136,11 +137,23 @@ namespace Repository.Implement
             return rentingRequestInitDataDto;
         }
 
-        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests()
+        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequests(string? status)
         {
-            IEnumerable<RentingRequest> rentingRequests = await RentingRequestDao.Instance.GetRentingRequests();
+            var rentingRequests = await RentingRequestDao.Instance.GetRentingRequests();
 
-            return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
+            if (!rentingRequests.IsNullOrEmpty())
+            {
+                var rentingRequestDtos = _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    rentingRequestDtos = rentingRequestDtos.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return rentingRequestDtos;
+            }
+
+            return [];
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
@@ -257,13 +270,6 @@ namespace Repository.Implement
             return areContractsNotSigned;
         }
 
-        public async Task<RentingRequestDto> GetRentingRequest(string rentingRequestId)
-        {
-            var list = await GetRentingRequests();
-
-            return list.FirstOrDefault(r => r.RentingRequestId == rentingRequestId);
-        }
-
         public async Task UpdateRentingRequestStatus(string rentingRequestId, string status)
         {
             var request = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
@@ -283,6 +289,13 @@ namespace Repository.Implement
             var rentingRequest = _mapper.Map<RentingRequest>(rentingRequestDto);
 
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
+        }
+
+        public void ScheduleCancelRentingRequest(string rentingRequestId)
+        {
+            ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
+            var backgroundImpl = new BackgroundImpl(logger);
+            backgroundImpl.CancelRentingRequestJob(rentingRequestId);
         }
     }
 }
