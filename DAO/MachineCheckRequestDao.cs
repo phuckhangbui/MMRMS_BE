@@ -91,7 +91,14 @@ namespace DAO
             }
         }
 
-
-
+        public async Task<int> GetTotalRequestByDate(DateTime date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.MachineCheckRequests
+                    .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
+                    .CountAsync();
+            }
+        }
     }
 }

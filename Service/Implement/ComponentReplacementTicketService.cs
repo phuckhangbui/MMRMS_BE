@@ -259,7 +259,6 @@ namespace Service.Implement
 
             var replacementTicket = new ComponentReplacementTicketDto
             {
-                ComponentReplacementTicketId = GlobalConstant.ComponentReplacementTicketIdPrefixPattern + now.ToString(GlobalConstant.DateTimeFormatPattern),
                 EmployeeCreateId = staffId,
                 MachineTaskCreateId = createComponentReplacementTicketDto.MachineTaskCreateId,
                 ContractId = machineTask.ContractId,

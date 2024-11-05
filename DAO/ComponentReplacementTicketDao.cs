@@ -67,7 +67,7 @@ namespace DAO
 
 
         //have transaction inside the service layer
-        public async Task<ComponentReplacementTicket> CreateTicket(ComponentReplacementTicket componentTicket, ComponentReplacementTicketLog ticketLog, Invoice invoice)
+        public async Task<ComponentReplacementTicket> CreateTicket(ComponentReplacementTicket componentTicket, ComponentReplacementTicketLog ticketLog)
         {
             using (var context = new MmrmsContext())
             {
@@ -76,16 +76,6 @@ namespace DAO
                 context.ComponentReplacementTickets.Add(componentTicket);
                 await context.SaveChangesAsync();
 
-                invoice.ComponentReplacementTicketId = componentTicket.ComponentReplacementTicketId;
-                context.Invoices.Add(invoice);
-                await context.SaveChangesAsync();
-
-                componentTicket.InvoiceId = invoice.InvoiceId;
-                context.ComponentReplacementTickets.Update(componentTicket);
-                await context.SaveChangesAsync();
-
-
-                ticketLog.ComponentReplacementTicketId = componentTicket.ComponentReplacementTicketId;
                 context.ComponentReplacementTicketLogs.Add(ticketLog);
                 await context.SaveChangesAsync();
 
@@ -93,6 +83,14 @@ namespace DAO
             }
         }
 
-
+        public async Task<int> GetTotalTicketByDate(DateTime date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Contracts
+                    .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
+                    .CountAsync();
+            }
+        }
     }
 }
