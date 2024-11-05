@@ -25,7 +25,7 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
@@ -36,6 +36,7 @@ namespace Service.Implement
             _machineTaskRepository = machineTaskRepository;
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
             _machineCheckRequestService = machineCheckRequestService;
+            _machineSerialNumberLogRepository = machineSerialNumberLogRepository;
         }
 
         private async Task UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus(int machineTaskId, int activatorId)
@@ -180,7 +181,7 @@ namespace Service.Implement
 
                     await _componentRepository.RemoveOnHoldQuantity((int)ticket.ComponentId, (int)ticket.Quantity);
 
-                    await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, staffId);
+                    //await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, staffId);
 
                     scope.Complete();
                 }
@@ -422,8 +423,8 @@ namespace Service.Implement
             }
             else if (machineTaskDetail.Type == MachineTaskTypeEnum.ContractTerminationCheck.ToString())
             {
-                replacementTicket.Type = ComponentReplacementTicketTypeEnum.ContractTermniationTicket.ToString();
-                replacementTicket.Status = ComponentReplacementTicketStatusEnum.Paid.ToString();
+                replacementTicket.Type = ComponentReplacementTicketTypeEnum.ContractTerminationTicket.ToString();
+                replacementTicket.Status = ComponentReplacementTicketStatusEnum.Completed.ToString();
             }
 
             var contract = await _contractRepository.GetContractById(contractId);

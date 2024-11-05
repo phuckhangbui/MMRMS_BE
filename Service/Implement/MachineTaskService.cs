@@ -246,24 +246,35 @@ namespace Service.Implement
 
         public async Task StaffCheckMachineSuccess(int taskId, int staffId, string? confirmationPictureUrl)
         {
-            var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
+            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(taskId);
 
-            if (machineTask == null)
+            if (machineTaskDetail == null)
             {
                 throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
             }
 
-            if (machineTask.StaffId != staffId)
+            if (machineTaskDetail.StaffId != staffId)
             {
                 throw new ServiceException(MessageConstant.MachineTask.IncorrectStaffIdToUpdate);
             }
 
-            if (machineTask.Type != MachineTaskTypeEnum.MachineryCheckRequest.ToString())
+            if (machineTaskDetail.Type != MachineTaskTypeEnum.MachineryCheckRequest.ToString())
             {
-                throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
+                if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList != null &&
+                    machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
+                {
+                    var isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
+                                                               componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
+                                                               componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
+
+                    if (!isAllTicketCompleted)
+                    {
+                        throw new ServiceException(MessageConstant.MachineTask.TaskCannotCompleteDueToTicketListUnfulfill);
+                    }
+                }
             }
 
-            if (machineTask.Status != MachineTaskEnum.Created.ToString())
+            if (machineTaskDetail.Status == MachineTaskEnum.Canceled.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
             }
@@ -274,19 +285,19 @@ namespace Service.Implement
                 {
                     await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
-                    if (machineTask.MachineCheckRequestId != null && machineTask.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
+                    if (machineTaskDetail.MachineCheckRequestId != null && machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
                     {
-                        await _machineCheckRequestService.UpdateRequestStatus(machineTask.MachineCheckRequestId
+                        await _machineCheckRequestService.UpdateRequestStatus(machineTaskDetail.MachineCheckRequestId
                                                              , MachineCheckRequestStatusEnum.Completed.ToString(), null);
                     }
 
                     //logic when check success in case of terminate contract check
-                    if (machineTask.Type == MachineTaskTypeEnum.ContractTerminationCheck.ToString())
+                    if (machineTaskDetail.Type == MachineTaskTypeEnum.ContractTerminationCheck.ToString())
                     {
 
                     }
 
-                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskEnum.Completed));
+                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTaskDetail.ManagerId, machineTaskDetail.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskEnum.Completed));
 
                     scope.Complete();
                 }

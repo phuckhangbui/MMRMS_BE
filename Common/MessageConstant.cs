@@ -357,6 +357,7 @@
             public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";
             public const string CannotCreateTicketWithThisTask = "Trạng thái nhiệm vụ này không thể tạo ticket thay thế bộ phận máy";
             public const string CreateFail = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
+            public const string TaskCannotCompleteDueToTicketListUnfulfill = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";

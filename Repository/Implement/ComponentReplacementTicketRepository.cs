@@ -60,7 +60,6 @@ namespace Repository.Implement
                 Type = InvoiceTypeEnum.ComponentTicket.ToString(),
             };
 
-            componentTicket.InvoiceId = invoice.InvoiceId;
             componentTicket = await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog);
 
 
@@ -68,6 +67,8 @@ namespace Repository.Implement
             {
                 invoice.Status = InvoiceStatusEnum.Pending.ToString();
                 await InvoiceDao.Instance.CreateAsync(invoice);
+                componentTicket.InvoiceId = invoice.InvoiceId;
+                await ComponentReplacementTicketDao.Instance.UpdateAsync(componentTicket);
             }
 
             var result = _mapper.Map<ComponentReplacementTicketDto>(componentTicket);

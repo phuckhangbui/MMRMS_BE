@@ -18,6 +18,6 @@
     public enum ComponentReplacementTicketTypeEnum
     {
         RentingTicket,
-        ContractTermniationTicket,
+        ContractTerminationTicket,
     }
 }
