@@ -23,18 +23,18 @@ namespace Repository.Implement
             _machineCheckRequestRepository = MachineCheckRequestRepository;
         }
 
-        public async Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
+        private async Task<MachineTaskDto> CreateMachineTaskInternal(int managerId,
+                                                             CreateMachineTaskDtoBase createMachineTaskDto,
+                                                             string taskType,
+                                                             string logAction)
         {
-
+            // Parse DateStart
             if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
             {
                 throw new Exception("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
             }
 
             var staffAccount = await _accountRepository.GetAccounById(createMachineTaskDto.StaffId);
-
-            var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(createMachineTaskDto.RequestId);
-
             var now = DateTime.Now;
 
             var task = new MachineTask
@@ -43,25 +43,48 @@ namespace Repository.Implement
                 Content = createMachineTaskDto.TaskContent,
                 StaffId = createMachineTaskDto.StaffId,
                 ManagerId = managerId,
-                Type = MachineTaskTypeEnum.MachineryCheck.ToString(),
+                Type = taskType,
                 DateCreate = now,
                 DateStart = parsedDate,
                 Status = MachineTaskStatusEnum.Created.ToString(),
-                Note = createMachineTaskDto.Note,
-                MachineCheckRequestId = createMachineTaskDto.RequestId,
-                ContractId = request.ContractId
+                Note = createMachineTaskDto.Note
             };
+
+            if (createMachineTaskDto is CreateMachineTaskCheckRequestDto checkMachineDto)
+            {
+                var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(checkMachineDto.RequestId);
+                task.MachineCheckRequestId = checkMachineDto.RequestId;
+                task.ContractId = request.ContractId;
+            }
+            else if (createMachineTaskDto is CreateMachineTaskContractTerminationDto terminationDto)
+            {
+                task.ContractId = terminationDto.ContractId;
+            }
 
             var taskLog = new MachineTaskLog
             {
-                Action = $"Tạo và giao công việc kiểm tra máy cho {staffAccount.Name}",
+                Action = logAction.Replace("{staffName}", staffAccount.Name),
                 DateCreate = now,
-                AccountTriggerId = managerId,
+                AccountTriggerId = managerId
             };
 
             task = await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog);
 
             return _mapper.Map<MachineTaskDto>(task);
+        }
+        public async Task<MachineTaskDto> CreateMachineTaskContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        {
+            return await CreateMachineTaskInternal(managerId, createMachineTaskDto,
+                                   MachineTaskTypeEnum.ContractTerminationCheck.ToString(),
+                                   "Tạo và giao công việc kiêm tra máy chấm dứt hợp đồng cho {staffName}");
+        }
+
+        public async Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto)
+        {
+
+            return await CreateMachineTaskInternal(managerId, createMachineTaskDto,
+                                        MachineTaskTypeEnum.MachineryCheckRequest.ToString(),
+                                        "Tạo và giao công việc kiểm tra máy cho {staffName}");
         }
 
         public async Task Delete(int taskId)

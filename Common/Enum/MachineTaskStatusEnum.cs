@@ -17,7 +17,7 @@
 
     public enum MachineTaskTypeEnum
     {
-        MachineryCheck,
-        ComponentReplacement
+        MachineryCheckRequest,
+        ContractTerminationCheck
     }
 }

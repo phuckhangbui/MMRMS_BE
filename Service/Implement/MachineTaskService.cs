@@ -67,9 +67,8 @@ namespace Service.Implement
             }
         }
 
-        public async Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckMachineDto createMachineTaskDto)
+        public async Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto)
         {
-
             if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
             {
                 throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
@@ -109,6 +108,54 @@ namespace Service.Implement
                 }
             }
 
+
+        }
+
+        public async Task CreateMachineTaskCheckMachineContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        {
+            if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
+            }
+
+            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, parsedDate);
+
+            var contractDto = await _contractRepository.GetContractById(createMachineTaskDto.ContractId);
+
+            if (contractDto == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            //Todo check contract status
+
+            //if (contractDto.Status != ContractStatusEnum.Terminated.ToString())
+            //{
+            //    throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleContractStatus);
+            //}
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var task = await _machineTaskRepository.CreateMachineTaskContractTermination(managerId, createMachineTaskDto);
+
+                    //update contract status
+                    //await _contractRepository.UpdateContractStatus(createMachineTaskDto.ContractId, ContractStatusEnum.Terminated.ToString());
+
+                    var contractAddress = await _contractRepository.GetContractAddressById(createMachineTaskDto.ContractId);
+
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, contractAddress, parsedDate);
+
+                    await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.MachineTask.CreateFail);
+                }
+            }
 
         }
 
@@ -211,7 +258,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.IncorrectStaffIdToUpdate);
             }
 
-            if (machineTask.Type != MachineTaskTypeEnum.MachineryCheck.ToString())
+            if (machineTask.Type != MachineTaskTypeEnum.MachineryCheckRequest.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
             }
@@ -227,10 +274,16 @@ namespace Service.Implement
                 {
                     await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
-                    if (machineTask.MachineCheckRequestId != null)
+                    if (machineTask.MachineCheckRequestId != null && machineTask.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
                     {
                         await _machineCheckRequestService.UpdateRequestStatus(machineTask.MachineCheckRequestId
                                                              , MachineCheckRequestStatusEnum.Completed.ToString(), null);
+                    }
+
+                    //logic when check success in case of terminate contract check
+                    if (machineTask.Type == MachineTaskTypeEnum.ContractTerminationCheck.ToString())
+                    {
+
                     }
 
                     await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
@@ -245,30 +298,32 @@ namespace Service.Implement
 
         }
 
-        public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)
-        {
-            var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
 
-            if (machineTask == null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-            }
 
-            if (machineTask.Type != MachineTaskTypeEnum.ComponentReplacement.ToString())
-            {
-                throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
-            }
+        //public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)
+        //{
+        //    var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
 
-            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
-            {
-                throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
-            }
+        //    if (machineTask == null)
+        //    {
+        //        throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+        //    }
 
-            //Todo logic here
+        //    if (machineTask.Type != MachineTaskTypeEnum.ComponentReplacement.ToString())
+        //    {
+        //        throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
+        //    }
 
-            await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
+        //    if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
+        //    {
+        //        throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
+        //    }
 
-            await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
-        }
+        //    //Todo logic here
+
+        //    await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
+
+        //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
+        //}
     }
 }
