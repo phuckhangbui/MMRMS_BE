@@ -167,6 +167,8 @@ namespace Repository.Mapper
             //CreateMap<Promotion, PromotionRequestDto>().ReverseMap();
 
             CreateMap<MembershipRank, MembershipRankDto>();
+            CreateMap<MembershipRank, MembershipRankDetailDto>();
+            CreateMap<MembershipRankLog, MembershipRankLogDto>();
             CreateMap<MembershipRank, MembershipRankRequestDto>().ReverseMap();
 
             CreateMap<Contract, ContractDto>()

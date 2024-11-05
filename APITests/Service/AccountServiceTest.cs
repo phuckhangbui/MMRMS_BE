@@ -67,8 +67,8 @@ namespace Test.Service
             var accountBase = GetSampleAccountBaseDto(accountId, (int)AccountRoleEnum.TechnicalStaff);
             var employeeAccount = GetSampleEmployeeAccounts().FirstOrDefault(x => x.AccountId == accountId);
 
-            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync(accountBase);
-            _accountRepositoryMock.Setup(x => x.GetEmployeeAccountById(accountId)).ReturnsAsync(employeeAccount);
+            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(It.IsAny<int>())).ReturnsAsync(accountBase);
+            _accountRepositoryMock.Setup(x => x.GetEmployeeAccountById(It.IsAny<int>())).ReturnsAsync(employeeAccount);
 
             var result = await _accountService.GetEmployeeAccountDetail(accountId);
 
@@ -80,7 +80,7 @@ namespace Test.Service
         public async Task GetEmployeeAccountDetail_ThrowsException_AccountNotFound()
         {
             int accountId = -100;
-            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync((AccountBaseDto)null);
+            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(It.IsAny<int>())).ReturnsAsync((AccountBaseDto)null);
 
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.GetEmployeeAccountDetail(accountId));
             Assert.Equal(MessageConstant.Account.AccountNotFound, exception.Message);
@@ -118,15 +118,17 @@ namespace Test.Service
                 AvatarImg = "https://res.cloudinary.com/dfdwupiah/image/upload/v1728103743/MMRMS/qbjsfiyperlviohymsmv.png"
             };
 
-            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(newEmployee.Email)).ReturnsAsync(false);
-            _accountRepositoryMock.Setup(x => x.IsAccountExistWithUsername(newEmployee.Username)).ReturnsAsync(false);
-            _accountRepositoryMock.Setup(x => x.CreateEmployeeAccount(newEmployee)).ReturnsAsync(createdEmployee);
+            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(It.IsAny<string>())).ReturnsAsync(false);
+            _accountRepositoryMock.Setup(x => x.IsAccountExistWithUsername(It.IsAny<string>())).ReturnsAsync(false);
+            _accountRepositoryMock.Setup(x => x.CreateEmployeeAccount(It.IsAny<NewEmployeeAccountDto>())).ReturnsAsync(createdEmployee);
 
             var result = await _accountService.CreateEmployeeAccount(newEmployee);
 
-            Assert.Equal(createdEmployee.AccountId, result);
             _accountRepositoryMock.Verify(x => x.CreateEmployeeAccount(It.IsAny<NewEmployeeAccountDto>()), Times.Once);
-            //_mailMock.Verify(x => x.SendMail(It.IsAny<string>()), Times.Once);
+            _accountRepositoryMock.Verify(x => x.IsAccountExistWithEmail(It.IsAny<string>()), Times.Once);
+            _accountRepositoryMock.Verify(x => x.IsAccountExistWithUsername(It.IsAny<string>()), Times.Once);
+
+            Assert.Equal(createdEmployee.AccountId, result);
         }
 
         [Fact]
@@ -145,7 +147,7 @@ namespace Test.Service
                 RoleId = 2
             };
 
-            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(newEmployee.Email)).ReturnsAsync(true);
+            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(It.IsAny<string>())).ReturnsAsync(true);
 
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.CreateEmployeeAccount(newEmployee));
             Assert.Equal(MessageConstant.Account.EmailAlreadyExists, exception.Message);
@@ -167,8 +169,8 @@ namespace Test.Service
                 RoleId = 2
             };
 
-            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(newEmployee.Email)).ReturnsAsync(false);
-            _accountRepositoryMock.Setup(x => x.IsAccountExistWithUsername(newEmployee.Username)).ReturnsAsync(true);
+            _accountRepositoryMock.Setup(x => x.IsAccountExistWithEmail(It.IsAny<string>())).ReturnsAsync(false);
+            _accountRepositoryMock.Setup(x => x.IsAccountExistWithUsername(It.IsAny<string>())).ReturnsAsync(true);
 
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.CreateEmployeeAccount(newEmployee));
             Assert.Equal(MessageConstant.Account.UsernameAlreadyExists, exception.Message);
@@ -181,8 +183,8 @@ namespace Test.Service
             int accountId = 4;
             var accountBase = GetSampleAccountBaseDto(accountId, (int)AccountRoleEnum.TechnicalStaff);
 
-            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync(accountBase);
-            _accountRepositoryMock.Setup(x => x.ChangeAccountStatus(accountId, validStatus)).ReturnsAsync(true);
+            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(It.IsAny<int>())).ReturnsAsync(accountBase);
+            _accountRepositoryMock.Setup(x => x.ChangeAccountStatus(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
 
             var result = await _accountService.ChangeAccountStatus(accountId, validStatus);
 
@@ -194,7 +196,7 @@ namespace Test.Service
         {
             string validStatus = AccountStatusEnum.Active.ToString();
             int accountId = 100;
-            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync((AccountBaseDto)null);
+            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(It.IsAny<int>())).ReturnsAsync((AccountBaseDto)null);
 
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.ChangeAccountStatus(accountId, validStatus));
             Assert.Equal(MessageConstant.Account.AccountNotFound, exception.Message);
@@ -207,7 +209,7 @@ namespace Test.Service
             int accountId = 4;
             var accountBase = GetSampleAccountBaseDto(accountId, (int)AccountRoleEnum.TechnicalStaff);
 
-            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(accountId)).ReturnsAsync(accountBase);
+            _accountRepositoryMock.Setup(x => x.GetAccountBaseById(It.IsAny<int>())).ReturnsAsync(accountBase);
 
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _accountService.ChangeAccountStatus(accountId, invalidStatus));
             Assert.Equal(MessageConstant.InvalidStatusValue, exception.Message);

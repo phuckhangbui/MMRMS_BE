@@ -10,6 +10,7 @@ namespace Repository.Interface
         Task UpdateMembershipRank(int membershipRankId, MembershipRankRequestDto membershipRankRequestDto);
         Task DeleteMembershipRank(int membershipRankId);
         Task ChangeMembershipRankStatus(int membershipRankId, string status);
-        Task<MembershipRankDto?> GetMembershipRankForCustomer(int customerId);
+        Task<MembershipRankDetailDto?> GetMembershipRankForCustomer(int customerId);
+        Task AddMembershipRankLog(int customerId, int membershipRankId, string action);
     }
 }

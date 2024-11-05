@@ -33,6 +33,12 @@ namespace Service.Implement
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
+            var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
+            if (!isAddressValid)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
+            }
+
             var duplicateSerials = newRentingRequestDto.RentingRequestSerialNumbers
                     .GroupBy(r => r.SerialNumber)
                     .Where(g => g.Count() > 1)
@@ -43,10 +49,10 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
-            var isAddressValid = await _addressRepository.IsAddressValid(newRentingRequestDto.AddressId, customerId);
-            if (!isAddressValid)
+            var isSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRent(newRentingRequestDto.RentingRequestSerialNumbers);
+            if (!isSerialNumbersValid)
             {
-                throw new ServiceException(MessageConstant.RentingRequest.RequestAddressInvalid);
+                throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -57,12 +63,6 @@ namespace Service.Implement
 
                     if (rentingRequest != null)
                     {
-                        var isSerialNumbersValid = await _machineSerialNumberRepository.CheckMachineSerialNumberValidToRent(newRentingRequestDto.RentingRequestSerialNumbers);
-                        if (!isSerialNumbersValid)
-                        {
-                            throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
-                        }
-
                         foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
                         {
                             await _contractRepository.CreateContract(rentingRequest, rentingRequestSerialNumber);

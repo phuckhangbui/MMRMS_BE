@@ -3,7 +3,6 @@ using Common.Enum;
 using DTOs.Contract;
 using DTOs.Invoice;
 using DTOs.MachineSerialNumber;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -36,14 +35,7 @@ namespace Service.Implement
 
         public async Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId)
         {
-            var contracts = await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
-
-            if (contracts.IsNullOrEmpty())
-            {
-                throw new ServiceException(MessageConstant.Contract.ContractListEmpty);
-            }
-
-            return contracts;
+            return await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
         }
 
         public async Task<IEnumerable<ContractDto>> GetContracts(string? status)
