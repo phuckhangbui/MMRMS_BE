@@ -39,6 +39,17 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<ComponentReplacementTicket>> GetComponentReplacementTicketByContractId(string contractId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ComponentReplacementTickets
+                                    .Where(c => c.ContractId == contractId)
+                                    .OrderByDescending(c => c.DateCreate)
+                                    .ToListAsync();
+            }
+        }
+
         public async Task<ComponentReplacementTicket> GetComponentReplacementTicket(string ticketId)
         {
             using (var context = new MmrmsContext())

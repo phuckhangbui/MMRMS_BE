@@ -14,4 +14,10 @@
         [Translation("Đã hủy")]
         Canceled
     }
+
+    public enum ComponentReplacementTicketTypeEnum
+    {
+        RentingTicket,
+        ContractTermniationTicket,
+    }
 }

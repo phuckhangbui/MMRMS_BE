@@ -46,7 +46,7 @@ namespace Repository.Implement
                 Type = taskType,
                 DateCreate = now,
                 DateStart = parsedDate,
-                Status = MachineTaskStatusEnum.Created.ToString(),
+                Status = MachineTaskEnum.Created.ToString(),
                 Note = createMachineTaskDto.Note
             };
 
@@ -143,7 +143,7 @@ namespace Repository.Implement
                 return new List<MachineTaskDto>();
             }
 
-            list = list.Where(t => t.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
+            list = list.Where(t => t.Status != MachineTaskEnum.Canceled.ToString()).ToList();
 
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
@@ -157,7 +157,7 @@ namespace Repository.Implement
                 return new List<MachineTaskDto>();
             }
 
-            list = list.Where(t => t.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
+            list = list.Where(t => t.Status != MachineTaskEnum.Canceled.ToString()).ToList();
 
             return _mapper.Map<IEnumerable<MachineTaskDto>>(list);
         }
@@ -168,7 +168,7 @@ namespace Repository.Implement
 
             var staffList = list.Where(t => t.StaffId == staffId).ToList();
 
-            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date && d.Status != MachineTaskStatusEnum.Canceled.ToString()).ToList();
+            var filteredList = staffList.Where(d => d.DateStart.HasValue && d.DateStart.Value.Date == date.Date && d.Status != MachineTaskEnum.Canceled.ToString()).ToList();
 
             return _mapper.Map<IEnumerable<MachineTaskDto>>(filteredList);
         }
@@ -178,21 +178,21 @@ namespace Repository.Implement
             var machineTask = await MachineTaskDao.Instance.GetMachineTask(machineTaskId);
 
             string oldStatus = machineTask.Status;
-            if (confirmationPictureUrl != null && status == MachineTaskStatusEnum.Completed.ToString())
+            if (confirmationPictureUrl != null && status == MachineTaskEnum.Completed.ToString())
             {
                 machineTask.ConfirmationPictureUrl = confirmationPictureUrl;
             }
 
             machineTask.Status = status;
 
-            if (status == MachineTaskStatusEnum.Completed.ToString())
+            if (status == MachineTaskEnum.Completed.ToString())
             {
                 machineTask.DateCompleted = DateTime.Now;
             }
 
             await MachineTaskDao.Instance.UpdateAsync(machineTask);
 
-            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<MachineTaskStatusEnum>(status)}]";
+            string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineTaskEnum>(oldStatus)}] trở thành [{EnumExtensions.TranslateStatus<MachineTaskEnum>(status)}]";
 
             var taskLog = new MachineTaskLog
             {

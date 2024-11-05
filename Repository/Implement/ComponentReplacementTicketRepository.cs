@@ -58,14 +58,17 @@ namespace Repository.Implement
                 Amount = componentReplacementTicketDto.TotalAmount,
                 DateCreate = time,
                 Type = InvoiceTypeEnum.ComponentTicket.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString()
             };
 
             componentTicket.InvoiceId = invoice.InvoiceId;
-
             componentTicket = await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog);
 
-            await InvoiceDao.Instance.CreateAsync(invoice);
+
+            if (componentTicket.Type == ComponentReplacementTicketTypeEnum.RentingTicket.ToString())
+            {
+                invoice.Status = InvoiceStatusEnum.Pending.ToString();
+                await InvoiceDao.Instance.CreateAsync(invoice);
+            }
 
             var result = _mapper.Map<ComponentReplacementTicketDto>(componentTicket);
 
@@ -173,6 +176,13 @@ namespace Repository.Implement
             };
 
             await ComponentReplacementicketLogDao.Instance.CreateAsync(ticketLog);
+        }
+
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketListFromContract(string contractId)
+        {
+            var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketByContractId(contractId);
+
+            return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
         }
     }
 }

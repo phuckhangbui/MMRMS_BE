@@ -6,7 +6,7 @@ namespace Service.Interface
     {
         Task CancelComponentReplacementTicket(int customerId, string componentReplacementTicketId);
         Task CompleteComponentReplacementTicket(int staffId, string componentReplacementTicketId);
-        Task CreateComponentReplacementTicketWhenCheckMachineRenting(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
+        Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
         Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId);

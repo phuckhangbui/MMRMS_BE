@@ -3,13 +3,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.ComponentReplacementTicket
 {
-    public class CreateComponentReplacementTicketDto
+    public abstract class CreateComponentReplacementTicketBaseDto
     {
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineSerialNumberComponentIdRequired)]
-        public int MachineSerialNumberComponentId { get; set; }
 
+    }
+
+    public class CreateComponentReplacementTicketDto : CreateComponentReplacementTicketBaseDto
+    {
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineTaskIdRequired)]
         public int MachineTaskCreateId { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineSerialNumberComponentIdRequired)]
+        public int MachineSerialNumberComponentId { get; set; }
 
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.PriceRequired)]
         [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.ComponentReplacementTicket.PricePositiveNumberRequired)]
@@ -23,7 +28,12 @@ namespace DTOs.ComponentReplacementTicket
         public double AdditionalFee { get; set; }
 
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.NoteRequired)]
-        public string Note { get; set; }
+        public string? Note { get; set; }
+    }
 
+    public class CreateComponentReplacementTicketContractTerminationDto : CreateComponentReplacementTicketBaseDto
+    {
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.ContractIdRequired)]
+        public int ContractId { get; set; }
     }
 }

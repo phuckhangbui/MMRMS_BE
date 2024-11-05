@@ -1,6 +1,6 @@
 ﻿namespace Common.Enum
 {
-    public enum MachineTaskStatusEnum
+    public enum MachineTaskEnum
     {
         [Translation("Mới tạo")]
         Created,

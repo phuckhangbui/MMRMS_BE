@@ -263,7 +263,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
             }
 
-            if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
+            if (machineTask.Status != MachineTaskEnum.Created.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
             }
@@ -272,7 +272,7 @@ namespace Service.Implement
             {
                 try
                 {
-                    await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
+                    await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskEnum.Completed.ToString(), staffId, confirmationPictureUrl);
 
                     if (machineTask.MachineCheckRequestId != null && machineTask.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
                     {
@@ -286,7 +286,7 @@ namespace Service.Implement
 
                     }
 
-                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
+                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskEnum.Completed));
 
                     scope.Complete();
                 }
