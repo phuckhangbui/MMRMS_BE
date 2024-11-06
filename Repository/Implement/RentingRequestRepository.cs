@@ -259,15 +259,24 @@ namespace Repository.Implement
 
         public async Task<bool> IsRentingRequestValidToCancel(string rentingRequestId)
         {
-            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(rentingRequestId);
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequest(rentingRequestId);
             if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
             {
                 return false;
             }
 
-            bool areContractsNotSigned = rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.NotSigned.ToString());
+            foreach (var contract in rentingRequest.Contracts)
+            {
+                var isPaid = contract.ContractPayments
+                    .Any(c => c.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
 
-            return areContractsNotSigned;
+                if (isPaid)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public async Task UpdateRentingRequestStatus(string rentingRequestId, string status)
@@ -289,13 +298,6 @@ namespace Repository.Implement
             var rentingRequest = _mapper.Map<RentingRequest>(rentingRequestDto);
 
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
-        }
-
-        public void ScheduleCancelRentingRequest(string rentingRequestId)
-        {
-            ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-            var backgroundImpl = new BackgroundImpl(logger);
-            backgroundImpl.CancelRentingRequestJob(rentingRequestId);
         }
     }
 }

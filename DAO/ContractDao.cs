@@ -104,7 +104,6 @@ namespace DAO
 
             var rentingRequest = await context.RentingRequests
                 .Include(r => r.Contracts)
-                    .ThenInclude(c => c.ContractPayments)
                 .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestId));
 
             if (rentingRequest != null && !rentingRequest.Contracts.IsNullOrEmpty())

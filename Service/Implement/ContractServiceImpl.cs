@@ -81,7 +81,7 @@ namespace Service.Implement
             return null;
         }
 
-        //TODO: Calculate ActualRentPrice of machineSerialNumber
+        //TODO: Calculate ActualRentPrice of machineSerialNumber, Case EndContract when delivery failed
         public async Task<bool> EndContract(string contractId)
         {
             var contract = await _contractRepository.GetContractById(contractId);
@@ -90,42 +90,40 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToEnd);
             }
 
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
             {
-                try
+                var currentDate = DateTime.Now;
+                var actualRentPeriod = (currentDate - contract.DateStart).Value.Days;
+
+                await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
+
+                var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
+                if (machineSerialNumber != null)
                 {
-                    var currentDate = DateTime.Now;
-                    var actualRentPeriod = (currentDate - contract.DateStart).Value.Days;
-
-                    await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
-
-                    var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
-                    if (machineSerialNumber != null)
+                    var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+                    var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
                     {
-                        var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
-                        var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
-                        {
-                            ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
-                            RentDaysCounter = updatedRentDaysCounter,
-                            Status = machineSerialNumber.Status,
-                        };
+                        ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
+                        RentDaysCounter = updatedRentDaysCounter,
+                        Status = machineSerialNumber.Status,
+                    };
 
-                        if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
-                        {
-                            machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
-                        }
-
-                        await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)contract.AccountSignId);
+                    if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+                    {
+                        machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
                     }
 
-                    scope.Complete();
+                    await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)contract.AccountSignId);
+                }
 
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    throw new ServiceException(ex.Message);
-                }
+                scope.Complete();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
             }
         }
 

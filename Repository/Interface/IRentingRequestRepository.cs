@@ -11,7 +11,6 @@ namespace Repository.Interface
         Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
         Task<bool> IsRentingRequestValidToCancel(string rentingRequestId);
         Task<bool> CancelRentingRequest(string rentingRequestId);
-        void ScheduleCancelRentingRequest(string rentingRequestId);
         Task UpdateRentingRequestStatus(string rentingRequestId, string status);
         Task UpdateRentingRequest(RentingRequestDto rentingRequestDto);
     }

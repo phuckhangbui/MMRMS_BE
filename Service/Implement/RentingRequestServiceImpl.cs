@@ -16,19 +16,22 @@ namespace Service.Implement
         private readonly IAddressRepository _addressRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IBackground _background;
 
         public RentingRequestServiceImpl(
             IRentingRequestRepository rentingRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
             IAddressRepository addressRepository,
             IContractRepository contractRepository,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceRepository invoiceRepository,
+            IBackground background)
         {
             _rentingRepository = rentingRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _addressRepository = addressRepository;
             _contractRepository = contractRepository;
             _invoiceRepository = invoiceRepository;
+            _background = background;
         }
 
         public async Task<string> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
@@ -70,7 +73,7 @@ namespace Service.Implement
 
                         await _rentingRepository.UpdateRentingRequest(rentingRequest);
                         await _invoiceRepository.CreateInvoice(rentingRequest.RentingRequestId);
-                        _rentingRepository.ScheduleCancelRentingRequest(rentingRequest.RentingRequestId);
+                        _background.CancelRentingRequestJob(rentingRequest.RentingRequestId);
 
                         scope.Complete();
 

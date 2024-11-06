@@ -7,6 +7,7 @@ using DTOs.RentingRequestAddress;
 using Moq;
 using Repository.Interface;
 using Repository.Mapper;
+using Service;
 using Service.Exceptions;
 using Service.Implement;
 using Service.Interface;
@@ -22,6 +23,7 @@ namespace Test.Service
         private readonly Mock<IAddressRepository> _addressRepositoryMock;
         private readonly Mock<IContractRepository> _contractRepositoryMock;
         private readonly Mock<IInvoiceRepository> _invoiceRepositoryMock;
+        private readonly Mock<IBackground> _backgroundMock;
         private readonly IRentingRequestService _rentingRequestService;
         private readonly IMapper _mapper;
 
@@ -32,12 +34,14 @@ namespace Test.Service
             _addressRepositoryMock = new Mock<IAddressRepository>();
             _contractRepositoryMock = new Mock<IContractRepository>();
             _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
+            _backgroundMock = new Mock<IBackground>();
 
             _rentingRequestService = new RentingRequestServiceImpl(_rentingRequestRepositoryMock.Object,
                 _machineSerialNumberRepositoryMock.Object,
                 _addressRepositoryMock.Object,
                 _contractRepositoryMock.Object,
-                _invoiceRepositoryMock.Object);
+                _invoiceRepositoryMock.Object,
+                _backgroundMock.Object);
 
             _mapper = new Mapper(new MapperConfiguration(options =>
             {
@@ -88,7 +92,6 @@ namespace Test.Service
             _contractRepositoryMock.Setup(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<RentingRequestSerialNumberDto>()));
             _rentingRequestRepositoryMock.Setup(x => x.UpdateRentingRequest(It.IsAny<RentingRequestDto>()));
             _invoiceRepositoryMock.Setup(x => x.CreateInvoice(It.IsAny<string>()));
-            _rentingRequestRepositoryMock.Setup(x => x.ScheduleCancelRentingRequest(It.IsAny<string>()));
 
             //Act
             var result = await _rentingRequestService.CreateRentingRequest(customerId, newRentingRequestDto);
@@ -100,7 +103,6 @@ namespace Test.Service
             _contractRepositoryMock.Verify(x => x.CreateContract(It.IsAny<RentingRequestDto>(), It.IsAny<RentingRequestSerialNumberDto>()), Times.Exactly(2));
             _rentingRequestRepositoryMock.Verify(x => x.UpdateRentingRequest(It.IsAny<RentingRequestDto>()), Times.Once);
             _invoiceRepositoryMock.Verify(x => x.CreateInvoice(It.IsAny<string>()), Times.Once);
-            _rentingRequestRepositoryMock.Verify(x => x.ScheduleCancelRentingRequest(It.IsAny<string>()), Times.Once);
 
             Assert.NotNull(result);
         }
