@@ -119,7 +119,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("complete-all")]
+        [HttpPut("complete")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult> CompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
         {
@@ -140,7 +140,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("fail-task")]
+        [HttpPut("fail-all")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult> FailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask)
         {

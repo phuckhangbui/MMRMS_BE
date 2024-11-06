@@ -107,6 +107,43 @@ namespace Repository.Implement
 
         }
 
+        public async Task MarkDeliveryTaskAsFail(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
+        {
+            var now = DateTime.Now;
+
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(staffUpdateDeliveryTaskDto.DeliveryTaskId);
+
+            delivery.Status = DeliveryTaskStatusEnum.Fail.ToString();
+            delivery.DateCompleted = now;
+            delivery.ReceiverName = staffUpdateDeliveryTaskDto.ReceiverName;
+            delivery.Note = staffUpdateDeliveryTaskDto.Note;
+            delivery.ConfirmationPictureUrl = staffUpdateDeliveryTaskDto.ConfirmationPictureUrl;
+
+            foreach (var (old, update) in delivery.ContractDeliveries
+                .OrderBy(d => d.ContractDeliveryId)
+                .Zip(staffUpdateDeliveryTaskDto.ContractDeliveries.OrderBy(d => d.ContractDeliveryId), (delivery, update) => (delivery, update)))
+            {
+                old.Note = update.Note;
+                old.PictureUrl = update.PictureUrl;
+
+                // Set status based on success of each delivery item
+                old.Status = update.IsSuccess ? ContractDeliveryStatusEnum.Success.ToString() : ContractDeliveryStatusEnum.Fail.ToString();
+            }
+
+            string action = "Đơn giao hàng bị thất bại một phần";
+
+            var newLogs = new DeliveryTaskLog
+            {
+                DeliveryTaskId = delivery.DeliveryTaskId,
+                DateCreate = now,
+                AccountTriggerId = delivery.StaffId,
+                Action = action,
+            };
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
+        }
+
+
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()
         {
             var list = await DeliveryTaskDao.Instance.GetDeliveries();
@@ -235,5 +272,7 @@ namespace Repository.Implement
 
             await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
         }
+
+
     }
 }

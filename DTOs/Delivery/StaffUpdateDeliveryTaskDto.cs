@@ -25,9 +25,13 @@ namespace DTOs.Delivery
         [Required(ErrorMessage = MessageConstant.DeliveryTask.DeliveryTaskIdRequired)]
         public int ContractDeliveryId { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.DeliveryTask.ContractDeliveryIsSuccessRequired)]
+        public bool IsSuccess { get; set; }
+
         public string? Note { get; set; }
 
         public string? PictureUrl { get; set; }
+
 
     }
 

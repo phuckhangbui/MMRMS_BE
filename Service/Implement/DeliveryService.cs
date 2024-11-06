@@ -172,38 +172,24 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.DeliveryTask.InvalidContractDeliveryList);
             }
 
+            if (staffUpdateDeliveryTaskDto.ContractDeliveries.All(c => !c.IsSuccess))
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.AllContractDeliveryFailPleaseCallAllFailAPI);
+            }
+
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
-
-                    string contractId = "";
-                    foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+                    if (staffUpdateDeliveryTaskDto.ContractDeliveries.All(c => c.IsSuccess))
                     {
-                        contractId = contractDelivery.ContractId;
-
-                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
-
-                        await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
+                        await this.CompleteAllDeliveryInTask(staffUpdateDeliveryTaskDto, deliveryDetail, accountId);
                     }
-
-                    var contract = await _contractRepository.GetContractById(contractId);
-                    if (contract != null)
+                    else
                     {
-                        var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
-
-                        if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.Renting.ToString()))
-                        {
-                            await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequest.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
-
-                            //need to send noti to customer ?
-                        }
+                        await this.CompletePartialDeliveryInTask(staffUpdateDeliveryTaskDto, deliveryDetail, accountId);
                     }
-
-                    await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
-
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -211,6 +197,73 @@ namespace Service.Implement
                     throw new ServiceException(ex.ToString());
                 }
             }
+        }
+
+        private async Task CompletePartialDeliveryInTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, DeliveryTaskDetailDto deliveryDetail, int accountId)
+        {
+            await _deliveryTaskRepository.MarkDeliveryTaskAsFail(staffUpdateDeliveryTaskDto);
+
+            foreach (var contractDeliveryDto in staffUpdateDeliveryTaskDto.ContractDeliveries)
+            {
+                var contractDelivery = deliveryDetail.ContractDeliveries
+                    .FirstOrDefault(cd => cd.ContractDeliveryId == contractDeliveryDto.ContractDeliveryId);
+
+                if (contractDelivery != null)
+                {
+                    var contractId = contractDelivery.ContractId;
+
+                    if (contractDeliveryDto.IsSuccess)
+                    {
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                        await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
+                    }
+                    else
+                    {
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.ShipFail.ToString());
+                    }
+
+                }
+            }
+
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated(
+                (int)deliveryDetail.DeliveryTask.ManagerId,
+                deliveryDetail.DeliveryTask.ContractAddress,
+                EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail)
+            );
+        }
+
+
+
+
+        private async Task CompleteAllDeliveryInTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, DeliveryTaskDetailDto deliveryDetail, int accountId)
+        {
+            await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
+
+            string contractId = "";
+            foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+            {
+                contractId = contractDelivery.ContractId;
+
+                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+
+                await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
+            }
+
+            var contract = await _contractRepository.GetContractById(contractId);
+            if (contract != null)
+            {
+                var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
+
+                if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.Renting.ToString()))
+                {
+                    await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequest.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
+
+                    //need to send noti to customer ?
+                }
+            }
+
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
+
         }
 
         public async Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId)
@@ -252,25 +305,26 @@ namespace Service.Implement
 
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)
         {
-            var delivery = await _deliveryTaskRepository.GetDeliveryTask(deliveryTaskId);
+            var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
 
-            if (delivery == null)
+            if (deliveryDetail == null)
             {
                 throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
             }
 
-            if (accountId != delivery.StaffId)
+            if (accountId != deliveryDetail.DeliveryTask.StaffId)
             {
                 throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
             }
 
-            if (delivery.Status != DeliveryTaskStatusEnum.Created.ToString())
+            if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Created.ToString())
             {
                 throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
             }
 
             await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.Delivering.ToString(), accountId);
 
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering));
         }
 
         //public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
