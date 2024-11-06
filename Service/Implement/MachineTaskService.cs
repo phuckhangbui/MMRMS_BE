@@ -22,11 +22,12 @@ namespace Service.Implement
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IDeliveryTaskRepository _DeliveryTaskRepository;
         private readonly IContractRepository _contractRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly INotificationService _notificationService;
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
-        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineCheckRequestService machineCheckRequestService)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _machineTaskRepository = MachineTaskRepository;
             _machineTaskHub = MachineTaskHub;
@@ -38,6 +39,7 @@ namespace Service.Implement
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _machineCheckRequestRepository = machineCheckRequestRepository;
             _machineCheckRequestService = machineCheckRequestService;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
         private async Task CheckCreateTaskCondition(int staffId, DateTime dateStart)
@@ -127,12 +129,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotFound);
             }
 
-            //Todo check contract status
 
-            //if (contractDto.Status != ContractStatusEnum.Terminated.ToString())
-            //{
-            //    throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleContractStatus);
-            //}
+            if (contractDto.Status != ContractStatusEnum.InspectionPending.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleContractStatus);
+            }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -141,7 +142,7 @@ namespace Service.Implement
                     var task = await _machineTaskRepository.CreateMachineTaskContractTermination(managerId, createMachineTaskDto);
 
                     //update contract status
-                    //await _contractRepository.UpdateContractStatus(createMachineTaskDto.ContractId, ContractStatusEnum.Terminated.ToString());
+                    await _contractRepository.UpdateContractStatus(createMachineTaskDto.ContractId, ContractStatusEnum.InspectionInProgress.ToString());
 
                     var contractAddress = await _contractRepository.GetContractAddressById(createMachineTaskDto.ContractId);
 
@@ -257,20 +258,21 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.MachineTask.IncorrectStaffIdToUpdate);
             }
+            var isAllTicketCompleted = true;
 
-            if (machineTaskDetail.Type != MachineTaskTypeEnum.MachineryCheckRequest.ToString())
+
+            if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList != null &&
+                machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
             {
-                if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList != null &&
-                    machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
-                {
-                    var isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
-                                                               componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
-                                                               componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
+                isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList
+                    .All(componentReplacementTicket =>
+                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
+                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
 
-                    if (!isAllTicketCompleted)
-                    {
-                        throw new ServiceException(MessageConstant.MachineTask.TaskCannotCompleteDueToTicketListUnfulfill);
-                    }
+                if (!isAllTicketCompleted &&
+                    machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
+                {
+                    throw new ServiceException(MessageConstant.MachineTask.TaskCannotCompleteDueToTicketListUnfulfill);
                 }
             }
 
@@ -295,6 +297,15 @@ namespace Service.Implement
                     if (machineTaskDetail.Type == MachineTaskTypeEnum.ContractTerminationCheck.ToString())
                     {
 
+                        await _contractRepository.UpdateContractStatus(machineTaskDetail.ContractId,
+                                                            ContractStatusEnum.AwaitingRefundInvoice.ToString());
+
+                        if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList != null
+                            && machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
+                        {
+                            await _machineSerialNumberRepository.UpdateStatus(machineTaskDetail.SerialNumber,
+                                                             MachineSerialNumberStatusEnum.Maintenance.ToString(), staffId);
+                        }
                     }
 
                     await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTaskDetail.ManagerId, machineTaskDetail.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskEnum.Completed));

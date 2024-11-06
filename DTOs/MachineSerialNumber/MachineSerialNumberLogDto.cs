@@ -6,11 +6,11 @@
 
         public string? SerialNumber { get; set; }
 
-        public string? MachineSerialNumberComponentId { get; set; }
+        public int? MachineSerialNumberComponentId { get; set; }
 
         public int? AccountTriggerId { get; set; }
 
-        public int? AccountTriggerName { get; set; }
+        public string? AccountTriggerName { get; set; }
 
         public string? Type { get; set; }
 
