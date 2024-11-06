@@ -82,6 +82,7 @@ public static class ApplicationServicesExtensions
                 policy
                 .WithOrigins("http://localhost:5173")
                 .WithOrigins("http://localhost:5174")
+                .WithOrigins("https://capstone-project-fe-management.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
