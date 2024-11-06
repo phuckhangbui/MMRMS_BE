@@ -1,4 +1,4 @@
-﻿namespace DAO
+﻿namespace Service
 {
     public interface IBackground
     {

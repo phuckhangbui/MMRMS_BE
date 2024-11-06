@@ -299,12 +299,5 @@ namespace Repository.Implement
 
             await RentingRequestDao.Instance.UpdateAsync(rentingRequest);
         }
-
-        public void ScheduleCancelRentingRequest(string rentingRequestId)
-        {
-            ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-            var backgroundImpl = new BackgroundImpl(logger);
-            backgroundImpl.CancelRentingRequestJob(rentingRequestId);
-        }
     }
 }

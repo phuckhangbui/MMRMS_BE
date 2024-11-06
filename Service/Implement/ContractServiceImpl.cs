@@ -81,7 +81,7 @@ namespace Service.Implement
             return null;
         }
 
-        //TODO: Calculate ActualRentPrice of machineSerialNumber
+        //TODO: Calculate ActualRentPrice of machineSerialNumber, Case EndContract when delivery failed
         public async Task<bool> EndContract(string contractId)
         {
             var contract = await _contractRepository.GetContractById(contractId);
