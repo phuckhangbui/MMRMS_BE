@@ -10,5 +10,6 @@ namespace Service.Interface
 
         Task UpdateComponentStatus(int componentId, string status);
         Task DeleteComponent(int componentId);
+        Task ToggleComponentLockStatus(int componentId);
     }
 }

@@ -81,13 +81,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{componentId}/status")]
-        public async Task<IActionResult> UpdateComponentStatus([FromRoute] int componentId, [FromQuery] string status)
+        [HttpPatch("{componentId}/toggle-lock")]
+        public async Task<IActionResult> ToggleComponentLockStatus([FromRoute] int componentId)
         {
 
             try
             {
-                await _componentService.UpdateComponentStatus(componentId, status);
+                await _componentService.ToggleComponentLockStatus(componentId);
                 return NoContent();
             }
             catch (ServiceException ex)

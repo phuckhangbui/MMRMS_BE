@@ -264,9 +264,10 @@ namespace Service.Implement
             if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList != null &&
                 machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
             {
-                isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
-                                                           componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
-                                                           componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
+                isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList
+                    .All(componentReplacementTicket =>
+                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
+                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
 
                 if (!isAllTicketCompleted &&
                     machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
@@ -303,7 +304,7 @@ namespace Service.Implement
                             && machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() > 0)
                         {
                             await _machineSerialNumberRepository.UpdateStatus(machineTaskDetail.SerialNumber,
-                                                             MachineSerialNumberStatusEnum.Maintenance.ToString(),      staffId);
+                                                             MachineSerialNumberStatusEnum.Maintenance.ToString(), staffId);
                         }
                     }
 
