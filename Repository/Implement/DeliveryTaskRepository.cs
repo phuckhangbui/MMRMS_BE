@@ -100,13 +100,49 @@ namespace Repository.Implement
                 DateCreate = now,
                 AccountTriggerId = delivery.StaffId,
                 Action = action,
-
             };
 
 
             await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
 
         }
+
+        public async Task MarkDeliveryTaskAsFail(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
+        {
+            var now = DateTime.Now;
+
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(staffUpdateDeliveryTaskDto.DeliveryTaskId);
+
+            delivery.Status = DeliveryTaskStatusEnum.Fail.ToString();
+            delivery.DateCompleted = now;
+            delivery.ReceiverName = staffUpdateDeliveryTaskDto.ReceiverName;
+            delivery.Note = staffUpdateDeliveryTaskDto.Note;
+            delivery.ConfirmationPictureUrl = staffUpdateDeliveryTaskDto.ConfirmationPictureUrl;
+
+            foreach (var (old, update) in delivery.ContractDeliveries
+                .OrderBy(d => d.ContractDeliveryId)
+                .Zip(staffUpdateDeliveryTaskDto.ContractDeliveries.OrderBy(d => d.ContractDeliveryId), (delivery, update) => (delivery, update)))
+            {
+                old.Note = update.Note;
+                old.PictureUrl = update.PictureUrl;
+
+                // Set status based on success of each delivery item
+                old.Status = update.IsSuccess ? ContractDeliveryStatusEnum.Success.ToString() : ContractDeliveryStatusEnum.Fail.ToString();
+            }
+
+            string action = "Đơn giao hàng bị thất bại một phần";
+
+            var newLogs = new DeliveryTaskLog
+            {
+                DeliveryTaskId = delivery.DeliveryTaskId,
+                DateCreate = now,
+                AccountTriggerId = delivery.StaffId,
+                Action = action,
+            };
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
+        }
+
 
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()
         {
@@ -207,5 +243,36 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
         }
+
+        public async Task FailDeliveryTask(StaffFailDeliveryTaskDto staffFailDeliveryTask)
+        {
+            var now = DateTime.Now;
+
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(staffFailDeliveryTask.DeliveryTaskId);
+
+            delivery.Status = DeliveryTaskStatusEnum.Fail.ToString();
+            delivery.DateCompleted = now;
+            delivery.Note = staffFailDeliveryTask.Note;
+
+            foreach (var contractDelivery in delivery.ContractDeliveries)
+            {
+                contractDelivery.Note = staffFailDeliveryTask.Note;
+                contractDelivery.Status = ContractDeliveryStatusEnum.Fail.ToString();
+            }
+
+            string action = $"Đơn giao hàng đã thất bại toàn bộ, ghi chú của người giao hàng: [{staffFailDeliveryTask.Note}]";
+
+            var newLogs = new DeliveryTaskLog
+            {
+                DeliveryTaskId = delivery.DeliveryTaskId,
+                DateCreate = now,
+                AccountTriggerId = delivery.StaffId,
+                Action = action,
+            };
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
+        }
+
+
     }
 }

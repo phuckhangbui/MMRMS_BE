@@ -5,6 +5,7 @@
         NotSigned,
         Signed,
         Shipping,
+        ShipFail,
         Renting,
         InspectionPending,
         InspectionInProgress,

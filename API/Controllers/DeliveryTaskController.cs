@@ -119,7 +119,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("complete-all")]
+        [HttpPut("complete")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult> CompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)
         {
@@ -128,6 +128,27 @@ namespace API.Controllers
             try
             {
                 await _deliverService.StaffCompleteDelivery(staffUpdateDeliveryTaskDto, accountId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("fail-all")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> FailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                await _deliverService.StaffFailDelivery(staffFailDeliveryTask, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)

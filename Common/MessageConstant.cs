@@ -315,6 +315,7 @@
             public const string ContractAreNotInTheSameRequest = "Những hợp đồng này không cùng một đơn yêu cầu";
             public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
             public const string InvalidContractDeliveryList = "Danh sách các hợp đồng của lần giao hàng này không hợp lệ";
+            public const string AllContractDeliveryFailPleaseCallAllFailAPI = "Tất cả các hợp đồng giao đều thất bại, xin hãy gọi API khác";
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
@@ -323,7 +324,8 @@
             public const string ContractIdListRequired = "Danh sách các mã contract cần giao là bắt buộc";
             public const string ReceiverNameRequired = "Tên người nhận là bắt buộc";
             public const string ContractDeliveryListRequired = "Danh sách các hợp đồng của lần giao hàng này là bắt buộc";
-
+            public const string NoteRequired = "Ghi chú là bắt buộc";
+            public const string ContractDeliveryIsSuccessRequired = "Trạng thái của từng đơn giao trong hợp đồng là bắt buộc";
         }
 
         public static class MachineCheckRequest
