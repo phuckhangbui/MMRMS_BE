@@ -296,7 +296,11 @@ namespace Repository.Mapper
                             : null));
 
             CreateMap<MachineTask, MachineTaskDisplayDetail>()
-                .ForMember(dest => dest.MachineCheckRequest, opt => opt.Ignore());
+                .ForMember(dest => dest.MachineCheckRequest, opt => opt.Ignore())
+                .ForMember(dest => dest.SerialNumber,
+                opt => opt.MapFrom(src => src.Contract != null
+                            ? src.Contract.SerialNumber
+                            : null));
 
             //.ForMember(dest => dest.TaskLogs,
             //opt => opt.MapFrom(src => src.MachineTaskLogs != null

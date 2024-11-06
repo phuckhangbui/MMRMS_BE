@@ -9,8 +9,6 @@ namespace Repository.Interface
 
         Task Create(CreateComponentDto createComponentDto);
 
-        Task Update(ComponentDto componentDto);
-
         Task Delete(int componentId);
 
         Task<bool> IsComponentIdExisted(int componentId);

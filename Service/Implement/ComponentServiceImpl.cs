@@ -42,18 +42,6 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
             }
 
-            if (updateComponentDto.ComponentName.Trim().ToLower() != component.ComponentName.Trim().ToLower())
-            {
-
-                var componentMachines = await _componentRepository.GetMachineComponentList(component.ComponentId);
-
-                if (!componentMachines.IsNullOrEmpty())
-                {
-                    throw new ServiceException(MessageConstant.Component.ComponentHasBeenUsedCannotUpdateName);
-                }
-            }
-
-
             if (component.AvailableQuantity == null && component.Status.Equals(ComponentStatusEnum.NoQuantity.ToString()))
             {
                 component.Status = ComponentStatusEnum.Active.ToString();
@@ -61,8 +49,6 @@ namespace Service.Implement
 
             component.Price = updateComponentDto.Price;
             component.AvailableQuantity = updateComponentDto.Quantity;
-            component.ComponentName = updateComponentDto.ComponentName;
-
 
             if (updateComponentDto.Quantity == 0)
             {
@@ -115,6 +101,36 @@ namespace Service.Implement
             }
 
             await _componentRepository.Delete(componentId);
+        }
+
+        public async Task ToggleComponentLockStatus(int componentId)
+        {
+            var componentDto = await _componentRepository.GetComponent(componentId);
+
+            if (componentDto == null)
+            {
+                throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+            }
+
+            if (componentDto.Status == ComponentStatusEnum.OutOfStock.ToString() ||
+                componentDto.Status == ComponentStatusEnum.NoQuantity.ToString())
+            {
+                throw new ServiceException(MessageConstant.Component.ComponentStatusCannotSet);
+            }
+
+            if (componentDto.Status != ComponentStatusEnum.Locked.ToString())
+            {
+                componentDto.Status = ComponentStatusEnum.Locked.ToString();
+
+                await _componentRepository.UpdateComponent(componentDto);
+
+                return;
+            }
+
+            componentDto.Status = ComponentStatusEnum.Active.ToString();
+
+            await _componentRepository.UpdateComponent(componentDto);
+
         }
     }
 }

@@ -77,10 +77,7 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<ComponentDto>>(list);
         }
 
-        public Task Update(ComponentDto componentDto)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public async Task<bool> IsComponentIdExisted(int componentId)
         {

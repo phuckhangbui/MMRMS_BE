@@ -39,43 +39,43 @@ namespace Service.Implement
             _machineSerialNumberLogRepository = machineSerialNumberLogRepository;
         }
 
-        private async Task UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus(int machineTaskId, int activatorId)
-        {
-            var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(machineTaskId);
+        //private async Task UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus(int machineTaskId, int activatorId)
+        //{
+        //    var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(machineTaskId);
 
-            if (machineTaskDetail == null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-            }
+        //    if (machineTaskDetail == null)
+        //    {
+        //        throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
+        //    }
 
-            if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() == 1)
-            {
-                await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
-            }
-            else
-            {
-                var isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
-                                                            componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
-                                                            componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
+        //    if (machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.Count() == 1)
+        //    {
+        //        await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
+        //    }
+        //    else
+        //    {
+        //        var isAllTicketCompleted = machineTaskDetail.ComponentReplacementTicketCreateFromTaskList.All(componentReplacementTicket =>
+        //                                                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Completed.ToString() ||
+        //                                                    componentReplacementTicket.Status == ComponentReplacementTicketStatusEnum.Canceled.ToString());
 
-                if (isAllTicketCompleted)
-                {
-                    await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
-                }
-            }
-        }
+        //        if (isAllTicketCompleted)
+        //        {
+        //            await this.UpdateTaskAndRequestStatusToCompleted(machineTaskDetail.MachineTaskId, machineTaskDetail.MachineCheckRequestId, activatorId);
+        //        }
+        //    }
+        //}
 
-        private async Task UpdateTaskAndRequestStatusToCompleted(int machineTaskId, string machineCheckRequestId, int activatorId)
-        {
-            await _machineTaskRepository.UpdateTaskStatus(machineTaskId,
-                                                          MachineTaskEnum.Completed.ToString(),
-                                                          activatorId,
-                                                          null);
+        //private async Task UpdateTaskAndRequestStatusToCompleted(int machineTaskId, string machineCheckRequestId, int activatorId)
+        //{
+        //    await _machineTaskRepository.UpdateTaskStatus(machineTaskId,
+        //                                                  MachineTaskEnum.Completed.ToString(),
+        //                                                  activatorId,
+        //                                                  null);
 
-            await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId,
-                                                                  MachineCheckRequestStatusEnum.Completed.ToString(),
-                                                                  null);
-        }
+        //    await _machineCheckRequestService.UpdateRequestStatus(machineCheckRequestId,
+        //                                                          MachineCheckRequestStatusEnum.Completed.ToString(),
+        //                                                          null);
+        //}
 
         public async Task CancelComponentReplacementTicket(int customerId, string componentReplacementTicketId)
         {
@@ -110,7 +110,7 @@ namespace Service.Implement
                     await _invoiceRepository.UpdateInvoiceStatus(ticket.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
 
                     //update task status and request status
-                    await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
+                    //await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
 
                     string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã bị hủy";
 
@@ -168,14 +168,11 @@ namespace Service.Implement
                         throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
                     }
 
-                    if (serialComponent.Status != MachineSerialNumberComponentStatusEnum.Broken.ToString())
-                    {
-                        string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã được hoàn tất, bộ phận đã được thay thế";
+                    string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã được hoàn tất, bộ phận đã được thay thế";
 
-                        await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, staffId);
+                    await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, staffId);
 
-                        await _machineSerialNumberComponentRepository.UpdateComponentStatus(serialComponent.MachineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Normal.ToString(), staffId);
-                    }
+                    await _machineSerialNumberComponentRepository.UpdateComponentStatus(serialComponent.MachineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Normal.ToString(), staffId);
 
                     await _componentReplacementTicketRepository.UpdateTicketStatusToComplete(componentReplacementTicketId, staffId);
 
