@@ -6,6 +6,9 @@
         Signed,
         Shipping,
         Renting,
+        InspectionPending,
+        InspectionInProgress,
+        AwaitingRefundInvoice,
         Completed,
         Terminated,
         Canceled

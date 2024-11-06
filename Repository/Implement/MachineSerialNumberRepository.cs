@@ -169,6 +169,32 @@ namespace Repository.Implement
             }
         }
 
+        public async Task UpdateMachineSerialNumber(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto, int accountId)
+        {
+            var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
+
+            if (machineSerialNumber != null)
+            {
+                var oldStatus = machineSerialNumber.Status;
+
+                machineSerialNumber.ActualRentPrice = machineSerialNumberUpdateDto.ActualRentPrice;
+                machineSerialNumber.RentDaysCounter = machineSerialNumberUpdateDto.RentDaysCounter;
+                machineSerialNumber.Status = machineSerialNumberUpdateDto.Status;
+
+                var machineSerialNumberLog = new MachineSerialNumberLog
+                {
+                    SerialNumber = serialNumber,
+                    AccountTriggerId = accountId,
+                    DateCreate = DateTime.Now,
+                    Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
+                    Action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumberUpdateDto.Status)}]",
+                };
+                machineSerialNumber.MachineSerialNumberLogs.Add(machineSerialNumberLog);
+
+                await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
+            }
+        }
+
         public async Task UpdateStatus(string serialNumber, string status, int accountId)
         {
             var serialMachine = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
