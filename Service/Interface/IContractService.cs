@@ -10,6 +10,6 @@ namespace Service.Interface
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status);
         Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
-        Task<bool> EndContract(string contractId);
+        Task<bool> EndContract(string contractId, int? accountId);
     }
 }

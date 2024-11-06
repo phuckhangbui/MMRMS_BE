@@ -10,7 +10,6 @@ using DTOs.MembershipRank;
 using DTOs.RentingRequest;
 using DTOs.RentingService;
 using DTOs.Term;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 

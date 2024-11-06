@@ -20,7 +20,6 @@ namespace Service.Implement
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
-        private readonly IBackground _background;
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
@@ -28,8 +27,7 @@ namespace Service.Implement
             IContractRepository contractRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
-            IMembershipRankService membershipRankService,
-            IBackground background)
+            IMembershipRankService membershipRankService)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -38,7 +36,6 @@ namespace Service.Implement
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
-            _background = background;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -180,7 +177,6 @@ namespace Service.Implement
 
                 if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
                 {
-                    //await _contractRepository.ScheduleNextRentalPayment(rentingRequestId);
                     await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
                 }
             }

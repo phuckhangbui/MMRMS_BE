@@ -75,12 +75,13 @@ namespace API.Controllers
         }
 
         [HttpPost("end-contract")]
-        [Authorize(policy: "Customer")]
+        [Authorize(policy: "ManagerAndCustomer")]
         public async Task<ActionResult> EndContract([FromQuery] string contractId)
         {
             try
             {
-                var result = await _contractService.EndContract(contractId);
+                int accountId = GetLoginAccountId();
+                var result = await _contractService.EndContract(contractId, accountId);
                 if (result) return Ok(MessageConstant.Contract.EndContractSuccessfully);
                 return BadRequest(MessageConstant.Contract.EndContractFail);
             }

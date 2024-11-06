@@ -12,7 +12,7 @@ namespace Service
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly IContractService _contractService;
 
-        public BackgroundImpl(ILogger<BackgroundImpl> logger, 
+        public BackgroundImpl(ILogger<BackgroundImpl> logger,
             IRentingRequestRepository rentingRequestRepository,
             IContractService contractService)
         {
@@ -63,28 +63,7 @@ namespace Service
         }
         public async Task CompleteContractOnTime(string contractId)
         {
-            //using var context = new MmrmsContext();
-            //using var transaction = context.Database.BeginTransaction();
-            //try
-            //{
-            //    var contract = await context.Contracts.FirstOrDefaultAsync(c => c.ContractId.Equals(contractId));
-            //    if (contract != null && contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
-            //    {
-            //        contract.Status = ContractStatusEnum.Completed.ToString();
-
-            //        //TODO: Send noti to manager to create delivery task for returning machine back
-
-            //        await context.SaveChangesAsync();
-            //        await transaction.CommitAsync();
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    transaction.Rollback();
-            //    throw new Exception(e.Message);
-            //}
-
-            //await _contractService.EndContract(contractId);
+            await _contractService.EndContract(contractId, null);
         }
 
         public async Task CancelRentingRequestAsync(string rentingRequestId)
