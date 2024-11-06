@@ -323,6 +323,7 @@
             public const string ContractIdListRequired = "Danh sách các mã contract cần giao là bắt buộc";
             public const string ReceiverNameRequired = "Tên người nhận là bắt buộc";
             public const string ContractDeliveryListRequired = "Danh sách các hợp đồng của lần giao hàng này là bắt buộc";
+            public const string NoteRequired = "Ghi chú là bắt buộc";
 
         }
 

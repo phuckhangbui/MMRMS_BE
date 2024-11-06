@@ -100,7 +100,6 @@ namespace Repository.Implement
                 DateCreate = now,
                 AccountTriggerId = delivery.StaffId,
                 Action = action,
-
             };
 
 
@@ -206,6 +205,35 @@ namespace Repository.Implement
             }
 
             return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
+        }
+
+        public async Task FailDeliveryTask(StaffFailDeliveryTaskDto staffFailDeliveryTask)
+        {
+            var now = DateTime.Now;
+
+            var delivery = await DeliveryTaskDao.Instance.GetDeliveryDetail(staffFailDeliveryTask.DeliveryTaskId);
+
+            delivery.Status = DeliveryTaskStatusEnum.Fail.ToString();
+            delivery.DateCompleted = now;
+            delivery.Note = staffFailDeliveryTask.Note;
+
+            foreach (var contractDelivery in delivery.ContractDeliveries)
+            {
+                contractDelivery.Note = staffFailDeliveryTask.Note;
+                contractDelivery.Status = ContractDeliveryStatusEnum.Fail.ToString();
+            }
+
+            string action = $"Đơn giao hàng đã thất bại toàn bộ, ghi chú của người giao hàng: [{staffFailDeliveryTask.Note}]";
+
+            var newLogs = new DeliveryTaskLog
+            {
+                DeliveryTaskId = delivery.DeliveryTaskId,
+                DateCreate = now,
+                AccountTriggerId = delivery.StaffId,
+                Action = action,
+            };
+
+            await DeliveryTaskDao.Instance.UpdateDeliveryAndContractDelivery(delivery, newLogs);
         }
     }
 }

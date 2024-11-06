@@ -140,6 +140,27 @@ namespace API.Controllers
             }
         }
 
+        [HttpPut("fail-task")]
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> FailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                await _deliverService.StaffFailDelivery(staffFailDeliveryTask, accountId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         //[HttpPost]
         //[Authorize(Policy = "Manager")]

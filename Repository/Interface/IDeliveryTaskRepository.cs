@@ -6,6 +6,7 @@ namespace Repository.Interface
     {
         Task CompleteFullyAllDeliveryTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto);
         Task<DeliveryTaskDto> CreateDeliveryTaskToStaff(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto);
+        Task FailDeliveryTask(StaffFailDeliveryTaskDto staffFailDeliveryTask);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesForStaff(int staffId);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip);

@@ -213,6 +213,43 @@ namespace Service.Implement
             }
         }
 
+        public async Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId)
+        {
+            var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(staffFailDeliveryTask.DeliveryTaskId);
+
+            if (deliveryDetail == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            if (accountId != deliveryDetail.DeliveryTask.StaffId)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            }
+
+            if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Delivering.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await _deliveryTaskRepository.FailDeliveryTask(staffFailDeliveryTask);
+                    foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+                    {
+                        var contractId = contractDelivery.ContractId;
+
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.ShipFail.ToString());
+                    }
+
+                    scope.Complete();
+                }
+                catch (Exception ex) { }
+            }
+        }
+
         public async Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId)
         {
             var delivery = await _deliveryTaskRepository.GetDeliveryTask(deliveryTaskId);
@@ -236,40 +273,40 @@ namespace Service.Implement
 
         }
 
-        public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
-        {
-            DeliveryTaskDto DeliveryTaskDto = await _deliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);
+        //public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
+        //{
+        //    DeliveryTaskDto DeliveryTaskDto = await _deliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);
 
-            var account = await _accountRepository.GetAccounById(accountId);
-
-
-            if (DeliveryTaskDto == null)
-            {
-                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
-            }
-
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(DeliveryTaskStatusEnum), status, true, out _))
-            {
-                throw new ServiceException(MessageConstant.DeliveryTask.StatusNotAvailable);
-            }
-
-            //business logic here, fix later
-
-            await _deliveryTaskRepository.UpdateDeliveryTaskStatus(DeliveryTaskId, status, accountId);
+        //    var account = await _accountRepository.GetAccounById(accountId);
 
 
-            //if (account.RoleId == (int)AccountRoleEnum.Staff)
-            //{
-            //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated(accountId, DeliveryTaskDto.TaskTitle, status);
-            //}
+        //    if (DeliveryTaskDto == null)
+        //    {
+        //        throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+        //    }
 
-            if (account.RoleId == (int)AccountRoleEnum.Manager)
-            {
-                await _notificationService.SendNotificationToStaffWhenDeliveryTaskStatusUpdated((int)DeliveryTaskDto.StaffId, DeliveryTaskDto.ContractAddress, status);
-            }
+        //    if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(DeliveryTaskStatusEnum), status, true, out _))
+        //    {
+        //        throw new ServiceException(MessageConstant.DeliveryTask.StatusNotAvailable);
+        //    }
 
-            await _DeliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
-        }
+        //    //business logic here, fix later
+
+        //    await _deliveryTaskRepository.UpdateDeliveryTaskStatus(DeliveryTaskId, status, accountId);
+
+
+        //    //if (account.RoleId == (int)AccountRoleEnum.Staff)
+        //    //{
+        //    //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated(accountId, DeliveryTaskDto.TaskTitle, status);
+        //    //}
+
+        //    if (account.RoleId == (int)AccountRoleEnum.Manager)
+        //    {
+        //        await _notificationService.SendNotificationToStaffWhenDeliveryTaskStatusUpdated((int)DeliveryTaskDto.StaffId, DeliveryTaskDto.ContractAddress, status);
+        //    }
+
+        //    await _DeliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
+        //}
 
 
     }

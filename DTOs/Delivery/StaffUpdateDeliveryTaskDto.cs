@@ -30,4 +30,13 @@ namespace DTOs.Delivery
         public string? PictureUrl { get; set; }
 
     }
+
+    public class StaffFailDeliveryTaskDto
+    {
+        [Required(ErrorMessage = MessageConstant.DeliveryTask.DeliveryTaskIdRequired)]
+        public int DeliveryTaskId { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.DeliveryTask.NoteRequired)]
+        public string Note { get; set; }
+    }
 }
