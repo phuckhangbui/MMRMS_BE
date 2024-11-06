@@ -197,7 +197,6 @@ namespace Repository.Implement
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
-                NumberOfMonth = rentingRequest.NumberOfMonth,
                 RentPeriod = numberOfDays,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,
@@ -476,7 +475,6 @@ namespace Repository.Implement
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
-                NumberOfMonth = rentingRequest.NumberOfMonth,
                 RentPeriod = numberOfDays,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,

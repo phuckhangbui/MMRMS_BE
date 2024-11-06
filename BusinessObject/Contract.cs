@@ -14,8 +14,6 @@ public partial class Contract
 
     public double? DepositPrice { get; set; }
 
-    public int? NumberOfMonth { get; set; }
-
     public int? RentPeriod { get; set; }
 
     public double? TotalRentPrice { get; set; }
@@ -34,11 +32,15 @@ public partial class Contract
 
     public string? SerialNumber { get; set; }
 
+    public string? BaseContractId { get; set; }
+
     public virtual MachineSerialNumber? ContractMachineSerialNumber { get; set; }
 
     public virtual Account? AccountSign { get; set; }
 
     public virtual RentingRequest? RentingRequest { get; set; }
+
+    public virtual Contract? BaseContract { get; set; }
 
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
 

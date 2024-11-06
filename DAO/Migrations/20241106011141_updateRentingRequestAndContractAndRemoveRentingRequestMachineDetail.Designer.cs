@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    partial class MmrmsContextModelSnapshot : ModelSnapshot
+    [Migration("20241106011141_updateRentingRequestAndContractAndRemoveRentingRequestMachineDetail")]
+    partial class updateRentingRequestAndContractAndRemoveRentingRequestMachineDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,9 +362,6 @@ namespace DAO.Migrations
                     b.Property<int?>("AccountSignId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BaseContractId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -406,10 +406,6 @@ namespace DAO.Migrations
                     b.HasKey("ContractId");
 
                     b.HasIndex("AccountSignId");
-
-                    b.HasIndex("BaseContractId")
-                        .IsUnique()
-                        .HasFilter("[BaseContractId] IS NOT NULL");
 
                     b.HasIndex("RentingRequestId");
 
@@ -1527,11 +1523,6 @@ namespace DAO.Migrations
                         .HasForeignKey("AccountSignId")
                         .HasConstraintName("FK_Contract_Account");
 
-                    b.HasOne("BusinessObject.Contract", "BaseContract")
-                        .WithOne()
-                        .HasForeignKey("BusinessObject.Contract", "BaseContractId")
-                        .HasConstraintName("FK_Contract_BaseContract");
-
                     b.HasOne("BusinessObject.RentingRequest", "RentingRequest")
                         .WithMany("Contracts")
                         .HasForeignKey("RentingRequestId")
@@ -1547,8 +1538,6 @@ namespace DAO.Migrations
                         .HasConstraintName("FK_Contract_MachineSerialNumber");
 
                     b.Navigation("AccountSign");
-
-                    b.Navigation("BaseContract");
 
                     b.Navigation("ContractMachineSerialNumber");
 

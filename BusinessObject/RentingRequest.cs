@@ -8,10 +8,6 @@ public partial class RentingRequest
 
     public DateTime? DateCreate { get; set; }
 
-    public DateTime? DateStart { get; set; }
-
-    public DateTime? DateEnd { get; set; }
-
     public double? TotalRentPrice { get; set; }
 
     public double? TotalDepositPrice { get; set; }
@@ -21,8 +17,6 @@ public partial class RentingRequest
     public double? ShippingPrice { get; set; }
 
     public double? DiscountPrice { get; set; }
-
-    public int? NumberOfMonth { get; set; }
 
     public double? TotalAmount { get; set; }
 
@@ -37,8 +31,6 @@ public partial class RentingRequest
     public virtual RentingRequestAddress? RentingRequestAddress { get; set; }
 
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
-
-    public virtual ICollection<RentingRequestMachineDetail> RentingRequestMachineDetails { get; set; } = new List<RentingRequestMachineDetail>();
 
     public virtual ICollection<ServiceRentingRequest> ServiceRentingRequests { get; set; } = new List<ServiceRentingRequest>();
 }
