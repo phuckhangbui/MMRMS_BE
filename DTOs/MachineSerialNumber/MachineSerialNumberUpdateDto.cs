@@ -7,8 +7,11 @@ namespace DTOs.MachineSerialNumber
     {
         [Required(ErrorMessage = MessageConstant.MachineSerialNumber.ActualRentPriceRequired)]
         public double ActualRentPrice { get; set; }
+
         [Required(ErrorMessage = MessageConstant.MachineSerialNumber.RentTimeCounterequired)]
         public int RentDaysCounter { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.MachineSerialNumber.StatusRequired)]
+        public string? Status { get; set; }
     }
 }

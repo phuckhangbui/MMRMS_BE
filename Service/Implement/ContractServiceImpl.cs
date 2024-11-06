@@ -95,13 +95,9 @@ namespace Service.Implement
                 try
                 {
                     var currentDate = DateTime.Now;
-                    bool isTerminatedEarly = currentDate < contract.DateEnd;
-                    string newStatus = isTerminatedEarly ? ContractStatusEnum.Terminated.ToString() : ContractStatusEnum.Completed.ToString();
                     var actualRentPeriod = (currentDate - contract.DateStart).Value.Days;
 
-                    await _contractRepository.EndContract(contractId, newStatus, actualRentPeriod, currentDate);
-
-                    var refundInvoice = await _invoiceRepository.CreateInvoice((double)contract.TotalRentPrice, InvoiceTypeEnum.Refund.ToString(), (int)contract.AccountSignId);
+                    await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
 
                     var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
                     if (machineSerialNumber != null)
@@ -110,11 +106,16 @@ namespace Service.Implement
                         var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
                         {
                             ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
-                            RentDaysCounter = updatedRentDaysCounter
+                            RentDaysCounter = updatedRentDaysCounter,
+                            Status = machineSerialNumber.Status,
                         };
 
-                        await _machineSerialNumberRepository.Update(contract.SerialNumber, machineSerialNumberUpdateDto);
-                        await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId);
+                        if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+                        {
+                            machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
+                        }
+
+                        await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)contract.AccountSignId);
                     }
 
                     scope.Complete();

@@ -11,6 +11,7 @@ using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
+using System;
 
 namespace Repository.Implement
 {
@@ -197,7 +198,6 @@ namespace Repository.Implement
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
-                NumberOfMonth = rentingRequest.NumberOfMonth,
                 RentPeriod = numberOfDays,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,
@@ -451,6 +451,17 @@ namespace Repository.Implement
             rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice;
 
             await ContractDao.Instance.CreateAsync(contract);
+
+            string action = $"Đã tạo hợp đồng cho số serial: {machineSerialNumber.SerialNumber} vào lúc {contract.DateCreate}";
+            var log = new MachineSerialNumberLog
+            {
+                SerialNumber = machineSerialNumber.SerialNumber,
+                Action = action,
+                AccountTriggerId = rentingRequestDto.AccountOrderId,
+                DateCreate = DateTime.Now,
+                Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
+            };
+            await MachineSerialNumberLogDao.Instance.CreateAsync(log);
         }
 
         private async Task<Contract> InitContract(RentingRequestDto rentingRequest,
@@ -476,7 +487,6 @@ namespace Repository.Implement
                 Content = string.Empty,
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
-                NumberOfMonth = rentingRequest.NumberOfMonth,
                 RentPeriod = numberOfDays,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,

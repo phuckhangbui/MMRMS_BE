@@ -51,8 +51,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<RentingRequest> RentingRequests { get; set; }
 
-    public virtual DbSet<RentingRequestMachineDetail> RentingRequestMachineDetails { get; set; }
-
     public virtual DbSet<Invoice> Invoices { get; set; }
 
     public virtual DbSet<LogDetail> LogDetails { get; set; }
@@ -322,6 +320,11 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.SerialNumber)
                 .HasConstraintName("FK_Contract_MachineSerialNumber")
                 .IsRequired();
+
+            entity.HasOne(d => d.BaseContract)
+                .WithOne()
+                .HasForeignKey<Contract>(d => d.BaseContractId)
+                .HasConstraintName("FK_Contract_BaseContract");
         });
 
         modelBuilder.Entity<RentingRequest>(entity =>
@@ -491,30 +494,6 @@ public partial class MmrmsContext : DbContext
                 .HasForeignKey(d => d.ContractId)
                 .HasConstraintName("FK_Feedback_Contract");
         });
-
-
-
-        modelBuilder.Entity<RentingRequestMachineDetail>(entity =>
-        {
-            entity.HasKey(e => e.RentingRequestMachineDetailId);
-
-            entity.ToTable("RentingRequestMachineDetail");
-
-            entity.Property(e => e.RentingRequestMachineDetailId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.RentingRequest).WithMany(p => p.RentingRequestMachineDetails)
-                .HasForeignKey(d => d.RentingRequestId)
-                .HasConstraintName("FK_RentingRequestMachineDetail_RentingRequest");
-
-            entity.HasOne(d => d.Machine).WithMany(p => p.RentingRequestMachineDetails)
-                .HasForeignKey(d => d.MachineId)
-                .HasConstraintName("FK_RentingRequestMachineDetail_Machine");
-        });
-
-
-
 
         modelBuilder.Entity<LogDetail>(entity =>
         {

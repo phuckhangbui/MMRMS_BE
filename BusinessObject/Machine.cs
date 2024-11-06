@@ -28,8 +28,6 @@ public partial class Machine
 
     public virtual Category? Category { get; set; }
 
-    public virtual ICollection<RentingRequestMachineDetail> RentingRequestMachineDetails { get; set; } = new List<RentingRequestMachineDetail>();
-
     public virtual ICollection<MachineSerialNumber> MachineSerialNumbers { get; set; } = new List<MachineSerialNumber>();
     public virtual ICollection<MachineImage> MachineImages { get; set; } = new List<MachineImage>();
     public virtual ICollection<MachineComponent> MachineComponents { get; set; } = new List<MachineComponent>();

@@ -83,50 +83,38 @@ namespace Service.Implement
 
         public async Task UpdateMembershipRankForCustomer(int customerId, double amount)
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            var currentMembershipRank = await _membershipRankRepository.GetMembershipRankForCustomer(customerId);
+            if (currentMembershipRank == null)
             {
-                try
+                throw new ServiceException(MessageConstant.MembershipRank.NoMembershipRank);
+            }
+
+            var customerAccount = await _accountRepository.GetAccounById(customerId);
+            customerAccount.MoneySpent += amount;
+            string paymentMadeAction = $"{GlobalConstant.MembershipRankLogPaymentMadeAction}{customerAccount.MoneySpent}";
+            await _membershipRankRepository.AddMembershipRankLog(customerId, currentMembershipRank.MembershipRankId, paymentMadeAction);
+
+            var membershipRanks = await _membershipRankRepository.GetMembershipRanks();
+            MembershipRankDto? highestRankCanUpgraded = null;
+            foreach (var membershipRank in membershipRanks.OrderBy(rank => rank.MoneySpent))
+            {
+                if (customerAccount.MoneySpent < membershipRank.MoneySpent)
+                    break;
+
+                if (customerAccount.MembershipRankId != membershipRank.MembershipRankId)
                 {
-                    var currentMembershipRank = await _membershipRankRepository.GetMembershipRankForCustomer(customerId);
-                    if (currentMembershipRank == null)
-                    {
-                        throw new ServiceException(MessageConstant.MembershipRank.NoMembershipRank);
-                    }
-
-                    var customerAccount = await _accountRepository.GetAccounById(customerId);
-                    customerAccount.MoneySpent += amount;
-                    string paymentMadeAction = $"{GlobalConstant.MembershipRankLogPaymentMadeAction}{customerAccount.MoneySpent}";
-                    await _membershipRankRepository.AddMembershipRankLog(customerId, currentMembershipRank.MembershipRankId, paymentMadeAction);
-
-                    var membershipRanks = await _membershipRankRepository.GetMembershipRanks();
-                    MembershipRankDto? highestRankCanUpgraded = null;
-                    foreach (var membershipRank in membershipRanks.OrderBy(rank => rank.MoneySpent))
-                    {
-                        if (customerAccount.MoneySpent < membershipRank.MoneySpent)
-                            break;
-
-                        if (customerAccount.MembershipRankId != membershipRank.MembershipRankId)
-                        {
-                            highestRankCanUpgraded = membershipRank;
-                        }
-                    }
-
-                    if (highestRankCanUpgraded != null)
-                    {
-                        customerAccount.MembershipRankId = highestRankCanUpgraded.MembershipRankId;
-                        string rankUpgradedAction = $"{GlobalConstant.MembershipRankLogRankUpgradedAction}{highestRankCanUpgraded.MembershipRankName}";
-                        await _membershipRankRepository.AddMembershipRankLog(customerId, highestRankCanUpgraded.MembershipRankId, rankUpgradedAction);
-                    }
-
-                    await _accountRepository.UpdateAccount(customerAccount);
-
-                    scope.Complete();
-                }
-                catch (Exception ex)
-                {
-                    throw new ServiceException(ex.Message);
+                    highestRankCanUpgraded = membershipRank;
                 }
             }
+
+            if (highestRankCanUpgraded != null)
+            {
+                customerAccount.MembershipRankId = highestRankCanUpgraded.MembershipRankId;
+                string rankUpgradedAction = $"{GlobalConstant.MembershipRankLogRankUpgradedAction}{highestRankCanUpgraded.MembershipRankName}";
+                await _membershipRankRepository.AddMembershipRankLog(customerId, highestRankCanUpgraded.MembershipRankId, rankUpgradedAction);
+            }
+
+            await _accountRepository.UpdateAccount(customerAccount);
         }
 
         private async Task<MembershipRankDto> CheckMembershipRankExist(int membershipRankId)
