@@ -189,7 +189,8 @@ namespace Repository.Implement
                     Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                     Action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumberUpdateDto.Status)}]",
                 };
-                machineSerialNumber.MachineSerialNumberLogs.Add(machineSerialNumberLog);
+
+                await MachineSerialNumberLogDao.Instance.CreateAsync(machineSerialNumberLog);
 
                 await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
             }

@@ -66,62 +66,6 @@ namespace DAO
             return rentingRequestId;
         }
 
-        public async Task ScheduleNextRentalPayment(string rentingRequestId)
-        {
-            using var context = new MmrmsContext();
-
-            var contracts = await context.Contracts
-                .Include(c => c.ContractPayments)
-                .Where(c => c.RentingRequestId.Equals(rentingRequestId))
-                .ToListAsync();
-
-            foreach (var contract in contracts)
-            {
-                foreach (var contractPayment in contract.ContractPayments)
-                {
-                    var nextContractPayment = await context.ContractPayments
-                        .Where(cp => cp.ContractId == contractPayment.ContractId &&
-                                     cp.Status == ContractPaymentStatusEnum.Pending.ToString() &&
-                                     cp.Type == ContractPaymentTypeEnum.Rental.ToString() &&
-                                     cp.DateFrom > contractPayment.DateFrom)
-                        .OrderBy(cp => cp.DateFrom)
-                        .FirstOrDefaultAsync();
-
-                    if (nextContractPayment != null)
-                    {
-                        DateTime oneWeekBefore = nextContractPayment.DateFrom.Value.AddDays(-7);
-                        TimeSpan delayToStart = oneWeekBefore - DateTime.Now;
-
-                        SheduleInvoiceGeneration(nextContractPayment.ContractPaymentId, delayToStart);
-                    }
-                    else
-                    {
-                        //ScheduleContractCompletion(contractPayment.Contract);
-                    }
-
-                    await context.SaveChangesAsync();
-                }
-            }
-        }
-
-        private void ScheduleContractCompletion(Contract contract)
-        {
-            ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-            var backgroundImpl = new BackgroundImpl(logger);
-
-            DateTime contractEndDate = (DateTime)contract.DateEnd;
-            TimeSpan delayToStart = contractEndDate - DateTime.Now;
-            backgroundImpl.CompleteContractOnTimeJob(contract.ContractId, delayToStart);
-        }
-
-        private void SheduleInvoiceGeneration(int contractPaymentId, TimeSpan delayToStart)
-        {
-            ILogger<BackgroundImpl> logger = new LoggerFactory().CreateLogger<BackgroundImpl>();
-            var backgroundImpl = new BackgroundImpl(logger);
-
-            backgroundImpl.GenerateInvoiceJob(contractPaymentId, delayToStart);
-        }
-
         public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
         {
             using var context = new MmrmsContext();
@@ -145,34 +89,6 @@ namespace DAO
             }
 
             return true;
-
-            //var rentingRequest = await context.RentingRequests
-            //    .Where(r => r.RentingRequestId.Equals(rentingRequestId))
-            //    .Include(r => r.Contracts)
-            //    .FirstOrDefaultAsync();
-
-            //bool isAllPaid = true;
-            //foreach (var contract in rentingRequest.Contracts)
-            //{
-            //    var depositPaid = await context.ContractPayments
-            //        .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
-            //                        cp.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()) &&
-            //                        cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
-
-            //    var firstRentalPaid = await context.ContractPayments
-            //        .AnyAsync(cp => cp.ContractId.Equals(contract.ContractId) &&
-            //                        cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) &&
-            //                        cp.IsFirstRentalPayment == true &&
-            //                        cp.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
-
-            //    if (!depositPaid || !firstRentalPaid)
-            //    {
-            //        isAllPaid = false;
-            //        break;
-            //    }
-            //}
-
-            //return isAllPaid;
         }
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
-using System.Transactions;
 
 namespace Service.Implement
 {
@@ -95,19 +94,22 @@ namespace Service.Implement
             await _membershipRankRepository.AddMembershipRankLog(customerId, currentMembershipRank.MembershipRankId, paymentMadeAction);
 
             var membershipRanks = await _membershipRankRepository.GetMembershipRanks();
+            membershipRanks = membershipRanks
+                .OrderBy(rank => rank.MoneySpent)
+                .ToList();
+
             MembershipRankDto? highestRankCanUpgraded = null;
-            foreach (var membershipRank in membershipRanks.OrderBy(rank => rank.MoneySpent))
+            foreach (var membershipRank in membershipRanks)
             {
                 if (customerAccount.MoneySpent < membershipRank.MoneySpent)
                     break;
-
-                if (customerAccount.MembershipRankId != membershipRank.MembershipRankId)
+                else
                 {
                     highestRankCanUpgraded = membershipRank;
                 }
             }
 
-            if (highestRankCanUpgraded != null)
+            if (highestRankCanUpgraded != null && highestRankCanUpgraded.MembershipRankId != customerAccount.MembershipRankId)
             {
                 customerAccount.MembershipRankId = highestRankCanUpgraded.MembershipRankId;
                 string rankUpgradedAction = $"{GlobalConstant.MembershipRankLogRankUpgradedAction}{highestRankCanUpgraded.MembershipRankName}";

@@ -11,7 +11,6 @@ using DTOs.RentingRequest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
-using System;
 
 namespace Repository.Implement
 {
@@ -399,11 +398,6 @@ namespace Repository.Implement
         public async Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate)
         {
             await ContractDao.Instance.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, paymentDate);
-        }
-
-        public async Task ScheduleNextRentalPayment(string rentingRequestId)
-        {
-            await ContractPaymentDao.Instance.ScheduleNextRentalPayment(rentingRequestId);
         }
 
         public async Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)

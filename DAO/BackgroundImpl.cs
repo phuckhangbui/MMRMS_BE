@@ -52,21 +52,6 @@ namespace DAO
             }
         }
 
-        public void GenerateInvoiceJob(int nextContractPaymentId, TimeSpan delayToStart)
-        {
-            try
-            {
-                _logger.LogInformation($"Starting ScheduleGenerateInvoiceJob");
-
-                BackgroundJob.Schedule(() => GenerateInvoiceForRecurringPaymentAsync(nextContractPaymentId), delayToStart);
-                _logger.LogInformation($"Invoice generation for contract payment {nextContractPaymentId} scheduled to run in {delayToStart.TotalMinutes} minutes.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while ScheduleGenerateInvoiceJob");
-            }
-        }
-
         public async Task CompleteContractOnTimeAsync(string contractId)
         {
             await CompleteContractOnTime(contractId);
@@ -95,46 +80,6 @@ namespace DAO
             }
         }
 
-        public async Task GenerateInvoiceForRecurringPaymentAsync(int nextContractPaymentId)
-        {
-            await GenerateInvoiceForRecurringPayment(nextContractPaymentId);
-        }
-        public async Task GenerateInvoiceForRecurringPayment(int nextContractPaymentId)
-        {
-            using var context = new MmrmsContext();
-            using var transaction = context.Database.BeginTransaction();
-
-            try
-            {
-                var nextContractPayment = await context.ContractPayments
-                    .Include(cp => cp.Contract)
-                    .FirstOrDefaultAsync(cp => cp.ContractPaymentId == nextContractPaymentId);
-
-                if (nextContractPayment != null)
-                {
-                    var nextInvoice = new Invoice
-                    {
-                        InvoiceId = GlobalConstant.InvoiceIdPrefixPattern + "RENTAL" + DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern),
-                        Amount = nextContractPayment.Amount,
-                        Type = InvoiceTypeEnum.Rental.ToString(),
-                        Status = InvoiceStatusEnum.Pending.ToString(),
-                        DateCreate = DateTime.Now,
-                        AccountPaidId = nextContractPayment.Contract.AccountSignId,
-                    };
-
-                    nextContractPayment.Invoice = nextInvoice;
-
-                    await context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                transaction.Rollback();
-                throw new Exception(e.Message);
-            }
-        }
-
         public async Task CancelRentingRequestAsync(string rentingRequestId)
         {
             await CancelRentingRequest(rentingRequestId);
@@ -150,7 +95,7 @@ namespace DAO
                         .ThenInclude(c => c.ContractPayments)
                     .FirstOrDefaultAsync(rq => rq.RentingRequestId.Equals(rentingRequestId));
 
-                if (rentingRequest != null && rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
+                if (IsRentingRequestValidToCancel(rentingRequest))
                 {
                     rentingRequest.Status = RentingRequestStatusEnum.Canceled.ToString();
 
@@ -178,6 +123,27 @@ namespace DAO
                 transaction.Rollback();
                 throw new Exception(e.Message);
             }
+        }
+
+        private bool IsRentingRequestValidToCancel(RentingRequest rentingRequest)
+        {
+            if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
+            {
+                return false;
+            }
+
+            foreach (var contract in rentingRequest.Contracts)
+            {
+                var isPaid = contract.ContractPayments
+                    .Any(c => c.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+                if (isPaid)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -23,7 +23,6 @@ namespace Repository.Interface
         Task<string?> UpdateContractPayments(string invoiceId);
         Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
         Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
-        Task ScheduleNextRentalPayment(string rentingRequestId);
         Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
     }
