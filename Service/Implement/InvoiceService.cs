@@ -112,18 +112,18 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenPaid);
             }
 
-            //var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice?.PayOsOrderId);
+            var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice?.PayOsOrderId);
 
-            //if (transactionReturn == null)
-            //{
+            if (transactionReturn == null)
+            {
 
-            //}
+            }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    invoice = await _invoiceRepository.AddTransactionToInvoice(GenerateSampleTransactionReturn(), invoiceId);
+                    invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
                     if (invoice == null || invoice.Status != InvoiceStatusEnum.Paid.ToString())
                     {
                         return false;
@@ -201,7 +201,7 @@ namespace Service.Implement
         {
             var contract = await _contractRepository.GetContractById(refundInvoiceRequestDto.ContractId);
 
-            if (contract == null)
+            if (contract == null && !contract.Status.Equals(ContractStatusEnum.AwaitingRefundInvoice.ToString()))
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToCreateRefundInvoice);
             }

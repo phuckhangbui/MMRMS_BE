@@ -198,7 +198,7 @@ namespace Repository.Implement
                 contract.DateEnd = actualDateEnd;
 
                 var outstandingContractPayments = contract.ContractPayments
-                    .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) && 
+                    .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
                                 !cp.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
                     .ToList();
 
