@@ -14,7 +14,6 @@ namespace Service.Implement
     {
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IComponentRepository _componentRepository;
-        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineSerialNumberLogRepository _machineSerialNumberLogRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IMachineTaskRepository _machineTaskRepository;
@@ -25,10 +24,9 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
-            _machineSerialNumberRepository = machineSerialNumberRepository;
             _componentRepository = componentRepository;
             _contractRepository = contractRepository;
             _ComponentReplacementTicketHub = ComponentReplacementTicketHub;
