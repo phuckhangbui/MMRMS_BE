@@ -83,7 +83,7 @@ namespace Repository.Implement
                     MembershipRankId = defaultMembershipRank.MembershipRankId,
                     AccountId = newAccount.AccountId,
                     Action = $"{GlobalConstant.MembershipRankLogRankUpgradedAction}{defaultMembershipRank.MembershipRankName}",
-                    DateCreate = DateTime.UtcNow,
+                    DateCreate = DateTime.Now,
                 };
 
                 await MembershipRankLogDao.Instance.CreateAsync(memberhipRankLog);

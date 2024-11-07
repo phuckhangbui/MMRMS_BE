@@ -10,5 +10,6 @@ namespace Service.Interface
         Task<string> GetPaymentUrl(int customerId, string invoiceId, UrlDto urlDto);
         Task<bool> PostTransactionProcess(int customerId, string invoiceId);
         Task<object?> GetInvoiceDetail(string invoiceId);
+        Task<InvoiceDto> CreateRefundInvoice(int accountId, RefundInvoiceRequestDto refundInvoiceRequestDto);
     }
 }

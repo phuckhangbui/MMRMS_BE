@@ -84,11 +84,10 @@ namespace Service.Implement
             return null;
         }
 
-        //TODO: Calculate ActualRentPrice of machineSerialNumber, Case EndContract when delivery failed
-        public async Task<bool> EndContract(string contractId)
+        public async Task<bool> EndContract(string contractId, int? accountId)
         {
             var contract = await _contractRepository.GetContractById(contractId);
-            if (contract == null || !contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+            if (contract == null)
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToEnd);
             }
@@ -96,42 +95,62 @@ namespace Service.Implement
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                var currentDate = DateTime.Now;
-                var actualRentPeriod = (currentDate - contract.DateStart).Value.Days;
-
-                await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
-
-                var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
-                if (machineSerialNumber != null)
+                var currentDate = DateTime.Now.Date;
+                var actualRentPeriod = (currentDate - contract.DateStart.Value.Date).Days;
+                if (actualRentPeriod < 0)
                 {
-                    var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
-                    var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
+                    actualRentPeriod = 0;
+                }
+
+                //Manager
+                if (contract.Status.Equals(ContractStatusEnum.Signed.ToString()))
+                {
+                    await _contractRepository.EndContract(contractId, ContractStatusEnum.Terminated.ToString(), 0, currentDate);
+
+                    if (accountId != null)
                     {
-                        ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
-                        RentDaysCounter = updatedRentDaysCounter,
-                        Status = machineSerialNumber.Status,
-                    };
+                        var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), (int)accountId);
 
-                    //update here
-                    var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineSerialNumber.SerialNumber);
-
-                    var isMachineMaintenance = false;
-
-                    if (!componentList.IsNullOrEmpty())
-                    {
-                        isMachineMaintenance = componentList.Any(c => c.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString());
+                        await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
                     }
+                }
 
-                    if (isMachineMaintenance)
-                    {
-                        machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintenance.ToString();
-                    }
-                    else
-                    {
-                        machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
-                    }
+                //Customer
+                if (contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+                {
+                    await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
 
-                    await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)contract.AccountSignId);
+                    var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
+                    if (machineSerialNumber != null)
+                    {
+                        var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+                        var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
+                        {
+                            ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
+                            RentDaysCounter = updatedRentDaysCounter,
+                            Status = machineSerialNumber.Status,
+                        };
+
+                        var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineSerialNumber.SerialNumber);
+
+                        var isMachineMaintenance = false;
+
+                        if (!componentList.IsNullOrEmpty())
+                        {
+                            isMachineMaintenance = componentList.Any(c => c.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString());
+                        }
+
+                        if (isMachineMaintenance)
+                        {
+                            machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintenance.ToString();
+                        }
+                        else
+                        {
+                            machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
+                        }
+
+                        await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)contract.AccountSignId);
+                    }
                 }
 
                 scope.Complete();

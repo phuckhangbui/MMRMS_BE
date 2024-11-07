@@ -109,7 +109,7 @@ namespace Repository.Implement
                 MembershipRankId = membershipRankId,
                 AccountId = customerId,
                 Action = action,
-                DateCreate = DateTime.UtcNow,
+                DateCreate = DateTime.Now,
             };
 
             await MembershipRankLogDao.Instance.CreateAsync(memberhipRankLog);

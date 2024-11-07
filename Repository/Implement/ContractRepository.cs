@@ -5,10 +5,7 @@ using Common.Enum;
 using DAO;
 using DTOs.Contract;
 using DTOs.ContractPayment;
-using DTOs.Invoice;
-using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -142,216 +139,7 @@ namespace Repository.Implement
         //    return [];
         //}
 
-        public async Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> CreateContract(RentingRequestDto rentingRequestDto,
-            MachineSerialNumberDto machineSerialNumberDto,
-            InvoiceDto depositInvoice,
-            InvoiceDto rentalInvoice)
-        {
-            using var context = new MmrmsContext();
 
-            var contractTerms = await context.Terms
-                .Where(t => t.Type.Equals(TermTypeEnum.Contract.ToString()))
-                .ToListAsync();
-
-            var machineSerialNumber = await context.MachineSerialNumbers
-                .Include(m => m.Machine)
-                    .ThenInclude(m => m.MachineTerms)
-                .FirstOrDefaultAsync(m => m.SerialNumber.Equals(machineSerialNumberDto.SerialNumber));
-
-            var rentingRequest = await context.RentingRequests
-                .FirstOrDefaultAsync(r => r.RentingRequestId.Equals(rentingRequestDto.RentingRequestId));
-
-            var contract = await InitContract(rentingRequestDto, contractTerms, machineSerialNumber, depositInvoice, rentalInvoice);
-
-            rentingRequestDto.TotalDepositPrice += contract.DepositPrice;
-            rentingRequestDto.TotalRentPrice += contract.TotalRentPrice;
-            //rentingRequestDto.TotalServicePrice += totalServicePricePerContract;
-            rentingRequestDto.TotalAmount += contract.DepositPrice + contract.TotalRentPrice;
-
-            rentingRequest.Contracts.Add(contract);
-            await context.SaveChangesAsync();
-
-            return (depositInvoice, rentalInvoice);
-        }
-
-        private async Task<Contract> InitContract(RentingRequestDto rentingRequest,
-            List<Term> contractTerms,
-            MachineSerialNumber machineSerialNumber,
-            InvoiceDto depositInvoice,
-            InvoiceDto rentalInvoice)
-        {
-            var dateCreate = DateTime.Now;
-            int numberOfDays = (rentingRequest.DateEnd - rentingRequest.DateStart).Value.Days + 1;
-
-            var contract = new Contract
-            {
-                ContractId = await GenerateContractId(),
-                SerialNumber = machineSerialNumber.SerialNumber,
-
-                DateCreate = dateCreate,
-                Status = ContractStatusEnum.NotSigned.ToString(),
-
-                ContractName = GlobalConstant.ContractName + machineSerialNumber.SerialNumber,
-                DateStart = rentingRequest.DateStart,
-                DateEnd = rentingRequest.DateEnd,
-                Content = string.Empty,
-                RentingRequestId = rentingRequest.RentingRequestId,
-                AccountSignId = rentingRequest.AccountOrderId,
-                RentPeriod = numberOfDays,
-
-                RentPrice = machineSerialNumber.ActualRentPrice,
-                DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
-                TotalRentPrice = machineSerialNumber.ActualRentPrice * numberOfDays,
-            };
-
-            //Contract Term
-            foreach (var productTerm in machineSerialNumber.Machine.MachineTerms)
-            {
-                if (productTerm != null)
-                {
-                    var term = new ContractTerm()
-                    {
-                        Content = productTerm.Content,
-                        Title = productTerm.Title,
-                        DateCreate = dateCreate,
-                    };
-
-                    contract.ContractTerms.Add(term);
-                }
-            }
-
-            foreach (var contractTerm in contractTerms)
-            {
-                if (contractTerm != null)
-                {
-                    var term = new ContractTerm()
-                    {
-                        Content = contractTerm.Content,
-                        Title = contractTerm.Title,
-                        DateCreate = dateCreate,
-                    };
-
-                    contract.ContractTerms.Add(term);
-                }
-            }
-
-            var contractPayments = new List<ContractPayment>();
-            var depositContractPayment = InitDepositContractPayment(contract);
-            depositContractPayment.InvoiceId = depositInvoice.InvoiceId;
-            contractPayments.Add(depositContractPayment);
-
-            if ((bool)rentingRequest.IsOnetimePayment)
-            {
-                var rentalContractPayment = new ContractPayment
-                {
-                    ContractId = contract.ContractId,
-                    DateCreate = DateTime.Now,
-                    Status = ContractPaymentStatusEnum.Pending.ToString(),
-                    Type = ContractPaymentTypeEnum.Rental.ToString(),
-                    Title = GlobalConstant.RentalContractPaymentTitle + contract.ContractId,
-                    Amount = contract.RentPrice * contract.RentPeriod,
-                    DateFrom = contract.DateStart,
-                    DateTo = contract.DateEnd,
-                    Period = contract.RentPeriod,
-                    DueDate = contract.DateStart,
-                    IsFirstRentalPayment = true,
-                };
-
-                rentalContractPayment.InvoiceId = rentalInvoice.InvoiceId;
-
-                contractPayments.Add(rentalContractPayment);
-            }
-            else
-            {
-                var currentStartDate = rentingRequest.DateStart;
-                var remainingDays = numberOfDays;
-
-                int paymentIndex = 1;
-                while (remainingDays > 0)
-                {
-                    var paymentEndDate = GetContractPaymentEndDate((DateTime)currentStartDate, (DateTime)rentingRequest.DateEnd);
-
-                    var paymentPeriod = (paymentEndDate - currentStartDate).Value.Days + 1;
-                    var paymentAmount = contract.RentPrice * paymentPeriod;
-
-                    var rentalContractPayment = new ContractPayment
-                    {
-                        ContractId = contract.ContractId,
-                        DateCreate = DateTime.Now,
-                        Status = ContractPaymentStatusEnum.Pending.ToString(),
-                        Type = ContractPaymentTypeEnum.Rental.ToString(),
-                        Title = $"{GlobalConstant.RentalContractPaymentTitle}{contract.ContractId} - Lần {paymentIndex}",
-                        Amount = paymentAmount,
-                        DateFrom = currentStartDate,
-                        DateTo = paymentEndDate,
-                        Period = paymentPeriod,
-                        DueDate = currentStartDate,
-                        IsFirstRentalPayment = false,
-                    };
-
-                    if (paymentIndex == 1)
-                    {
-                        //rentalContractPayment.Amount += servicePrice;
-                        rentalContractPayment.IsFirstRentalPayment = true;
-
-                        rentalContractPayment.InvoiceId = rentalInvoice.InvoiceId;
-                        rentalInvoice.Amount += rentalContractPayment.Amount;
-                    }
-
-                    contractPayments.Add(rentalContractPayment);
-
-                    currentStartDate = paymentEndDate.AddDays(1);
-                    remainingDays -= paymentPeriod;
-                    paymentIndex++;
-                }
-            }
-
-            contract.ContractPayments = contractPayments;
-
-            return contract;
-        }
-
-        private async Task<string> GenerateContractId()
-        {
-            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.UtcNow);
-            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
-            string sequencePart = (currentTotalContracts + 1).ToString("D4");
-            return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
-        }
-
-        private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
-        {
-            if (startDate.Year == contractEndDate.Year && startDate.Month == contractEndDate.Month)
-            {
-                //DateEnd
-                return contractEndDate;
-            }
-            else
-            {
-                //Full month
-                return new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
-            }
-        }
-
-        private ContractPayment InitDepositContractPayment(Contract contract)
-        {
-            var contractPaymentDeposit = new ContractPayment
-            {
-                ContractId = contract.ContractId,
-                DateCreate = DateTime.Now,
-                Status = ContractPaymentStatusEnum.Pending.ToString(),
-                Type = ContractPaymentTypeEnum.Deposit.ToString(),
-                Title = GlobalConstant.DepositContractPaymentTitle + contract.ContractId,
-                Amount = contract.DepositPrice,
-                DateFrom = contract.DateStart,
-                DateTo = contract.DateEnd,
-                Period = contract.RentPeriod,
-                DueDate = contract.DateStart,
-                IsFirstRentalPayment = false,
-            };
-
-            return contractPaymentDeposit;
-        }
 
         public async Task<ContractAddressDto> GetContractAddressById(string contractId)
         {
@@ -410,7 +198,8 @@ namespace Repository.Implement
                 contract.DateEnd = actualDateEnd;
 
                 var outstandingContractPayments = contract.ContractPayments
-                    .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()))
+                    .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) && 
+                                !cp.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
                     .ToList();
 
                 if (!outstandingContractPayments.IsNullOrEmpty())
@@ -422,6 +211,24 @@ namespace Repository.Implement
                 }
 
                 await ContractDao.Instance.UpdateAsync(contract);
+            }
+        }
+
+        public async Task UpdateRefundContractPayment(string contractId, string invoiceId)
+        {
+            var contract = await ContractDao.Instance.GetContractById(contractId);
+            if (contract != null)
+            {
+                var refundContractPayment = contract.ContractPayments
+                    .FirstOrDefault(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
+                                        cp.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()));
+
+                if (refundContractPayment != null)
+                {
+                    refundContractPayment.InvoiceId = invoiceId;
+
+                    await ContractPaymentDao.Instance.UpdateAsync(refundContractPayment);
+                }
             }
         }
 
@@ -521,7 +328,9 @@ namespace Repository.Implement
 
             var contractPayments = new List<ContractPayment>();
             var depositContractPayment = InitDepositContractPayment(contract);
+            var refundContractPayment = InitRefundContractPayment(contract);
             contractPayments.Add(depositContractPayment);
+            contractPayments.Add(refundContractPayment);
 
             if ((bool)rentingRequest.IsOnetimePayment)
             {
@@ -586,6 +395,68 @@ namespace Repository.Implement
             contract.ContractPayments = contractPayments;
 
             return contract;
+        }
+
+        private async Task<string> GenerateContractId()
+        {
+            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.UtcNow);
+            string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
+            string sequencePart = (currentTotalContracts + 1).ToString("D4");
+            return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
+        }
+
+        private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
+        {
+            if (startDate.Year == contractEndDate.Year && startDate.Month == contractEndDate.Month)
+            {
+                //DateEnd
+                return contractEndDate;
+            }
+            else
+            {
+                //Full month
+                return new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+            }
+        }
+
+        private ContractPayment InitDepositContractPayment(Contract contract)
+        {
+            var contractPaymentDeposit = new ContractPayment
+            {
+                ContractId = contract.ContractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Deposit.ToString(),
+                Title = GlobalConstant.DepositContractPaymentTitle + contract.ContractId,
+                Amount = contract.DepositPrice,
+                DateFrom = contract.DateStart,
+                DateTo = contract.DateEnd,
+                Period = contract.RentPeriod,
+                DueDate = contract.DateStart,
+                IsFirstRentalPayment = false,
+            };
+
+            return contractPaymentDeposit;
+        }
+
+        private ContractPayment InitRefundContractPayment(Contract contract)
+        {
+            var refundContractPayment = new ContractPayment
+            {
+                ContractId = contract.ContractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Refund.ToString(),
+                Title = GlobalConstant.RefundContractPaymentTitle + contract.ContractId,
+                Amount = contract.DepositPrice,
+                DateFrom = contract.DateEnd,
+                DateTo = contract.DateEnd,
+                Period = contract.RentPeriod,
+                DueDate = contract.DateEnd,
+                IsFirstRentalPayment = false,
+            };
+
+            return refundContractPayment;
         }
     }
 }

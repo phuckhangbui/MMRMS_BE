@@ -85,23 +85,6 @@
             public const string ContentRequired = "Nội dung là bắt buộc.";
         }
 
-        public static class Promotion
-        {
-            //Service
-            public const string PromotionListEmpty = "Danh sách khuyến mãi trống.";
-            public const string PromotionNotFound = "Khuyến mãi không tồn tại.";
-
-            //DTO
-            public const string DiscountTypeNameRequired = "Tên loại giảm giá là bắt buộc.";
-            public const string DiscountPercentageRequired = "Phần trăm giảm giá là bắt buộc.";
-            public const string DiscountPercentageRange = "Phần trăm giảm giá phải nằm trong khoảng từ 0 đến 100.";
-            public const string DescriptionRequired = "Mô tả là bắt buộc.";
-            public const string ContentRequired = "Nội dung là bắt buộc.";
-            public const string DateStartRequired = "Ngày bắt đầu là bắt buộc.";
-            public const string DateStartFutureOrPresent = "Ngày bắt đầu phải là hôm nay hoặc trong tương lai.";
-            public const string DateEndRequired = "Ngày kết thúc là bắt buộc.";
-        }
-
         public static class Machine
         {
             //Service
@@ -185,7 +168,6 @@
             public const string MachineSerialNumberNotFound = "Mã máy không tồn tại";
             public const string MachineSerialNumberHasContract = "Mã máy đã có trong hợp đồng, không thể xóa";
             public const string StatusCannotSet = "Tình trạng mã máy này không thể được cài đặt";
-            public const string NoAvailableSerailNumberMachineForRenting = "Không có sản phẩm với số serial khả dụng để cho thuê.";
             public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
             public const string ComponentIdNotFound = "Mã bộ phận máy serial này không tìm thấy";
             public const string ComponentIsNotBrokenToCreateTicket = "Bộ phận máy này chưa hư hỏng để tạo ticket";
@@ -208,22 +190,20 @@
         public static class Contract
         {
             //Controller
-            public const string SignContractSuccessfully = "Ký hợp đồng thành công";
             public const string EndContractSuccessfully = "Kết thúc hợp đồng thành công";
             public const string EndContractFail = "Kết thúc hợp đồng thất bại";
 
             //Service
-            public const string ContractListEmpty = "Danh sách hợp đồng trống.";
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
             public const string RentingRequestInvalid = "Yêu cầu thuê không hợp lệ.";
             public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
-            public const string MachineSerialNumbersInvalid = "Sản phẩm theo số sê-ri không hợp lệ.";
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
             public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa kí";
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
+            public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
@@ -285,12 +265,6 @@
             //DTO
             public const string RentingServiceNameRequired = "Tên dịch vụ thuê là bắt buộc.";
             public const string DescriptionRequired = "Mô tả là bắt buộc.";
-        }
-
-        public static class AccountPromotion
-        {
-            //Service
-            public const string AccountPromotionListEmpty = "Danh sách khuyến mãi của bạn trống";
         }
 
         public static class Address
@@ -437,10 +411,14 @@
             public const string InvoiceNotFound = "Hóa đơn này không tồn tại";
             public const string IncorrectAccountIdForInvoice = "Hóa đơn này không thể được trả bởi bạn";
             public const string InvoiceHaveBeenPaid = "Hóa đơn này đã được thanh toán";
+            public const string CreateInvoiceFail = "Tạo hóa đơn thất bại";
 
             //DTO
             public const string ReturnUrlRequired = "Đường dẫn trả về là bắt buộc";
             public const string CancelUrlRequired = "Đường dẫn hủy đơn thanh toán là bắt buộc";
+            public const string ContractIdRequired = "Mã hợp đồng để tạo hóa đơn refund là bắt buộc";
+            public const string InvoiceAmountRequired = "Số tiền cần trả của hóa đơn là bắt buộc";
+            public const string InvoiceAmountPositive = "Số tiền cần trả của hóa đơn là số dương";
         }
 
         public static class PayOS

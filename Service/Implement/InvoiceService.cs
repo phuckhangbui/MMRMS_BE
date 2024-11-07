@@ -20,7 +20,6 @@ namespace Service.Implement
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
-        private readonly IBackground _background;
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
@@ -28,8 +27,7 @@ namespace Service.Implement
             IContractRepository contractRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
-            IMembershipRankService membershipRankService,
-            IBackground background)
+            IMembershipRankService membershipRankService)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -38,7 +36,6 @@ namespace Service.Implement
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
-            _background = background;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -115,18 +112,18 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenPaid);
             }
 
-            var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice?.PayOsOrderId);
+            //var transactionReturn = await _payOSService.HandleCodeAfterPaymentQR(invoice?.PayOsOrderId);
 
-            if (transactionReturn == null)
-            {
+            //if (transactionReturn == null)
+            //{
 
-            }
+            //}
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    invoice = await _invoiceRepository.AddTransactionToInvoice(transactionReturn, invoiceId);
+                    invoice = await _invoiceRepository.AddTransactionToInvoice(GenerateSampleTransactionReturn(), invoiceId);
                     if (invoice == null || invoice.Status != InvoiceStatusEnum.Paid.ToString())
                     {
                         return false;
@@ -180,7 +177,6 @@ namespace Service.Implement
 
                 if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
                 {
-                    //await _contractRepository.ScheduleNextRentalPayment(rentingRequestId);
                     await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
                 }
             }
@@ -201,5 +197,30 @@ namespace Service.Implement
             };
         }
 
+        public async Task<InvoiceDto> CreateRefundInvoice(int accountId, RefundInvoiceRequestDto refundInvoiceRequestDto)
+        {
+            var contract = await _contractRepository.GetContractById(refundInvoiceRequestDto.ContractId);
+
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotValidToCreateRefundInvoice);
+            }
+
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
+
+                await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
+
+                scope.Complete();
+
+                return invoice;
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(MessageConstant.Invoice.CreateInvoiceFail);
+            }
+        }
     }
 }

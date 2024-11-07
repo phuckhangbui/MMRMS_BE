@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Common;
+﻿using Common;
 using Common.Enum;
 using DTOs.Contract;
 using DTOs.Delivery;
@@ -26,9 +25,9 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
-        private readonly IMapper _mapper;
+        private readonly IBackground _background;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMapper mapper, IMachineSerialNumberRepository machineSerialNumberRepository)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -37,8 +36,8 @@ namespace Service.Implement
             _notificationService = notificationService;
             _contractRepository = contractRepository;
             _rentingRequestRepository = rentingRequestRepository;
-            _mapper = mapper;
             _machineSerialNumberRepository = machineSerialNumberRepository;
+            _background = background;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -217,6 +216,11 @@ namespace Service.Implement
                     {
                         await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
                         await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
+
+                        //Schedule Background Job
+                        var contractDto = await _contractRepository.GetContractById(contractId);
+                        TimeSpan timeUntilEnd = (TimeSpan)(contractDto.DateEnd - DateTime.Now);
+                        _background.CompleteContractOnTimeJob(contractId, timeUntilEnd);
                     }
                     else
                     {
@@ -248,6 +252,11 @@ namespace Service.Implement
                 await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
 
                 await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
+
+                //Schedule Background Job
+                var contractDto = await _contractRepository.GetContractById(contractId);
+                TimeSpan timeUntilEnd = (TimeSpan)(contractDto.DateEnd - DateTime.Now);
+                _background.CompleteContractOnTimeJob(contractId, timeUntilEnd);
             }
 
             var contract = await _contractRepository.GetContractById(contractId);
