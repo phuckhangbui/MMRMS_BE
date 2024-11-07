@@ -3,6 +3,7 @@ using Common.Enum;
 using DTOs.Contract;
 using DTOs.Invoice;
 using DTOs.MachineSerialNumber;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -15,15 +16,17 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
-
+        private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceRepository invoiceRepository,
+            IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
+            _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
         }
 
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
@@ -128,7 +131,20 @@ namespace Service.Implement
                             Status = machineSerialNumber.Status,
                         };
 
-                        if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+                        var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineSerialNumber.SerialNumber);
+
+                        var isMachineMaintenance = false;
+
+                        if (!componentList.IsNullOrEmpty())
+                        {
+                            isMachineMaintenance = componentList.Any(c => c.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString());
+                        }
+
+                        if (isMachineMaintenance)
+                        {
+                            machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintenance.ToString();
+                        }
+                        else
                         {
                             machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
                         }

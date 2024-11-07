@@ -85,29 +85,6 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{machineSerialNumberComponentId}/update-component-status/broken")]
-        [Authorize("Employee")]
-        public async Task<ActionResult> UpdateMachineSerialNumberComponentStatusToBroken([FromRoute] int machineSerialNumberComponentId)
-        {
-            int accountId = GetLoginAccountId();
-
-            try
-            {
-                await _machineSerialNumberService.UpdateMachineSerialNumberComponentStatusToBroken(machineSerialNumberComponentId, accountId);
-                return NoContent();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-
-
         [HttpDelete("{serialNumber}")]
         [Authorize(policy: "WebsiteStaff")]
         public async Task<IActionResult> DeleteMachineSerialNumber([FromRoute] string serialNumber)
@@ -137,6 +114,90 @@ namespace API.Controllers
             try
             {
                 await _machineSerialNumberService.ToggleStatus(serialNumber, staffId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{serialNumber}/webstaff/machine-active-to-maintenance")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<IActionResult> MachineCheckWhileInStoreMoveToMaintenance([FromRoute] string serialNumber, [FromQuery] string note)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineSerialNumberService.MoveSerialMachineToMaintenanceStatus(serialNumber, staffId, note);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{serialNumber}/webstaff/machine-maintenance-to-active")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<IActionResult> MachineCheckWhileInStoreMoveToActive([FromRoute] string serialNumber, [FromQuery] string note)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineSerialNumberService.MoveSerialMachineToActiveStatus(serialNumber, staffId, note);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{machineSerialNumberComponentId}/webstaff/update-component-status/broken")]
+        [Authorize("WebsiteStaff")]
+        public async Task<ActionResult> UpdateMachineSerialNumberComponentStatusToBrokenWhileInStore([FromRoute] int machineSerialNumberComponentId, [FromQuery] string note)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineSerialNumberService.UpdateMachineSerialNumberComponentStatusToBrokenWhileInStore(machineSerialNumberComponentId, staffId, note);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("{machineSerialNumberComponentId}/webstaff/replace-broken-component")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<IActionResult> ReplaceBrokenComponentWhenNotRenting([FromRoute] int machineSerialNumberComponentId, [FromQuery] bool isDeductFromComponentStorage, [FromQuery] int quantity, [FromQuery] string note)
+        {
+            int staffId = GetLoginAccountId();
+
+            try
+            {
+                await _machineSerialNumberService.UpdateMachineSerialNumberComponentStatusToNormalWhileInStore(machineSerialNumberComponentId, staffId, isDeductFromComponentStorage, quantity, note);
                 return NoContent();
             }
             catch (ServiceException ex)

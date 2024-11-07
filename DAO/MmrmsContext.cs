@@ -653,8 +653,8 @@ public partial class MmrmsContext : DbContext
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            entity.HasOne(d => d.Component).WithMany(p => p.MachineSerialNumberComponents)
-                .HasForeignKey(d => d.ComponentId)
+            entity.HasOne(d => d.MachineComponent).WithMany(p => p.MachineSerialNumberComponents)
+                .HasForeignKey(d => d.MachineComponentId)
                 .HasConstraintName("FK_MachineSerialNumberComponent_ComponentID");
 
             entity.HasOne(d => d.MachineSerialNumber).WithMany(p => p.MachineSerialNumberComponents)

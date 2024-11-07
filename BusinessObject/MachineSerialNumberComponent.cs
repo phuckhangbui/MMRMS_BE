@@ -6,7 +6,7 @@ public partial class MachineSerialNumberComponent
 
     public string? SerialNumber { get; set; }
 
-    public int? ComponentId { get; set; }
+    public int? MachineComponentId { get; set; }
 
     public int? Quantity { get; set; }
 
@@ -16,7 +16,7 @@ public partial class MachineSerialNumberComponent
 
     public DateTime? DateModified { get; set; }
 
-    public virtual MachineComponent? Component { get; set; }
+    public virtual MachineComponent? MachineComponent { get; set; }
 
     public virtual MachineSerialNumber? MachineSerialNumber { get; set; }
 
