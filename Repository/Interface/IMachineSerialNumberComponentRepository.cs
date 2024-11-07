@@ -6,5 +6,6 @@ namespace Repository.Interface
     {
         Task<MachineSerialNumberComponentDto> GetComponent(int machineSerialNumberComponentId);
         Task UpdateComponentStatus(int machineSerialNumberComponentId, string status, int accountId);
+        Task UpdateComponentStatus(int machineSerialNumberComponentId, string status, int staffId, string note);
     }
 }

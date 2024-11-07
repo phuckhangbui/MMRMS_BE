@@ -189,6 +189,11 @@
             public const string MachineStateNotSuitableForModifyStatus = "Trạng thái máy hiện giờ không cho phép khóa/mở khóa";
             public const string ComponentIdNotFound = "Mã bộ phận máy serial này không tìm thấy";
             public const string ComponentIsNotBrokenToCreateTicket = "Bộ phận máy này chưa hư hỏng để tạo ticket";
+            public const string YouCannotUpdateStatusOfComponentWhileRenting = "Bạn không thể cập nhật trạng thái của bộ phận máy khi máy đang thuê";
+            public const string InvalidQuantity = "Số lượng bộ phận bạn nhập vào không phù hợp với máy này";
+            public const string MachineNotSuitableForAvailableStatus = "Trạng thái máy hiện tại không thể chuyển sang sẵn sàng";
+            public const string MachineNotSuitableForMaintenanceStatus = "Trạng thái máy hiện tại không thể chuyển sang đang bảo trì";
+            public const string MachineComponentStillBroken = "Thành phần máy hiện tại vẫn còn hư hỏng, chưa thể chuyển trạng thái máy qua sẵn sàng";
 
             //DTO
             public const string MachineIdRequired = "ID máy là bắt buộc";
