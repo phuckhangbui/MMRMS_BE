@@ -128,5 +128,31 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult<InvoiceDto>> CreateRefundInvoice([FromBody] RefundInvoiceRequestDto refundInvoiceRequestDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
+            try
+            {
+                int accountId = GetLoginAccountId();
+                var result = await _invoiceService.CreateRefundInvoice(accountId, refundInvoiceRequestDto);
+                if (result != null) return Ok(result);
+                return BadRequest(MessageConstant.Invoice.CreateInvoiceFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

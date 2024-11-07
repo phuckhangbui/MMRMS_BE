@@ -99,16 +99,20 @@ namespace Service.Implement
                     actualRentPeriod = 0;
                 }
 
+                //Manager
                 if (contract.Status.Equals(ContractStatusEnum.Signed.ToString()))
                 {
                     await _contractRepository.EndContract(contractId, ContractStatusEnum.Terminated.ToString(), 0, currentDate);
 
                     if (accountId != null)
                     {
-                        await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), (int)accountId);
+                        var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), (int)accountId);
+
+                        await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
                     }
                 }
 
+                //Customer
                 if (contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
                 {
                     await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);

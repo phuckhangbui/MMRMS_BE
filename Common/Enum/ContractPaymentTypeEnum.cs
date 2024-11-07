@@ -3,6 +3,7 @@
     public enum ContractPaymentTypeEnum
     {
         Deposit,
-        Rental
+        Rental,
+        Refund
     }
 }

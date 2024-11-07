@@ -5,7 +5,6 @@ using Common.Enum;
 using DAO;
 using DTOs.ContractPayment;
 using DTOs.Invoice;
-using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -109,37 +108,6 @@ namespace Repository.Implement
             await InvoiceDao.Instance.UpdateAsync(invoice);
         }
 
-        public async Task<(InvoiceDto DepositInvoice, InvoiceDto RentalInvoice)> InitInvoices(RentingRequestDto rentingRequest)
-        {
-            var depositInvoice = new Invoice
-            {
-                InvoiceId = await GenerateInvoiceId(),
-                Amount = 0,
-                Type = InvoiceTypeEnum.Deposit.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = DateTime.Now,
-                AccountPaidId = rentingRequest.AccountOrderId,
-            };
-            await InvoiceDao.Instance.CreateAsync(depositInvoice);
-
-
-            var rentalInvoice = new Invoice
-            {
-                InvoiceId = await GenerateInvoiceId(),
-                Amount = 0,
-                Type = InvoiceTypeEnum.Rental.ToString(),
-                Status = InvoiceStatusEnum.Pending.ToString(),
-                DateCreate = DateTime.Now,
-                AccountPaidId = rentingRequest.AccountOrderId,
-            };
-            await InvoiceDao.Instance.CreateAsync(rentalInvoice);
-
-            return (
-                _mapper.Map<InvoiceDto>(depositInvoice),
-                _mapper.Map<InvoiceDto>(rentalInvoice)
-            );
-        }
-
         public async Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId)
         {
             var invoice = new Invoice
@@ -152,7 +120,7 @@ namespace Repository.Implement
                 AccountPaidId = accountPaidId,
             };
 
-            await InvoiceDao.Instance.CreateAsync(invoice);
+            invoice = await InvoiceDao.Instance.CreateAsync(invoice);
 
             return _mapper.Map<InvoiceDto>(invoice);
         }

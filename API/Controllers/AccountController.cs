@@ -164,7 +164,7 @@ namespace API.Controllers
         }
 
         [HttpPost("employees")]
-        //[Authorize(policy: "AdminAndManager")]
+        [Authorize(policy: "AdminAndManager")]
         public async Task<ActionResult> CreateEmployeeAccount([FromBody] NewEmployeeAccountDto newStaffAndManagerAccountDto)
         {
             if (!ModelState.IsValid)
