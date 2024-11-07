@@ -47,7 +47,7 @@ namespace Repository.Implement
             serialComponent.DateModified = now;
 
             await MachineSerialNumberComponentDao.Instance.UpdateAsync(serialComponent);
-            var action = $"Thay đổi trạng thái của bộ phận {serialComponent?.Component?.Component?.ComponentName ?? string.Empty} từ [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]";
+            var action = $"Thay đổi trạng thái của bộ phận {serialComponent?.MachineComponent?.Component?.ComponentName ?? string.Empty} từ [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]";
 
             if (!note.IsNullOrEmpty())
             {

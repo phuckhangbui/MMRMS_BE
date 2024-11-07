@@ -78,7 +78,7 @@ namespace Repository.Implement
                 var productComponentStatus = new MachineSerialNumberComponent
                 {
                     SerialNumber = createSerialMachineNumberDto.SerialNumber,
-                    ComponentId = componentMachine.MachineComponentId,
+                    MachineComponentId = componentMachine.MachineComponentId,
                     Quantity = componentMachine.Quantity,
                     Status = MachineSerialNumberComponentStatusEnum.Normal.ToString()
                 };
@@ -211,6 +211,7 @@ namespace Repository.Implement
             }
 
             var oldStatus = serialMachine.Status;
+            serialMachine.Status = status;
 
             var action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(status)}]";
 

@@ -372,7 +372,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
-            if (serialComponent.Quantity < createComponentReplacementTicketDto.Quantity)
+            if (serialComponent.AvailableQuantity < createComponentReplacementTicketDto.Quantity)
             {
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.BiggerQuantityThanMachine);
             }

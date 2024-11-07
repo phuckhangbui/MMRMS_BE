@@ -147,16 +147,20 @@ namespace Repository.Mapper
 
             CreateMap<MachineSerialNumberComponent, MachineSerialNumberComponentDto>()
                 .ForMember(dest => dest.ComponentName,
-                        opt => opt.MapFrom(src => src.Component != null
-                            ? src.Component.Component.ComponentName
+                        opt => opt.MapFrom(src => src.MachineComponent != null
+                            ? src.MachineComponent.Component.ComponentName
                             : null))
+                .ForMember(dest => dest.ComponentId,
+                        opt => opt.MapFrom(src => src.MachineComponent != null
+                            ? src.MachineComponent.Component.ComponentId
+                            : 0))
                 .ForMember(dest => dest.ComponentPrice,
-                        opt => opt.MapFrom(src => src.Component != null
-                            ? src.Component.Component.Price
+                        opt => opt.MapFrom(src => src.MachineComponent != null
+                            ? src.MachineComponent.Component.Price
                             : null))
                 .ForMember(dest => dest.ComponentInStoreQuantity,
-                        opt => opt.MapFrom(src => src.Component != null
-                            ? src.Component.Component.AvailableQuantity
+                        opt => opt.MapFrom(src => src.MachineComponent != null
+                            ? src.MachineComponent.Component.AvailableQuantity
                             : null));
 
             CreateMap<Content, ContentDto>()

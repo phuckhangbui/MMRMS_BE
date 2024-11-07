@@ -290,7 +290,7 @@ namespace Service.Implement
 
             if (isDeductFromComponentStorage)
             {
-                if (serialComponent.Quantity < quantity)
+                if (serialComponent.AvailableQuantity < quantity)
                 {
                     throw new ServiceException(MessageConstant.MachineSerialNumber.InvalidQuantity);
                 }
