@@ -30,7 +30,7 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.MachineSerialNumberComponents
-                    .Include(sc => sc.Component)
+                    .Include(sc => sc.MachineComponent)
                     .ThenInclude(c => c.Component)
                     .FirstOrDefaultAsync(sc => sc.MachineSerialNumberComponentId == machineSerialNumberComponentId);
 

@@ -15,14 +15,16 @@ namespace Service.Implement
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineRepository _productRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
+        private readonly IComponentRepository _componentRepository;
         private readonly IMapper _mapper;
 
-        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository)
+        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IComponentRepository componentRepository)
         {
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _productRepository = productRepository;
             _mapper = mapper;
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
+            _componentRepository = componentRepository;
         }
 
         public async Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto dto, int accountId)
@@ -140,6 +142,56 @@ namespace Service.Implement
             return await _machineSerialNumberRepository.GetMachineComponent(serialNumber);
         }
 
+        public async Task MoveSerialMachineToMaintenanceStatus(string serialNumber, int staffId, string note)
+        {
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+
+            if (machineSerialNumber == null)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+            }
+
+            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintenance.ToString()
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineNotSuitableForMaintenanceStatus);
+            }
+
+            await _machineSerialNumberRepository.UpdateStatus(serialNumber, MachineSerialNumberStatusEnum.Maintenance.ToString(), staffId, note);
+        }
+
+        public async Task MoveSerialMachineToActiveStatus(string serialNumber, int staffId, string note)
+        {
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+
+            if (machineSerialNumber == null)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+            }
+
+            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Available.ToString()
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineNotSuitableForAvailableStatus);
+            }
+
+            var machineComponent = await _machineSerialNumberRepository.GetMachineComponent(serialNumber);
+
+            var isUpdatableToAvailable = true;
+
+            if (!machineComponent.IsNullOrEmpty())
+            {
+                isUpdatableToAvailable = machineComponent.All(c => c.Status == MachineSerialNumberComponentStatusEnum.Normal.ToString());
+            }
+
+            if (!isUpdatableToAvailable)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineComponentStillBroken);
+            }
+
+            await _machineSerialNumberRepository.UpdateStatus(serialNumber, MachineSerialNumberStatusEnum.Available.ToString(), staffId, note);
+        }
+
         public async Task ToggleStatus(string serialNumber, int staffId)
         {
             var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
@@ -182,7 +234,7 @@ namespace Service.Implement
             await _machineSerialNumberRepository.Update(serialNumber, machineSerialNumberUpdateDto);
         }
 
-        public async Task UpdateMachineSerialNumberComponentStatusToBroken(int machineSerialNumberComponentId, int accountId)
+        public async Task UpdateMachineSerialNumberComponentStatusToBrokenWhileInStore(int machineSerialNumberComponentId, int accountId, string note)
         {
             var serialComponent = await _machineSerialNumberComponentRepository.GetComponent(machineSerialNumberComponentId);
 
@@ -191,12 +243,87 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
             }
 
+            var serialMachine = await _machineSerialNumberRepository.GetMachineSerialNumber(serialComponent.SerialNumber);
+
+            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.YouCannotUpdateStatusOfComponentWhileRenting);
+            }
+
             if (serialComponent.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString())
             {
                 return;
             }
 
-            await _machineSerialNumberComponentRepository.UpdateComponentStatus(machineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Broken.ToString(), accountId);
+            await _machineSerialNumberComponentRepository.UpdateComponentStatus(machineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Broken.ToString(), accountId, note);
+
+            if (serialMachine.Status == MachineSerialNumberStatusEnum.Available.ToString())
+            {
+                await _machineSerialNumberRepository.UpdateStatus(serialMachine.SerialNumber, MachineSerialNumberStatusEnum.Maintenance.ToString(), accountId);
+            }
+        }
+
+        public async Task UpdateMachineSerialNumberComponentStatusToNormalWhileInStore(int machineSerialNumberComponentId,
+                                                                                       int staffId,
+                                                                                       bool isDeductFromComponentStorage,
+                                                                                       int quantity,
+                                                                                       string note)
+        {
+            var serialComponent = await _machineSerialNumberComponentRepository.GetComponent(machineSerialNumberComponentId);
+
+            if (serialComponent == null)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.ComponentIdNotFound);
+            }
+
+            var serialMachine = await _machineSerialNumberRepository.GetMachineSerialNumber(serialComponent.SerialNumber);
+
+            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.YouCannotUpdateStatusOfComponentWhileRenting);
+            }
+
+            if (serialComponent.Status == MachineSerialNumberComponentStatusEnum.Normal.ToString())
+            {
+                return;
+            }
+
+            if (isDeductFromComponentStorage)
+            {
+                if (serialComponent.AvailableQuantity < quantity)
+                {
+                    throw new ServiceException(MessageConstant.MachineSerialNumber.InvalidQuantity);
+                }
+
+                var component = await _componentRepository.GetComponent((int)serialComponent.ComponentId);
+
+                if (component == null)
+                {
+                    throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
+                }
+
+                if (component.AvailableQuantity.HasValue && component.AvailableQuantity < quantity)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotEnoughQuantity);
+                }
+
+                component.AvailableQuantity -= quantity;
+                if (component.AvailableQuantity == 0)
+                {
+                    component.Status = ComponentStatusEnum.OutOfStock.ToString();
+                }
+
+                await _componentRepository.UpdateComponent(component);
+            }
+
+            await _machineSerialNumberComponentRepository.UpdateComponentStatus(machineSerialNumberComponentId, MachineSerialNumberComponentStatusEnum.Normal.ToString(), staffId, note);
+
+            //no need to update machine serial status, staff must have to update this manually
+
+            //if (serialMachine.Status == MachineSerialNumberStatusEnum.Available.ToString())
+            //{
+            //    await _machineSerialNumberRepository.UpdateStatus(serialMachine.SerialNumber, MachineSerialNumberStatusEnum.Maintenance.ToString(), staffId);
+            //}
         }
 
         //public async Task UpdateStatus(string serialNumber, string status)

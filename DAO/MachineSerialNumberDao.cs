@@ -92,7 +92,7 @@ namespace DAO
                                                        .Include(d => d.MachineSerialNumberLogs.OrderByDescending(l => l.DateCreate))
                                                        .ThenInclude(l => l.AccountTrigger)
                                                        .Include(c => c.MachineSerialNumberComponents)
-                                                       .ThenInclude(c => c.Component)
+                                                       .ThenInclude(c => c.MachineComponent)
                                                        .ThenInclude(c => c.Component)
                                                        .FirstOrDefaultAsync(s => s.SerialNumber.Equals(serialNumber));
 

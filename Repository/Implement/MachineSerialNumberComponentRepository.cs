@@ -4,6 +4,7 @@ using Common;
 using Common.Enum;
 using DAO;
 using DTOs.MachineSerialNumber;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -24,7 +25,7 @@ namespace Repository.Implement
             return _mapper.Map<MachineSerialNumberComponentDto>(serialComponent);
         }
 
-        public async Task UpdateComponentStatus(int machineSerialNumberComponentId, string status, int accountId)
+        private async Task UpdateComponentStatusInternal(int machineSerialNumberComponentId, string status, int accountId, string note)
         {
             var serialComponent = await MachineSerialNumberComponentDao.Instance.GetComponent(machineSerialNumberComponentId);
 
@@ -46,6 +47,12 @@ namespace Repository.Implement
             serialComponent.DateModified = now;
 
             await MachineSerialNumberComponentDao.Instance.UpdateAsync(serialComponent);
+            var action = $"Thay đổi trạng thái của bộ phận {serialComponent?.MachineComponent?.Component?.ComponentName ?? string.Empty} từ [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]";
+
+            if (!note.IsNullOrEmpty())
+            {
+                action += $". Đi kèm ghi chú: {note}";
+            }
 
             var log = new MachineSerialNumberLog
             {
@@ -54,12 +61,20 @@ namespace Repository.Implement
                 AccountTriggerId = accountId,
                 DateCreate = now,
                 Type = MachineSerialNumberLogTypeEnum.MachineComponent.ToString(),
-                Action = $"Thay đổi trạng thái của bộ phận {serialComponent?.Component?.Component?.ComponentName ?? string.Empty} từ [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberComponentStatusEnum>(status)}]",
+                Action = action
             };
 
             await MachineSerialNumberLogDao.Instance.CreateAsync(log);
         }
 
+        public async Task UpdateComponentStatus(int machineSerialNumberComponentId, string status, int accountId)
+        {
+            await this.UpdateComponentStatusInternal(machineSerialNumberComponentId, status, accountId, null);
+        }
 
+        public async Task UpdateComponentStatus(int machineSerialNumberComponentId, string status, int staffId, string note)
+        {
+            await this.UpdateComponentStatusInternal(machineSerialNumberComponentId, status, staffId, note);
+        }
     }
 }
