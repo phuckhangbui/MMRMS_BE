@@ -16,17 +16,15 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
-        private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
+
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
-            IInvoiceRepository invoiceRepository,
-            IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository)
+            IInvoiceRepository invoiceRepository)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
-            _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
         }
 
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
@@ -103,7 +101,7 @@ namespace Service.Implement
                 }
 
                 //Manager
-                if (contract.Status.Equals(ContractStatusEnum.Signed.ToString()))
+                if (contract.Status.Equals(ContractStatusEnum.ShipFail.ToString()))
                 {
                     await _contractRepository.EndContract(contractId, ContractStatusEnum.Terminated.ToString(), 0, currentDate);
 

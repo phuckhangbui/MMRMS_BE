@@ -199,7 +199,7 @@ namespace Repository.Implement
 
                 var outstandingContractPayments = contract.ContractPayments
                     .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
-                                !cp.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
+                                cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()))
                     .ToList();
 
                 if (!outstandingContractPayments.IsNullOrEmpty())
@@ -207,6 +207,19 @@ namespace Repository.Implement
                     foreach (var payment in outstandingContractPayments)
                     {
                         payment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+
+                        var invoiceId = payment.InvoiceId;
+                        var invoice = await InvoiceDao.Instance.GetInvoice(invoiceId);
+                        if (invoice != null)
+                        {
+                            invoice.Amount -= payment.Amount;
+                            if (invoice.Amount <= 0)
+                            {
+                                invoice.Status = InvoiceStatusEnum.Canceled.ToString();
+                            }
+
+                            await InvoiceDao.Instance.UpdateAsync(invoice);
+                        }
                     }
                 }
 

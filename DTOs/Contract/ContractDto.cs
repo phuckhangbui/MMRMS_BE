@@ -1,14 +1,8 @@
-﻿using Common;
-using DTOs.ContractTerm;
-using DTOs.MachineSerialNumber;
-using DTOs.Validation;
-using System.ComponentModel.DataAnnotations;
-
-namespace DTOs.Contract
+﻿namespace DTOs.Contract
 {
     public class ContractDto
     {
-        public string ContractId { get; set; }
+        public string? ContractId { get; set; }
         public string? ContractName { get; set; }
         public string? RentingRequestId { get; set; }
         public DateTime? DateCreate { get; set; }
@@ -17,7 +11,6 @@ namespace DTOs.Contract
         public DateTime? DateEnd { get; set; }
         public string? Status { get; set; }
         public double? DepositPrice { get; set; }
-        public int? NumberOfMonth { get; set; }
         public int? RentPeriod { get; set; }
         public double? TotalRentPrice { get; set; }
         public int? MachineId { get; set; }
@@ -26,30 +19,5 @@ namespace DTOs.Contract
         public double? RentPrice { get; set; }
         public string? Thumbnail { get; set; }
         public int? AccountSignId { get; set; }
-    }
-
-    public class ContractRequestDto
-    {
-        [Required(ErrorMessage = MessageConstant.Contract.ContractNameRequired)]
-        public string ContractName { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.RentingRequestIdRequired)]
-        public string RentingRequestId { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.ContentRequired)]
-        public string Content { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.DateStartRequired)]
-        [FutureOrPresentDate(ErrorMessage = MessageConstant.Contract.DateStartFutureOrPresent)]
-        public DateTime DateStart { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.DateEndRequired)]
-        public DateTime DateEnd { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.ContractTermsRequired)]
-        public List<ContractTermRequestDto> ContractTerms { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Contract.MachineSerialNumbersRequired)]
-        public List<MachineSerialNumberRentRequestDto> MachineSerialNumbers { get; set; }
     }
 }
