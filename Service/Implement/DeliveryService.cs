@@ -88,7 +88,7 @@ namespace Service.Implement
 
 
                 if (contract.Status != ContractStatusEnum.Signed.ToString()
-                    || contract.Status != ContractStatusEnum.ShipFail.ToString())
+                    && contract.Status != ContractStatusEnum.ShipFail.ToString())
                 {
                     throw new ServiceException(MessageConstant.Contract.ContractNotValidToDelivery);
                 }

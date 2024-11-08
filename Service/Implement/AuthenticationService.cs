@@ -118,7 +118,6 @@ namespace Service.Implement
 
             await _accountRepository.UpdateAccount(accountDto);
 
-
             await _accountLogRepository.WriteNewAccountLogDetail(accountDto.AccountId);
 
             return loginAccountDto;
