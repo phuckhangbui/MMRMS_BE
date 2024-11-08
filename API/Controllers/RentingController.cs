@@ -1,6 +1,5 @@
 ﻿using Common;
 using DTOs.Contract;
-using DTOs.Invoice;
 using DTOs.RentingRequest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +59,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{rentingRequestId}")]
-        public async Task<ActionResult<RentingRequestDetailDto>> GetRentingRequesteDetailById(string rentingRequestId)
+        public async Task<ActionResult<RentingRequestDetailDto>> GetRentingRequestDetail(string rentingRequestId)
         {
             try
             {
@@ -95,28 +94,28 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{rentingRequestId}/contracts/sign")]
-        [Authorize(policy: "Customer")]
-        public async Task<ActionResult<ContractInvoiceDto>> SignContract(string rentingRequestId)
-        {
-            try
-            {
-                var contractInvoices = await _contractService.SignContract(rentingRequestId);
-                return Ok(contractInvoices);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //[HttpPut("{rentingRequestId}/contracts/sign")]
+        //[Authorize(policy: "Customer")]
+        //public async Task<ActionResult<ContractInvoiceDto>> SignContract(string rentingRequestId)
+        //{
+        //    try
+        //    {
+        //        var contractInvoices = await _contractService.SignContract(rentingRequestId);
+        //        return Ok(contractInvoices);
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         [HttpPost]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult> CreateRentingRequest([FromBody] NewRentingRequestDto newRentingRequestDto)
+        public async Task<ActionResult<string>> CreateRentingRequest([FromBody] NewRentingRequestDto newRentingRequestDto)
         {
             if (!ModelState.IsValid)
             {

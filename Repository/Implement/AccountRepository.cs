@@ -8,7 +8,6 @@ using DTOs.MembershipRank;
 using Repository.Interface;
 using System.Security.Cryptography;
 using System.Text;
-using Account = BusinessObject.Account;
 
 namespace Repository.Implement
 {

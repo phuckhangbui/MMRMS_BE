@@ -74,9 +74,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("end-contract")]
+        [HttpPost("{contractId}/end-contract")]
         [Authorize(policy: "ManagerAndCustomer")]
-        public async Task<ActionResult> EndContract([FromQuery] string contractId)
+        public async Task<ActionResult> EndContract(string contractId)
         {
             try
             {
