@@ -200,7 +200,7 @@
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
-            public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa kí";
+            public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa ký hoặc đã giao thành công";
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
