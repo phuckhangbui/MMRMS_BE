@@ -135,13 +135,18 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
             }
 
-            var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
-            if (!isValid)
-            {
-                throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
-            }
+            //var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
+            //if (!isValid)
+            //{
+            //    throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
+            //}
 
-            return await _accountRepository.UpdateAccount(accountId, employeeAccountUpdateDto);
+            var account = await _accountRepository.GetAccounById(accountId);
+            account.RoleId = employeeAccountUpdateDto.RoleId;
+
+            await _accountRepository.UpdateAccount(account);
+
+            return account.AccountId;
         }
 
         public async Task<int> UpdateCustomerAccount(int accountId, CustomerAccountUpdateDto customerAccountUpdateDto)
