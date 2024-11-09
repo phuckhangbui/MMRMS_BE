@@ -152,7 +152,8 @@ namespace Service.Implement
             }
 
             if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintenance.ToString()
-               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString()
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Reserved.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineNotSuitableForMaintenanceStatus);
             }
@@ -170,7 +171,8 @@ namespace Service.Implement
             }
 
             if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Available.ToString()
-               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString()
+               || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Reserved.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineNotSuitableForAvailableStatus);
             }
@@ -245,7 +247,8 @@ namespace Service.Implement
 
             var serialMachine = await _machineSerialNumberRepository.GetMachineSerialNumber(serialComponent.SerialNumber);
 
-            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString()
+                || serialMachine.Status == MachineSerialNumberStatusEnum.Reserved.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.YouCannotUpdateStatusOfComponentWhileRenting);
             }
@@ -278,7 +281,8 @@ namespace Service.Implement
 
             var serialMachine = await _machineSerialNumberRepository.GetMachineSerialNumber(serialComponent.SerialNumber);
 
-            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+            if (serialMachine.Status == MachineSerialNumberStatusEnum.Renting.ToString()
+                || serialMachine.Status == MachineSerialNumberStatusEnum.Reserved.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.YouCannotUpdateStatusOfComponentWhileRenting);
             }
