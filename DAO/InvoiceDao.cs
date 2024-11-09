@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -49,6 +50,27 @@ namespace DAO
             return await context.Invoices
                 .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
                 .CountAsync();
+        }
+
+        public async Task<(Invoice depositInvoice, Invoice rentalInvoice)> GetInvoicesByRentingRequest(string rentingRequestId)
+        {
+            using var context = new MmrmsContext();
+
+            var invoices = await context.Invoices
+                    .Where(i => context.ContractPayments
+                        .Where(cp => context.Contracts
+                            .Where(c => c.RentingRequestId == rentingRequestId)
+                            .Select(c => c.ContractId)
+                            .Contains(cp.ContractId))
+                        .Select(cp => cp.InvoiceId)
+                        .Contains(i.InvoiceId))
+                    .OrderBy(i => i.DateCreate)
+                    .ToListAsync();
+
+            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()));
+            var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()));
+
+            return (depositInvoice, rentalInvoice);
         }
     }
 }

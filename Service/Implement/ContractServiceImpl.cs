@@ -110,6 +110,20 @@ namespace Service.Implement
                         var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), (int)accountId);
 
                         await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
+
+                        var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
+                        if (machineSerialNumber != null)
+                        {
+                            var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+                            var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
+                            {
+                                ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
+                                RentDaysCounter = 0,
+                                Status = MachineSerialNumberStatusEnum.Available.ToString(),
+                            };
+
+                            await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, (int)accountId);
+                        }
                     }
                 }
 

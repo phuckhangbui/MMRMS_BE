@@ -43,15 +43,21 @@ namespace Repository.Implement
 
             foreach (var rentingRequestSerialNumber in rentingRequestSerialNumbers)
             {
-                var isValid = await MachineSerialNumberDao.Instance.IsMachineSerialNumberValidToRent(
-                    rentingRequestSerialNumber.SerialNumber,
-                    rentingRequestSerialNumber.DateStart,
-                    rentingRequestSerialNumber.DateEnd);
-
-                if (!isValid)
+                var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(rentingRequestSerialNumber.SerialNumber);
+                if (machineSerialNumber == null || !machineSerialNumber.Status.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
                 {
                     return false;
                 }
+
+                //var isValid = await MachineSerialNumberDao.Instance.IsMachineSerialNumberValidToRent(
+                //    rentingRequestSerialNumber.SerialNumber,
+                //    rentingRequestSerialNumber.DateStart,
+                //    rentingRequestSerialNumber.DateEnd);
+
+                //if (!isValid)
+                //{
+                //    return false;
+                //}
             }
 
             return true;

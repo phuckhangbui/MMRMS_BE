@@ -100,31 +100,6 @@ namespace DAO
             }
         }
 
-        //public async Task CreateSerialMachine(MachineSerialNumber serialMachine)
-        //{
-        //    using (var context = new MmrmsContext())
-        //    {
-        //        using (var transaction = context.Database.BeginTransaction())
-        //        {
-        //            try
-        //            {
-        //                DbSet<MachineSerialNumber> _dbSet = context.Set<MachineSerialNumber>();
-        //                _dbSet.Add(serialMachine);
-        //                await context.SaveChangesAsync();
-
-        //                var machineSerialNumber
-
-        //                await transaction.CommitAsync();
-        //            }
-        //            catch (Exception e)
-        //            {
-        //                transaction.Rollback();
-        //                throw new Exception(e.Message);
-        //            }
-        //        }
-        //    }
-        //}
-
         public async Task<bool> IsMachineSerialNumberValidToRent(string serialNumber, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();
@@ -167,36 +142,24 @@ namespace DAO
         {
             using var context = new MmrmsContext();
 
-            var availableSerialNumbersToRent = await context.MachineSerialNumbers
-                .Where(s => machineIds.Contains((int)s.MachineId)
-                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
-                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
-                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
-                                    c.Status == ContractStatusEnum.Signed.ToString() ||
-                                    c.Status == ContractStatusEnum.Renting.ToString())
-                                && (c.DateStart < endDate && c.DateEnd > startDate)))
-                .Include(s => s.Machine)
-                    .ThenInclude(p => p.MachineTerms)
-                .OrderByDescending(s => s.DateCreate)
-                .ThenByDescending(s => s.RentDaysCounter)
-                .ToListAsync();
-
-            return availableSerialNumbersToRent;
-        }
-
-        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(DateTime startDate, DateTime endDate)
-        {
-            using var context = new MmrmsContext();
+            //var availableSerialNumbersToRent = await context.MachineSerialNumbers
+            //    .Where(s => machineIds.Contains((int)s.MachineId)
+            //                && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
+            //                && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
+            //                    && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
+            //                        c.Status == ContractStatusEnum.Shipping.ToString() ||
+            //                        c.Status == ContractStatusEnum.Signed.ToString() ||
+            //                        c.Status == ContractStatusEnum.Renting.ToString())
+            //                    && (c.DateStart < endDate && c.DateEnd > startDate)))
+            //    .Include(s => s.Machine)
+            //        .ThenInclude(p => p.MachineTerms)
+            //    .OrderByDescending(s => s.DateCreate)
+            //    .ThenByDescending(s => s.RentDaysCounter)
+            //    .ToListAsync();
 
             var availableSerialNumbersToRent = await context.MachineSerialNumbers
-                .Where(s => s.Status == MachineSerialNumberStatusEnum.Available.ToString()
-                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
-                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
-                                    c.Status == ContractStatusEnum.Signed.ToString() ||
-                                    c.Status == ContractStatusEnum.Renting.ToString())
-                                && (c.DateStart < endDate && c.DateEnd > startDate)))
+                .Where(s => machineIds.Contains((int)s.MachineId) &&
+                        s.Status == MachineSerialNumberStatusEnum.Available.ToString())
                 .Include(s => s.Machine)
                     .ThenInclude(p => p.MachineTerms)
                 .OrderByDescending(s => s.DateCreate)

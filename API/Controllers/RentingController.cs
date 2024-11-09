@@ -167,7 +167,7 @@ namespace API.Controllers
 
         [HttpGet("customer/requests")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult<IEnumerable<RentingRequestDto>>> GetRentingRequestsForCustomer()
+        public async Task<ActionResult<IEnumerable<CustomerRentingRequestDto>>> GetRentingRequestsForCustomer()
         {
             try
             {

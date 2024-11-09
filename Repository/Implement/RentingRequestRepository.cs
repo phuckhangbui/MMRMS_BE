@@ -155,10 +155,44 @@ namespace Repository.Implement
             return [];
         }
 
-        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
+        public async Task<IEnumerable<CustomerRentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
         {
             var rentingRequests = await RentingRequestDao.Instance.GetRentingRequestsForCustomer(customerId);
-            return _mapper.Map<IEnumerable<RentingRequestDto>>(rentingRequests);
+            var customerRentingRequests = _mapper.Map<IEnumerable<CustomerRentingRequestDto>>(rentingRequests);
+
+            foreach (var rentingRequest in customerRentingRequests)
+            {
+                if (rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
+                {
+                    var (depositInvoice, rentalInvoice) = await InvoiceDao.Instance.GetInvoicesByRentingRequest(rentingRequest.RentingRequestId);
+
+                    if (depositInvoice != null)
+                    {
+                        var depositInvoiceDto = new PendingInvoiceDto
+                        {
+                            InvoiceId = depositInvoice.InvoiceId,
+                            Status = depositInvoice.Status,
+                            Type = depositInvoice.Type,
+                        };
+
+                        rentingRequest.PendingInvoices.Add(depositInvoiceDto);
+                    }
+
+                    if (rentalInvoice != null)
+                    {
+                        var rentalInvoiceDto = new PendingInvoiceDto
+                        {
+                            InvoiceId = rentalInvoice.InvoiceId,
+                            Status = rentalInvoice.Status,
+                            Type = rentalInvoice.Type,
+                        };
+
+                        rentingRequest.PendingInvoices.Add(rentalInvoiceDto);
+                    }
+                }
+            }
+
+            return customerRentingRequests;
         }
 
         //TODO
