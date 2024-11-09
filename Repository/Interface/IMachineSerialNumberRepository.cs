@@ -16,8 +16,8 @@ namespace Repository.Interface
         Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber);
         Task<IEnumerable<MachineSerialNumberLogDto>> GetMachineSerialNumberLog(string serialNumber);
         Task<IEnumerable<MachineSerialNumberComponentDto>> GetMachineComponent(string serialNumber);
-        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate);
-        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate);
+        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate); //TODO: Remove
+        Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate); //TODO: Remove
         Task UpdateStatus(string serialNumber, string status, int staffId);
         Task UpdateStatus(string serialNumber, string status, int staffId, string note);
     }

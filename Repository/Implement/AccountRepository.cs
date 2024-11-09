@@ -236,10 +236,10 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<StaffAccountDto>>(accounts);
         }
 
-        public async Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
-        {
-            return await AccountDao.Instance.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
-        }
+        //public async Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        //{
+        //    return await AccountDao.Instance.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
+        //}
 
         public async Task<bool> IsAccountValidToUpdate(int accountId, string email, string phone)
         {
@@ -257,19 +257,21 @@ namespace Repository.Implement
             account.Name = accountUpdateDto.Name;
             account.Email = accountUpdateDto.Email;
             account.Phone = accountUpdateDto.Phone;
-            account.Gender = accountUpdateDto.Gender;
-            account.DateBirth = accountUpdateDto.DateBirth;
 
             if (accountUpdateDto is EmployeeAccountUpdateDto employeeDto)
             {
-                account.Username = employeeDto.Username;
+                //account.Username = employeeDto.Username;
                 account.RoleId = employeeDto.RoleId;
-                account.DateExpire = employeeDto.DateExpire;
+                //account.DateExpire = employeeDto.DateExpire;
+                //account.Gender = employeeDto.Gender;
+                //account.DateBirth = employeeDto.DateBirth;
                 await AccountDao.Instance.UpdateAsync(account);
             }
             else if (accountUpdateDto is CustomerAccountUpdateDto customerDto)
             {
                 account.AvatarImg = customerDto.AvatarImg;
+                account.Gender = customerDto.Gender;
+                account.DateBirth = customerDto.DateBirth;
 
                 if (account.AccountBusiness != null)
                 {

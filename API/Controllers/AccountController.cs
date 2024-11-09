@@ -247,8 +247,8 @@ namespace API.Controllers
         }
 
         [HttpPut("employees/{accountId}")]
-        [Authorize(policy: "AdminAndManager")]
-        public async Task<ActionResult> UpdateEmployeeAccount(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
+        [Authorize(policy: "Admin")]
+        public async Task<ActionResult> UpdateEmployeeAccount(int accountId, [FromBody] EmployeeAccountUpdateDto employeeAccountUpdateDto)
         {
             try
             {
@@ -343,7 +343,7 @@ namespace API.Controllers
 
         [HttpPut("customers")]
         [Authorize(policy: "Customer")]
-        public async Task<ActionResult> UpdateCustomerAccount(CustomerAccountUpdateDto customerAccountUpdateDto)
+        public async Task<ActionResult> UpdateCustomerAccount([FromBody] CustomerAccountUpdateDto customerAccountUpdateDto)
         {
             try
             {
@@ -365,7 +365,7 @@ namespace API.Controllers
 
         [HttpPut("employees")]
         [Authorize(policy: "Employee")]
-        public async Task<ActionResult> UpdateEmployeeProfile(EmployeeProfileUpdateDto employeeProfileUpdateDto)
+        public async Task<ActionResult> UpdateEmployeeProfile([FromBody] EmployeeProfileUpdateDto employeeProfileUpdateDto)
         {
             try
             {

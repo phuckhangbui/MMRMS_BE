@@ -12,8 +12,6 @@ namespace DTOs.Account
         string Name { get; set; }
         string Email { get; set; }
         string Phone { get; set; }
-        int Gender { get; set; }
-        DateTime DateBirth { get; set; }
     }
 
     public class CustomerAccountUpdateDto : IAccountUpdateDto
@@ -50,32 +48,32 @@ namespace DTOs.Account
         public string AvatarImg { get; set; }
     }
 
-    public class EmployeeAccountUpdateDto : IAccountUpdateDto
+    public class EmployeeAccountUpdateDto
     {
-        [Required(ErrorMessage = MessageConstant.Account.NameRequired)]
-        public string Name { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.NameRequired)]
+        //public string Name { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
-        [EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
-        public string Email { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.EmailRequired)]
+        //[EmailAddress(ErrorMessage = MessageConstant.Account.InvalidEmail)]
+        //public string Email { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
-        public string Phone { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
+        //public string Phone { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
-        public int Gender { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
+        //public int Gender { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
-        public DateTime DateBirth { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
+        //public DateTime DateBirth { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.UsernameRequired)]
-        public string Username { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.UsernameRequired)]
+        //public string Username { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.RoleIdRequired)]
         public int RoleId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Account.DateExpireRequired)]
-        public DateTime DateExpire { get; set; }
+        //[Required(ErrorMessage = MessageConstant.Account.DateExpireRequired)]
+        //public DateTime DateExpire { get; set; }
     }
 
     public class EmployeeProfileUpdateDto : IAccountUpdateDto
@@ -89,11 +87,5 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
         public string Phone { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Account.GenderRequired)]
-        public int Gender { get; set; }
-
-        [Required(ErrorMessage = MessageConstant.Account.DateBirthRequired)]
-        public DateTime DateBirth { get; set; }
     }
 }
