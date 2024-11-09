@@ -9,7 +9,7 @@ namespace Repository.Interface
         Task<IEnumerable<MachineDto>> GetActiveMachines();
         Task<IEnumerable<MachineDto>> GetTop8LatestMachineList();
         Task<bool> IsMachineExisted(int productId);
-        Task<bool> IsMachineExisted(string name);
+        Task<bool> IsMachineNameExisted(string name);
         Task<bool> IsMachineModelExisted(string model);
         Task<MachineDetailDto?> GetMachineDetail(int machineId);
         Task<IEnumerable<MachineSerialNumberDto>> GetMachineNumberList(int productId);

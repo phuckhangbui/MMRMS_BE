@@ -52,7 +52,7 @@ namespace DAO
         }
 
 
-        public async Task<bool> IsMachineExisted(string name)
+        public async Task<bool> IsMachineNameExisted(string name)
         {
             using (var context = new MmrmsContext())
             {
