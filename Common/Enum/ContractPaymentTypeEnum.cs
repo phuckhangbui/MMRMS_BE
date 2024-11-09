@@ -4,6 +4,7 @@
     {
         Deposit,
         Rental,
-        Refund
+        Refund,
+        Extend,
     }
 }

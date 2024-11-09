@@ -109,7 +109,7 @@ namespace Service.Implement
                     {
                         var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), (int)accountId);
 
-                        await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
+                        await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
 
                         var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
                         if (machineSerialNumber != null)
@@ -185,6 +185,53 @@ namespace Service.Implement
             }
 
             return contract;
+        }
+
+        public async Task<bool> ExtendContract(string contractId, ContractExtendDto contractExtendDto)
+        {
+            var contract = await _contractRepository.GetContractById(contractId);
+            if (contract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (!contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotValidToExtend);
+            }
+
+            if (contractExtendDto.DateStart < contract.DateEnd)
+            {
+                throw new ServiceException(MessageConstant.Contract.ExtensionStartDateNotValid);
+            }
+
+            if (contractExtendDto.DateEnd < contractExtendDto.DateStart.AddDays(30))
+            {
+                throw new ServiceException(MessageConstant.Contract.ExtensionPeriodNotValid);
+            }
+
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                //Create contract
+                var contractDto = await _contractRepository.ExtendContract(contractId, contractExtendDto);
+
+                //Create rental invoice
+                if (contractDto != null)
+                {
+                    var invoice = await _invoiceRepository.CreateInvoice((double)contractDto.TotalRentPrice, InvoiceTypeEnum.Rental.ToString(), (int)contractDto.AccountSignId);
+
+                    await _contractRepository.SetInvoiceForContractPayment(contractDto.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Extend.ToString());
+                }
+
+                scope.Complete();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
+            }
         }
     }
 }

@@ -211,7 +211,7 @@ namespace Service.Implement
             {
                 var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
 
-                await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
+                await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
 
                 scope.Complete();
 
