@@ -223,6 +223,12 @@ namespace Repository.Mapper
                             ? src.AccountOrder.Name
                             : null));
 
+            CreateMap<RentingRequest, CustomerRentingRequestDto>()
+                 .ForMember(dest => dest.AccountOrderName,
+                        opt => opt.MapFrom(src => src.AccountOrder != null
+                            ? src.AccountOrder.Name
+                            : null));
+
             CreateMap<RentingRequestDto, RentingRequest>();
             CreateMap<RentingRequest, NewRentingRequestDto>()
                 .ForMember(dest => dest.ServiceRentingRequests, opt => opt.Ignore())

@@ -117,7 +117,7 @@ namespace Service.Implement
             return await _rentingRepository.InitializeRentingRequestData(customerId, rentingRequestMachineInRangeDto);
         }
 
-        public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
+        public async Task<IEnumerable<CustomerRentingRequestDto>> GetRentingRequestsForCustomer(int customerId)
         {
             return await _rentingRepository.GetRentingRequestsForCustomer(customerId);
         }

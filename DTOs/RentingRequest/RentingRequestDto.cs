@@ -20,6 +20,18 @@ namespace DTOs.RentingRequest
         public string? Status { get; set; }
     }
 
+    public class CustomerRentingRequestDto : RentingRequestDto
+    {
+        public List<PendingInvoiceDto> PendingInvoices { get; set; } = new List<PendingInvoiceDto>();
+    }
+
+    public class PendingInvoiceDto
+    {
+        public string? InvoiceId { get; set; }
+        public string? Status { get; set; }
+        public string? Type { get; set; }
+    }
+
     public class NewRentingRequestDto
     {
         [Required(ErrorMessage = MessageConstant.RentingRequest.AddressIdRequired)]

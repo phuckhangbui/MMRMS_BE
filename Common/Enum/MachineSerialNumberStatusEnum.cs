@@ -12,6 +12,9 @@
         Maintenance,
 
         [Translation("Đã khóa")]
-        Locked
+        Locked,
+
+        [Translation("Đã giữ chỗ")]
+        Reserved,
     }
 }

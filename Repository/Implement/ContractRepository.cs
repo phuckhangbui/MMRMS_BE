@@ -5,7 +5,9 @@ using Common.Enum;
 using DAO;
 using DTOs.Contract;
 using DTOs.ContractPayment;
+using DTOs.MachineSerialNumber;
 using DTOs.RentingRequest;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -266,16 +268,20 @@ namespace Repository.Implement
 
             await ContractDao.Instance.CreateAsync(contract);
 
-            string action = $"Đã tạo hợp đồng cho số serial: {machineSerialNumber.SerialNumber} vào lúc {contract.DateCreate}";
-            var log = new MachineSerialNumberLog
+            var oldStatus = machineSerialNumber.Status;
+            machineSerialNumber.Status = MachineSerialNumberStatusEnum.Reserved.ToString();
+            await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
+
+            var machineSerialNumberLog = new MachineSerialNumberLog
             {
                 SerialNumber = machineSerialNumber.SerialNumber,
-                Action = action,
                 AccountTriggerId = rentingRequestDto.AccountOrderId,
                 DateCreate = DateTime.Now,
                 Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
+                Action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumber.Status)}]",
             };
-            await MachineSerialNumberLogDao.Instance.CreateAsync(log);
+
+            await MachineSerialNumberLogDao.Instance.CreateAsync(machineSerialNumberLog);
         }
 
         private async Task<Contract> InitContract(RentingRequestDto rentingRequest,
