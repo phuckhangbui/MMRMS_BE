@@ -9,7 +9,6 @@ namespace Repository.Interface
         Task<RentingRequestDetailDto?> GetRentingRequestDetailById(string rentingRequestId);
         Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto);
         Task<IEnumerable<CustomerRentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
-        Task<bool> IsRentingRequestValidToCancel(string rentingRequestId);
         Task<bool> CancelRentingRequest(string rentingRequestId);
         Task UpdateRentingRequestStatus(string rentingRequestId, string status);
         Task UpdateRentingRequest(RentingRequestDto rentingRequestDto);

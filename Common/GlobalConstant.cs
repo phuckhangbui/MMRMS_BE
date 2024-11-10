@@ -22,5 +22,7 @@
         public const string SequenceSeparator = "NO";
         public const string MembershipRankLogPaymentMadeAction = "Tổng số tiền đã thanh toán là ";
         public const string MembershipRankLogRankUpgradedAction = "Hạng thành viên đã được nâng cấp lên ";
+        public const int MinimumRentPeriodInDay = 90;
+        public const int MaxStartDateOffsetInDays = 30;
     }
 }

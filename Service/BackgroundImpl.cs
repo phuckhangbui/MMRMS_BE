@@ -1,6 +1,7 @@
 ﻿using Common.Enum;
 using Hangfire;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Interface;
 
@@ -10,15 +11,21 @@ namespace Service
     {
         private readonly ILogger<BackgroundImpl> _logger;
         private readonly IRentingRequestRepository _rentingRequestRepository;
+        private readonly IContractRepository _contractRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IContractService _contractService;
 
         public BackgroundImpl(ILogger<BackgroundImpl> logger,
+            IContractService contractService,
             IRentingRequestRepository rentingRequestRepository,
-            IContractService contractService)
+            IContractRepository contractRepository,
+            IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _logger = logger;
-            _rentingRequestRepository = rentingRequestRepository;
             _contractService = contractService;
+            _rentingRequestRepository = rentingRequestRepository;
+            _contractRepository = contractRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
         public void CancelRentingRequestJob(string rentingRequestId)
@@ -72,9 +79,36 @@ namespace Service
         }
         public async Task CancelRentingRequest(string rentingRequestId)
         {
-            var isValid = await _rentingRequestRepository.IsRentingRequestValidToCancel(rentingRequestId);
-            if (isValid)
+            var contracts = await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
+            if (contracts.IsNullOrEmpty())
             {
+                return;
+            }
+
+            var canCancel = true;
+            foreach (var contract in contracts)
+            {
+                var isPaid = contract.ContractPayments
+                    .Any(c => c.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+                if (isPaid)
+                {
+                    canCancel = false;
+                    break;
+                }
+            }
+
+            if (canCancel)
+            {
+                foreach (var contract in contracts)
+                {
+                    await _machineSerialNumberRepository.UpdateStatus(
+                        contract.SerialNumber,
+                        MachineSerialNumberStatusEnum.Available.ToString(),
+                        (int)contract.AccountSignId
+                    );
+                }
+
                 await _rentingRequestRepository.CancelRentingRequest(rentingRequestId);
             }
         }

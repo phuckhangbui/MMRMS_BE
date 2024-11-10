@@ -235,8 +235,8 @@
         {
             //Service
             public const string RequestMachinesInvalid = "Danh sách máy yêu cầu thuê không hợp lệ";
-            public const string RequestAccountInvalid = "Tài khoản yêu cầu thuê không hợp lệ.";
             public const string RequestAddressInvalid = "Địa chỉ yêu cầu thuê không hợp lệ.";
+            public const string RentPeriodInValid = "Thời gian yêu cầu thuê không hợp lệ";
             public const string RentingRequestNotFound = "Yêu cầu thuê không tồn tại";
             public const string RentingRequestCanNotCancel = "Yêu cầu thuê không tồn tại hoặc không thể hủy";
             public const string RentingRequestCancelSuccessfully = "Hủy yêu cầu thuê thành công";

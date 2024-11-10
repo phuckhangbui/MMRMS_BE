@@ -58,36 +58,42 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RequestMachinesInvalid);
             }
 
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
             {
-                try
+                if (!ValidateRentPeriod(rentingRequestSerialNumber.DateStart, rentingRequestSerialNumber.DateEnd))
                 {
-                    var rentingRequest = await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
-
-                    if (rentingRequest != null)
-                    {
-                        foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
-                        {
-                            await _contractRepository.CreateContract(rentingRequest, rentingRequestSerialNumber);
-                        }
-
-                        await _rentingRepository.UpdateRentingRequest(rentingRequest);
-                        await _invoiceRepository.CreateInvoice(rentingRequest.RentingRequestId);
-                        _background.CancelRentingRequestJob(rentingRequest.RentingRequestId);
-
-                        scope.Complete();
-
-                        return rentingRequest.RentingRequestId;
-                    }
-                    else
-                    {
-                        throw new ServiceException(MessageConstant.RentingRequest.CreateRentingRequestFail);
-                    }
+                    throw new ServiceException(MessageConstant.RentingRequest.RentPeriodInValid);
                 }
-                catch (Exception ex)
+            }
+
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                var rentingRequest = await _rentingRepository.CreateRentingRequest(customerId, newRentingRequestDto);
+
+                if (rentingRequest != null)
                 {
-                    throw new ServiceException(ex.Message);
+                    foreach (var rentingRequestSerialNumber in newRentingRequestDto.RentingRequestSerialNumbers)
+                    {
+                        await _contractRepository.CreateContract(rentingRequest, rentingRequestSerialNumber);
+                    }
+
+                    await _rentingRepository.UpdateRentingRequest(rentingRequest);
+                    await _invoiceRepository.CreateInvoice(rentingRequest.RentingRequestId);
+                    _background.CancelRentingRequestJob(rentingRequest.RentingRequestId);
+
+                    scope.Complete();
+
+                    return rentingRequest.RentingRequestId;
                 }
+                else
+                {
+                    throw new ServiceException(MessageConstant.RentingRequest.CreateRentingRequestFail);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
             }
         }
 
@@ -124,13 +130,41 @@ namespace Service.Implement
 
         public async Task<bool> CancelRentingRequest(string rentingRequestId)
         {
-            var isValid = await _rentingRepository.IsRentingRequestValidToCancel(rentingRequestId);
-            if (!isValid)
+            var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
+            if (rentingRequest == null || !rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
             {
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestCanNotCancel);
             }
 
-            return await _rentingRepository.CancelRentingRequest(rentingRequestId);
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                var contracts = await _contractRepository.GetContractDetailListByRentingRequestId(rentingRequestId);
+                if (!contracts.IsNullOrEmpty())
+                {
+                    foreach (var contract in contracts)
+                    {
+                        var isPaid = contract.ContractPayments
+                            .Any(c => c.Status.Equals(ContractPaymentStatusEnum.Paid.ToString()));
+
+                        if (isPaid)
+                        {
+                            throw new ServiceException(MessageConstant.RentingRequest.RentingRequestCanNotCancel);
+                        }
+
+                        await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId);
+                    }
+                }
+
+                await _rentingRepository.CancelRentingRequest(rentingRequestId);
+
+                scope.Complete();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<RentingRequestDto>> GetRentingRequestsThatStillHaveContractNeedDelivery()
@@ -155,5 +189,19 @@ namespace Service.Implement
             return requestsWithPendingContracts;
         }
 
+        private bool ValidateRentPeriod(DateTime dateStart, DateTime dateEnd)
+        {
+            if (dateStart > DateTime.Now.AddDays(GlobalConstant.MaxStartDateOffsetInDays))
+            {
+                return false;
+            }
+
+            if (dateEnd < dateStart.AddDays(GlobalConstant.MinimumRentPeriodInDay))
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
