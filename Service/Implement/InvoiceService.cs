@@ -29,7 +29,7 @@ namespace Service.Implement
             IPayOSService payOSService,
             IComponentReplacementTicketRepository componentReplacementTicketRepository,
             IContractRepository contractRepository,
-            MachineSerialNumberRepository machineSerialNumberRepository,
+            IMachineSerialNumberRepository machineSerialNumberRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
             IMembershipRankService membershipRankService)

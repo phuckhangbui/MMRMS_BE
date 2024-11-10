@@ -188,7 +188,7 @@ namespace Repository.Implement
             await ContractDao.Instance.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, paymentDate);
         }
 
-        public async Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
+        public async Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
@@ -223,8 +223,10 @@ namespace Repository.Implement
                     }
                 }
 
-                await ContractDao.Instance.UpdateAsync(contract);
+                contract = await ContractDao.Instance.UpdateAsync(contract);
             }
+
+            return _mapper.Map<ContractDto>(contract);
         }
 
         public async Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type)

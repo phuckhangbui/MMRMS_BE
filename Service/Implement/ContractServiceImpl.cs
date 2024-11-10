@@ -103,19 +103,13 @@ namespace Service.Implement
                     actualRentPeriod = 0;
                 }
 
-                await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
+                var updatedContract = await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
 
-                var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
-                if (machineSerialNumber != null)
-                {
-                    var updatedRentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
-
-                    await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(machineSerialNumber.SerialNumber, updatedRentDaysCounter);
-                }
+                await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
 
                 scope.Complete();
 
-                return true;
+                return updatedContract.Status.Equals(ContractStatusEnum.InspectionPending.ToString());
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace Repository.Interface
         Task<string?> UpdateContractPayments(string invoiceId);
         Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
         Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
-        Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
+        Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
         Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type);
         Task<ContractDto> ExtendContract(string contractId, ContractExtendDto contractExtendDto);

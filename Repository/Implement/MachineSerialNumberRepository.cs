@@ -168,7 +168,7 @@ namespace Repository.Implement
 
             if (machineSerialNumber != null)
             {
-                machineSerialNumber.RentDaysCounter = actualRentDays;
+                machineSerialNumber.RentDaysCounter = machineSerialNumber.RentDaysCounter + actualRentDays;
 
                 await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
             }
