@@ -63,7 +63,7 @@ namespace Service
         }
         public async Task CompleteContractOnTime(string contractId)
         {
-            await _contractService.EndContract(contractId, null);
+            await _contractService.EndContract(contractId);
         }
 
         public async Task CancelRentingRequestAsync(string rentingRequestId)
