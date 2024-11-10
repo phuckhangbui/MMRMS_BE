@@ -5,6 +5,7 @@ namespace Repository.Interface
 {
     public interface IMachineTaskRepository
     {
+        Task<MachineTaskDto> CreateMachineTaskCheckMachineWhenDeliveryFail(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto);
         Task<MachineTaskDto> CreateMachineTaskContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto);
         Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto);
         Task Delete(int taskId);

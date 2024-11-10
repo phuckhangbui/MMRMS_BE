@@ -132,7 +132,7 @@ namespace Service.Implement
 
             if (contractDto.Status != ContractStatusEnum.InspectionPending.ToString())
             {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleContractStatus);
+                throw new ServiceException(MessageConstant.MachineTask.TaskTerminationNotPossibleContractStatus);
             }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -160,25 +160,48 @@ namespace Service.Implement
 
         }
 
-        public async Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto)
+        public async Task CreateMachineTaskCheckMachineDeliveryFail(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto)
         {
-            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, createMachineTaskDto.DateStart);
-
-            var ticketDto = await _componentReplacementTicketRepository.GetTicket(createMachineTaskDto.ComponentReplacementTicketId);
-
-            if (ticketDto == null)
+            if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
             {
-                throw new ServiceException(MessageConstant.ComponentReplacementTicket.TicketNotFound);
+                throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
             }
 
-            if (ticketDto.Status != ComponentReplacementTicketStatusEnum.Paid.ToString())
+            await CheckCreateTaskCondition(createMachineTaskDto.StaffId, parsedDate);
+
+            var contractDto = await _contractRepository.GetContractById(createMachineTaskDto.ContractId);
+
+            if (contractDto == null)
             {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotPossibleComponentReplacementTicketStatus);
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
             }
 
 
-            //Todo
+            if (contractDto.Status != ContractStatusEnum.ShipFail.ToString())
+            {
+                throw new ServiceException(MessageConstant.MachineTask.TaskCheckDeliveryFailNotPossibleContractStatus);
+            }
 
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var task = await _machineTaskRepository.CreateMachineTaskCheckMachineWhenDeliveryFail(managerId, createMachineTaskDto);
+
+                    //update contract status
+                    await _contractRepository.UpdateContractStatus(createMachineTaskDto.ContractId, ContractStatusEnum.InspectionInProgress.ToString());
+
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(createMachineTaskDto.StaffId, task, parsedDate);
+
+                    await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(MessageConstant.MachineTask.CreateFail);
+                }
+            }
         }
 
 
@@ -319,6 +342,8 @@ namespace Service.Implement
             }
 
         }
+
+
 
 
 

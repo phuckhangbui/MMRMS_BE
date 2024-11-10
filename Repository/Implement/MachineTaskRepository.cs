@@ -87,6 +87,13 @@ namespace Repository.Implement
                                         "Tạo và giao công việc kiểm tra máy cho {staffName}");
         }
 
+        public async Task<MachineTaskDto> CreateMachineTaskCheckMachineWhenDeliveryFail(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        {
+            return await CreateMachineTaskInternal(managerId, createMachineTaskDto,
+                                  MachineTaskTypeEnum.DeliveryFailCheckRequest.ToString(),
+                                  "Tạo và giao công việc kiêm tra máy khi khách từ chối nhận máy lúc giao cho {staffName}");
+        }
+
         public async Task Delete(int taskId)
         {
             var MachineTask = await MachineTaskDao.Instance.GetMachineTask(taskId);
@@ -206,6 +213,7 @@ namespace Repository.Implement
 
 
         }
+
 
     }
 }

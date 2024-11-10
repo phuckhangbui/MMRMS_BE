@@ -332,7 +332,8 @@
             public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
-            public const string TaskNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy đáo hạn hợp đồng";
+            public const string TaskTerminationNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy đáo hạn hợp đồng";
+            public const string TaskCheckDeliveryFailNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy sau khi giao thất bại";
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
             public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
             public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";

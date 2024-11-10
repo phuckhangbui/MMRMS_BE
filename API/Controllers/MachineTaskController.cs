@@ -120,6 +120,27 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("check-machine-delivery-fail")]
+        [Authorize(Policy = "Manager")]
+        public async Task<IActionResult> CreateMachineTaskCheckMachineDeliveryFail([FromBody] CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        {
+            int managerId = GetLoginAccountId();
+
+            try
+            {
+                await _machineTaskService.CreateMachineTaskCheckMachineDeliveryFail(managerId, createMachineTaskDto);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPatch("{taskId}/check-machine-success")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<IActionResult> CheckMachineSuccess([FromRoute] int taskId, [FromBody] PictureUrlDto confirmationPicture)
