@@ -4,6 +4,7 @@
     {
         Pending,
         Success,
-        Fail
+        Fail,
+        ProcessedAfterFailure,
     }
 }

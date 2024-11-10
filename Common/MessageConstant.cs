@@ -204,6 +204,7 @@
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
+            public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
@@ -349,6 +350,7 @@
             public const string TitleRequired = "Tên công việc là bắt buộc";
             public const string DateStartRequired = "Ngày làm việc là bắt buộc";
             public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
+            public const string ContractDeliveryIdRequire = "Mã giao hợp đồng là bắt buộc";
 
         }
 

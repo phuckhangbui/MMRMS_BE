@@ -119,6 +119,27 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{deliveryTaskId}/manager-change-to-processed-after-failure")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult> UpdateStatusToProcessedAfterFailure([FromRoute] int deliveryTaskId)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                await _deliverService.UpdateDeliveryStatusToProcessedAfterFailure(deliveryTaskId, accountId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPut("complete")]
         [Authorize(Policy = "TechnicalStaff")]
         public async Task<ActionResult> CompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto)

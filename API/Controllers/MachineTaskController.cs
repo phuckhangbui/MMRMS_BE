@@ -122,7 +122,7 @@ namespace API.Controllers
 
         [HttpPost("check-machine-delivery-fail")]
         [Authorize(Policy = "Manager")]
-        public async Task<IActionResult> CreateMachineTaskCheckMachineDeliveryFail([FromBody] CreateMachineTaskContractTerminationDto createMachineTaskDto)
+        public async Task<IActionResult> CreateMachineTaskCheckMachineDeliveryFail([FromBody] CreateMachineTaskDeliveryFailDto createMachineTaskDto)
         {
             int managerId = GetLoginAccountId();
 

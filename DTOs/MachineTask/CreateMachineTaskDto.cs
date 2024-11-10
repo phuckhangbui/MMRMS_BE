@@ -31,4 +31,10 @@ namespace DTOs.MachineTask
         [Required(ErrorMessage = MessageConstant.MachineTask.ContractIdRequired)]
         public string ContractId { get; set; }
     }
+
+    public class CreateMachineTaskDeliveryFailDto : CreateMachineTaskDtoBase
+    {
+        [Required(ErrorMessage = MessageConstant.MachineTask.ContractIdRequired)]
+        public int ContractDeliveryId { get; set; }
+    }
 }

@@ -88,7 +88,7 @@ namespace Service.Implement
 
 
                 if (contract.Status != ContractStatusEnum.Signed.ToString()
-                    && contract.Status != ContractStatusEnum.ShipFail.ToString())
+                    && contract.Status != ContractStatusEnum.AwaitingShippingAfterCheck.ToString())
                 {
                     throw new ServiceException(MessageConstant.Contract.ContractNotValidToDelivery);
                 }
@@ -335,6 +335,30 @@ namespace Service.Implement
             await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.Delivering.ToString(), accountId);
 
             await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering));
+        }
+
+        public async Task UpdateDeliveryStatusToProcessedAfterFailure(int deliveryTaskId, int accountId)
+        {
+            var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+
+            if (deliveryDetail == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
+            }
+
+            if (accountId != deliveryDetail.DeliveryTask.ManagerId)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            }
+
+            if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Fail.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
+
+
+            await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.ProcessedAfterFailure.ToString(), accountId);
         }
 
         //public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
