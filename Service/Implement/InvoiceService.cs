@@ -2,7 +2,10 @@
 using Common.Enum;
 using DTOs;
 using DTOs.Invoice;
+using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using Repository.Implement;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -17,6 +20,7 @@ namespace Service.Implement
         private readonly IPayOSService _payOSService;
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IContractRepository _contractRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
@@ -25,6 +29,7 @@ namespace Service.Implement
             IPayOSService payOSService,
             IComponentReplacementTicketRepository componentReplacementTicketRepository,
             IContractRepository contractRepository,
+            IMachineSerialNumberRepository machineSerialNumberRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
             IMembershipRankService membershipRankService)
@@ -33,6 +38,7 @@ namespace Service.Implement
             _payOSService = payOSService;
             _componentReplacementTicketRepository = componentReplacementTicketRepository;
             _contractRepository = contractRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
@@ -211,7 +217,32 @@ namespace Service.Implement
             {
                 var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
 
-                await _contractRepository.UpdateRefundContractPayment(contract.ContractId, invoice.InvoiceId);
+                await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
+
+                //MachineSerialNumber
+                var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
+                var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
+                {
+                    ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
+                    Status = machineSerialNumber.Status,
+                };
+
+                var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineSerialNumber.SerialNumber);
+                var isMachineMaintenance = false;
+                if (!componentList.IsNullOrEmpty())
+                {
+                    isMachineMaintenance = componentList.Any(c => c.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString());
+                }
+                if (isMachineMaintenance)
+                {
+                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintenance.ToString();
+                }
+                else
+                {
+                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
+                }
+
+                await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, accountId);
 
                 scope.Complete();
 

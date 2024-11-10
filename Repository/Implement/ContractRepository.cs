@@ -189,7 +189,7 @@ namespace Repository.Implement
             await ContractDao.Instance.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, paymentDate);
         }
 
-        public async Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
+        public async Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
@@ -224,24 +224,26 @@ namespace Repository.Implement
                     }
                 }
 
-                await ContractDao.Instance.UpdateAsync(contract);
+                contract = await ContractDao.Instance.UpdateAsync(contract);
             }
+
+            return _mapper.Map<ContractDto>(contract);
         }
 
-        public async Task UpdateRefundContractPayment(string contractId, string invoiceId)
+        public async Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);
             if (contract != null)
             {
-                var refundContractPayment = contract.ContractPayments
+                var contractPayment = contract.ContractPayments
                     .FirstOrDefault(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
-                                        cp.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()));
+                                        cp.Type.Equals(type));
 
-                if (refundContractPayment != null)
+                if (contractPayment != null)
                 {
-                    refundContractPayment.InvoiceId = invoiceId;
+                    contractPayment.InvoiceId = invoiceId;
 
-                    await ContractPaymentDao.Instance.UpdateAsync(refundContractPayment);
+                    await ContractPaymentDao.Instance.UpdateAsync(contractPayment);
                 }
             }
         }
@@ -413,6 +415,56 @@ namespace Repository.Implement
             contract.ContractPayments = contractPayments;
 
             return contract;
+        }
+
+        public async Task<ContractDto> ExtendContract(string contractId, ContractExtendDto contractExtendDto)
+        {
+            var baseContract = await ContractDao.Instance.GetContractById(contractId);
+
+            var dateCreate = DateTime.Now;
+            int numberOfDays = (contractExtendDto.DateEnd - contractExtendDto.DateStart).Days + 1;
+
+            var contract = new Contract
+            {
+                ContractId = await GenerateContractId(),
+                SerialNumber = baseContract.SerialNumber,
+
+                DateCreate = dateCreate,
+                Status = ContractStatusEnum.NotSigned.ToString(),
+
+                ContractName = GlobalConstant.ContractName + baseContract.SerialNumber,
+                DateStart = contractExtendDto.DateStart,
+                DateEnd = contractExtendDto.DateEnd,
+                Content = string.Empty,
+                AccountSignId = baseContract.AccountSignId,
+                RentingRequestId = baseContract.RentingRequestId,
+                RentPeriod = numberOfDays,
+                RentPrice = baseContract.RentPrice,
+                DepositPrice = 0,
+                TotalRentPrice = baseContract.RentPrice * numberOfDays,
+                BaseContractId = contractId,
+            };
+
+            var extendContractPayment = new ContractPayment
+            {
+                ContractId = contract.ContractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Extend.ToString(),
+                Title = GlobalConstant.ExtendContractPaymentTitle + contract.ContractId,
+                Amount = contract.RentPrice * contract.RentPeriod,
+                DateFrom = contract.DateStart,
+                DateTo = contract.DateEnd,
+                Period = contract.RentPeriod,
+                DueDate = contract.DateStart,
+                IsFirstRentalPayment = true,
+            };
+
+            contract.ContractPayments.Add(extendContractPayment);
+
+            contract = await ContractDao.Instance.CreateAsync(contract);
+
+            return _mapper.Map<ContractDto>(contract);
         }
 
         private async Task<string> GenerateContractId()

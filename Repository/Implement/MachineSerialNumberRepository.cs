@@ -162,14 +162,13 @@ namespace Repository.Implement
             return await MachineSerialNumberDao.Instance.IsSerialNumberInAnyContract(serialNumber);
         }
 
-        public async Task Update(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto)
+        public async Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentDays)
         {
             var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
 
             if (machineSerialNumber != null)
             {
-                machineSerialNumber.ActualRentPrice = machineSerialNumberUpdateDto.ActualRentPrice;
-                machineSerialNumber.RentDaysCounter = machineSerialNumberUpdateDto.RentDaysCounter;
+                machineSerialNumber.RentDaysCounter = machineSerialNumber.RentDaysCounter + actualRentDays;
 
                 await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
             }
@@ -184,7 +183,6 @@ namespace Repository.Implement
                 var oldStatus = machineSerialNumber.Status;
 
                 machineSerialNumber.ActualRentPrice = machineSerialNumberUpdateDto.ActualRentPrice;
-                machineSerialNumber.RentDaysCounter = machineSerialNumberUpdateDto.RentDaysCounter;
                 machineSerialNumber.Status = machineSerialNumberUpdateDto.Status;
 
                 var machineSerialNumberLog = new MachineSerialNumberLog

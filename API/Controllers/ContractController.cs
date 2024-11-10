@@ -75,13 +75,12 @@ namespace API.Controllers
         }
 
         [HttpPost("{contractId}/end-contract")]
-        [Authorize(policy: "ManagerAndCustomer")]
+        [Authorize(policy: "Customer")]
         public async Task<ActionResult> EndContract(string contractId)
         {
             try
             {
-                int accountId = GetLoginAccountId();
-                var result = await _contractService.EndContract(contractId, accountId);
+                var result = await _contractService.EndContract(contractId);
                 if (result) return Ok(MessageConstant.Contract.EndContractSuccessfully);
                 return BadRequest(MessageConstant.Contract.EndContractFail);
             }
@@ -95,6 +94,25 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("{contractId}/extend-contract")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult> ExtendContract(string contractId, [FromBody] ContractExtendDto contractExtendDto)
+        {
+            try
+            {
+                var result = await _contractService.ExtendContract(contractId, contractExtendDto);
+                if (result) return Ok(MessageConstant.Contract.ExtendContractSuccessfully);
+                return BadRequest(MessageConstant.Contract.ExtendContractFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         //[HttpPost]
         //[Authorize(Policy = "Manager")]

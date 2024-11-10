@@ -17,11 +17,13 @@ namespace Repository.Interface
         Task<string?> UpdateContractPayments(string invoiceId);
         Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
         Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
-        Task EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
+        Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
-        Task UpdateRefundContractPayment(string contractId, string invoiceId);
-        Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
+        Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type);
+        Task<ContractDto> ExtendContract(string contractId, ContractExtendDto contractExtendDto);
         Task UpdateContractDeliveryStatus(int contractDeliveryId, string status);
         Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId);
+        Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
+
     }
 }
