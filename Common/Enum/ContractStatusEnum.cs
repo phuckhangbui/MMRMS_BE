@@ -9,6 +9,7 @@
         Renting,
         InspectionPending,
         InspectionInProgress,
+        AwaitingShippingAfterCheck,
         AwaitingRefundInvoice,
         Completed,
         Terminated,

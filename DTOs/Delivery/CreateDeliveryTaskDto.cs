@@ -16,5 +16,7 @@ namespace DTOs.Delivery
 
         [Required(ErrorMessage = MessageConstant.DeliveryTask.ContractIdListRequired)]
         public List<string> ContractIdList { get; set; }
+
+        public string? Note { get; set; }
     }
 }

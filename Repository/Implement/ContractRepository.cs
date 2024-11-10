@@ -5,6 +5,7 @@ using Common.Enum;
 using DAO;
 using DTOs.Contract;
 using DTOs.ContractPayment;
+using DTOs.Delivery;
 using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -526,6 +527,29 @@ namespace Repository.Implement
             };
 
             return refundContractPayment;
+        }
+
+        public async Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId)
+        {
+            var contractDelivery = await ContractDeliveryDao.Instance.GetContractDeliveryById(contractDeliveryId);
+
+            return _mapper.Map<ContractDeliveryDto>(contractDelivery);
+        }
+
+        public async Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId)
+        {
+            var list = await ContractDeliveryDao.Instance.GetContractDeliveryBaseOnContractId(contractId);
+
+            return _mapper.Map<IEnumerable<ContractDeliveryDto>>(list);
+        }
+
+        public async Task UpdateContractDeliveryStatus(int contractDeliveryId, string status)
+        {
+            var contractDelivery = await ContractDeliveryDao.Instance.GetContractDeliveryById(contractDeliveryId);
+
+            contractDelivery.Status = status;
+
+            await ContractDeliveryDao.Instance.UpdateAsync(contractDelivery);
         }
     }
 }

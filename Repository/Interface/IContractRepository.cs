@@ -1,4 +1,5 @@
 ﻿using DTOs.Contract;
+using DTOs.Delivery;
 using DTOs.RentingRequest;
 
 namespace Repository.Interface
@@ -20,5 +21,9 @@ namespace Repository.Interface
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
         Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type);
         Task<ContractDto> ExtendContract(string contractId, ContractExtendDto contractExtendDto);
+        Task UpdateContractDeliveryStatus(int contractDeliveryId, string status);
+        Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId);
+        Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
+
     }
 }

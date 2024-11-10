@@ -178,7 +178,7 @@ namespace Service.Implement
                 var contractList = await _contractRepository.GetContractListOfRequest(request.RentingRequestId);
 
                 bool hasNonShippingContract = contractList.Any(contract => contract.Status == ContractStatusEnum.Signed.ToString()
-                                                                        || contract.Status == ContractStatusEnum.ShipFail.ToString());
+                                                                        || contract.Status == ContractStatusEnum.AwaitingShippingAfterCheck.ToString());
 
                 if (hasNonShippingContract)
                 {

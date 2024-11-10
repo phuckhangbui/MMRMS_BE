@@ -305,6 +305,9 @@ namespace Repository.Mapper
                             ? src.Manager.Name
                             : null));
 
+            CreateMap<MachineTaskDto, MachineTask>();
+            CreateMap<MachineTaskLogDto, MachineTaskLog>();
+
             CreateMap<MachineTask, MachineTaskDisplayDetail>()
                 .ForMember(dest => dest.MachineCheckRequest, opt => opt.Ignore())
                 .ForMember(dest => dest.SerialNumber,
