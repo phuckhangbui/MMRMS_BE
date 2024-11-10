@@ -4,6 +4,7 @@ using Common.Enum;
 using DTOs.Delivery;
 using DTOs.MachineTask;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -382,6 +383,23 @@ namespace Service.Implement
             if (machineTaskDetail.Status == MachineTaskEnum.Canceled.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
+            }
+
+            if (machineTaskDetail.Type == MachineTaskTypeEnum.DeliveryFailCheckRequest.ToString())
+            {
+                var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineTaskDetail.SerialNumber);
+
+                var isMachineMaintenance = false;
+
+                if (!componentList.IsNullOrEmpty())
+                {
+                    isMachineMaintenance = componentList.Any(c => c.Status == MachineSerialNumberComponentStatusEnum.Broken.ToString());
+                }
+
+                if (isMachineMaintenance)
+                {
+                    throw new ServiceException(MessageConstant.MachineTask.TaskShipFailCannotCompleteDueToMachineStillHaveBrokenComponent);
+                }
             }
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))

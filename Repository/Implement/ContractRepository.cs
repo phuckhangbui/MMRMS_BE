@@ -484,6 +484,13 @@ namespace Repository.Implement
             return _mapper.Map<ContractDeliveryDto>(contractDelivery);
         }
 
+        public async Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId)
+        {
+            var list = await ContractDeliveryDao.Instance.GetContractDeliveryBaseOnContractId(contractId);
+
+            return _mapper.Map<IEnumerable<ContractDeliveryDto>>(list);
+        }
+
         public async Task UpdateContractDeliveryStatus(int contractDeliveryId, string status)
         {
             var contractDelivery = await ContractDeliveryDao.Instance.GetContractDeliveryById(contractDeliveryId);

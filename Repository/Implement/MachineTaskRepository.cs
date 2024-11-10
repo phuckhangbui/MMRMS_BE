@@ -49,7 +49,12 @@ namespace Repository.Implement
         {
             var machineTask = await MachineTaskDao.Instance.GetMachineTaskDetail(taskId);
 
-            List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask.MachineTaskLogs;
+            if (machineTask == null)
+            {
+                return null;
+            }
+
+            List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask?.MachineTaskLogs;
 
             var taskLogsDto = _mapper.Map<List<MachineTaskLogDto>>(machineTaskLogs);
 

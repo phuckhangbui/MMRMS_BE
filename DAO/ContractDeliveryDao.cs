@@ -31,5 +31,12 @@ namespace DAO
             return await context.ContractDeliveries
                 .FirstOrDefaultAsync(c => c.ContractDeliveryId == contractDeliveryId);
         }
+
+        public async Task<IEnumerable<ContractDelivery>> GetContractDeliveryBaseOnContractId(string contractId)
+        {
+            using var context = new MmrmsContext();
+            return await context.ContractDeliveries
+                .Where(c => c.ContractId == contractId).ToListAsync();
+        }
     }
 }

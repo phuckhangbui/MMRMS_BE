@@ -113,7 +113,7 @@ namespace Repository.Implement
 
             var requestDto = _mapper.Map<MachineCheckRequestDto>(requestDetail);
 
-            var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail.MachineCheckRequestCriterias);
+            var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail?.MachineCheckRequestCriterias);
 
             return new MachineCheckRequestDetailDto
             {

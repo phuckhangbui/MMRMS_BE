@@ -88,9 +88,18 @@ namespace Service.Implement
 
 
                 if (contract.Status != ContractStatusEnum.Signed.ToString()
-                    && contract.Status != ContractStatusEnum.AwaitingShippingAfterCheck.ToString())
+                    && contract.Status != ContractStatusEnum.AwaitingShippingAfterCheck.ToString()
+                    && contract.Status != ContractStatusEnum.ShipFail.ToString())
                 {
-                    throw new ServiceException(MessageConstant.Contract.ContractNotValidToDelivery);
+                    throw new ServiceException(MessageConstant.Contract.ContractNotValidToDelivery + contractId);
+                }
+
+                var contractDeliveryList = await _contractRepository.GetContractDeliveryBaseOnContractId(contractId);
+
+                if (contractDeliveryList.Any(c => c.Status == ContractDeliveryStatusEnum.Pending.ToString()
+                                               || c.Status == ContractDeliveryStatusEnum.Success.ToString()))
+                {
+                    throw new ServiceException(MessageConstant.Contract.ContractNotValidToDeliveryOldContractDeliveryStillActive + contractId);
                 }
 
                 if (rentingRequestId.IsNullOrEmpty())

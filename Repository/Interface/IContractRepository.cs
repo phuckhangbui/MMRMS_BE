@@ -21,6 +21,7 @@ namespace Repository.Interface
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
         Task UpdateRefundContractPayment(string contractId, string invoiceId);
         Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
-        Task UpdateContractDeliveryStatus(int contractDeliveryId, string v);
+        Task UpdateContractDeliveryStatus(int contractDeliveryId, string status);
+        Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId);
     }
 }
