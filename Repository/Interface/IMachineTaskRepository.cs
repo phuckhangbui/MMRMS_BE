@@ -5,8 +5,6 @@ namespace Repository.Interface
 {
     public interface IMachineTaskRepository
     {
-        Task<MachineTaskDto> CreateMachineTaskContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto);
-        Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto);
         Task Delete(int taskId);
         Task<MachineTaskDto> GetMachineTask(int taskId);
         Task<IEnumerable<MachineTaskDto>> GetMachineTaskByStaff(int staffId);
@@ -16,5 +14,6 @@ namespace Repository.Interface
         Task<IEnumerable<MachineTaskDto>> GetMachineTasksInADate(DateOnly date);
         Task<IEnumerable<MachineTaskDto>> GetTaskOfStaffInADay(int staffId, DateTime date);
         Task UpdateTaskStatus(int machineTaskId, string status, int accountId, string? confirmationPictureUrl);
+        Task<MachineTaskDto> CreateMachineTaskWithLog(MachineTaskDto taskDto, MachineTaskLogDto taskLogDto);
     }
 }

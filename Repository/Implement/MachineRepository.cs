@@ -172,9 +172,9 @@ namespace Repository.Implement
             return await MachineDao.Instance.IsMachineExisted(productId);
         }
 
-        public async Task<bool> IsMachineExisted(string name)
+        public async Task<bool> IsMachineNameExisted(string name)
         {
-            return await MachineDao.Instance.IsMachineExisted(name);
+            return await MachineDao.Instance.IsMachineNameExisted(name);
         }
 
         public async Task<bool> IsMachineModelExisted(string model)

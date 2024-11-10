@@ -202,13 +202,15 @@
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
             public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
-            public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa ký hoặc đã giao thành công";
+            public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa ký hoặc đã giao thành công, mã hợp đồng: ";
+            public const string ContractNotValidToDeliveryOldContractDeliveryStillActive = "Hợp đồng không thể giao do vẫn còn lịch cũ chưa hoàn thành/ đã thành công, mã hợp đồng: ";
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
             public const string ExtensionPeriodNotValid = "Thời gian gia hạn phải tối thiểu 30 ngày.";
             public const string ExtensionStartDateNotValid = "Ngày bắt đầu gia hạn phải sau ngày kết thúc của hợp đồng hiện tại.";
             public const string ContractNotValidToExtend = "Hợp đồng không thể gia hạn do không hợp lệ";
+            public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
@@ -337,13 +339,15 @@
             public const string CannotDeleted = "Công việc này không thể xóa";
             public const string ReachMaxTaskLimit = "Nhân viên này đã đạt đến số công việc tối đa trong ngày";
             public const string TaskNotPossibleRequestStatus = "Yêu cầu này đã được xử lý, không thể tạo nhiệm vụ mới";
-            public const string TaskNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy đáo hạn hợp đồng";
+            public const string TaskTerminationNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy đáo hạn hợp đồng";
+            public const string TaskCheckDeliveryFailNotPossibleContractStatus = "Hợp đồng này chưa thể tạo yêu cầu check máy sau khi giao thất bại";
             public const string TaskNotPossibleComponentReplacementTicketStatus = "Chưa thể tạo nhiệm vụ mới với ticket này";
             public const string NotCorrectTaskType = "Loại công việc này không đúng để thực hiện chức năng này";
             public const string IncorrectStaffIdToUpdate = "Bạn không thể thực hiện hành động này";
             public const string CannotCreateTicketWithThisTask = "Trạng thái nhiệm vụ này không thể tạo ticket thay thế bộ phận máy";
             public const string CreateFail = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
             public const string TaskCannotCompleteDueToTicketListUnfulfill = "Có lỗi xảy ra trong quá trình tạo nhiệm vụ";
+            public const string TaskShipFailCannotCompleteDueToMachineStillHaveBrokenComponent = "Nhiệm vụ kiểm tra máy này chưa thể hoàn thành để đem máy đi giao được do có bộ phận bị hư hỏng";
 
             //DTO
             public const string RequestIdRequired = "Mã yêu cầu là bắt buộc";
@@ -353,6 +357,7 @@
             public const string TitleRequired = "Tên công việc là bắt buộc";
             public const string DateStartRequired = "Ngày làm việc là bắt buộc";
             public const string ContractIdRequired = "Mã hợp đồng là bắt buộc";
+            public const string ContractDeliveryIdRequire = "Mã giao hợp đồng là bắt buộc";
 
         }
 

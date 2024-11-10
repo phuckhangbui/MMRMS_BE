@@ -68,7 +68,7 @@ namespace Service.Implement
 
         public async Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto)
         {
-            if (await _machineRepository.IsMachineExisted(createMachineDto.MachineName))
+            if (await _machineRepository.IsMachineNameExisted(createMachineDto.MachineName))
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNameDuplicated);
             }
@@ -83,7 +83,6 @@ namespace Service.Implement
             if (category == null)
             {
                 throw new ServiceException(MessageConstant.Category.CategoryNotFound);
-
             }
 
             var flag = true;
@@ -184,7 +183,7 @@ namespace Service.Implement
 
             if (!productDto.MachineName.ToLower().Equals(updateMachineDto.MachineName.ToLower()))
             {
-                if (await _machineRepository.IsMachineExisted(updateMachineDto.MachineName))
+                if (await _machineRepository.IsMachineNameExisted(updateMachineDto.MachineName))
                 {
                     throw new ServiceException(MessageConstant.Machine.MachineNameDuplicated);
                 }

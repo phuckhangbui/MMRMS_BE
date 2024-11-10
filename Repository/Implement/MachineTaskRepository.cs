@@ -6,7 +6,6 @@ using DAO;
 using DTOs.ComponentReplacementTicket;
 using DTOs.MachineTask;
 using Repository.Interface;
-using System.Globalization;
 
 namespace Repository.Implement
 {
@@ -21,70 +20,6 @@ namespace Repository.Implement
             _mapper = mapper;
             _accountRepository = accountRepository;
             _machineCheckRequestRepository = MachineCheckRequestRepository;
-        }
-
-        private async Task<MachineTaskDto> CreateMachineTaskInternal(int managerId,
-                                                             CreateMachineTaskDtoBase createMachineTaskDto,
-                                                             string taskType,
-                                                             string logAction)
-        {
-            // Parse DateStart
-            if (!DateTime.TryParseExact(createMachineTaskDto.DateStart, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-            {
-                throw new Exception("Format ngày không đúng, xin hãy dùng 'yyyy-MM-dd'.");
-            }
-
-            var staffAccount = await _accountRepository.GetAccounById(createMachineTaskDto.StaffId);
-            var now = DateTime.Now;
-
-            var task = new MachineTask
-            {
-                TaskTitle = createMachineTaskDto.TaskTitle,
-                Content = createMachineTaskDto.TaskContent,
-                StaffId = createMachineTaskDto.StaffId,
-                ManagerId = managerId,
-                Type = taskType,
-                DateCreate = now,
-                DateStart = parsedDate,
-                Status = MachineTaskEnum.Created.ToString(),
-                Note = createMachineTaskDto.Note
-            };
-
-            if (createMachineTaskDto is CreateMachineTaskCheckRequestDto checkMachineDto)
-            {
-                var request = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(checkMachineDto.RequestId);
-                task.MachineCheckRequestId = checkMachineDto.RequestId;
-                task.ContractId = request.ContractId;
-            }
-            else if (createMachineTaskDto is CreateMachineTaskContractTerminationDto terminationDto)
-            {
-                task.ContractId = terminationDto.ContractId;
-            }
-
-            var taskLog = new MachineTaskLog
-            {
-                Action = logAction.Replace("{staffName}", staffAccount.Name),
-                DateCreate = now,
-                AccountTriggerId = managerId
-            };
-
-            task = await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(task, taskLog);
-
-            return _mapper.Map<MachineTaskDto>(task);
-        }
-        public async Task<MachineTaskDto> CreateMachineTaskContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto)
-        {
-            return await CreateMachineTaskInternal(managerId, createMachineTaskDto,
-                                   MachineTaskTypeEnum.ContractTerminationCheck.ToString(),
-                                   "Tạo và giao công việc kiêm tra máy chấm dứt hợp đồng cho {staffName}");
-        }
-
-        public async Task<MachineTaskDto> CreateMachineTaskWithRequest(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto)
-        {
-
-            return await CreateMachineTaskInternal(managerId, createMachineTaskDto,
-                                        MachineTaskTypeEnum.MachineryCheckRequest.ToString(),
-                                        "Tạo và giao công việc kiểm tra máy cho {staffName}");
         }
 
         public async Task Delete(int taskId)
@@ -114,7 +49,12 @@ namespace Repository.Implement
         {
             var machineTask = await MachineTaskDao.Instance.GetMachineTaskDetail(taskId);
 
-            List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask.MachineTaskLogs;
+            if (machineTask == null)
+            {
+                return null;
+            }
+
+            List<MachineTaskLog> machineTaskLogs = (List<MachineTaskLog>)machineTask?.MachineTaskLogs;
 
             var taskLogsDto = _mapper.Map<List<MachineTaskLogDto>>(machineTaskLogs);
 
@@ -206,6 +146,18 @@ namespace Repository.Implement
 
 
         }
+
+        public async Task<MachineTaskDto> CreateMachineTaskWithLog(MachineTaskDto taskDto, MachineTaskLogDto taskLogDto)
+        {
+            var machineTask = _mapper.Map<MachineTask>(taskDto);
+
+            var taskLog = _mapper.Map<MachineTaskLog>(taskLogDto);
+
+            machineTask = await MachineTaskDao.Instance.CreateMachineTaskBaseOnRequest(machineTask, taskLog);
+
+            return _mapper.Map<MachineTaskDto>(machineTask);
+        }
+
 
     }
 }

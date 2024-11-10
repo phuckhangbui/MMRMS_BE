@@ -12,8 +12,12 @@
         Completed,
 
         [Translation("Thất bại")]
-        Fail
+        Fail,
+
+        [Translation("Đã xử lý lại")]
+        ProcessedAfterFailure
     }
+
 
     public enum DeliveryTaskTypeEnum
     {

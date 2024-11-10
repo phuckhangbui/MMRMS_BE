@@ -3,6 +3,7 @@ using Common.Enum;
 using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
 using DTOs.MachineCheckRequest;
+using DTOs.MachineTask;
 using DTOs.Notification;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -351,6 +352,55 @@ namespace Service.Implement
 
         }
 
+        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(int staffId, MachineTaskDto task, DateTime parsedDate)
+        {
+            string title = "Yêu cầu kiểm tra máy";
+            string body = $"Có một yêu cầu kiểm tra máy {task.SerialNumber} hiện đang ở trong kho";
+
+            var managerList = await _accountRepository.GetManagerAccounts();
+
+            string type = NotificationTypeEnum.RequestMaintenance.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        LinkForward = linkForward,
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", account.AccountId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         public async Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string componentName)
         {
             string title = "Bạn có ticket thay sửa bộ phận cần được thanh toán";
@@ -518,5 +568,7 @@ namespace Service.Implement
 
             }
         }
+
+
     }
 }
