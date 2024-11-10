@@ -192,6 +192,8 @@
             //Controller
             public const string EndContractSuccessfully = "Kết thúc hợp đồng thành công";
             public const string EndContractFail = "Kết thúc hợp đồng thất bại";
+            public const string ExtendContractSuccessfully = "Gia hạn hợp đồng thành công";
+            public const string ExtendContractFail = "Gia hạn hợp đồng thất bại";
 
             //Service
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
@@ -204,6 +206,9 @@
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
+            public const string ExtensionPeriodNotValid = "Thời gian gia hạn phải tối thiểu 30 ngày.";
+            public const string ExtensionStartDateNotValid = "Ngày bắt đầu gia hạn phải sau ngày kết thúc của hợp đồng hiện tại.";
+            public const string ContractNotValidToExtend = "Hợp đồng không thể gia hạn do không hợp lệ";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";

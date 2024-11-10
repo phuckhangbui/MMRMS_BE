@@ -221,21 +221,6 @@ namespace Service.Implement
             await _machineSerialNumberRepository.UpdateStatus(serialNumber, machineSerialNumber.Status, staffId);
         }
 
-        public async Task Update(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto)
-        {
-            if (string.IsNullOrEmpty(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.MachineSerialNumber.SerialNumberRequired);
-            }
-
-            if (!await _machineSerialNumberRepository.IsSerialNumberExist(serialNumber))
-            {
-                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
-            }
-
-            await _machineSerialNumberRepository.Update(serialNumber, machineSerialNumberUpdateDto);
-        }
-
         public async Task UpdateMachineSerialNumberComponentStatusToBrokenWhileInStore(int machineSerialNumberComponentId, int accountId, string note)
         {
             var serialComponent = await _machineSerialNumberComponentRepository.GetComponent(machineSerialNumberComponentId);
