@@ -78,7 +78,6 @@ namespace DAO
         public async Task<RentingRequest?> CancelRentingRequest(string rentingRequestId)
         {
             using var context = new MmrmsContext();
-            using var transaction = context.Database.BeginTransaction();
             try
             {
                 var rentingRequest = await context.RentingRequests
@@ -111,15 +110,12 @@ namespace DAO
                     context.RentingRequests.Update(rentingRequest);
 
                     await context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
                 }
 
                 return rentingRequest;
             }
             catch (Exception e)
             {
-                transaction.Rollback();
                 throw new Exception(e.Message);
             }
         }

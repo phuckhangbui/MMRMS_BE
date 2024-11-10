@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Castle.Core.Resource;
 using Common;
 using Common.Enum;
 using DTOs.Contract;
-using DTOs.MachineSerialNumber;
-using DTOs.RentingRequest;
+using DTOs.Invoice;
 using Moq;
 using Repository.Interface;
 using Repository.Mapper;
@@ -120,7 +118,7 @@ namespace Test.Service
             var contractExtendDto = new ContractExtendDto
             {
                 DateStart = DateTime.Parse("2025-02-10T00:00:00"),
-                DateEnd = DateTime.Parse("2025-01-31T00:00:00"),
+                DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
             };
             var currentContractDto = GetSampleContractDtoStatusRenting();
             var extendContractDto = new ContractDto
@@ -143,9 +141,104 @@ namespace Test.Service
                 Thumbnail = "https://res.cloudinary.com/dfdwupiah/image/upload/v1729328591/MMRMS/lavbqsidqtuvpfnwb57k.jpg",
                 AccountSignId = 15
             };
+            var invoiceDto = GetInvoiceDto();
 
             _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
             _contractRepositoryMock.Setup(x => x.ExtendContract(It.IsAny<string>(), It.IsAny<ContractExtendDto>())).ReturnsAsync(extendContractDto);
+            _contractRepositoryMock.Setup(x => x.SetInvoiceForContractPayment(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            _invoiceRepositoryMock.Setup(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(invoiceDto);
+
+            //Act
+            var result = await _contractService.ExtendContract(contractId, contractExtendDto);
+
+            //Assert
+            _contractRepositoryMock.Verify(x => x.GetContractById(It.IsAny<string>()), Times.Once);
+            _contractRepositoryMock.Verify(x => x.ExtendContract(It.IsAny<string>(), It.IsAny<ContractExtendDto>()), Times.Once);
+            _contractRepositoryMock.Verify(x => x.SetInvoiceForContractPayment(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _invoiceRepositoryMock.Verify(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ExtendContract_ThrowsException_ContractNotFound()
+        {
+            //Arrange
+            var contractId = "CON20241104NO0005";
+            var contractExtendDto = new ContractExtendDto
+            {
+                DateStart = DateTime.Parse("2025-02-10T00:00:00"),
+                DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
+            };
+            _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync((ContractDto)null);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _contractService.ExtendContract(contractId, contractExtendDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.Contract.ContractNotFound, exception.Message);
+        }
+
+        [Fact]
+        public async Task ExtendContract_ThrowsException_ContractNotValidToExtend()
+        {
+            //Arrange
+            var contractId = "CON20241104NO0005";
+            var contractExtendDto = new ContractExtendDto
+            {
+                DateStart = DateTime.Parse("2025-02-10T00:00:00"),
+                DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
+            };
+            var currentContractDto = GetSampleContractDtoStatusRenting();
+            currentContractDto.Status = ContractStatusEnum.Completed.ToString();
+
+            _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _contractService.ExtendContract(contractId, contractExtendDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.Contract.ContractNotValidToExtend, exception.Message);
+        }
+
+        [Fact]
+        public async Task ExtendContract_ThrowsException_ExtensionStartDateNotValid()
+        {
+            //Arrange
+            var contractId = "CON20241104NO0005";
+            var contractExtendDto = new ContractExtendDto
+            {
+                DateStart = DateTime.Parse("2025-01-01T00:00:00"),
+                DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
+            };
+            var currentContractDto = GetSampleContractDtoStatusRenting();
+
+            _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _contractService.ExtendContract(contractId, contractExtendDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.Contract.ExtensionStartDateNotValid, exception.Message);
+        }
+
+        [Fact]
+        public async Task ExtendContract_ThrowsException_ExtensionPeriodNotValid()
+        {
+            var contractId = "CON20241104NO0005";
+            var contractExtendDto = new ContractExtendDto
+            {
+                DateStart = DateTime.Parse("2025-01-10T00:00:00"),
+                DateEnd = DateTime.Parse("2025-01-20T00:00:00"),
+            };
+            var currentContractDto = GetSampleContractDtoStatusRenting();
+
+            _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _contractService.ExtendContract(contractId, contractExtendDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.Contract.ExtensionPeriodNotValid, exception.Message);
         }
 
         public ContractDto GetSampleContractDtoStatusRenting()
@@ -171,5 +264,26 @@ namespace Test.Service
                 AccountSignId = 15
             };
         }
+
+        public InvoiceDto GetInvoiceDto()
+        {
+            return new InvoiceDto
+            {
+                InvoiceId = "INV20241109NO0020",
+                AccountPaidId = 15,
+                AccountPaidName = "khoa",
+                ComponentReplacementTicketId = null,
+                DigitalTransactionId = null,
+                PaymentMethod = null,
+                Amount = 25000000,
+                DateCreate = DateTime.Parse("2024-11-09T16:55:45.4628424"),
+                DatePaid = null,
+                Status = "Pending",
+                Type = "Rental",
+                Note = null,
+                PayOsOrderId = null
+            };
+        }
+
     }
 }
