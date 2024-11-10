@@ -14,9 +14,4 @@
 
         public int? RentDaysCounter { get; set; }
     }
-
-    public class MachineSerialNumberDetailDto : MachineSerialNumberDto
-    {
-
-    }
 }
