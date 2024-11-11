@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using Common;
+using Common.Enum;
 using DTOs.AccountBusiness;
 using DTOs.Contract;
+using DTOs.ContractPayment;
+using DTOs.ContractTerm;
 using DTOs.RentingRequest;
 using DTOs.RentingRequestAddress;
 using Moq;
@@ -181,9 +184,16 @@ namespace Test.Service
         public async Task CancelRentingRequest_ReturnSuccessfully()
         {
             //Arranage
+            //Arranage
+            var rentingRequestDetailDto = GetSampleRentingRequestDetail();
+            rentingRequestDetailDto.Status = RentingRequestStatusEnum.UnPaid.ToString();
             var rentingRequestId = "REH202410281009449979705";
-            //_rentingRequestRepositoryMock.Setup(x => x.IsRentingRequestValidToCancel(rentingRequestId)).ReturnsAsync(true);
-            _rentingRequestRepositoryMock.Setup(x => x.CancelRentingRequest(rentingRequestId)).ReturnsAsync(true);
+            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequestDetailById(It.IsAny<string>())).ReturnsAsync(rentingRequestDetailDto);
+
+            var contractDetatilDto = GetSampleContractDetail();
+            List<ContractDetailDto> contractDetails = new List<ContractDetailDto>();
+            contractDetails.Add(contractDetatilDto);
+            _contractRepositoryMock.Setup(x => x.GetContractDetailListByRentingRequestId(It.IsAny<string>())).ReturnsAsync(contractDetails);
 
             //Act
             var result = await _rentingRequestService.CancelRentingRequest(rentingRequestId);
@@ -195,17 +205,39 @@ namespace Test.Service
         }
 
         [Fact]
-        public async Task CancelRentingRequest_ThrowsException_RentingRequestCanNotCancel()
+        public async Task CancelRentingRequest_RentingRequestStatusNotUnPaid_ThrowsException_RentingRequestCanNotCancel()
         {
             //Arranage
+            var rentingRequestDetailDto = GetSampleRentingRequestDetail();
             var rentingRequestId = "REH202410281009449979705";
-            //_rentingRequestRepositoryMock.Setup(x => x.IsRentingRequestValidToCancel(rentingRequestId)).ReturnsAsync(false);
+            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequestDetailById(rentingRequestId)).ReturnsAsync(rentingRequestDetailDto);
 
             //Act
             var exception = await Assert.ThrowsAsync<ServiceException>(() => _rentingRequestService.CancelRentingRequest(rentingRequestId));
 
             //Assert
-            //_rentingRequestRepositoryMock.Verify(x => x.IsRentingRequestValidToCancel(It.IsAny<string>()), Times.Once);
+            Assert.Equal(MessageConstant.RentingRequest.RentingRequestCanNotCancel, exception.Message);
+        }
+
+        [Fact]
+        public async Task CancelRentingRequest_AtLeastOneInvoicePaid_ThrowsException_RentingRequestCanNotCancel()
+        {
+            //Arranage
+            var rentingRequestDetailDto = GetSampleRentingRequestDetail();
+            rentingRequestDetailDto.Status = RentingRequestStatusEnum.UnPaid.ToString();
+            var rentingRequestId = "REH202410281009449979705";
+            _rentingRequestRepositoryMock.Setup(x => x.GetRentingRequestDetailById(It.IsAny<string>())).ReturnsAsync(rentingRequestDetailDto);
+
+            var contractDetatilDto = GetSampleContractDetail();
+            contractDetatilDto.ContractPayments[0].Status = ContractPaymentStatusEnum.Paid.ToString();
+            List<ContractDetailDto> contractDetails = new List<ContractDetailDto>();
+            contractDetails.Add(contractDetatilDto);
+            _contractRepositoryMock.Setup(x => x.GetContractDetailListByRentingRequestId(It.IsAny<string>())).ReturnsAsync(contractDetails);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _rentingRequestService.CancelRentingRequest(rentingRequestId));
+
+            //Assert
             Assert.Equal(MessageConstant.RentingRequest.RentingRequestCanNotCancel, exception.Message);
         }
 
@@ -315,7 +347,7 @@ namespace Test.Service
                 TotalAmount = 6150.0,
                 IsOnetimePayment = true,
                 Note = "Sample renting request note",
-                Status = "Active",
+                Status = "Signed",
                 ServiceRentingRequests = new List<ServiceRentingRequestDto>
                 {
                     new ServiceRentingRequestDto
@@ -396,6 +428,133 @@ namespace Test.Service
                     }
                 },
                 ServiceRentingRequests = new List<int> { 201, 202 }
+            };
+        }
+
+        public ContractDetailDto GetSampleContractDetail()
+        {
+            return new ContractDetailDto
+            {
+                IsOnetimePayment = true,
+                AccountOrder = new AccountOrderDto
+                {
+                    AccountId = 15,
+                    Name = "khoa",
+                    Email = "khoa1@yopmail.com",
+                    Phone = "0912345867"
+                },
+                Content = "",
+                AccountBusiness = new AccountBusinessDto
+                {
+                    AccountId = 15,
+                    Company = "FPT",
+                    Address = "Thu Duc",
+                    Position = "CEO",
+                    TaxNumber = "1324"
+                },
+                ContractPayments = new List<ContractPaymentDto>
+                {
+                    new ContractPaymentDto
+                    {
+                        ContractPaymentId = 755,
+                        ContractId = "CON20241110NO0007",
+                        InvoiceId = "INV20241110NO0011",
+                        Title = "Thanh toán tiền đặt cọc cho hợp đồng CON20241110NO0007",
+                        Amount = 1500000,
+                        Status = "Pending",
+                        Type = "Deposit",
+                        CustomerPaidDate = null,
+                        DateFrom = DateTime.Parse("2024-11-21T00:00:00"),
+                        DateTo = DateTime.Parse("2025-02-21T00:00:00"),
+                        Period = 93,
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.33443"),
+                        DueDate = DateTime.Parse("2024-11-21T00:00:00"),
+                        IsFirstRentalPayment = false,
+                        FirstRentalPayment = null
+                    },
+                    new ContractPaymentDto
+                    {
+                        ContractPaymentId = 756,
+                        ContractId = "CON20241110NO0007",
+                        InvoiceId = null,
+                        Title = "Hoàn trả tiền đặt cọc cho hợp đồng CON20241110NO0007",
+                        Amount = 1500000,
+                        Status = "Canceled",
+                        Type = "Pending",
+                        CustomerPaidDate = null,
+                        DateFrom = DateTime.Parse("2025-02-21T00:00:00"),
+                        DateTo = DateTime.Parse("2025-02-21T00:00:00"),
+                        Period = 93,
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.3354166"),
+                        DueDate = DateTime.Parse("2025-02-21T00:00:00"),
+                        IsFirstRentalPayment = false,
+                        FirstRentalPayment = null
+                    },
+                    new ContractPaymentDto
+                    {
+                        ContractPaymentId = 757,
+                        ContractId = "CON20241110NO0007",
+                        InvoiceId = "INV20241110NO0012",
+                        Title = "Thanh toán tiền thuê cho hợp đồng CON20241110NO0007",
+                        Amount = 46500000,
+                        Status = "Pending",
+                        Type = "Rental",
+                        CustomerPaidDate = null,
+                        DateFrom = DateTime.Parse("2024-11-21T00:00:00"),
+                        DateTo = DateTime.Parse("2025-02-21T00:00:00"),
+                        Period = 93,
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.3355082"),
+                        DueDate = DateTime.Parse("2024-11-21T00:00:00"),
+                        IsFirstRentalPayment = true,
+                        FirstRentalPayment = new FirstRentalPaymentDto
+                        {
+                            TotalServicePrice = 400000,
+                            ShippingPrice = 200000,
+                            DiscountPrice = 100000
+                        }
+                    }
+                },
+                ContractTerms = new List<ContractTermDto>
+                {
+                    new ContractTermDto
+                    {
+                        ContractId = "CON20241110NO0007",
+                        Title = "Điều khoản bảo hành",
+                        Content = "Bảo hành 12 tháng kể từ ngày giao máy.",
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.2764151")
+                    },
+                    new ContractTermDto
+                    {
+                        ContractId = "CON20241110NO0007",
+                        Title = "Điều khoản thanh toán",
+                        Content = "Thanh toán trước 30% khi ký hợp đồng, phần còn lại thanh toán sau khi bàn giao.",
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.2764151")
+                    },
+                    new ContractTermDto
+                    {
+                        ContractId = "CON20241110NO0007",
+                        Title = "Mục đích sử dụng",
+                        Content = "<p>Máy móc cơ khí chỉ được sử dụng cho các công việc chuyên môn theo yêu cầu và chỉ được vận hành bởi những người có đầy đủ trình độ chuyên môn và chứng chỉ liên quan.</p>",
+                        DateCreate = DateTime.Parse("2024-11-10T21:23:50.2764151")
+                    }
+                },
+                ContractId = "CON20241110NO0007",
+                ContractName = "Hợp đồng thuê máy SN001",
+                RentingRequestId = "REH20241110NO0006",
+                DateCreate = DateTime.Parse("2024-11-10T21:23:50.2764151"),
+                DateSign = null,
+                DateStart = DateTime.Parse("2024-11-21T00:00:00"),
+                DateEnd = DateTime.Parse("2025-02-21T00:00:00"),
+                Status = "Canceled",
+                DepositPrice = 1500000,
+                RentPeriod = 93,
+                TotalRentPrice = 46500000,
+                MachineId = 1,
+                MachineName = "Máy xúc thủy lực",
+                SerialNumber = "SN001",
+                RentPrice = 500000,
+                Thumbnail = "https://res.cloudinary.com/dfdwupiah/image/upload/v1729328591/MMRMS/lavbqsidqtuvpfnwb57k.jpg",
+                AccountSignId = 15
             };
         }
     }
