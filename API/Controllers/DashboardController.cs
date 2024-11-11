@@ -35,6 +35,25 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("manager")]
+        [Authorize(Policy = "Manager")]
+        public async Task<ActionResult> GetDataTotalManagerDashboard([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            try
+            {
+                var data = await _dashboardService.GetDataTotalManagerDashboard(startDate, endDate);
+                return Ok(data);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("/monthly")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<List<DataUserAdminDto>>> GetMonthlyCustomerData([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)

@@ -127,5 +127,23 @@ namespace DAO
                 .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
                 .CountAsync();
         }
+
+        public async Task<int> GetRentingRequestsInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using var context = new MmrmsContext();
+            IQueryable<RentingRequest> query = context.RentingRequests;
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate <= endDate.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

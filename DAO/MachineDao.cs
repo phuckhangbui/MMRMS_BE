@@ -394,5 +394,23 @@ namespace DAO
                     .FirstOrDefaultAsync(p => p.MachineId == productId);
             }
         }
+
+        public async Task<int> GetMachinesInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using var context = new MmrmsContext();
+            IQueryable<Machine> query = context.Machines;
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate <= endDate.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

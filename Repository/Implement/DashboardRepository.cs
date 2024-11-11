@@ -37,6 +37,22 @@ namespace Repository.Implement
             };
         }
 
+        public async Task<DataTotalManagerDto> GetDataTotalManagerDashboard(DateTime? startDate, DateTime? endDate)
+        {
+            var totalMachines = await MachineDao.Instance.GetMachinesInRangeAsync(startDate, endDate);
+            var totalRentingRequests = await RentingRequestDao.Instance.GetRentingRequestsInRangeAsync(startDate, endDate);
+            var totalContracts = await ContractDao.Instance.GetContractsInRangeAsync(startDate, endDate);
+            var totalMoney = await InvoiceDao.Instance.GetTotalMoneyInRangeAsync(startDate, endDate);
+
+            return new DataTotalManagerDto
+            {
+                TotalMachine = totalMachines,
+                TotalRentingRequest = totalRentingRequests,
+                TotalContract = totalContracts,
+                TotalMoney = totalMoney
+            };
+        }
+
         public async Task<List<DataUserAdminDto>> GetMonthlyCustomerDataAsync(DateTime? startDate, DateTime? endDate)
         {
             using (var context = new MmrmsContext())
