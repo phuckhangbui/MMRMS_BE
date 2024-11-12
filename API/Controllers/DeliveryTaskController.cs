@@ -140,7 +140,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{contractDeliveryId}/manager-change-to-processed-after-failure")]
+        [HttpPatch("{contractDeliveryId}/manager-change-contract-delivery-to-processed-after-failure")]
         [Authorize(Policy = "Manager")]
         public async Task<ActionResult> UpdateContractDeliveryStatusToProcessedAfterFailure([FromRoute] int contractDeliveryId)
         {
