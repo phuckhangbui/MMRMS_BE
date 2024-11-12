@@ -10,6 +10,7 @@ namespace Service.Interface
         Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId);
         Task StaffCompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, int accountId);
         Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId);
+        Task UpdateContractDeliveryStatusToProcessedAfterFailure(int contractDeliveryId, int accountId);
         Task UpdateDeliveryStatusToDelivering(int deliveryTaskId, int accountId);
         Task UpdateDeliveryStatusToProcessedAfterFailure(int deliveryTaskId, int accountId);
         //Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId);
