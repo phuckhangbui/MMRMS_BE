@@ -1,5 +1,4 @@
 ﻿using BusinessObject;
-using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -35,59 +34,6 @@ namespace DAO
                     .Include(cp => cp.Contract)
                     .ToListAsync();
             }
-        }
-
-        public async Task<string?> UpdateContractPayments(string invoiceId)
-        {
-            using var context = new MmrmsContext();
-
-            var invoice = await context.Invoices
-                .Include(i => i.ContractPayments)
-                    .ThenInclude(cp => cp.Contract)
-                    .ThenInclude(c => c.RentingRequest)
-                .FirstOrDefaultAsync(i => i.InvoiceId.Equals(invoiceId));
-
-            if (invoice == null) return null;
-
-            string rentingRequestId = null;
-            foreach (var contractPayment in invoice.ContractPayments)
-            {
-                contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
-                contractPayment.CustomerPaidDate = invoice.DatePaid;
-                rentingRequestId = contractPayment.Contract.RentingRequestId;
-
-                if (contractPayment.Contract == null || contractPayment.Contract.RentingRequest == null)
-                    continue;
-
-                await context.SaveChangesAsync();
-            }
-
-            return rentingRequestId;
-        }
-
-        public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
-        {
-            using var context = new MmrmsContext();
-            var requiredPayments = await context.ContractPayments
-                .Where(cp => cp.Contract.RentingRequestId == rentingRequestId &&
-                     cp.Status == ContractPaymentStatusEnum.Paid.ToString() &&
-                     (cp.Type == ContractPaymentTypeEnum.Deposit.ToString() ||
-                      (cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true)))
-                .GroupBy(cp => cp.ContractId)
-                .ToListAsync();
-
-            foreach (var contractGroup in requiredPayments)
-            {
-                var hasDepositPaid = contractGroup.Any(cp => cp.Type == ContractPaymentTypeEnum.Deposit.ToString());
-                var hasFirstRentalPaid = contractGroup.Any(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true);
-
-                if (!hasDepositPaid || !hasFirstRentalPaid)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }

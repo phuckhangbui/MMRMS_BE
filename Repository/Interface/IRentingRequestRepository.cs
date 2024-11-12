@@ -12,5 +12,6 @@ namespace Repository.Interface
         Task<bool> CancelRentingRequest(string rentingRequestId);
         Task UpdateRentingRequestStatus(string rentingRequestId, string status);
         Task UpdateRentingRequest(RentingRequestDto rentingRequestDto);
+        Task<CustomerRentingRequestDto?> GetCustomerRentingRequest(string rentingRequestId, int customerId);
     }
 }

@@ -67,8 +67,8 @@ namespace DAO
                     .OrderBy(i => i.DateCreate)
                     .ToListAsync();
 
-            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()));
-            var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()));
+            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
+            var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
 
             return (depositInvoice, rentalInvoice);
         }

@@ -367,6 +367,7 @@ namespace Repository.Mapper
             CreateMap<UpdateTermDto, Term>();
 
             CreateMap<ContractPayment, ContractPaymentDto>();
+            CreateMap<ContractPaymentDto, ContractPayment>();
 
             CreateMap<Role, RoleDto>();
         }

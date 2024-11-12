@@ -20,6 +20,7 @@ namespace Service.Implement
         private readonly IComponentReplacementTicketRepository _componentReplacementTicketRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
+        private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
@@ -29,6 +30,7 @@ namespace Service.Implement
             IComponentReplacementTicketRepository componentReplacementTicketRepository,
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
+            IRentingRequestRepository rentingRequestRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
             IMembershipRankService membershipRankService)
@@ -38,6 +40,7 @@ namespace Service.Implement
             _componentReplacementTicketRepository = componentReplacementTicketRepository;
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
+            _rentingRequestRepository = rentingRequestRepository;
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
@@ -155,8 +158,10 @@ namespace Service.Implement
 
                             break;
 
-                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || type.Equals(InvoiceTypeEnum.Rental.ToString()):
-                            await HandleContractPayment(invoice);
+                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || 
+                                            type.Equals(InvoiceTypeEnum.Rental.ToString()) ||
+                                            type.Equals(InvoiceTypeEnum.Refund.ToString()):
+                            await ProcessContractInvoice(invoice);
                             break;
                     }
 
@@ -170,19 +175,42 @@ namespace Service.Implement
                 }
             }
         }
-        private async Task HandleContractPayment(InvoiceDto invoice)
+
+        private async Task ProcessContractInvoice(InvoiceDto invoice)
         {
-            var rentingRequestId = await _contractRepository.UpdateContractPayments(invoice.InvoiceId);
+            var invoiceDetail = await _invoiceRepository.GetInvoiceDetail(invoice.InvoiceId);
 
-            var isDepositAndFirstRentalPaid = await _contractRepository.IsDepositAndFirstRentalPaid(rentingRequestId);
-
-            if (isDepositAndFirstRentalPaid)
+            if (invoiceDetail != null && invoiceDetail is ContractInvoiceDto contractInvoice)
             {
-                await _contractRepository.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, (DateTime)invoice.DatePaid);
-
-                if (invoice.Type.Equals(InvoiceTypeEnum.Rental.ToString()))
+                if (!contractInvoice.ContractPayments.IsNullOrEmpty())
                 {
-                    await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
+                    foreach (var contractPayment in contractInvoice.ContractPayments)
+                    {
+                        contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+                        contractPayment.CustomerPaidDate = invoice.DatePaid;
+
+                        await _contractRepository.UpdateContractPayment(contractPayment);
+                    }
+                }
+
+                var rentingRequestId = contractInvoice.RentingRequestId;
+                var rentingRequest = await _rentingRequestRepository.GetCustomerRentingRequest(rentingRequestId, (int)contractInvoice.AccountPaidId);
+                if (rentingRequest != null && 
+                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) && 
+                    rentingRequest.PendingInvoices.IsNullOrEmpty())
+                {
+                    //Both invoice paid
+                    foreach (var contractPayment in contractInvoice.ContractPayments)
+                    {
+                        await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Signed.ToString());
+                    }
+
+                    await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequestId, RentingRequestStatusEnum.Signed.ToString());
+
+                    if (rentingRequest.IsOnetimePayment == false)
+                    {
+                        await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
+                    }
                 }
             }
         }

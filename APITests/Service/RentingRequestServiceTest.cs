@@ -154,9 +154,13 @@ namespace Test.Service
         }
 
         [Fact]
-        public async Task CreateRentingRequest_ThrowsException_RentPeriodInValid()
+        public async Task CreateRentingRequest_RentPeriodShorterThan90Days_ThrowsException_RentPeriodInValid()
         {
             //Arrange
+            var fixedDate = new DateTime(2024, 11, 10);
+            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
+            dateTimeProviderMock.Setup(x => x.Now).Returns(fixedDate);
+
             var customerId = 1;
             var newRentingRequestDto = GetSampleNewRentingRequest();
             var rentingRequestDto = GetSampleRentingRequestDto();
@@ -167,6 +171,68 @@ namespace Test.Service
                 SerialNumber = "SN002",
                 DateStart = new DateTime(2024, 11, 20),
                 DateEnd = new DateTime(2024, 12, 01)
+            };
+            newRentingRequestDto.RentingRequestSerialNumbers.Add(rentintRequestSerialNumberDto);
+
+            _addressRepositoryMock.Setup(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(true);
+            _machineSerialNumberRepositoryMock.Setup(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>())).ReturnsAsync(true);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _rentingRequestService.CreateRentingRequest(customerId, newRentingRequestDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.RentingRequest.RentPeriodInValid, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreateRentingRequest_DateStartGreaterThanCurrentDate30Days_ThrowsException_RentPeriodInValid()
+        {
+            //Arrange
+            var fixedDate = new DateTime(2024, 11, 10);
+            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
+            dateTimeProviderMock.Setup(x => x.Now).Returns(fixedDate);
+
+            var customerId = 1;
+            var newRentingRequestDto = GetSampleNewRentingRequest();
+            var rentingRequestDto = GetSampleRentingRequestDto();
+
+            var rentintRequestSerialNumberDto = new RentingRequestSerialNumberDto
+            {
+                MachineId = 1,
+                SerialNumber = "SN002",
+                DateStart = new DateTime(2025, 01, 01),
+                DateEnd = new DateTime(2025, 05, 01)
+            };
+            newRentingRequestDto.RentingRequestSerialNumbers.Add(rentintRequestSerialNumberDto);
+
+            _addressRepositoryMock.Setup(x => x.IsAddressValid(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(true);
+            _machineSerialNumberRepositoryMock.Setup(x => x.CheckMachineSerialNumberValidToRent(It.IsAny<List<RentingRequestSerialNumberDto>>())).ReturnsAsync(true);
+
+            //Act
+            var exception = await Assert.ThrowsAsync<ServiceException>(() => _rentingRequestService.CreateRentingRequest(customerId, newRentingRequestDto));
+
+            //Assert
+            Assert.Equal(MessageConstant.RentingRequest.RentPeriodInValid, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreateRentingRequest_RentPeriodGreaterThan365Days_ThrowsException_RentPeriodInValid()
+        {
+            //Arrange
+            var fixedDate = new DateTime(2024, 11, 10);
+            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
+            dateTimeProviderMock.Setup(x => x.Now).Returns(fixedDate);
+
+            var customerId = 1;
+            var newRentingRequestDto = GetSampleNewRentingRequest();
+            var rentingRequestDto = GetSampleRentingRequestDto();
+
+            var rentintRequestSerialNumberDto = new RentingRequestSerialNumberDto
+            {
+                MachineId = 1,
+                SerialNumber = "SN002",
+                DateStart = new DateTime(2024, 11, 21),
+                DateEnd = new DateTime(2025, 12, 01)
             };
             newRentingRequestDto.RentingRequestSerialNumbers.Add(rentintRequestSerialNumberDto);
 

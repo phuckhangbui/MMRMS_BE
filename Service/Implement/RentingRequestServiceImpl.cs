@@ -201,6 +201,11 @@ namespace Service.Implement
                 return false;
             }
 
+            if ((dateEnd - dateStart).Days > GlobalConstant.MaximumRentPeriodInDay)
+            {
+                return false;
+            }
+
             return true;
         }
     }

@@ -195,6 +195,13 @@ namespace Repository.Implement
             return customerRentingRequests;
         }
 
+        public async Task<CustomerRentingRequestDto?> GetCustomerRentingRequest(string rentingRequestId, int customerId)
+        {
+            var customerRentingRequests = await GetRentingRequestsForCustomer(customerId);
+            var customerRentingRequest = customerRentingRequests.FirstOrDefault(r => r.RentingRequestId.Equals(rentingRequestId));
+            return customerRentingRequest;
+        }
+
         //TODO
         public async Task<RentingRequestDto> CreateRentingRequest(int customerId, NewRentingRequestDto newRentingRequestDto)
         {
