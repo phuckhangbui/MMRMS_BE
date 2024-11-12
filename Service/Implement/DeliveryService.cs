@@ -370,6 +370,24 @@ namespace Service.Implement
             await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.ProcessedAfterFailure.ToString(), accountId);
         }
 
+        public async Task UpdateContractDeliveryStatusToProcessedAfterFailure(int contractDeliveryId, int accountId)
+        {
+            var contractDelivery = await _contractRepository.GetContractDelivery(contractDeliveryId);
+
+            if (contractDelivery == null)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.ContractDeliveryNotFound);
+            }
+
+
+            if (contractDelivery.Status != ContractDeliveryStatusEnum.Fail.ToString())
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
+            }
+
+            await _contractRepository.UpdateContractDeliveryStatus(contractDeliveryId, ContractDeliveryStatusEnum.ProcessedAfterFailure.ToString());
+        }
+
         //public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
         //{
         //    DeliveryTaskDto DeliveryTaskDto = await _deliveryTaskRepository.GetDeliveryTask(DeliveryTaskId);
