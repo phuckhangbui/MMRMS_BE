@@ -63,6 +63,7 @@ namespace Repository.Implement
 
             if (!membershipRanks.IsNullOrEmpty())
             {
+                membershipRanks = membershipRanks.OrderBy(x => x.MoneySpent);
                 return _mapper.Map<IEnumerable<MembershipRankDto>>(membershipRanks);
             }
 

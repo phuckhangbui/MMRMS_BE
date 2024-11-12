@@ -190,6 +190,11 @@ namespace Service.Implement
                         contractPayment.CustomerPaidDate = invoice.DatePaid;
 
                         await _contractRepository.UpdateContractPayment(contractPayment);
+
+                        if(invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
+                        {
+                            await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Completed.ToString());
+                        }
                     }
                 }
 
