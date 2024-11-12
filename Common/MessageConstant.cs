@@ -302,6 +302,7 @@
             public const string YouCannotChangeThisDelivery = "Bạn không có quyền thay đổi trạng thái của yêu cầu giao nhận này";
             public const string InvalidContractDeliveryList = "Danh sách các hợp đồng của lần giao hàng này không hợp lệ";
             public const string AllContractDeliveryFailPleaseCallAllFailAPI = "Tất cả các hợp đồng giao đều thất bại, xin hãy gọi API khác";
+            public const string ContractDeliveryNotFound = "Mã hợp đồng giao hàng này không tìm thấy";
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
