@@ -355,10 +355,10 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.DeliveryTask.DeliveryTaskNotFound);
             }
 
-            if (accountId != deliveryDetail.DeliveryTask.ManagerId)
-            {
-                throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
-            }
+            //if (accountId != deliveryDetail.DeliveryTask.ManagerId)
+            //{
+            //    throw new ServiceException(MessageConstant.DeliveryTask.YouCannotChangeThisDelivery);
+            //}
 
             if (deliveryDetail.DeliveryTask.Status != DeliveryTaskStatusEnum.Fail.ToString())
             {
