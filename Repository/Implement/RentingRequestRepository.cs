@@ -280,7 +280,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateRentingRequestId()
         {
-            int currentTotalRentingRequests = await RentingRequestDao.Instance.GetTotalRentingRequestByDate(DateTime.UtcNow);
+            int currentTotalRentingRequests = await RentingRequestDao.Instance.GetTotalRentingRequestByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTotalRentingRequests + 1).ToString("D4");
             return $"{GlobalConstant.RentingRequestIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";

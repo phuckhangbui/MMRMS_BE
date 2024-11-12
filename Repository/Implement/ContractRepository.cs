@@ -458,7 +458,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateContractId()
         {
-            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.UtcNow);
+            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTotalContracts + 1).ToString("D4");
             return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
