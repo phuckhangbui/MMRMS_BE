@@ -1,4 +1,5 @@
 ﻿using DTOs.Contract;
+using DTOs.ContractPayment;
 using DTOs.Delivery;
 using DTOs.RentingRequest;
 
@@ -14,9 +15,6 @@ namespace Repository.Interface
         Task<ContractAddressDto> GetContractAddressById(string contractId);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
         Task UpdateContractStatus(string contractId, string status);
-        Task<string?> UpdateContractPayments(string invoiceId);
-        Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId);
-        Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate);
         Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd);
         Task<IEnumerable<ContractDto>> GetContractListOfRequest(string rentingRequestId);
         Task SetInvoiceForContractPayment(string contractId, string invoiceId, string type);
@@ -24,6 +22,6 @@ namespace Repository.Interface
         Task UpdateContractDeliveryStatus(int contractDeliveryId, string status);
         Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId);
         Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
-
+        Task<ContractPaymentDto> UpdateContractPayment(ContractPaymentDto contractPaymentDto);
     }
 }

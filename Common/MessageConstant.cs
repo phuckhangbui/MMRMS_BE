@@ -436,5 +436,10 @@
             //Service
             public const string PaymentReferenceError = "Đã có lỗi xảy ra trong quá trình thực hiện thanh toán. Hiện tại trạng thái của mã này đang là: ";
         }
+
+        public static class DashBoard
+        {
+            public const string FilterParamNotValid = "Tham số lọc không hợp lệ";
+        }
     }
 }

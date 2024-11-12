@@ -170,23 +170,12 @@ namespace Repository.Implement
             var contract = await ContractDao.Instance.GetContractDetailById(contractId);
 
             contract.Status = status;
+            if (status.Equals(ContractStatusEnum.Signed.ToString()))
+            {
+                contract.DateSign = DateTime.Now;
+            }
 
             await ContractDao.Instance.UpdateAsync(contract);
-        }
-
-        public async Task<string?> UpdateContractPayments(string invoiceId)
-        {
-            return await ContractPaymentDao.Instance.UpdateContractPayments(invoiceId);
-        }
-
-        public async Task<bool> IsDepositAndFirstRentalPaid(string rentingRequestId)
-        {
-            return await ContractPaymentDao.Instance.IsDepositAndFirstRentalPaid(rentingRequestId);
-        }
-
-        public async Task UpdateStatusContractsToSignedInRentingRequest(string rentingRequestId, DateTime paymentDate)
-        {
-            await ContractDao.Instance.UpdateStatusContractsToSignedInRentingRequest(rentingRequestId, paymentDate);
         }
 
         public async Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
@@ -550,6 +539,15 @@ namespace Repository.Implement
             contractDelivery.Status = status;
 
             await ContractDeliveryDao.Instance.UpdateAsync(contractDelivery);
+        }
+
+        public async Task<ContractPaymentDto> UpdateContractPayment(ContractPaymentDto contractPaymentDto)
+        {
+            var contractPayment = _mapper.Map<ContractPayment>(contractPaymentDto);
+
+            contractPayment = await ContractPaymentDao.Instance.UpdateAsync(contractPayment);
+
+            return _mapper.Map<ContractPaymentDto>(contractPayment);
         }
     }
 }

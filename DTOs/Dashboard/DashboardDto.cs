@@ -16,4 +16,12 @@
         public string Time { get; set; }
         public int Customer { get; set; }
     }
+
+    public class DataTotalManagerDto
+    {
+        public int TotalMachine { get; set; }
+        public int TotalRentingRequest { get; set; }
+        public int TotalContract { get; set; }
+        public double TotalMoney { get; set; }
+    }
 }

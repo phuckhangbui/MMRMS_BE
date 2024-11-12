@@ -67,10 +67,28 @@ namespace DAO
                     .OrderBy(i => i.DateCreate)
                     .ToListAsync();
 
-            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()));
-            var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()));
+            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
+            var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
 
             return (depositInvoice, rentalInvoice);
+        }
+
+        public async Task<double> GetTotalMoneyInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using var context = new MmrmsContext();
+            IQueryable<Invoice> query = context.Invoices.Where(i => i.Status.Equals(InvoiceStatusEnum.Paid.ToString()));
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(i => i.DatePaid > startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(i => i.DatePaid < endDate.Value);
+            }
+
+            return (double)await query.SumAsync(i => i.Amount);
         }
     }
 }
