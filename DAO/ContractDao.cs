@@ -1,8 +1,5 @@
 ﻿using BusinessObject;
-using Common;
-using Common.Enum;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DAO
 {
@@ -145,6 +142,13 @@ namespace DAO
             }
 
             return await query.CountAsync();
+        }
+
+        public async Task<Contract?> GetExtendContract(string baseContractId)
+        {
+            using var context = new MmrmsContext();
+            return await context.Contracts
+                .FirstOrDefaultAsync(c => c.BaseContractId.Equals(baseContractId));
         }
     }
 }

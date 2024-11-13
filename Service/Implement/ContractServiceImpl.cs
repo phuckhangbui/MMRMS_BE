@@ -14,15 +14,18 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IBackground _background;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceRepository invoiceRepository,
+            IBackground background)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
+            _background = background;
         }
 
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
@@ -131,23 +134,29 @@ namespace Service.Implement
 
         public async Task<bool> ExtendContract(string contractId, ContractExtendDto contractExtendDto)
         {
-            var contract = await _contractRepository.GetContractById(contractId);
-            if (contract == null)
+            var baseContract = await _contractRepository.GetContractById(contractId);
+            if (baseContract == null)
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotFound);
             }
 
-            if (!contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+            if (!baseContract.Status.Equals(ContractStatusEnum.Renting.ToString()))
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToExtend);
             }
 
-            if (contractExtendDto.DateStart < contract.DateEnd)
+            var extendContract = await _contractRepository.GetExtendContract(contractId);
+            if (extendContract != null)
             {
-                throw new ServiceException(MessageConstant.Contract.ExtensionStartDateNotValid);
+                throw new ServiceException(MessageConstant.Contract.ContractAlreadyExtended);
             }
 
-            if (contractExtendDto.DateEnd < contractExtendDto.DateStart.AddDays(30))
+            //if (contractExtendDto.DateStart < baseContract.DateEnd)
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.ExtensionStartDateNotValid);
+            //}
+
+            if (contractExtendDto.DateEnd < baseContract.DateStart.Value.AddDays(30))
             {
                 throw new ServiceException(MessageConstant.Contract.ExtensionPeriodNotValid);
             }
@@ -155,15 +164,16 @@ namespace Service.Implement
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                //Create contract
                 var contractDto = await _contractRepository.ExtendContract(contractId, contractExtendDto);
 
-                //Create rental invoice
                 if (contractDto != null)
                 {
                     var invoice = await _invoiceRepository.CreateInvoice((double)contractDto.TotalRentPrice, InvoiceTypeEnum.Rental.ToString(), (int)contractDto.AccountSignId);
 
                     await _contractRepository.SetInvoiceForContractPayment(contractDto.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Extend.ToString());
+
+                    TimeSpan timeUntilEnd = (TimeSpan)(contractDto.DateEnd - DateTime.Now);
+                    _background.ProcessExtendContractJob(contractDto.ContractId, timeUntilEnd);
                 }
 
                 scope.Complete();

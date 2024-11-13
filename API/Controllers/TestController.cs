@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
-using Serilog;
 using Service.Exceptions;
 using Service.Interface;
 
@@ -15,13 +14,15 @@ namespace API.Controllers
         private readonly INotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
         private readonly IMembershipRankService _membershipRankService;
+        private readonly ILogger<TestController> _logger;
 
-        public TestController(ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService)
+        public TestController(ILogger<TestController> logger, ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService)
         {
             _cloudinaryService = cloudinaryService;
             _firebaseMessagingService = firebaseMessagingService;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
+            _logger = logger;
         }
 
         [HttpPost("update-customer-rank")]
@@ -45,7 +46,7 @@ namespace API.Controllers
         [HttpGet("datetime")]
         public async Task<ActionResult> GetDatetime()
         {
-            Log.Information("Datetime endpoint hit at {Time}", DateTime.Now);
+            _logger.LogInformation("Datetime endpoint hit at {Time}", DateTime.Now);
 
             return Ok(DateTime.Now);
         }
