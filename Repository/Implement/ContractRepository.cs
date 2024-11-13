@@ -232,6 +232,12 @@ namespace Repository.Implement
                 {
                     contractPayment.InvoiceId = invoiceId;
 
+                    if (type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
+                    {
+                        contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+                        contractPayment.CustomerPaidDate = DateTime.Now;
+                    }
+
                     await ContractPaymentDao.Instance.UpdateAsync(contractPayment);
                 }
             }
