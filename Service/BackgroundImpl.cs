@@ -3,7 +3,8 @@ using Hangfire;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
-using Service.Interface;
+using Service.Exceptions;
+using System.Transactions;
 
 namespace Service
 {
@@ -13,19 +14,19 @@ namespace Service
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
-        private readonly IContractService _contractService;
+        private readonly IInvoiceRepository _invoiceRepository;
 
         public BackgroundImpl(ILogger<BackgroundImpl> logger,
-            IContractService contractService,
             IRentingRequestRepository rentingRequestRepository,
             IContractRepository contractRepository,
-            IMachineSerialNumberRepository machineSerialNumberRepository)
+            IMachineSerialNumberRepository machineSerialNumberRepository,
+            IInvoiceRepository invoiceRepository)
         {
             _logger = logger;
-            _contractService = contractService;
             _rentingRequestRepository = rentingRequestRepository;
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
+            _invoiceRepository = invoiceRepository;
         }
 
         public void CancelRentingRequestJob(string rentingRequestId)
@@ -64,13 +65,105 @@ namespace Service
             }
         }
 
+        public void ProcessExtendContractJob(string contractId, TimeSpan delayToStart)
+        {
+            try
+            {
+                _logger.LogInformation($"Starting ProcessExtendContractJob");
+
+                BackgroundJob.Schedule(() => ProcessExtendContracAsync(contractId), delayToStart);
+                _logger.LogInformation($"Contract: {contractId} scheduled for status change: {ContractStatusEnum.Completed.ToString()} at {delayToStart}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while ProcessExtendContractJob");
+            }
+        }
+
+        public async Task ProcessExtendContracAsync(string contractId)
+        {
+            await ProcessExtendContract(contractId);
+        }
+
+        public async Task ProcessExtendContract(string contractId)
+        {
+            var extendContract = await _contractRepository.GetContractDetailById(contractId);
+            if (extendContract != null && extendContract.BaseContractId != null)
+            {
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                try
+                {
+                    var baseContract = await _contractRepository.GetContractById(extendContract.BaseContractId);
+
+                    if (extendContract.Status.Equals(ContractStatusEnum.NotSigned.ToString()))
+                    {
+                        //Base contract
+                        await CompleteContractOnTime(extendContract.BaseContractId);
+
+                        //Extend contract
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Canceled.ToString());
+                        foreach (var contractPayment in extendContract.ContractPayments)
+                        {
+                            contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+                            await _contractRepository.UpdateContractPayment(contractPayment);
+
+                            var invoice = await _invoiceRepository.GetInvoice(contractPayment.InvoiceId);
+                            if (invoice != null)
+                            {
+                                await _invoiceRepository.UpdateInvoiceStatus(invoice.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
+                            }
+                        }
+                    }
+
+                    if (extendContract.Status.Equals(ContractStatusEnum.Signed.ToString()))
+                    {
+                        if (baseContract != null)
+                        {
+                            await _contractRepository.UpdateContractStatus(baseContract.ContractId, ContractStatusEnum.Completed.ToString());
+                        }
+
+                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                    }
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(ex.Message);
+                }
+            }
+        }
+
         public async Task CompleteContractOnTimeAsync(string contractId)
         {
             await CompleteContractOnTime(contractId);
         }
         public async Task CompleteContractOnTime(string contractId)
         {
-            await _contractService.EndContract(contractId);
+            var contract = await _contractRepository.GetContractById(contractId);
+            if (contract != null && contract.Status.Equals(ContractStatusEnum.Renting.ToString()))
+            {
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                try
+                {
+                    var currentDate = DateTime.Now.Date;
+                    var actualRentPeriod = (currentDate - contract.DateStart.Value.Date).Days;
+                    if (actualRentPeriod < 0)
+                    {
+                        actualRentPeriod = 0;
+                    }
+
+                    var updatedContract = await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
+
+                    await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
+
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(ex.Message);
+                }
+            }
         }
 
         public async Task CancelRentingRequestAsync(string rentingRequestId)

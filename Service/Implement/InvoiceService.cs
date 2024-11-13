@@ -158,7 +158,7 @@ namespace Service.Implement
 
                             break;
 
-                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || 
+                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
                                             type.Equals(InvoiceTypeEnum.Rental.ToString()) ||
                                             type.Equals(InvoiceTypeEnum.Refund.ToString()):
                             await ProcessContractInvoice(invoice);
@@ -191,7 +191,7 @@ namespace Service.Implement
 
                         await _contractRepository.UpdateContractPayment(contractPayment);
 
-                        if(invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
+                        if (invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
                         {
                             await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Completed.ToString());
                         }
@@ -200,8 +200,8 @@ namespace Service.Implement
 
                 var rentingRequestId = contractInvoice.RentingRequestId;
                 var rentingRequest = await _rentingRequestRepository.GetCustomerRentingRequest(rentingRequestId, (int)contractInvoice.AccountPaidId);
-                if (rentingRequest != null && 
-                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) && 
+                if (rentingRequest != null &&
+                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) &&
                     rentingRequest.PendingInvoices.IsNullOrEmpty())
                 {
                     //Both invoice paid
