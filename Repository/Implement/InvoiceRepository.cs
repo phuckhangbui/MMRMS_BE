@@ -124,6 +124,12 @@ namespace Repository.Implement
                 AccountPaidId = accountPaidId,
             };
 
+            if (type.Equals(InvoiceTypeEnum.Refund.ToString()))
+            {
+                invoice.Status = InvoiceStatusEnum.Paid.ToString();
+                invoice.DatePaid = DateTime.Now;
+            }
+
             invoice = await InvoiceDao.Instance.CreateAsync(invoice);
 
             return _mapper.Map<InvoiceDto>(invoice);
