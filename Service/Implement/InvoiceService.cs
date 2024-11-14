@@ -151,7 +151,7 @@ namespace Service.Implement
                             var ticket = await _componentReplacementTicketRepository.GetTicket(invoice.ComponentReplacementTicketId);
 
                             //send notification to staff
-                            await _notificationService.SendNotificationToStaffWhenCustomerPayTicket(ticket);
+                            await _notificationService.SendNotificationToStaffWhenCustomerPayTicket(ticket, ticket.ComponentReplacementTicketId);
 
                             //realtime for ticket
                             await _componentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponentReplacementTicketStatus", invoice.ComponentReplacementTicketId);

@@ -85,7 +85,10 @@ namespace Service.Implement
                     if (machineTask != null)
                     {
                         await _machineTaskRepository.UpdateTaskStatus((int)request.MachineTaskId, MachineTaskEnum.Canceled.ToString(), customerId, null);
-                        await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)machineTask.StaffId, machineTask.MachineTaskId, MachineTaskEnum.Canceled.ToVietnamese());
+                        await _notificationService.SendNotificationToStaffWhenTaskStatusUpdated((int)machineTask.StaffId,
+                                                                                                machineTask.MachineTaskId,
+                                                                                                MachineTaskEnum.Canceled.ToVietnamese(),
+                                                                                                machineTask?.MachineTaskId.ToString() ?? null);
                         await _machineTaskHub.Clients.All.SendAsync("OnUpdateMachineTask", (int)request.MachineTaskId);
                     }
 
@@ -128,9 +131,9 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineCheckRequest.PendingRequestStillExist);
             }
 
-            await _machineCheckRequestRepository.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
+            var request = await _machineCheckRequestRepository.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
 
-            await _notificationService.SendToManagerWhenCustomerCreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
+            await _notificationService.SendToManagerWhenCustomerCreateMachineCheckRequest(customerId, createMachineCheckRequestDto, request?.MachineCheckRequestId ?? null);
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnCreateMachineCheckRequest");
         }
@@ -211,7 +214,7 @@ namespace Service.Implement
             await _machineCheckRequestRepository.UpdateRequest(request);
 
             //send notification here
-            await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request);
+            await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request, request.MachineCheckRequestId);
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequest", machineCheckRequestId);
         }

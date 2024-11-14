@@ -20,5 +20,9 @@ public partial class Notification
 
     public DateTime? DateRead { get; set; }
 
+    public string? DetailId { get; set; }
+
+    public string? DetailIdName { get; set; }
+
     public virtual Account? AccountReceive { get; set; }
 }

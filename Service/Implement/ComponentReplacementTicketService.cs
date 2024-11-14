@@ -115,7 +115,7 @@ namespace Service.Implement
                     await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, customerId);
 
                     //notify staff
-                    await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket);
+                    await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket, ticket.ComponentReplacementTicketId);
 
                     scope.Complete();
                 }
@@ -470,7 +470,11 @@ namespace Service.Implement
                         createComponentReplacementTicketDto.MachineSerialNumberComponentId,
                        componentLogMessage,
                         staffId);
-
+                    if (contract != null)
+                    {
+                        await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket(
+                            (int)contract.AccountSignId, (double)replacementTicket.TotalAmount, replacementTicket.ComponentName, newComponentTicket.ComponentReplacementTicketId);
+                    }
                     scope.Complete();
                 }
                 catch
@@ -479,11 +483,7 @@ namespace Service.Implement
                 }
             }
 
-            if (contract != null)
-            {
-                await _notificationService.SendNotificationToCustomerWhenCreateComponentReplacementTicket(
-                    (int)contract.AccountSignId, (double)replacementTicket.TotalAmount, replacementTicket.ComponentName);
-            }
+
             await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnCreateComponentReplacementTicket");
         }
 

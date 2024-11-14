@@ -47,7 +47,7 @@ namespace Service.Implement
 
         }
 
-        public async Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status)
+        public async Task SendNotificationToManagerWhenTaskStatusUpdated(int managerId, string taskTitle, string status, string detailId)
         {
             string title = "Cập nhật trạng thái công việc";
             string body = $"Trạng thái công việc của {taskTitle} đã được đổi thành [{status}]";
@@ -55,6 +55,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.Task.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
+            string detailIdName = NotificationDto.GetDetailIdName(type);
 
             var account = await _accountRepository.GetAccounById(managerId);
 
@@ -67,6 +68,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -75,6 +78,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", managerId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -91,7 +96,7 @@ namespace Service.Implement
 
 
 
-        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, int taskId, string status)
+        public async Task SendNotificationToStaffWhenTaskStatusUpdated(int staffId, int taskId, string status, string detailId)
         {
             string title = "Cập nhật trạng thái công việc";
             string body = $"Trạng thái công việc số {taskId} đã được đổi thành [{status}]";
@@ -99,7 +104,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.Task.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
             try
@@ -111,6 +116,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -119,6 +126,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -133,7 +142,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart)
+        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachine(int staffId, ContractAddressDto contractAddress, DateTime dateStart, string detailId)
         {
             string title = "Bạn có thêm một nhiệm vụ kiểm tra máy mới";
             string body = $"Kiểm tra máy tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateStart.Date.ToString(GlobalConstant.DateOnlyFormat)}";
@@ -141,7 +150,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.Task.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
             try
@@ -153,6 +162,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -161,6 +172,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -175,7 +188,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status)
+        public async Task SendNotificationToStaffWhenDeliveryTaskStatusUpdated(int staffId, ContractAddressDto contractAddress, string status, string detailId)
         {
             string title = "Cập nhật trạng thái giao hàng";
             string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
@@ -183,7 +196,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
             try
@@ -195,6 +208,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -203,6 +218,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -217,7 +234,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToManagerWhenDeliveryTaskStatusUpdated(int managerId, ContractAddressDto contractAddress, string status)
+        public async Task SendNotificationToManagerWhenDeliveryTaskStatusUpdated(int managerId, ContractAddressDto contractAddress, string status, string detailId)
         {
             string title = "Cập nhật trạng thái giao hàng";
             string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
@@ -225,7 +242,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(managerId);
 
             try
@@ -237,6 +254,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -245,6 +264,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", managerId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -259,7 +280,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip)
+        public async Task SendNotificationToStaffWhenAssignDeliveryTask(int staffId, ContractAddressDto contractAddress, DateTime dateShip, string detailId)
         {
             string title = "Bạn có thêm một nhiệm vụ giao hàng mới";
             string body = $"Giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} vào ngày {dateShip.Date.ToString(GlobalConstant.DateOnlyFormat)}";
@@ -267,7 +288,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
             try
@@ -279,6 +300,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -287,6 +310,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -301,16 +326,16 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
+        public async Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto, string detailId)
         {
             string title = "Yêu cầu kiểm tra máy";
             string body = $"Có một yêu cầu kiểm tra máy của hợp đồng {createMachineCheckRequestDto.ContractId}";
 
             var managerList = await _accountRepository.GetManagerAccounts();
 
-            string type = NotificationTypeEnum.RequestMaintenance.ToString();
+            string type = NotificationTypeEnum.MachineCheckRequest.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             if (managerList.IsNullOrEmpty())
             {
                 return;
@@ -326,6 +351,8 @@ namespace Service.Implement
                         MessageNotification = body,
                         NotificationType = type,
                         LinkForward = linkForward,
+                        DetailIdName = detailIdName,
+                        DetailId = detailId,
                     };
 
                     var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -334,6 +361,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", account.AccountId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -352,16 +381,16 @@ namespace Service.Implement
 
         }
 
-        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(int staffId, MachineTaskDto task, DateTime parsedDate)
+        public async Task SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(int staffId, MachineTaskDto task, DateTime parsedDate, string detailId)
         {
             string title = "Yêu cầu kiểm tra máy";
             string body = $"Có một yêu cầu kiểm tra máy {task.SerialNumber} hiện đang ở trong kho";
 
             var managerList = await _accountRepository.GetManagerAccounts();
 
-            string type = NotificationTypeEnum.RequestMaintenance.ToString();
+            string type = NotificationTypeEnum.MachineCheckRequest.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             if (managerList.IsNullOrEmpty())
             {
                 return;
@@ -377,6 +406,8 @@ namespace Service.Implement
                         MessageNotification = body,
                         NotificationType = type,
                         LinkForward = linkForward,
+                        DetailIdName = detailIdName,
+                        DetailId = detailId,
                     };
 
                     var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -385,6 +416,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", account.AccountId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -401,7 +434,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string componentName)
+        public async Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string componentName, string detailId)
         {
             string title = "Bạn có ticket thay sửa bộ phận cần được thanh toán";
             string body = $"Bộ phận {componentName} cần được thay/sửa với tổng giá tiền là {totalAmount}";
@@ -409,7 +442,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(customerId);
 
             try
@@ -421,6 +454,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -429,6 +464,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", customerId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -443,7 +480,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket)
+        public async Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket, string detailId)
         {
             string title = "Một ticket thay thế bộ phận máy của bạn đã được khách thanh toán";
             string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được thanh toán";
@@ -451,7 +488,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
 
             try
@@ -463,6 +500,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -471,6 +510,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -485,7 +526,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket)
+        public async Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket, string detailId)
         {
             string title = "Một ticket thay thế bộ phận máy của bạn đã bị khách từ chối thanh toán";
             string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được khách hủy";
@@ -493,7 +534,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
 
             try
@@ -505,6 +546,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -513,6 +556,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
@@ -527,7 +572,7 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request)
+        public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request, string detailId)
         {
             string title = $"Yêu cầu kiểm tra máy của bạn đã được thay đổi trạng thái";
             string body = $"Yêu cầu số {request.MachineCheckRequestId} của máy {request.SerialNumber} đã được đổi thành [{EnumExtensions.TranslateStatus<MachineCheckRequestStatusEnum>(request.Status.ToString())}]";
@@ -535,7 +580,7 @@ namespace Service.Implement
 
             string type = NotificationTypeEnum.MachineCheckRequest.ToString();
             string linkForward = NotificationDto.GetForwardPath(type);
-
+            string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(accountSignId);
 
             try
@@ -547,6 +592,8 @@ namespace Service.Implement
                     MessageNotification = body,
                     NotificationType = type,
                     LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
                 };
 
                 var notificationDto = await _notificationRepository.CreateNotification(noti);
@@ -555,6 +602,8 @@ namespace Service.Implement
                         { "type", type.ToString() },
                         { "accountId", accountSignId.ToString() },
                         { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
                     };
 
