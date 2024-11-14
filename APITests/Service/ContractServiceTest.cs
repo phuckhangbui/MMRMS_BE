@@ -6,6 +6,7 @@ using DTOs.Invoice;
 using Moq;
 using Repository.Interface;
 using Repository.Mapper;
+using Service;
 using Service.Exceptions;
 using Service.Implement;
 using Service.Interface;
@@ -19,6 +20,7 @@ namespace Test.Service
         private readonly Mock<IContractRepository> _contractRepositoryMock;
         private readonly Mock<IMachineSerialNumberRepository> _machineSerialNumberRepositoryMock;
         private readonly Mock<IInvoiceRepository> _invoiceRepositoryMock;
+        private readonly Mock<IBackground> _backgroundMock;
         private readonly IContractService _contractService;
         private readonly IMapper _mapper;
 
@@ -27,11 +29,13 @@ namespace Test.Service
             _machineSerialNumberRepositoryMock = new Mock<IMachineSerialNumberRepository>();
             _contractRepositoryMock = new Mock<IContractRepository>();
             _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
+            _backgroundMock = new Mock<IBackground>();
 
             _contractService = new ContractServiceImpl(
                 _contractRepositoryMock.Object,
                 _machineSerialNumberRepositoryMock.Object,
-                _invoiceRepositoryMock.Object);
+                _invoiceRepositoryMock.Object,
+                _backgroundMock.Object);
 
             _mapper = new Mapper(new MapperConfiguration(options =>
             {
@@ -117,7 +121,6 @@ namespace Test.Service
             var contractId = "CON20241104NO0005";
             var contractExtendDto = new ContractExtendDto
             {
-                DateStart = DateTime.Parse("2025-02-10T00:00:00"),
                 DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
             };
             var currentContractDto = GetSampleContractDtoStatusRenting();
@@ -166,7 +169,6 @@ namespace Test.Service
             var contractId = "CON20241104NO0005";
             var contractExtendDto = new ContractExtendDto
             {
-                DateStart = DateTime.Parse("2025-02-10T00:00:00"),
                 DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
             };
             _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync((ContractDto)null);
@@ -185,7 +187,6 @@ namespace Test.Service
             var contractId = "CON20241104NO0005";
             var contractExtendDto = new ContractExtendDto
             {
-                DateStart = DateTime.Parse("2025-02-10T00:00:00"),
                 DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
             };
             var currentContractDto = GetSampleContractDtoStatusRenting();
@@ -207,7 +208,6 @@ namespace Test.Service
             var contractId = "CON20241104NO0005";
             var contractExtendDto = new ContractExtendDto
             {
-                DateStart = DateTime.Parse("2025-01-01T00:00:00"),
                 DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
             };
             var currentContractDto = GetSampleContractDtoStatusRenting();
@@ -227,7 +227,6 @@ namespace Test.Service
             var contractId = "CON20241104NO0005";
             var contractExtendDto = new ContractExtendDto
             {
-                DateStart = DateTime.Parse("2025-01-10T00:00:00"),
                 DateEnd = DateTime.Parse("2025-01-20T00:00:00"),
             };
             var currentContractDto = GetSampleContractDtoStatusRenting();

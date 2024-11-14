@@ -23,5 +23,6 @@ namespace Repository.Interface
         Task<IEnumerable<ContractDeliveryDto>> GetContractDeliveryBaseOnContractId(string contractId);
         Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
         Task<ContractPaymentDto> UpdateContractPayment(ContractPaymentDto contractPaymentDto);
+        Task<ContractDto?> GetExtendContract(string baseContractId);
     }
 }

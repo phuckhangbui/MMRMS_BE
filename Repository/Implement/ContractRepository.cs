@@ -232,6 +232,12 @@ namespace Repository.Implement
                 {
                     contractPayment.InvoiceId = invoiceId;
 
+                    if (type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
+                    {
+                        contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+                        contractPayment.CustomerPaidDate = DateTime.Now;
+                    }
+
                     await ContractPaymentDao.Instance.UpdateAsync(contractPayment);
                 }
             }
@@ -411,7 +417,7 @@ namespace Repository.Implement
             var baseContract = await ContractDao.Instance.GetContractById(contractId);
 
             var dateCreate = DateTime.Now;
-            int numberOfDays = (contractExtendDto.DateEnd - contractExtendDto.DateStart).Days + 1;
+            int numberOfDays = (contractExtendDto.DateEnd - baseContract.DateEnd.Value).Days + 1;
 
             var contract = new Contract
             {
@@ -422,7 +428,7 @@ namespace Repository.Implement
                 Status = ContractStatusEnum.NotSigned.ToString(),
 
                 ContractName = GlobalConstant.ContractName + baseContract.SerialNumber,
-                DateStart = contractExtendDto.DateStart,
+                DateStart = baseContract.DateEnd,
                 DateEnd = contractExtendDto.DateEnd,
                 Content = string.Empty,
                 AccountSignId = baseContract.AccountSignId,
@@ -446,7 +452,7 @@ namespace Repository.Implement
                 DateTo = contract.DateEnd,
                 Period = contract.RentPeriod,
                 DueDate = contract.DateStart,
-                IsFirstRentalPayment = true,
+                IsFirstRentalPayment = false,
             };
 
             contract.ContractPayments.Add(extendContractPayment);
@@ -458,7 +464,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateContractId()
         {
-            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.UtcNow);
+            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTotalContracts + 1).ToString("D4");
             return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
@@ -548,6 +554,17 @@ namespace Repository.Implement
             contractPayment = await ContractPaymentDao.Instance.UpdateAsync(contractPayment);
 
             return _mapper.Map<ContractPaymentDto>(contractPayment);
+        }
+
+        public async Task<ContractDto?> GetExtendContract(string baseContractId)
+        {
+            var extendContract = await ContractDao.Instance.GetExtendContract(baseContractId);
+            if (extendContract == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<ContractDto>(extendContract);
         }
     }
 }

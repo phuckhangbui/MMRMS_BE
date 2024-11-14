@@ -100,22 +100,6 @@ namespace DAO
             }
         }
 
-        public async Task<bool> IsMachineSerialNumberValidToRent(string serialNumber, DateTime startDate, DateTime endDate)
-        {
-            using var context = new MmrmsContext();
-
-            return await context.MachineSerialNumbers
-                .Where(s => s.SerialNumber == serialNumber
-                            && s.Status == MachineSerialNumberStatusEnum.Available.ToString()
-                            && !context.Contracts.Any(c => c.ContractMachineSerialNumber == s
-                                && (c.Status == ContractStatusEnum.NotSigned.ToString() ||
-                                    c.Status == ContractStatusEnum.Shipping.ToString() ||
-                                    c.Status == ContractStatusEnum.Signed.ToString() ||
-                                    c.Status == ContractStatusEnum.Renting.ToString())
-                                && (c.DateStart < endDate && c.DateEnd > startDate)))
-                .AnyAsync();
-        }
-
         public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate)
         {
             using var context = new MmrmsContext();

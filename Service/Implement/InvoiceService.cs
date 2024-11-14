@@ -159,8 +159,7 @@ namespace Service.Implement
                             break;
 
                         case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
-                                            type.Equals(InvoiceTypeEnum.Rental.ToString()) ||
-                                            type.Equals(InvoiceTypeEnum.Refund.ToString()):
+                                            type.Equals(InvoiceTypeEnum.Rental.ToString()):
                             await ProcessContractInvoice(invoice);
                             break;
                     }
@@ -234,7 +233,7 @@ namespace Service.Implement
         {
             var contract = await _contractRepository.GetContractById(refundInvoiceRequestDto.ContractId);
 
-            if (contract == null && !contract.Status.Equals(ContractStatusEnum.AwaitingRefundInvoice.ToString()))
+            if (contract == null || !contract.Status.Equals(ContractStatusEnum.AwaitingRefundInvoice.ToString()))
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToCreateRefundInvoice);
             }
@@ -242,10 +241,11 @@ namespace Service.Implement
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                var invoice = await _invoiceRepository.CreateInvoice(contract.DepositPrice ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
+                var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
 
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
 
+                await _contractRepository.UpdateContractStatus(contract.ContractId, ContractStatusEnum.Completed.ToString());
                 //MachineSerialNumber
                 var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
                 var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto

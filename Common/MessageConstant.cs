@@ -212,6 +212,7 @@
             public const string ExtensionStartDateNotValid = "Ngày bắt đầu gia hạn phải sau ngày kết thúc của hợp đồng hiện tại.";
             public const string ContractNotValidToExtend = "Hợp đồng không thể gia hạn do không hợp lệ";
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
+            public const string ContractAlreadyExtended = "Hợp đồng này đã được gia hạn, không thể gia hạn được nữa";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
