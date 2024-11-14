@@ -112,10 +112,10 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotFound);
             }
 
-            if (DateTime.Today < contract.DateStart || DateTime.Today > contract.DateEnd)
-            {
-                throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
-            }
+            //if (DateTime.Today < contract.DateStart || DateTime.Today > contract.DateEnd)
+            //{
+            //    throw new ServiceException(MessageConstant.Contract.ContractOutOfRange);
+            //}
 
             if (contract.Status != ContractStatusEnum.Renting.ToString())
             {
