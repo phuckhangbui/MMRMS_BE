@@ -27,7 +27,7 @@ namespace DTOs.Component
 
         [Required(ErrorMessage = MessageConstant.Component.QuantityRequired)]
         [Range(0, Double.MaxValue, ErrorMessage = MessageConstant.Component.QuantityPositiveNumber)]
-        public int Quantity { get; set; }
+        public int AvailableQuantity { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Component.PriceRequired)]
         [Range(1, Double.MaxValue, ErrorMessage = MessageConstant.Component.PricePositiveNumber)]
