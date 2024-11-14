@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -31,10 +32,11 @@ namespace DAO.Migrations
                     ComponentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ComponentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    AvailableQuantity = table.Column<int>(type: "int", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QuantityOnHold = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -125,6 +127,7 @@ namespace DAO.Migrations
                     MachineName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RentPrice = table.Column<double>(type: "float", nullable: true),
                     ShipPricePerKm = table.Column<double>(type: "float", nullable: true),
+                    Weight = table.Column<double>(type: "float", nullable: true),
                     MachinePrice = table.Column<double>(type: "float", nullable: true),
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Origin = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -216,9 +219,7 @@ namespace DAO.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MachineId = table.Column<int>(type: "int", nullable: true),
                     ComponentId = table.Column<int>(type: "int", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsRequiredMoney = table.Column<bool>(type: "bit", nullable: true)
+                    Quantity = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -367,12 +368,44 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeliveryTask",
+                columns: table => new
+                {
+                    DeliveryTaskId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StaffId = table.Column<int>(type: "int", nullable: true),
+                    ManagerId = table.Column<int>(type: "int", nullable: true),
+                    DateShip = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmationPictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReceiverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryTask", x => x.DeliveryTaskId);
+                    table.ForeignKey(
+                        name: "FK_DeliveryTask_ManagerID",
+                        column: x => x.ManagerId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_DeliveryTask_StaffID",
+                        column: x => x.StaffId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Invoices",
                 columns: table => new
                 {
                     InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AccountPaidId = table.Column<int>(type: "int", nullable: true),
-                    MaintainTicketId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ComponentReplacementTicketId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DigitalTransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: true),
@@ -452,7 +485,9 @@ namespace DAO.Migrations
                     LinkForward = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateRead = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateRead = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DetailId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DetailIdName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -471,13 +506,11 @@ namespace DAO.Migrations
                     RentingRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AccountOrderId = table.Column<int>(type: "int", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TotalRentPrice = table.Column<double>(type: "float", nullable: true),
                     TotalDepositPrice = table.Column<double>(type: "float", nullable: true),
                     TotalServicePrice = table.Column<double>(type: "float", nullable: true),
                     ShippingPrice = table.Column<double>(type: "float", nullable: true),
                     DiscountPrice = table.Column<double>(type: "float", nullable: true),
-                    NumberOfMonth = table.Column<int>(type: "int", nullable: true),
                     TotalAmount = table.Column<double>(type: "float", nullable: true),
                     IsOnetimePayment = table.Column<bool>(type: "bit", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -494,27 +527,28 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MachineComponentStatus",
+                name: "MachineSerialNumberComponent",
                 columns: table => new
                 {
-                    MachineComponentStatusId = table.Column<int>(type: "int", nullable: false)
+                    MachineSerialNumberComponentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ComponentId = table.Column<int>(type: "int", nullable: true),
+                    MachineComponentId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MachineComponentStatus", x => x.MachineComponentStatusId);
+                    table.PrimaryKey("PK_MachineSerialNumberComponent", x => x.MachineSerialNumberComponentId);
                     table.ForeignKey(
-                        name: "FK_MachineComponentStatus_ComponentID",
-                        column: x => x.ComponentId,
+                        name: "FK_MachineSerialNumberComponent_ComponentID",
+                        column: x => x.MachineComponentId,
                         principalTable: "MachineComponent",
                         principalColumn: "MachineComponentId");
                     table.ForeignKey(
-                        name: "FK_MachineComponentStatus_MachineSerialNumber",
+                        name: "FK_MachineSerialNumberComponent_MachineSerialNumber",
                         column: x => x.SerialNumber,
                         principalTable: "MachineSerialNumber",
                         principalColumn: "SerialNumber",
@@ -522,31 +556,30 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MachineSerialNumberLog",
+                name: "DeliveryTaskLog",
                 columns: table => new
                 {
-                    MachineSerialNumberLogId = table.Column<int>(type: "int", nullable: false)
+                    DeliveryTaskLogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DeliveryTaskId = table.Column<int>(type: "int", nullable: true),
                     AccountTriggerId = table.Column<int>(type: "int", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MachineSerialNumberLog", x => x.MachineSerialNumberLogId);
+                    table.PrimaryKey("PK_DeliveryTaskLog", x => x.DeliveryTaskLogId);
                     table.ForeignKey(
-                        name: "FK_MachineSerialNumberLog_AccountID",
+                        name: "FK_DeliveryTaskLog_AccountID",
                         column: x => x.AccountTriggerId,
                         principalTable: "Account",
-                        principalColumn: "AccountId");
-                    table.ForeignKey(
-                        name: "FK_MachineSerialNumber_Log",
-                        column: x => x.SerialNumber,
-                        principalTable: "MachineSerialNumber",
-                        principalColumn: "SerialNumber",
+                        principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeliveryTaskLog_DeliveryTaskID",
+                        column: x => x.DeliveryTaskId,
+                        principalTable: "DeliveryTask",
+                        principalColumn: "DeliveryTaskId");
                 });
 
             migrationBuilder.CreateTable(
@@ -584,7 +617,7 @@ namespace DAO.Migrations
                     RentingRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RentPrice = table.Column<double>(type: "float", nullable: true),
                     DepositPrice = table.Column<double>(type: "float", nullable: true),
-                    NumberOfMonth = table.Column<int>(type: "int", nullable: true),
+                    RentPeriod = table.Column<int>(type: "int", nullable: true),
                     TotalRentPrice = table.Column<double>(type: "float", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -592,7 +625,8 @@ namespace DAO.Migrations
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BaseContractId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -602,6 +636,11 @@ namespace DAO.Migrations
                         column: x => x.AccountSignId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_Contract_BaseContract",
+                        column: x => x.BaseContractId,
+                        principalTable: "Contract",
+                        principalColumn: "ContractId");
                     table.ForeignKey(
                         name: "FK_Contract_MachineSerialNumber",
                         column: x => x.SerialNumber,
@@ -638,31 +677,6 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RentingRequestMachineDetail",
-                columns: table => new
-                {
-                    RentingRequestMachineDetailId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RentingRequestId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    MachineId = table.Column<int>(type: "int", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RentingRequestMachineDetail", x => x.RentingRequestMachineDetailId);
-                    table.ForeignKey(
-                        name: "FK_RentingRequestMachineDetail_Machine",
-                        column: x => x.MachineId,
-                        principalTable: "Machine",
-                        principalColumn: "MachineId");
-                    table.ForeignKey(
-                        name: "FK_RentingRequestMachineDetail_RentingRequest",
-                        column: x => x.RentingRequestId,
-                        principalTable: "RentingRequest",
-                        principalColumn: "RentingRequestId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ServiceRentingRequest",
                 columns: table => new
                 {
@@ -688,6 +702,67 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MachineSerialNumberLog",
+                columns: table => new
+                {
+                    MachineSerialNumberLogId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MachineSerialNumberComponentId = table.Column<int>(type: "int", nullable: true),
+                    AccountTriggerId = table.Column<int>(type: "int", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MachineSerialNumberLog", x => x.MachineSerialNumberLogId);
+                    table.ForeignKey(
+                        name: "FK_MachineSerialNumberComponent_Log",
+                        column: x => x.MachineSerialNumberComponentId,
+                        principalTable: "MachineSerialNumberComponent",
+                        principalColumn: "MachineSerialNumberComponentId");
+                    table.ForeignKey(
+                        name: "FK_MachineSerialNumberLog_AccountID",
+                        column: x => x.AccountTriggerId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_MachineSerialNumber_Log",
+                        column: x => x.SerialNumber,
+                        principalTable: "MachineSerialNumber",
+                        principalColumn: "SerialNumber",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContractDelivery",
+                columns: table => new
+                {
+                    ContractDeliveryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DeliveryTaskId = table.Column<int>(type: "int", nullable: true),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractDelivery", x => x.ContractDeliveryId);
+                    table.ForeignKey(
+                        name: "FK_Contract_ContractDelivery",
+                        column: x => x.ContractId,
+                        principalTable: "Contract",
+                        principalColumn: "ContractId");
+                    table.ForeignKey(
+                        name: "FK_DeliveryTask_ContractDelivery",
+                        column: x => x.DeliveryTaskId,
+                        principalTable: "DeliveryTask",
+                        principalColumn: "DeliveryTaskId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContractPayment",
                 columns: table => new
                 {
@@ -700,6 +775,9 @@ namespace DAO.Migrations
                     CustomerPaidDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateFrom = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateTo = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Period = table.Column<int>(type: "int", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsFirstRentalPayment = table.Column<bool>(type: "bit", nullable: true)
@@ -741,38 +819,6 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeliveryTask",
-                columns: table => new
-                {
-                    DeliveryTaskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StaffId = table.Column<int>(type: "int", nullable: true),
-                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DateShip = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConfirmationPictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReceiverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeliveryTask", x => x.DeliveryTaskId);
-                    table.ForeignKey(
-                        name: "FK_DeliveryTask_ContractID",
-                        column: x => x.ContractId,
-                        principalTable: "Contract",
-                        principalColumn: "ContractId");
-                    table.ForeignKey(
-                        name: "FK_DeliveryTask_StaffID",
-                        column: x => x.StaffId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Feedback",
                 columns: table => new
                 {
@@ -806,6 +852,7 @@ namespace DAO.Migrations
                 {
                     MachineCheckRequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MachineTaskId = table.Column<int>(type: "int", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -821,50 +868,18 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeliveryTaskLog",
-                columns: table => new
-                {
-                    DeliveryTaskLogId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeliveryTaskId = table.Column<int>(type: "int", nullable: true),
-                    AccountTriggerId = table.Column<int>(type: "int", nullable: true),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeliveryTaskLog", x => x.DeliveryTaskLogId);
-                    table.ForeignKey(
-                        name: "FK_DeliveryTaskLog_AccountID",
-                        column: x => x.AccountTriggerId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeliveryTaskLog_DeliveryTaskID",
-                        column: x => x.DeliveryTaskId,
-                        principalTable: "DeliveryTask",
-                        principalColumn: "DeliveryTaskId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MachineCheckRequestCriteria",
                 columns: table => new
                 {
                     MachineCheckRequestCriteriaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MachineCheckRequestId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    MachineCheckCriteriaId = table.Column<int>(type: "int", nullable: true),
+                    CriteriaName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CustomerNote = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MachineCheckRequestCriteria", x => x.MachineCheckRequestCriteriaId);
-                    table.ForeignKey(
-                        name: "FK_MachineCheckRequestCriteria_MachineCheckCriteria",
-                        column: x => x.MachineCheckCriteriaId,
-                        principalTable: "MachineCheckCriteria",
-                        principalColumn: "MachineCheckCriteriaId");
                     table.ForeignKey(
                         name: "FK_MachineCheckRequestCriteria_MachineCheckRequest",
                         column: x => x.MachineCheckRequestId,
@@ -873,25 +888,48 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RequestResponse",
+                name: "MachineTask",
                 columns: table => new
                 {
-                    RequestResponseId = table.Column<int>(type: "int", nullable: false)
+                    MachineTaskId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TaskTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     MachineCheckRequestId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    MachineTaskId = table.Column<int>(type: "int", nullable: true),
-                    DateResponse = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StaffId = table.Column<int>(type: "int", nullable: true),
+                    ManagerId = table.Column<int>(type: "int", nullable: true),
+                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmationPictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RequestResponse", x => x.RequestResponseId);
+                    table.PrimaryKey("PK_MachineTask", x => x.MachineTaskId);
                     table.ForeignKey(
-                        name: "FK_RequestResponse_MachineCheckRequest",
+                        name: "FK_Task_Contract",
+                        column: x => x.ContractId,
+                        principalTable: "Contract",
+                        principalColumn: "ContractId");
+                    table.ForeignKey(
+                        name: "FK_Task_MachineCheckRequest",
                         column: x => x.MachineCheckRequestId,
                         principalTable: "MachineCheckRequest",
                         principalColumn: "MachineCheckRequestId");
+                    table.ForeignKey(
+                        name: "FK_Task_Manager",
+                        column: x => x.ManagerId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_Task_Staff",
+                        column: x => x.StaffId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
                 });
 
             migrationBuilder.CreateTable(
@@ -904,14 +942,14 @@ namespace DAO.Migrations
                     ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ComponentId = table.Column<int>(type: "int", nullable: true),
                     InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    MachineSerialNumberComponentId = table.Column<int>(type: "int", nullable: true),
                     ComponentPrice = table.Column<double>(type: "float", nullable: true),
                     AdditionalFee = table.Column<double>(type: "float", nullable: true),
                     TotalAmount = table.Column<double>(type: "float", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateRepair = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -934,99 +972,20 @@ namespace DAO.Migrations
                         principalTable: "Contract",
                         principalColumn: "ContractId");
                     table.ForeignKey(
-                        name: "FK_ComponentReplacementTicket_MachineSerialNumber",
-                        column: x => x.SerialNumber,
-                        principalTable: "MachineSerialNumber",
-                        principalColumn: "SerialNumber");
+                        name: "FK_ComponentReplacementTicket_MachineSerialNumberComponent",
+                        column: x => x.MachineSerialNumberComponentId,
+                        principalTable: "MachineSerialNumberComponent",
+                        principalColumn: "MachineSerialNumberComponentId");
+                    table.ForeignKey(
+                        name: "FK_ComponentReplacementTicket_MachineTaskCreated",
+                        column: x => x.MachineTaskCreateId,
+                        principalTable: "MachineTask",
+                        principalColumn: "MachineTaskId");
                     table.ForeignKey(
                         name: "FK_Invoice_MaintainTicket",
                         column: x => x.InvoiceId,
                         principalTable: "Invoices",
                         principalColumn: "InvoiceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ComponentReplacementTicketLog",
-                columns: table => new
-                {
-                    ComponentReplacementTicketLogId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ComponentReplacementTicketId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AccountTriggerId = table.Column<int>(type: "int", nullable: true),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ComponentReplacementTicketLog", x => x.ComponentReplacementTicketLogId);
-                    table.ForeignKey(
-                        name: "FK_ComponentReplacementTicketLog_Account_AccountTriggerId",
-                        column: x => x.AccountTriggerId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                    table.ForeignKey(
-                        name: "FK_ComponentReplacementTicket_Log",
-                        column: x => x.ComponentReplacementTicketId,
-                        principalTable: "ComponentReplacementTicket",
-                        principalColumn: "ComponentReplacementTicketId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MachineTask",
-                columns: table => new
-                {
-                    MachineTaskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContractId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    RequestResponseId = table.Column<int>(type: "int", nullable: false),
-                    ComponentReplacementTicketId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    PreviousTaskId = table.Column<int>(type: "int", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StaffId = table.Column<int>(type: "int", nullable: true),
-                    ManagerId = table.Column<int>(type: "int", nullable: true),
-                    DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateCompleted = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConfirmationPictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MachineTask", x => x.MachineTaskId);
-                    table.ForeignKey(
-                        name: "FK_ComponentReplacementTicketId_Task",
-                        column: x => x.ComponentReplacementTicketId,
-                        principalTable: "ComponentReplacementTicket",
-                        principalColumn: "ComponentReplacementTicketId");
-                    table.ForeignKey(
-                        name: "FK_Task_Contract",
-                        column: x => x.ContractId,
-                        principalTable: "Contract",
-                        principalColumn: "ContractId");
-                    table.ForeignKey(
-                        name: "FK_Task_Manager",
-                        column: x => x.ManagerId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
-                    table.ForeignKey(
-                        name: "FK_Task_PreviousTask",
-                        column: x => x.PreviousTaskId,
-                        principalTable: "MachineTask",
-                        principalColumn: "MachineTaskId");
-                    table.ForeignKey(
-                        name: "FK_Task_Response",
-                        column: x => x.RequestResponseId,
-                        principalTable: "RequestResponse",
-                        principalColumn: "RequestResponseId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Task_Staff",
-                        column: x => x.StaffId,
-                        principalTable: "Account",
-                        principalColumn: "AccountId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1057,23 +1016,29 @@ namespace DAO.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Report",
+                name: "ComponentReplacementTicketLog",
                 columns: table => new
                 {
-                    ReportId = table.Column<int>(type: "int", nullable: false)
+                    ComponentReplacementTicketLogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MachineTaskId = table.Column<int>(type: "int", nullable: true),
-                    ReportContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ComponentReplacementTicketId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccountTriggerId = table.Column<int>(type: "int", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Report", x => x.ReportId);
+                    table.PrimaryKey("PK_ComponentReplacementTicketLog", x => x.ComponentReplacementTicketLogId);
                     table.ForeignKey(
-                        name: "FK_Report_TaskID",
-                        column: x => x.MachineTaskId,
-                        principalTable: "MachineTask",
-                        principalColumn: "MachineTaskId");
+                        name: "FK_ComponentReplacementTicketLog_Account_AccountTriggerId",
+                        column: x => x.AccountTriggerId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId");
+                    table.ForeignKey(
+                        name: "FK_ComponentReplacementTicket_Log",
+                        column: x => x.ComponentReplacementTicketId,
+                        principalTable: "ComponentReplacementTicket",
+                        principalColumn: "ComponentReplacementTicketId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -1121,14 +1086,14 @@ namespace DAO.Migrations
                 filter: "[InvoiceId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComponentReplacementTicket_MachineSerialNumberComponentId",
+                table: "ComponentReplacementTicket",
+                column: "MachineSerialNumberComponentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ComponentReplacementTicket_MachineTaskCreateId",
                 table: "ComponentReplacementTicket",
                 column: "MachineTaskCreateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ComponentReplacementTicket_SerialNumber",
-                table: "ComponentReplacementTicket",
-                column: "SerialNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComponentReplacementTicketLog_AccountTriggerId",
@@ -1151,6 +1116,13 @@ namespace DAO.Migrations
                 column: "AccountSignId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contract_BaseContractId",
+                table: "Contract",
+                column: "BaseContractId",
+                unique: true,
+                filter: "[BaseContractId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Contract_RentingRequestId",
                 table: "Contract",
                 column: "RentingRequestId");
@@ -1159,6 +1131,16 @@ namespace DAO.Migrations
                 name: "IX_Contract_SerialNumber",
                 table: "Contract",
                 column: "SerialNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractDelivery_ContractId",
+                table: "ContractDelivery",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContractDelivery_DeliveryTaskId",
+                table: "ContractDelivery",
+                column: "DeliveryTaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContractPayment_ContractId",
@@ -1176,9 +1158,9 @@ namespace DAO.Migrations
                 column: "ContractId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeliveryTask_ContractId",
+                name: "IX_DeliveryTask_ManagerId",
                 table: "DeliveryTask",
-                column: "ContractId");
+                column: "ManagerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeliveryTask_StaffId",
@@ -1238,11 +1220,6 @@ namespace DAO.Migrations
                 column: "ContractId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MachineCheckRequestCriteria_MachineCheckCriteriaId",
-                table: "MachineCheckRequestCriteria",
-                column: "MachineCheckCriteriaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MachineCheckRequestCriteria_MachineCheckRequestId",
                 table: "MachineCheckRequestCriteria",
                 column: "MachineCheckRequestId");
@@ -1258,16 +1235,6 @@ namespace DAO.Migrations
                 column: "MachineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MachineComponentStatus_ComponentId",
-                table: "MachineComponentStatus",
-                column: "ComponentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MachineComponentStatus_SerialNumber",
-                table: "MachineComponentStatus",
-                column: "SerialNumber");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MachineImage_MachineId",
                 table: "MachineImage",
                 column: "MachineId");
@@ -1278,9 +1245,24 @@ namespace DAO.Migrations
                 column: "MachineId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MachineSerialNumberComponent_MachineComponentId",
+                table: "MachineSerialNumberComponent",
+                column: "MachineComponentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MachineSerialNumberComponent_SerialNumber",
+                table: "MachineSerialNumberComponent",
+                column: "SerialNumber");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MachineSerialNumberLog_AccountTriggerId",
                 table: "MachineSerialNumberLog",
                 column: "AccountTriggerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MachineSerialNumberLog_MachineSerialNumberComponentId",
+                table: "MachineSerialNumberLog",
+                column: "MachineSerialNumberComponentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MachineSerialNumberLog_SerialNumber",
@@ -1288,32 +1270,21 @@ namespace DAO.Migrations
                 column: "SerialNumber");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MachineTask_ComponentReplacementTicketId",
-                table: "MachineTask",
-                column: "ComponentReplacementTicketId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MachineTask_ContractId",
                 table: "MachineTask",
                 column: "ContractId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MachineTask_MachineCheckRequestId",
+                table: "MachineTask",
+                column: "MachineCheckRequestId",
+                unique: true,
+                filter: "[MachineCheckRequestId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MachineTask_ManagerId",
                 table: "MachineTask",
                 column: "ManagerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MachineTask_PreviousTaskId",
-                table: "MachineTask",
-                column: "PreviousTaskId",
-                unique: true,
-                filter: "[PreviousTaskId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MachineTask_RequestResponseId",
-                table: "MachineTask",
-                column: "RequestResponseId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_MachineTask_StaffId",
@@ -1356,26 +1327,6 @@ namespace DAO.Migrations
                 column: "AccountOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RentingRequestMachineDetail_MachineId",
-                table: "RentingRequestMachineDetail",
-                column: "MachineId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RentingRequestMachineDetail_RentingRequestId",
-                table: "RentingRequestMachineDetail",
-                column: "RentingRequestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Report_MachineTaskId",
-                table: "Report",
-                column: "MachineTaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RequestResponse_MachineCheckRequestId",
-                table: "RequestResponse",
-                column: "MachineCheckRequestId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ServiceRentingRequest_RentingRequestId",
                 table: "ServiceRentingRequest",
                 column: "RentingRequestId");
@@ -1384,74 +1335,11 @@ namespace DAO.Migrations
                 name: "IX_ServiceRentingRequest_RentingServiceId",
                 table: "ServiceRentingRequest",
                 column: "RentingServiceId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ComponentReplacementTicket_MachineTaskCreated",
-                table: "ComponentReplacementTicket",
-                column: "MachineTaskCreateId",
-                principalTable: "MachineTask",
-                principalColumn: "MachineTaskId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Account_MembershipRank",
-                table: "Account");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Account_Role",
-                table: "Account");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ComponentReplacementTicket_Account_EmployeeCreateId",
-                table: "ComponentReplacementTicket");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Contract_Account",
-                table: "Contract");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Invoices_Account",
-                table: "Invoices");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Task_Manager",
-                table: "MachineTask");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Task_Staff",
-                table: "MachineTask");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_RentingRequest_Account",
-                table: "RentingRequest");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ComponentReplacementTicket_ComponentID",
-                table: "ComponentReplacementTicket");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ComponentReplacementTicket_ContractID",
-                table: "ComponentReplacementTicket");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_MachineCheckRequest_Contract",
-                table: "MachineCheckRequest");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Task_Contract",
-                table: "MachineTask");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ComponentReplacementTicket_MachineSerialNumber",
-                table: "ComponentReplacementTicket");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ComponentReplacementTicket_MachineTaskCreated",
-                table: "ComponentReplacementTicket");
-
             migrationBuilder.DropTable(
                 name: "AccountBusiness");
 
@@ -1463,6 +1351,9 @@ namespace DAO.Migrations
 
             migrationBuilder.DropTable(
                 name: "Content");
+
+            migrationBuilder.DropTable(
+                name: "ContractDelivery");
 
             migrationBuilder.DropTable(
                 name: "ContractPayment");
@@ -1486,10 +1377,10 @@ namespace DAO.Migrations
                 name: "MachineAttribute");
 
             migrationBuilder.DropTable(
-                name: "MachineCheckRequestCriteria");
+                name: "MachineCheckCriteria");
 
             migrationBuilder.DropTable(
-                name: "MachineComponentStatus");
+                name: "MachineCheckRequestCriteria");
 
             migrationBuilder.DropTable(
                 name: "MachineImage");
@@ -1513,37 +1404,34 @@ namespace DAO.Migrations
                 name: "RentingRequestAddress");
 
             migrationBuilder.DropTable(
-                name: "RentingRequestMachineDetail");
-
-            migrationBuilder.DropTable(
-                name: "Report");
-
-            migrationBuilder.DropTable(
                 name: "ServiceRentingRequest");
 
             migrationBuilder.DropTable(
                 name: "Term");
 
             migrationBuilder.DropTable(
+                name: "ComponentReplacementTicket");
+
+            migrationBuilder.DropTable(
                 name: "DeliveryTask");
-
-            migrationBuilder.DropTable(
-                name: "MachineCheckCriteria");
-
-            migrationBuilder.DropTable(
-                name: "MachineComponent");
 
             migrationBuilder.DropTable(
                 name: "RentingService");
 
             migrationBuilder.DropTable(
-                name: "MembershipRank");
+                name: "MachineSerialNumberComponent");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "MachineTask");
 
             migrationBuilder.DropTable(
-                name: "Account");
+                name: "Invoices");
+
+            migrationBuilder.DropTable(
+                name: "MachineComponent");
+
+            migrationBuilder.DropTable(
+                name: "MachineCheckRequest");
 
             migrationBuilder.DropTable(
                 name: "Component");
@@ -1552,31 +1440,25 @@ namespace DAO.Migrations
                 name: "Contract");
 
             migrationBuilder.DropTable(
-                name: "RentingRequest");
+                name: "MachineSerialNumber");
 
             migrationBuilder.DropTable(
-                name: "MachineSerialNumber");
+                name: "RentingRequest");
 
             migrationBuilder.DropTable(
                 name: "Machine");
 
             migrationBuilder.DropTable(
+                name: "Account");
+
+            migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
-                name: "MachineTask");
+                name: "MembershipRank");
 
             migrationBuilder.DropTable(
-                name: "ComponentReplacementTicket");
-
-            migrationBuilder.DropTable(
-                name: "RequestResponse");
-
-            migrationBuilder.DropTable(
-                name: "Invoices");
-
-            migrationBuilder.DropTable(
-                name: "MachineCheckRequest");
+                name: "Role");
         }
     }
 }
