@@ -18,7 +18,7 @@
 
         public string? Note { get; set; }
 
-        public int? ComponentInStoreQuantity { get; set; }
+        public int? AvailableQuantity { get; set; }
 
         public double? ComponentPrice { get; set; }
     }
