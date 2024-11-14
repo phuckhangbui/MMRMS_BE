@@ -4,7 +4,7 @@ namespace Repository.Interface
 {
     public interface IMachineCheckRequestRepository
     {
-        Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
+        Task<MachineCheckRequestDto> CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto);
         Task<IEnumerable<MachineCheckCriteriaDto>> GetMachineCheckCriteriaList();
         Task CreateMachineCheckCriteria(string name);
         Task<bool> UpdateMachineCheckCriteria(int id, string name);

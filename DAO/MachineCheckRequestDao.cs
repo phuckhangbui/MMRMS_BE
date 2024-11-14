@@ -64,7 +64,7 @@ namespace DAO
             }
         }
 
-        public async Task CreateMachineCheckRequest(MachineCheckRequest request, IEnumerable<MachineCheckRequestCriteria> machineCheckRequestCriterias)
+        public async Task<MachineCheckRequest> CreateMachineCheckRequest(MachineCheckRequest request, IEnumerable<MachineCheckRequestCriteria> machineCheckRequestCriterias)
         {
             using (var context = new MmrmsContext())
             {
@@ -82,6 +82,8 @@ namespace DAO
                         await context.SaveChangesAsync();
 
                         await transaction.CommitAsync();
+
+                        return request;
                     }
                     catch (Exception ex)
                     {

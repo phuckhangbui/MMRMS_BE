@@ -126,7 +126,9 @@ namespace Service.Implement
 
             var contractAddress = await _contractRepository.GetContractAddressById(createDeliveryTaskDto.ContractIdList.FirstOrDefault());
 
-            await _notificationService.SendNotificationToStaffWhenAssignDeliveryTask((int)deliveryDto.StaffId, contractAddress, (DateTime)deliveryDto.DateShip);
+            await _notificationService.SendNotificationToStaffWhenAssignDeliveryTask((int)deliveryDto.StaffId, contractAddress,
+                                                                                (DateTime)deliveryDto.DateShip,
+                                                                                deliveryDto?.DeliveryTaskId.ToString() ?? null);
 
             await _DeliveryTaskHub.Clients.All.SendAsync("OnCreateDeliveryTaskToStaff", deliveryDto.DeliveryTaskId);
         }
@@ -242,7 +244,8 @@ namespace Service.Implement
             await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated(
                 (int)deliveryDetail.DeliveryTask.ManagerId,
                 deliveryDetail.DeliveryTask.ContractAddress,
-                EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail)
+                EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail),
+                deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
             );
         }
 
@@ -281,7 +284,10 @@ namespace Service.Implement
                 }
             }
 
-            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed));
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId,
+                                                                                               deliveryDetail.DeliveryTask.ContractAddress,
+                                                                                               EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed),
+                                                                                               deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
 
         }
 
@@ -343,7 +349,10 @@ namespace Service.Implement
 
             await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.Delivering.ToString(), accountId);
 
-            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId, deliveryDetail.DeliveryTask.ContractAddress, EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering));
+            await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId,
+                                                                                                deliveryDetail.DeliveryTask.ContractAddress,
+                                                                                                EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering),
+                                                                                                deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
         }
 
         public async Task UpdateDeliveryStatusToProcessedAfterFailure(int deliveryTaskId, int accountId)

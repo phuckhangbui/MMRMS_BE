@@ -10,9 +10,8 @@
         Contract,
         Feedback,
         Task,
-        Billing,
+        Invoice,
         DeliveryTask,
-        RequestMaintenance,
         ComponentReplacementTicket,
         MachineCheckRequest
     }

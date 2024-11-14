@@ -151,14 +151,14 @@ namespace Service.Implement
                             var ticket = await _componentReplacementTicketRepository.GetTicket(invoice.ComponentReplacementTicketId);
 
                             //send notification to staff
-                            await _notificationService.SendNotificationToStaffWhenCustomerPayTicket(ticket);
+                            await _notificationService.SendNotificationToStaffWhenCustomerPayTicket(ticket, ticket.ComponentReplacementTicketId);
 
                             //realtime for ticket
                             await _componentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponentReplacementTicketStatus", invoice.ComponentReplacementTicketId);
 
                             break;
 
-                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) || 
+                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
                                             type.Equals(InvoiceTypeEnum.Rental.ToString()) ||
                                             type.Equals(InvoiceTypeEnum.Refund.ToString()):
                             await ProcessContractInvoice(invoice);
@@ -195,8 +195,8 @@ namespace Service.Implement
 
                 var rentingRequestId = contractInvoice.RentingRequestId;
                 var rentingRequest = await _rentingRequestRepository.GetCustomerRentingRequest(rentingRequestId, (int)contractInvoice.AccountPaidId);
-                if (rentingRequest != null && 
-                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) && 
+                if (rentingRequest != null &&
+                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) &&
                     rentingRequest.PendingInvoices.IsNullOrEmpty())
                 {
                     //Both invoice paid

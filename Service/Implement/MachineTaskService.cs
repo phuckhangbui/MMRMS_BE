@@ -99,7 +99,10 @@ namespace Service.Implement
 
                     await _machineCheckRequestService.UpdateRequestStatus(createMachineTaskDto.RequestId, MachineCheckRequestStatusEnum.Assigned.ToString(), task.MachineTaskId);
 
-                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, requestDto.ContractAddress, parsedDate);
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId,
+                                                                                                   requestDto.ContractAddress,
+                                                                                                   parsedDate,
+                                                                                                   task?.MachineTaskId.ToString() ?? null);
 
                     await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
 
@@ -147,7 +150,8 @@ namespace Service.Implement
 
                     var contractAddress = await _contractRepository.GetContractAddressById(createMachineTaskDto.ContractId);
 
-                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, contractAddress, parsedDate);
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachine(createMachineTaskDto.StaffId, contractAddress, parsedDate,
+                                                                                                   task?.MachineTaskId.ToString() ?? null);
 
                     await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
 
@@ -194,7 +198,8 @@ namespace Service.Implement
                     //update contract status
                     await _contractRepository.UpdateContractStatus(contractDeliveryDto.ContractId, ContractStatusEnum.InspectionInProgress.ToString());
 
-                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(createMachineTaskDto.StaffId, task, parsedDate);
+                    await _notificationService.SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(createMachineTaskDto.StaffId, task, parsedDate,
+                                                                                                            task?.MachineTaskId.ToString() ?? null);
 
                     await _machineTaskHub.Clients.All.SendAsync("OnCreateMachineTask");
 
@@ -427,7 +432,10 @@ namespace Service.Implement
                                                             ContractStatusEnum.AwaitingShippingAfterCheck.ToString());
                     }
 
-                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTaskDetail.ManagerId, machineTaskDetail.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskEnum.Completed));
+                    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTaskDetail.ManagerId,
+                                                                                                machineTaskDetail.TaskTitle,
+                                                                                                EnumExtensions.ToVietnamese(MachineTaskEnum.Completed),
+                                                                                                machineTaskDetail?.MachineTaskId.ToString() ?? null);
 
                     scope.Complete();
                 }

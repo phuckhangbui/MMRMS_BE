@@ -25,7 +25,7 @@ namespace Repository.Implement
             return $"{GlobalConstant.MachineCheckRequestIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
         }
 
-        public async Task CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
+        public async Task<MachineCheckRequestDto> CreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto)
         {
             var request = new MachineCheckRequest
             {
@@ -51,7 +51,9 @@ namespace Repository.Implement
             }
 
 
-            MachineCheckRequestDao.Instance.CreateMachineCheckRequest(request, machineCheckRequestCriterias);
+            request = await MachineCheckRequestDao.Instance.CreateMachineCheckRequest(request, machineCheckRequestCriterias);
+
+            return _mapper.Map<MachineCheckRequestDto>(request);
         }
 
         public async Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequests()
