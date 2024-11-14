@@ -158,7 +158,7 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.MachineComponent != null
                             ? src.MachineComponent.Component.Price
                             : null))
-                .ForMember(dest => dest.ComponentInStoreQuantity,
+                .ForMember(dest => dest.AvailableQuantity,
                         opt => opt.MapFrom(src => src.MachineComponent != null
                             ? src.MachineComponent.Component.AvailableQuantity
                             : null));
