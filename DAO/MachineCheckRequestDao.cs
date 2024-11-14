@@ -34,6 +34,7 @@ namespace DAO
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
+                    .OrderByDescending(c => c.DateCreate)
                     .ToListAsync();
             }
         }
