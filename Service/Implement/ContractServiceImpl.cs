@@ -110,6 +110,13 @@ namespace Service.Implement
 
                 await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
 
+                //Extend contract
+                var extendContract = await _contractRepository.GetExtendContract(contractId);
+                if (extendContract != null)
+                {
+                    await _contractRepository.EndContract(extendContract.ContractId, ContractStatusEnum.Canceled.ToString(), 0, currentDate);
+                }
+
                 scope.Complete();
 
                 return updatedContract.Status.Equals(ContractStatusEnum.InspectionPending.ToString());
