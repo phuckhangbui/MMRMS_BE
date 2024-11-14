@@ -111,7 +111,8 @@
             public const string MachinePricePositiveNumber = "Giá máy phải là số dương";
             public const string RentPricePositiveNumber = "Giá thuê phải là số dương";
             public const string ImageIsRequired = "Hình ảnh của sản phẩm là bắt buộc";
-
+            public const string ShipPriceRequired = "Giá tiền giao hàng là bắt buộc";
+            public const string WeightRequired = "Cân nặng là bắt buộc";
         }
 
         public static class MachineAttribute
