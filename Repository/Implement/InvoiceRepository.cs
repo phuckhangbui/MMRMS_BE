@@ -151,9 +151,9 @@ namespace Repository.Implement
 
         private async Task<string> GenerateInvoiceId()
         {
-            int currentTotalInvoices = await InvoiceDao.Instance.GetTotalInvoiceByDate(DateTime.Now);
+            int currentTotalInvoices = await InvoiceDao.Instance.GetLastestInvoiceByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
-            string sequencePart = (currentTotalInvoices + 1).ToString("D4");
+            string sequencePart = (currentTotalInvoices + 1).ToString("D3");
             return $"{GlobalConstant.InvoiceIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
         }
 

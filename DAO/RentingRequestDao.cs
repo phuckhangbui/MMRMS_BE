@@ -120,12 +120,32 @@ namespace DAO
             }
         }
 
-        public async Task<int> GetTotalRentingRequestByDate(DateTime date)
+        public async Task<int> GetLastestRentingRequestByDate(DateTime date)
         {
-            using var context = new MmrmsContext();
-            return await context.RentingRequests
-                .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
-                .CountAsync();
+            using (var context = new MmrmsContext())
+            {
+                var ids = await context.RentingRequests
+                    .Where(t => t.DateCreate.HasValue && t.DateCreate.Value.Date == date.Date)
+                    .Where(t => t.RentingRequestId != null)
+                    .Select(t => t.RentingRequestId)
+                    .ToListAsync();
+
+                if (!ids.Any())
+                {
+                    return 0;
+                }
+
+                var latestId = ids
+                     .Select(id =>
+                     {
+                         int startIndex = id.IndexOf("NO") + 2;
+                         return int.Parse(id.Substring(startIndex));
+                     })
+                     .OrderByDescending(id => id)
+                     .FirstOrDefault();
+
+                return latestId;
+            }
         }
 
         public async Task<int> GetRentingRequestsInRangeAsync(DateTime? startDate, DateTime? endDate)

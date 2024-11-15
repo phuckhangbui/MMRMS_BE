@@ -44,12 +44,32 @@ namespace DAO
             }
         }
 
-        public async Task<int> GetTotalInvoiceByDate(DateTime date)
+        public async Task<int> GetLastestInvoiceByDate(DateTime date)
         {
-            using var context = new MmrmsContext();
-            return await context.Invoices
-                .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
-                .CountAsync();
+            using (var context = new MmrmsContext())
+            {
+                var ids = await context.Invoices
+                    .Where(t => t.DateCreate.HasValue && t.DateCreate.Value.Date == date.Date)
+                    .Where(t => t.InvoiceId != null)
+                    .Select(t => t.InvoiceId)
+                    .ToListAsync();
+
+                if (!ids.Any())
+                {
+                    return 0;
+                }
+
+                var latestId = ids
+                     .Select(id =>
+                     {
+                         int startIndex = id.IndexOf("NO") + 2;
+                         return int.Parse(id.Substring(startIndex));
+                     })
+                     .OrderByDescending(id => id)
+                     .FirstOrDefault();
+
+                return latestId;
+            }
         }
 
         public async Task<(Invoice depositInvoice, Invoice rentalInvoice)> GetInvoicesByRentingRequest(string rentingRequestId)

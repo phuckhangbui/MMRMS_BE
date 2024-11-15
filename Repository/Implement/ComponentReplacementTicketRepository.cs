@@ -21,7 +21,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateTicketId()
         {
-            int currentTicketId = await ComponentReplacementTicketDao.Instance.GetTotalTicketByDate(DateTime.Now);
+            int currentTicketId = await ComponentReplacementTicketDao.Instance.GetLatestTicketByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTicketId + 1).ToString("D3");
             return $"{GlobalConstant.ComponentReplacementTicketIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
@@ -29,7 +29,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateInvoiceId()
         {
-            int currentInvoiceId = await InvoiceDao.Instance.GetTotalInvoiceByDate(DateTime.Now);
+            int currentInvoiceId = await InvoiceDao.Instance.GetLastestInvoiceByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentInvoiceId + 1).ToString("D3");
             return $"{GlobalConstant.InvoiceIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";

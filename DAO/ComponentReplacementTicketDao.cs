@@ -94,14 +94,36 @@ namespace DAO
             }
         }
 
-        public async Task<int> GetTotalTicketByDate(DateTime date)
+        public async Task<int> GetLatestTicketByDate(DateTime date)
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Contracts
-                    .Where(r => r.DateCreate.HasValue && r.DateCreate.Value.Date == date.Date)
-                    .CountAsync();
+                var ids = await context.ComponentReplacementTickets
+                    .Where(t => t.DateCreate.HasValue && t.DateCreate.Value.Date == date.Date)
+                    .Where(t => t.ComponentReplacementTicketId != null)
+                    .Select(t => t.ComponentReplacementTicketId)
+                    .ToListAsync();
+
+                if (!ids.Any())
+                {
+                    return 0;
+                }
+
+                var latestId = ids
+                     .Select(id =>
+                     {
+                         int startIndex = id.IndexOf("NO") + 2;
+                         return int.Parse(id.Substring(startIndex));
+                     })
+                     .OrderByDescending(id => id)
+                     .FirstOrDefault();
+
+                return latestId;
             }
         }
+
+
+
+
     }
 }

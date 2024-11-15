@@ -375,6 +375,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.ComponentReplacementTicket.BiggerQuantityThanMachine);
             }
 
+            if (serialComponent.SerialNumber != machineTaskDetail.SerialNumber)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotMappingCorrect);
+            }
+
             var component = await _componentRepository.GetComponent((int)serialComponent.ComponentId);
             if (machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
             {

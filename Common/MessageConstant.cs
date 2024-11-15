@@ -177,6 +177,7 @@
             public const string MachineNotSuitableForAvailableStatus = "Trạng thái máy hiện tại không thể chuyển sang sẵn sàng";
             public const string MachineNotSuitableForMaintenanceStatus = "Trạng thái máy hiện tại không thể chuyển sang đang bảo trì";
             public const string MachineComponentStillBroken = "Thành phần máy hiện tại vẫn còn hư hỏng, chưa thể chuyển trạng thái máy qua sẵn sàng";
+            public const string MachineSerialNumberNotMappingCorrect = "Bộ phận máy serial này không thuộc về máy này";
 
             //DTO
             public const string MachineIdRequired = "ID máy là bắt buộc";
