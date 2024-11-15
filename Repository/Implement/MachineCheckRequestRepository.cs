@@ -19,7 +19,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateCheckRequestId()
         {
-            int currentTotalRequest = await MachineCheckRequestDao.Instance.GetTotalRequestByDate(DateTime.UtcNow);
+            int currentTotalRequest = await MachineCheckRequestDao.Instance.GetTotalRequestByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTotalRequest + 1).ToString("D3");
             return $"{GlobalConstant.MachineCheckRequestIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";
