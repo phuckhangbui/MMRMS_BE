@@ -57,6 +57,7 @@ namespace DAO
                                                  .Include(d => d.MachineTaskLogs.OrderByDescending(l => l.DateCreate))
                                                  .ThenInclude(l => l.AccountTrigger)
                                                  .Include(d => d.ComponentReplacementTicketsCreateFromTask)
+                                                 .ThenInclude(c => c.Component)
                                                  .Include(d => d.MachineCheckRequest)
                                                  .Include(d => d.Contract)
                                                  .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
