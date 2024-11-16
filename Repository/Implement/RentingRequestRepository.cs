@@ -215,6 +215,9 @@ namespace Repository.Implement
             rentingRequest.TotalRentPrice = 0;
             rentingRequest.TotalServicePrice = 0;
             rentingRequest.TotalAmount = 0;
+            rentingRequest.AccountNumber = newRentingRequestDto.AccountNumber;
+            rentingRequest.BeneficiaryBank = newRentingRequestDto.BeneficiaryBank;
+            rentingRequest.BeneficiaryName = newRentingRequestDto.BeneficiaryName;
 
             var address = await AddressDao.Instance.GetAddressById(newRentingRequestDto.AddressId);
             if (address != null)

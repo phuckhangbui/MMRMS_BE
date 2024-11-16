@@ -189,7 +189,7 @@ namespace Repository.Implement
 
                 var outstandingContractPayments = contract.ContractPayments
                     .Where(cp => cp.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()) &&
-                                (cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) || 
+                                (cp.Type.Equals(ContractPaymentTypeEnum.Rental.ToString()) ||
                                 cp.Type.Equals(ContractPaymentTypeEnum.Extend.ToString())))
                     .ToList();
 

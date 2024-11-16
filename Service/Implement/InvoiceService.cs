@@ -189,6 +189,11 @@ namespace Service.Implement
                         contractPayment.CustomerPaidDate = invoice.DatePaid;
 
                         await _contractRepository.UpdateContractPayment(contractPayment);
+
+                        if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Extend.ToString()))
+                        {
+                            await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Signed.ToString());
+                        }
                     }
                 }
 
@@ -241,7 +246,8 @@ namespace Service.Implement
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId);
+                var note = GlobalConstant.RefundInvoiceNote + refundInvoiceRequestDto.ContractId;
+                var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note);
 
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
 
