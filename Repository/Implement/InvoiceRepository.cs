@@ -64,7 +64,9 @@ namespace Repository.Implement
 
             if (invoice != null)
             {
-                if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()))
+                if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) || 
+                    invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
+                    invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
                 {
                     var contractInvoice = _mapper.Map<ContractInvoiceDto>(invoice);
                     var contractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(invoiceId);
@@ -112,7 +114,7 @@ namespace Repository.Implement
             await InvoiceDao.Instance.UpdateAsync(invoice);
         }
 
-        public async Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId)
+        public async Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId, string note)
         {
             var invoice = new Invoice
             {
@@ -122,6 +124,7 @@ namespace Repository.Implement
                 Status = InvoiceStatusEnum.Pending.ToString(),
                 DateCreate = DateTime.Now,
                 AccountPaidId = accountPaidId,
+                Note = note
             };
 
             if (type.Equals(InvoiceTypeEnum.Refund.ToString()))
@@ -164,7 +167,7 @@ namespace Repository.Implement
             if (currentRequest != null)
             {
                 var totalDepositAmount = currentRequest.Contracts.Select(c => c.DepositPrice).Sum() ?? 0;
-                var depositInvoice = await CreateInvoice(totalDepositAmount, InvoiceTypeEnum.Deposit.ToString(), (int)currentRequest.AccountOrderId);
+                var depositInvoice = await CreateInvoice(totalDepositAmount, InvoiceTypeEnum.Deposit.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
                 foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
                                                                   .Where(cp => cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))
                 {
@@ -177,7 +180,7 @@ namespace Repository.Implement
                 {
                     var totalRentAmount = currentRequest.Contracts.Select(c => c.TotalRentPrice).Sum() ?? 0;
                     totalRentAmount = totalRentAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
-                    var rentalInvoice = await CreateInvoice(totalRentAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId);
+                    var rentalInvoice = await CreateInvoice(totalRentAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
                     foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
                                                                           .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString()))
                     {
@@ -193,7 +196,7 @@ namespace Repository.Implement
                                 .Sum(cp => cp.Amount ?? 0);
                     firstMonthTotalAmount = firstMonthTotalAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
 
-                    var rentalInvoice = await CreateInvoice(firstMonthTotalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId);
+                    var rentalInvoice = await CreateInvoice(firstMonthTotalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
                     foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
                                                                           .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true))
                     {
@@ -218,7 +221,7 @@ namespace Repository.Implement
             {
                 double totalAmount = monthlyGroup.Sum(payment => payment.Amount ?? 0);
 
-                var rentalInvoice = await CreateInvoice(totalAmount, InvoiceTypeEnum.Rental.ToString(), (int)rentingRequest.AccountOrderId);
+                var rentalInvoice = await CreateInvoice(totalAmount, InvoiceTypeEnum.Rental.ToString(), (int)rentingRequest.AccountOrderId, string.Empty);
 
                 foreach (var payment in monthlyGroup)
                 {

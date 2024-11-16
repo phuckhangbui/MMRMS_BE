@@ -18,6 +18,9 @@ namespace DTOs.RentingRequest
         public bool? IsOnetimePayment { get; set; }
         public string? Note { get; set; }
         public string? Status { get; set; }
+        public string? AccountNumber { get; set; }
+        public string? BeneficiaryBank { get; set; }
+        public string? BeneficiaryName { get; set; }
     }
 
     public class CustomerRentingRequestDto : RentingRequestDto
@@ -52,6 +55,15 @@ namespace DTOs.RentingRequest
 
         [Required(ErrorMessage = MessageConstant.RentingRequest.ServiceRentingRequestsRequired)]
         public List<int> ServiceRentingRequests { get; set; } = new List<int>();
+
+        [Required(ErrorMessage = MessageConstant.RentingRequest.AccountNumberRequired)]
+        public string? AccountNumber { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.RentingRequest.BeneficiaryBankRequired)]
+        public string? BeneficiaryBank { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.RentingRequest.BeneficiaryNameRequired)]
+        public string? BeneficiaryName { get; set; }
     }
 
     public class RentingRequestSerialNumberDto

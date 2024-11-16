@@ -149,7 +149,7 @@ namespace Test.Service
             _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
             _contractRepositoryMock.Setup(x => x.ExtendContract(It.IsAny<string>(), It.IsAny<ContractExtendDto>())).ReturnsAsync(extendContractDto);
             _contractRepositoryMock.Setup(x => x.SetInvoiceForContractPayment(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            _invoiceRepositoryMock.Setup(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(invoiceDto);
+            _invoiceRepositoryMock.Setup(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(invoiceDto);
 
             //Act
             var result = await _contractService.ExtendContract(contractId, contractExtendDto);
@@ -158,7 +158,7 @@ namespace Test.Service
             _contractRepositoryMock.Verify(x => x.GetContractById(It.IsAny<string>()), Times.Once);
             _contractRepositoryMock.Verify(x => x.ExtendContract(It.IsAny<string>(), It.IsAny<ContractExtendDto>()), Times.Once);
             _contractRepositoryMock.Verify(x => x.SetInvoiceForContractPayment(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _invoiceRepositoryMock.Verify(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+            _invoiceRepositoryMock.Verify(x => x.CreateInvoice(It.IsAny<double>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
             Assert.True(result);
         }
 

@@ -263,6 +263,9 @@
             public const string ServiceRentingRequestsRequired = "Danh sách dịch vụ thuê là bắt buộc.";
             public const string MachineIdRequired = "Mã máy là bắt buộc.";
             public const string SerialRequired = "Serial là bắt buộc.";
+            public const string AccountNumberRequired = "Số tài khoản ngân hàng là bắt buộc";
+            public const string BeneficiaryBankRequired = "Tên ngân hàng thụ hưởng là bắt buộc";
+            public const string BeneficiaryNameRequired = "Tên người thụ hưởng là bắt buộc";
         }
 
         public static class RentingService
