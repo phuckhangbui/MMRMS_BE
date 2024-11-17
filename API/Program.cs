@@ -97,5 +97,6 @@ app.MapHub<MachineTaskHub>("/machine-task");
 app.MapHub<InvoiceHub>("/invoice");
 app.MapHub<MachineCheckRequestHub>("/machine-check-request");
 app.MapHub<ComponentReplacementTicketHub>("/component-replacement-ticket");
+app.MapHub<SettingHub>("/settings");
 
 app.Run();
