@@ -31,7 +31,7 @@ namespace DTOs.Notification
             switch (notificationType)
             {
                 case var nt when nt == NotificationTypeEnum.Contract.ToString():
-                    return "/contracts";
+                    return "/contract";
 
                 case var nt when nt == NotificationTypeEnum.Feedback.ToString():
                     return "/feedback";
@@ -40,7 +40,7 @@ namespace DTOs.Notification
                     return "/tasks";
 
                 case var nt when nt == NotificationTypeEnum.Invoice.ToString():
-                    return "/invoices";
+                    return "/invoice";
 
                 case var nt when nt == NotificationTypeEnum.DeliveryTask.ToString():
                     return "/deliveryTask";
@@ -50,6 +50,9 @@ namespace DTOs.Notification
 
                 case var nt when nt == NotificationTypeEnum.MachineCheckRequest.ToString():
                     return "/check-requests";
+
+                case var nt when nt == NotificationTypeEnum.RentingRequest.ToString():
+                    return "/order";
 
                 default:
                     return null;
@@ -80,6 +83,9 @@ namespace DTOs.Notification
 
                 case var nt when nt == NotificationTypeEnum.MachineCheckRequest.ToString():
                     return "MachineCheckRequestId";
+
+                case var nt when nt == NotificationTypeEnum.RentingRequest.ToString():
+                    return "RentingRequestId";
 
                 default:
                     return null;

@@ -5,6 +5,7 @@ using DTOs.Contract;
 using DTOs.MachineCheckRequest;
 using DTOs.MachineTask;
 using DTOs.Notification;
+using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Interface;
@@ -618,6 +619,208 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToManagerWhenCustomerSignedAllContract(string customerName, string rentingRequestId, string detailId)
+        {
+            string title = "Khách hàng đã ký tất cả hợp đồng";
+            string body = $"Khách hàng {customerName} đã ký tất cả hợp đồng cho yêu cầu thuê {rentingRequestId}.";
 
+            var managerList = await _accountRepository.GetManagerAccounts();
+            string type = NotificationTypeEnum.RentingRequest.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        LinkForward = linkForward,
+                        DetailIdName = detailIdName,
+                        DetailId = detailId,
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type },
+                        { "accountId", account.AccountId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName },
+                        { "detailId", noti.DetailId },
+                        { "notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToManagerWhenCustomerEndContract(string contractId, string detailId)
+        {
+            string title = "Khách hàng đã kết thúc hợp đồng";
+            string body = $"Khách hàng đã kết thúc hợp đồng {contractId}.";
+
+            var managerList = await _accountRepository.GetManagerAccounts();
+            string type = NotificationTypeEnum.Contract.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        LinkForward = linkForward,
+                        DetailIdName = detailIdName,
+                        DetailId = detailId,
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type },
+                        { "accountId", account.AccountId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName },
+                        { "detailId", noti.DetailId },
+                        { "notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToManagerWhenCustomerExtendContract(string contractId, string detailId)
+        {
+            string title = "Khách hàng đã gia hạn hợp đồng";
+            string body = $"Khách hàng đã gia hạn hợp đồng {contractId}.";
+
+            var managerList = await _accountRepository.GetManagerAccounts();
+            string type = NotificationTypeEnum.Contract.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        LinkForward = linkForward,
+                        DetailIdName = detailIdName,
+                        DetailId = detailId,
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type },
+                        { "accountId", account.AccountId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName },
+                        { "detailId", noti.DetailId },
+                        { "notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToCustomerWhenManagerCreateRefundInvoice(int customerId, string contractId, string detailId)
+        {
+            string title = "Hoá đơn hoàn tiền đã được tạo";
+            string body = $"Hoá đơn hoàn tiền cho hợp đồng {contractId} đã được tạo.";
+
+            string type = NotificationTypeEnum.Invoice.ToString();
+            string linkForward = NotificationDto.GetForwardPath(type);
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            var account = await _accountRepository.GetAccounById(customerId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = customerId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    LinkForward = linkForward,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", customerId.ToString() },
+                        { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

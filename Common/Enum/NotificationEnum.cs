@@ -13,7 +13,8 @@
         Invoice,
         DeliveryTask,
         ComponentReplacementTicket,
-        MachineCheckRequest
+        MachineCheckRequest,
+        RentingRequest
     }
 
 }
