@@ -66,6 +66,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITermService, TermService>();
         services.AddScoped<IRequestResponseService, RequestResponseService>();
         services.AddScoped<IRoleService, RoleServiceImpl>();
+        services.AddScoped<ISettingsService, SettingsService>();
+
 
         //Background
         services.AddScoped<IBackground, BackgroundImpl>();
