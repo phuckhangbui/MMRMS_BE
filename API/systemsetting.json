@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "companyAddress",
+    "Value": "heheheh",
+    "ValueType": "string"
+  },
+  {
+    "Name": "companyCoordinate",
+    "Value": "",
+    "ValueType": "string"
+  },
+  {
+    "Name": "companyDirectorName",
+    "Value": "",
+    "ValueType": "string"
+  },
+  {
+    "Name": "maxTaskADay",
+    "Value": 3,
+    "ValueType": "int"
+  },
+  {
+    "Name": "defaultTicketCharge",
+    "Value": 111000.0,
+    "ValueType": "double"
+  }
+]
