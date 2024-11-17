@@ -29,6 +29,9 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+USER root
 RUN chown app:app /app/systemsetting.json && chmod u+w /app/systemsetting.json
+
+USER app
 
 ENTRYPOINT ["dotnet", "API.dll"]
