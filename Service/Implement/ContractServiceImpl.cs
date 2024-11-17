@@ -15,17 +15,20 @@ namespace Service.Implement
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IBackground _background;
+        private readonly INotificationService _notificationService;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
             IInvoiceRepository invoiceRepository,
-            IBackground background)
+            IBackground background,
+            INotificationService notificationService)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
             _background = background;
+            _notificationService = notificationService;
         }
 
         public async Task<ContractDetailDto> GetContractDetailById(string contractId)
@@ -117,6 +120,8 @@ namespace Service.Implement
                     await _contractRepository.EndContract(extendContract.ContractId, ContractStatusEnum.Canceled.ToString(), 0, currentDate);
                 }
 
+                await _notificationService.SendNotificationToManagerWhenCustomerEndContract(contractId, contractId);
+
                 scope.Complete();
 
                 return updatedContract.Status.Equals(ContractStatusEnum.InspectionPending.ToString());
@@ -181,11 +186,15 @@ namespace Service.Implement
 
                     TimeSpan timeUntilEnd = (TimeSpan)(contractDto.DateEnd - DateTime.Now);
                     _background.ProcessExtendContractJob(contractDto.ContractId, timeUntilEnd);
+
+                    await _notificationService.SendNotificationToManagerWhenCustomerExtendContract(contractId, contractId);
+
+                    scope.Complete();
+
+                    return true;
                 }
 
-                scope.Complete();
-
-                return true;
+                return false;
             }
             catch (Exception ex)
             {

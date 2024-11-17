@@ -215,6 +215,9 @@ namespace Service.Implement
                     {
                         await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
                     }
+
+                    //Notification
+                    await _notificationService.SendNotificationToManagerWhenCustomerSignedAllContract(invoice.AccountPaidName ?? string.Empty, rentingRequestId, rentingRequestId);
                 }
             }
         }
@@ -276,6 +279,8 @@ namespace Service.Implement
                 }
 
                 await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, accountId);
+
+                await _notificationService.SendNotificationToCustomerWhenManagerCreateRefundInvoice((int)contract.AccountSignId, contract.ContractId, invoice.InvoiceId);
 
                 scope.Complete();
 
