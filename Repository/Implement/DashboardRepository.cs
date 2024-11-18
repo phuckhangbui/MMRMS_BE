@@ -10,6 +10,36 @@ namespace Repository.Implement
 {
     public class DashboardRepository : IDashboardRepository
     {
+        public async Task<DataContractManagerDto> GetDataContractManagerDashboard(DateTime? startDate, DateTime? endDate)
+        {
+            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
+            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+
+            var totalContracts = await ContractDao.Instance.GetContractsInRangeAsync(startDate, endDate);
+
+            return new DataContractManagerDto { TotalContract = totalContracts };
+        }
+
+        public async Task<DataMachineCheckRequestManagerDto> GetDataMachineCheckRequestManagerDashboard(DateTime? startDate, DateTime? endDate)
+        {
+            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
+            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+
+            var totalMachineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequestsInRangeAsync(startDate, endDate);
+
+            return new DataMachineCheckRequestManagerDto { TotalMachineCheckRequest = totalMachineCheckRequest };
+        }
+
+        public async Task<DataMoneyManagerDto> GetDataMoneyManagerDashboard(DateTime? startDate, DateTime? endDate)
+        {
+            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
+            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+
+            var totalMoney = await InvoiceDao.Instance.GetTotalMoneyInRangeAsync(startDate, endDate);
+
+            return new DataMoneyManagerDto { TotalMoney = totalMoney };
+        }
+
         public async Task<DataTotalAdminDto> GetDataTotalAdminDashboard(DateTime? startDate, DateTime? endDate)
         {
             IEnumerable<Account> totalCustomers;

@@ -1,4 +1,5 @@
-﻿using DTOs.AccountBusiness;
+﻿using DTOs.Account;
+using DTOs.AccountBusiness;
 using DTOs.ContractPayment;
 using DTOs.ContractTerm;
 using DTOs.RentingRequest;
@@ -13,5 +14,6 @@ namespace DTOs.Contract
         public AccountBusinessDto? AccountBusiness { get; set; }
         public List<ContractPaymentDto>? ContractPayments { get; set; }
         public List<ContractTermDto>? ContractTerms { get; set; }
+        public BankAccountRefundDto? BankAccountRefund { get; set; }
     }
 }

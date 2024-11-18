@@ -284,8 +284,10 @@ namespace Repository.Implement
 
                 await AccountDao.Instance.UpdateCustomerAccount(account);
             }
-            else if (accountUpdateDto is EmployeeProfileUpdateDto)
+            else if (accountUpdateDto is EmployeeProfileUpdateDto employeeProfileUpdateDto)
             {
+                account.AvatarImg = employeeProfileUpdateDto.AvatarImg;
+
                 await AccountDao.Instance.UpdateAsync(account);
             }
 

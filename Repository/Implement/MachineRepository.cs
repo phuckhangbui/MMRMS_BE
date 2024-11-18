@@ -39,7 +39,12 @@ namespace Repository.Implement
             var machines = await MachineDao.Instance.GetMachineListWithCategory();
             machines = machines.Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString())).ToList();
 
-            return machines?.Select(machine =>
+            var filteredMachines = machines
+                .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()) &&
+                            m.MachineSerialNumbers.Any(msn => msn.Status == "Available"))
+                .ToList();
+
+            return filteredMachines?.Select(machine =>
             {
                 var machineViewDto = _mapper.Map<MachineDto>(machine);
                 machineViewDto.Thumbnail = machine.MachineImages?

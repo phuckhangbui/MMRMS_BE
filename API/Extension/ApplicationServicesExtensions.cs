@@ -34,7 +34,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IComponentReplacementTicketRepository, ComponentReplacementTicketRepository>();
         services.AddScoped<IAccountLogRepository, AccountLogRepository>();
         services.AddScoped<ITermRepository, TermRepository>();
-        //services.AddScoped<IRequestResponseRepository, RequestResponseRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IMachineSerialNumberComponentRepository, MachineSerialNumberComponentRepository>();
         services.AddScoped<IMachineSerialNumberLogRepository, MachineSerialNumberLogRepository>();
@@ -68,12 +67,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoleService, RoleServiceImpl>();
         services.AddScoped<ISettingsService, SettingsService>();
 
-
         //Background
         services.AddScoped<IBackground, BackgroundImpl>();
-        //services.AddScoped<RentingRequestDao>();
-        //services.AddScoped<ContractDao>();
-        //services.AddScoped<InvoiceDao>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -85,6 +80,7 @@ public static class ApplicationServicesExtensions
                 .WithOrigins("http://localhost:5173")
                 .WithOrigins("http://localhost:5174")
                 .WithOrigins("https://capstone-project-fe-management.vercel.app")
+                .WithOrigins("https://capstone-project-fe-client.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

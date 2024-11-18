@@ -103,5 +103,23 @@ namespace DAO
                     .CountAsync();
             }
         }
+
+        public async Task<int> GetMachineCheckRequestsInRangeAsync(DateTime? startDate, DateTime? endDate)
+        {
+            using var context = new MmrmsContext();
+            IQueryable<MachineCheckRequest> query = context.MachineCheckRequests;
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(a => a.DateCreate <= endDate.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

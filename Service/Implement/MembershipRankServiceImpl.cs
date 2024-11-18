@@ -2,7 +2,6 @@
 using Common.Enum;
 using DTOs.MembershipRank;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
