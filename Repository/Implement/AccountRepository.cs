@@ -187,6 +187,7 @@ namespace Repository.Implement
             return _mapper.Map<AccountDto>(account);
         }
 
+
         public async Task UpdateAccount(AccountDto accountDto)
         {
             var account = _mapper.Map<Account>(accountDto);
@@ -290,5 +291,7 @@ namespace Repository.Implement
 
             return account.AccountId;
         }
+
+
     }
 }

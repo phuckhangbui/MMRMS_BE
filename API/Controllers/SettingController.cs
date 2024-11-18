@@ -30,7 +30,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut("update")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdateSetting(UpdateSettingDto updateSettingDto)
         {
