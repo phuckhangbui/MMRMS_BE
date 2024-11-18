@@ -105,7 +105,7 @@ namespace API.Controllers
             try
             {
                 await _componentReplacementTicketService.CreateComponentReplacementTicket(staffId, createComponentReplacementTicketDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {

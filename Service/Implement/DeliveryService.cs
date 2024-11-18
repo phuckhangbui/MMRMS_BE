@@ -60,6 +60,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountRoleIsNotSuitableToAssignForThisTask);
             }
 
+            if (accountDto.Status != AccountStatusEnum.Active.ToString())
+            {
+                throw new ServiceException(MessageConstant.Account.AccountChosenLocked);
+            }
+
             var taskList = await _machineTaskRepository.GetTaskOfStaffInADay(createDeliveryTaskDto.StaffId, parsedDate)
                                         ?? Enumerable.Empty<MachineTaskDto>();
 
