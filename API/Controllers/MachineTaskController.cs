@@ -87,7 +87,7 @@ namespace API.Controllers
             try
             {
                 await _machineTaskService.CreateMachineTaskCheckMachine(managerId, createMachineTaskDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {
@@ -108,7 +108,7 @@ namespace API.Controllers
             try
             {
                 await _machineTaskService.CreateMachineTaskCheckMachineContractTermination(managerId, createMachineTaskDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {
@@ -129,7 +129,7 @@ namespace API.Controllers
             try
             {
                 await _machineTaskService.CreateMachineTaskCheckMachineDeliveryFail(managerId, createMachineTaskDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {
