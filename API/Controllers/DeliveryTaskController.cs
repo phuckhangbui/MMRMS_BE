@@ -86,7 +86,7 @@ namespace API.Controllers
             try
             {
                 await _deliverService.CreateDeliveryTask(managerId, createDeliveryTaskDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {
