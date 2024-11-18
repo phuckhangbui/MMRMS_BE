@@ -64,7 +64,7 @@ namespace Repository.Implement
 
             if (invoice != null)
             {
-                if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) || 
+                if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) ||
                     invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
                     invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
                 {

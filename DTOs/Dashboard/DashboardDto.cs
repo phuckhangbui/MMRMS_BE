@@ -24,4 +24,19 @@
         public int TotalContract { get; set; }
         public double TotalMoney { get; set; }
     }
+
+    public class DataContractManagerDto
+    {
+        public int TotalContract { get; set; }
+    }
+
+    public class DataMoneyManagerDto
+    {
+        public double TotalMoney { get; set; }
+    }
+
+    public class DataMachineCheckRequestManagerDto
+    {
+        public double TotalMachineCheckRequest { get; set; }
+    }
 }

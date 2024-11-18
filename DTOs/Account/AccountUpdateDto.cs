@@ -87,5 +87,8 @@ namespace DTOs.Account
 
         [Required(ErrorMessage = MessageConstant.Account.PhoneRequired)]
         public string Phone { get; set; }
+
+        [Required(ErrorMessage = MessageConstant.Account.AvatarUrlRequired)]
+        public string AvatarImg { get; set; }
     }
 }

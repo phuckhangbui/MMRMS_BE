@@ -1,7 +1,6 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs.Contract;
-using DTOs.Invoice;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -61,29 +60,6 @@ namespace Service.Implement
             }
 
             return await _contractRepository.GetContractsForCustomer(customerId, status);
-        }
-
-        public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
-        {
-            //var rentingRequest = await _rentingRepository.GetRentingRequestDetailById(rentingRequestId);
-            //if (rentingRequest == null)
-            //{
-            //    throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
-            //}
-
-            //var isValidToSign = await _contractRepository.IsContractValidToSign(rentingRequestId);
-            //if (!isValidToSign)
-            //{
-            //    throw new ServiceException(MessageConstant.Contract.ContractNotValidToSign);
-            //}
-
-            //var contractInvoices = await _contractRepository.SignContract(rentingRequestId);
-            //if (contractInvoices.IsNullOrEmpty())
-            //{
-            //    throw new ServiceException(MessageConstant.Contract.SignContractFail);
-            //}
-
-            return null;
         }
 
         public async Task<bool> EndContract(string contractId)

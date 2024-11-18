@@ -3,6 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
+using DTOs.Account;
 using DTOs.Contract;
 using DTOs.ContractPayment;
 using DTOs.Delivery;
@@ -58,6 +59,19 @@ namespace Repository.Implement
                     };
 
                     contractPayment.FirstRentalPayment = firstRentalPayment;
+                }
+
+                var rentingRequest = await RentingRequestDao.Instance.GetRentingRequest(contract.RentingRequestId);
+                if (rentingRequest != null)
+                {
+                    var bankAccountRefund = new BankAccountRefundDto
+                    {
+                        AccountNumber = rentingRequest.AccountNumber,
+                        BeneficiaryBank = rentingRequest.BeneficiaryBank,
+                        BeneficiaryName = rentingRequest.BeneficiaryName,
+                    };
+
+                    contractDetail.BankAccountRefund = bankAccountRefund;
                 }
 
                 return contractDetail;
