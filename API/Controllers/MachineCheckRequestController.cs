@@ -205,7 +205,7 @@ namespace API.Controllers
             try
             {
                 await _machineCheckRequestService.CreateMachineCheckRequest(customerId, createMachineCheckRequestDto);
-                return NoContent();
+                return Created();
             }
             catch (ServiceException ex)
             {
