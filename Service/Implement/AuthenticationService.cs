@@ -149,6 +149,7 @@ namespace Service.Implement
 
             account.TokenRefresh = null;
             account.TokenDateExpire = DateTime.MinValue;
+            account.FirebaseMessageToken = null;
 
             await _accountRepository.UpdateAccount(account);
         }
@@ -252,6 +253,11 @@ namespace Service.Implement
             if (accountDto == null)
             {
                 throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            if (accountDto.Status == AccountStatusEnum.Locked.ToString())
+            {
+                throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
 
 

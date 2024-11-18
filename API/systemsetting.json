@@ -10,6 +10,21 @@
     "ValueType": "string"
   },
   {
+    "Name": "companyName",
+    "Value": "",
+    "ValueType": "string"
+  },
+  {
+    "Name": "companyTaxNumber",
+    "Value": "",
+    "ValueType": "string"
+  },
+  {
+    "Name": "companyPhone",
+    "Value": "",
+    "ValueType": "string"
+  },
+  {
     "Name": "companyDirectorName",
     "Value": "",
     "ValueType": "string"
