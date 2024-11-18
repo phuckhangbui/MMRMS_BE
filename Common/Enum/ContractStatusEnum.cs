@@ -12,7 +12,6 @@
         AwaitingShippingAfterCheck,
         AwaitingRefundInvoice,
         Completed,
-        Terminated,
         Canceled
     }
 }
