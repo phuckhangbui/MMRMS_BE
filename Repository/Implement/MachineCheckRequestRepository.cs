@@ -78,7 +78,7 @@ namespace Repository.Implement
 
             var resultList = list.Where(c => c.Contract.AccountSignId.Equals(customerId)).ToList();
 
-            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(list);
+            return _mapper.Map<IEnumerable<MachineCheckRequestDto>>(resultList);
         }
 
         public async Task<MachineCheckRequestDto> GetMachineCheckRequest(string MachineCheckRequestId)
