@@ -2,9 +2,11 @@
 using Common.Enum;
 using DTOs.MembershipRank;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using System.Globalization;
 
 namespace Service.Implement
 {
@@ -90,7 +92,7 @@ namespace Service.Implement
 
             var customerAccount = await _accountRepository.GetAccounById(customerId);
             customerAccount.MoneySpent += amount;
-            string paymentMadeAction = $"{GlobalConstant.MembershipRankLogPaymentMadeAction}{customerAccount.MoneySpent}";
+            string paymentMadeAction = $"{GlobalConstant.MembershipRankLogPaymentMadeAction}{convertToVND(customerAccount.MoneySpent ?? 0)}";
             await _membershipRankRepository.AddMembershipRankLog(customerId, currentMembershipRank.MembershipRankId, paymentMadeAction);
 
             var membershipRanks = await _membershipRankRepository.GetMembershipRanks();
@@ -129,6 +131,12 @@ namespace Service.Implement
             }
 
             return membershipRank;
+        }
+
+        private string convertToVND(double amount)
+        {
+            CultureInfo vietnameseCulture = new CultureInfo("vi-VN");
+            return amount.ToString("C", vietnameseCulture);
         }
     }
 }
