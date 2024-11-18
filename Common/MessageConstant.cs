@@ -210,7 +210,7 @@
             public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
-            public const string ExtensionPeriodNotValid = "Thời gian gia hạn phải tối thiểu 30 ngày.";
+            public const string ExtensionPeriodNotValid = "Thời gian gia hạn phải tối thiểu 30 ngày tính từ ngày kết thúc của hợp đồng hiện tại.";
             public const string ExtensionStartDateNotValid = "Ngày bắt đầu gia hạn phải sau ngày kết thúc của hợp đồng hiện tại.";
             public const string ContractNotValidToExtend = "Hợp đồng không thể gia hạn do không hợp lệ";
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";

@@ -17,14 +17,22 @@ namespace Service.Implement
         private readonly IMailService _mailService;
         private readonly IDeliveryTaskRepository _deliveryTaskRepository;
         private readonly IMachineTaskRepository _machineTaskRepository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AccountServiceImpl(IConfiguration configuration, IAccountRepository accountRepository, IMailService mailService, IDeliveryTaskRepository deliveryTaskRepository, IMachineTaskRepository machineTaskRepository)
+        public AccountServiceImpl(
+            IConfiguration configuration, 
+            IAccountRepository accountRepository, 
+            IMailService mailService, 
+            IDeliveryTaskRepository deliveryTaskRepository, 
+            IMachineTaskRepository machineTaskRepository, 
+            IAuthenticationService authenticationService)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
             _configuration = configuration;
             _deliveryTaskRepository = deliveryTaskRepository;
             _machineTaskRepository = machineTaskRepository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<bool> ChangeAccountStatus(int accountId, string status)
@@ -34,6 +42,11 @@ namespace Service.Implement
             if (!Enum.IsDefined(typeof(AccountStatusEnum), status))
             {
                 throw new ServiceException(MessageConstant.InvalidStatusValue);
+            }
+
+            if (status.Equals(AccountStatusEnum.Locked.ToString()))
+            {
+                await _authenticationService.Logout(accountId);
             }
 
             return await _accountRepository.ChangeAccountStatus(accountId, status);
