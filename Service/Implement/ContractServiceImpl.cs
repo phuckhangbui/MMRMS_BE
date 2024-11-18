@@ -144,7 +144,7 @@ namespace Service.Implement
             //    throw new ServiceException(MessageConstant.Contract.ExtensionStartDateNotValid);
             //}
 
-            if (contractExtendDto.DateEnd < baseContract.DateStart.Value.AddDays(30))
+            if (contractExtendDto.DateEnd < baseContract.DateEnd.Value.AddDays(30))
             {
                 throw new ServiceException(MessageConstant.Contract.ExtensionPeriodNotValid);
             }

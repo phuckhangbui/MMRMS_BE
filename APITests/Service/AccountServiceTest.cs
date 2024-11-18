@@ -21,6 +21,7 @@ namespace Test.Service
         private readonly Mock<IDeliveryTaskRepository> _deliveryTaskRepositoryMock;
         private readonly Mock<IMailService> _mailMock;
         private readonly Mock<IConfiguration> _configurationMock;
+        private readonly Mock<IAuthenticationService> _authenticationServiceMock;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
@@ -31,6 +32,7 @@ namespace Test.Service
             _deliveryTaskRepositoryMock = new Mock<IDeliveryTaskRepository>();
             _mailMock = new Mock<IMailService>();
             _configurationMock = new Mock<IConfiguration>();
+            _authenticationServiceMock = new Mock<IAuthenticationService>();
 
             var mockConfigurationSection = new Mock<IConfigurationSection>();
             mockConfigurationSection.Setup(x => x.Value).Returns("admin_mmrms");
@@ -41,7 +43,8 @@ namespace Test.Service
                                                      _accountRepositoryMock.Object,
                                                      _mailMock.Object,
                                                      _deliveryTaskRepositoryMock.Object,
-                                                     _machineTaskRepositoryMock.Object);
+                                                     _machineTaskRepositoryMock.Object,
+                                                     _authenticationServiceMock.Object);
 
             _mapper = new Mapper(new MapperConfiguration(options =>
             {
