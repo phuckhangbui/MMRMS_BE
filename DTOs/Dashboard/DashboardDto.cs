@@ -27,16 +27,19 @@
 
     public class DataContractManagerDto
     {
-        public int TotalContract { get; set; }
+        public string Time { get; set; }
+        public int Contract { get; set; }
     }
 
     public class DataMoneyManagerDto
     {
-        public double TotalMoney { get; set; }
+        public string Time { get; set; }
+        public double Money { get; set; }
     }
 
     public class DataMachineCheckRequestManagerDto
     {
-        public double TotalMachineCheckRequest { get; set; }
+        public string Time { get; set; }
+        public int MachineCheckRequest { get; set; }
     }
 }

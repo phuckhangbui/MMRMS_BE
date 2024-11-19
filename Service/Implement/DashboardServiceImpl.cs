@@ -3,6 +3,7 @@ using DTOs.Dashboard;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
+using System.Globalization;
 
 namespace Service.Implement
 {
@@ -15,43 +16,37 @@ namespace Service.Implement
             _dashboardRepository = dashboardRepository;
         }
 
-        public async Task<DataContractManagerDto> GetDataContractManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataContractManagerDto>> GetDataContractManagerDashboard(string? startMonth, string? endMonth)
         {
-            if (startDate.HasValue && endDate.HasValue)
+            if (!string.IsNullOrEmpty(startMonth) && !string.IsNullOrEmpty(endMonth))
             {
-                if (startDate > endDate)
-                {
-                    throw new ServiceException(MessageConstant.DashBoard.FilterParamNotValid);
-                }
+                ValidateDateStringFormat(startMonth);
+                ValidateDateStringFormat(endMonth);
             }
 
-            return await _dashboardRepository.GetDataContractManagerDashboard(startDate, endDate);
+            return await _dashboardRepository.GetDataContractManagerDashboard(startMonth, endMonth);
         }
 
-        public async Task<DataMachineCheckRequestManagerDto> GetDataMachineCheckRequestManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataMachineCheckRequestManagerDto>> GetDataMachineCheckRequestManagerDashboard(string? startMonth, string? endMonth)
         {
-            if (startDate.HasValue && endDate.HasValue)
+            if (!string.IsNullOrEmpty(startMonth) && !string.IsNullOrEmpty(endMonth))
             {
-                if (startDate > endDate)
-                {
-                    throw new ServiceException(MessageConstant.DashBoard.FilterParamNotValid);
-                }
+                ValidateDateStringFormat(startMonth);
+                ValidateDateStringFormat(endMonth);
             }
 
-            return await _dashboardRepository.GetDataMachineCheckRequestManagerDashboard(startDate, endDate);
+            return await _dashboardRepository.GetDataMachineCheckRequestManagerDashboard(startMonth, endMonth);
         }
 
-        public async Task<DataMoneyManagerDto> GetDataMoneyManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataMoneyManagerDto>> GetDataMoneyManagerDashboard(string? startMonth, string? endMonth)
         {
-            if (startDate.HasValue && endDate.HasValue)
+            if (!string.IsNullOrEmpty(startMonth) && !string.IsNullOrEmpty(endMonth))
             {
-                if (startDate > endDate)
-                {
-                    throw new ServiceException(MessageConstant.DashBoard.FilterParamNotValid);
-                }
+                ValidateDateStringFormat(startMonth);
+                ValidateDateStringFormat(endMonth);
             }
 
-            return await _dashboardRepository.GetDataMoneyManagerDashboard(startDate, endDate);
+            return await _dashboardRepository.GetDataMoneyManagerDashboard(startMonth, endMonth);
         }
 
         public async Task<DataTotalAdminDto> GetDataTotalAdminDashboard(DateTime? startDate, DateTime? endDate)
@@ -75,6 +70,14 @@ namespace Service.Implement
         public async Task<List<DataUserAdminDto>> GetMonthlyCustomerDataAsync(DateTime? startDate, DateTime? endDate)
         {
             return await _dashboardRepository.GetMonthlyCustomerDataAsync(startDate, endDate);
+        }
+
+        private void ValidateDateStringFormat(string date)
+        {
+            if (!DateTime.TryParseExact(date, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+            {
+                throw new ServiceException("Format ngày không đúng, xin hãy dùng 'yyyy-MM'.");
+            }
         }
     }
 }

@@ -56,11 +56,11 @@ namespace API.Controllers
 
         [HttpGet("manager/contracts")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> GetDataContractManagerDashboard([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        public async Task<ActionResult> GetDataContractManagerDashboard([FromQuery] string? startMonth, [FromQuery] string? endMonth)
         {
             try
             {
-                var data = await _dashboardService.GetDataContractManagerDashboard(startDate, endDate);
+                var data = await _dashboardService.GetDataContractManagerDashboard(startMonth, endMonth);
                 return Ok(data);
             }
             catch (ServiceException ex)
@@ -75,11 +75,11 @@ namespace API.Controllers
 
         [HttpGet("manager/money")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> GetDataMoneyManagerDashboard([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        public async Task<ActionResult> GetDataMoneyManagerDashboard([FromQuery] string? startMonth, [FromQuery] string? endMonth)
         {
             try
             {
-                var data = await _dashboardService.GetDataMoneyManagerDashboard(startDate, endDate);
+                var data = await _dashboardService.GetDataMoneyManagerDashboard(startMonth, endMonth);
                 return Ok(data);
             }
             catch (ServiceException ex)
@@ -94,11 +94,11 @@ namespace API.Controllers
 
         [HttpGet("manager/machine-check-request")]
         [Authorize(Policy = "Manager")]
-        public async Task<ActionResult> GetDataMachineCheckRequestManagerDashboard([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        public async Task<ActionResult> GetDataMachineCheckRequestManagerDashboard([FromQuery] string? startMonth, [FromQuery] string? endMonth)
         {
             try
             {
-                var data = await _dashboardService.GetDataMachineCheckRequestManagerDashboard(startDate, endDate);
+                var data = await _dashboardService.GetDataMachineCheckRequestManagerDashboard(startMonth, endMonth);
                 return Ok(data);
             }
             catch (ServiceException ex)
