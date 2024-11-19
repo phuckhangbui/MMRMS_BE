@@ -16,6 +16,8 @@ namespace DTOs.Delivery
 
         public string? ManagerName { get; set; }
 
+        public int? CustomerId { get; set; }
+
         public DateTime? DateShip { get; set; }
 
         public DateTime? DateCreate { get; set; }

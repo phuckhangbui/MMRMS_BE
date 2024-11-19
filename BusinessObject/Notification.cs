@@ -12,8 +12,6 @@ public partial class Notification
 
     public string? MessageNotification { get; set; }
 
-    public string? LinkForward { get; set; }
-
     public string? Status { get; set; }
 
     public DateTime? DateCreate { get; set; }
