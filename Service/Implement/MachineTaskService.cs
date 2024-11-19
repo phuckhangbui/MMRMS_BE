@@ -295,28 +295,6 @@ namespace Service.Implement
                                   "Tạo và giao công việc kiêm tra máy khi khách từ chối nhận máy lúc giao cho {staffName}");
         }
 
-
-        // currently comment out the controller, because task always have staffId when created
-        public async Task DeleteMachineTask(int taskId)
-        {
-            var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
-
-            if (machineTask == null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-            }
-
-            if (machineTask.StaffId != null)
-            {
-                throw new ServiceException(MessageConstant.MachineTask.CannotDeleted);
-            }
-
-            //need to check logic of the RequestResponse
-            await _machineTaskRepository.Delete(taskId);
-
-            await _machineTaskHub.Clients.All.SendAsync("OnDeleteMachineTask", taskId);
-        }
-
         public async Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId)
         {
             var machineTaskDetail = await _machineTaskRepository.GetMachineTaskDetail(taskId);
@@ -441,6 +419,7 @@ namespace Service.Implement
                                                                                                 machineTaskDetail.TaskTitle,
                                                                                                 EnumExtensions.ToVietnamese(MachineTaskEnum.Completed),
                                                                                                 machineTaskDetail?.MachineTaskId.ToString() ?? null);
+                    await _machineTaskHub.Clients.All.SendAsync("OnUpdateMachineTaskStatus", machineTaskDetail.MachineTaskId);
 
                     scope.Complete();
                 }

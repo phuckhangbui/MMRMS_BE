@@ -18,8 +18,6 @@ namespace DTOs.Notification
 
         public DateTime? DateRead { get; set; }
 
-        public string? LinkForward { get; set; }
-
         public string? Status { get; set; }
 
         public string? DetailId { get; set; }
