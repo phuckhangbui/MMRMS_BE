@@ -89,6 +89,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenPaid);
             }
 
+            if (invoice.Status == InvoiceStatusEnum.Canceled.ToString())
+            {
+                throw new ServiceException(MessageConstant.Invoice.InvoiceHaveBeenCanceled);
+            }
+
             string timestamp = $"{DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds:0}{new Random().Next(1000, 9999)}";
             timestamp = timestamp.Substring(0, Math.Min(10, timestamp.Length));
 
