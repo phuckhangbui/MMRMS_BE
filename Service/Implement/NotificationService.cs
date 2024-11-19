@@ -54,7 +54,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.Task.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
 
             var account = await _accountRepository.GetAccounById(managerId);
@@ -67,7 +66,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -77,7 +75,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", managerId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -103,7 +100,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.Task.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
@@ -115,7 +111,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -125,7 +120,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -149,7 +143,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.Task.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
@@ -161,7 +154,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -171,7 +163,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -195,7 +186,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
@@ -207,7 +197,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -217,7 +206,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -241,7 +229,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(managerId);
 
@@ -253,7 +240,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -263,7 +249,49 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", managerId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(int customerId, ContractAddressDto contractAddress, string status, string detailId)
+        {
+            string title = "Cập nhật trạng thái giao hàng";
+            string body = $"Trạng thái giao hàng tại địa chỉ {contractAddress.AddressBody}, {contractAddress.District} đã được đổi thành [{status}]";
+
+
+            string type = NotificationTypeEnum.DeliveryTask.ToString();
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            var account = await _accountRepository.GetAccounById(customerId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = customerId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", customerId.ToString() },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -287,7 +315,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.DeliveryTask.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(staffId);
 
@@ -299,7 +326,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -309,7 +335,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", staffId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -334,7 +359,6 @@ namespace Service.Implement
             var managerList = await _accountRepository.GetManagerAccounts();
 
             string type = NotificationTypeEnum.MachineCheckRequest.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             if (managerList.IsNullOrEmpty())
             {
@@ -350,7 +374,6 @@ namespace Service.Implement
                         NotificationTitle = title,
                         MessageNotification = body,
                         NotificationType = type,
-                        LinkForward = linkForward,
                         DetailIdName = detailIdName,
                         DetailId = detailId,
                     };
@@ -360,7 +383,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", account.AccountId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -389,7 +411,6 @@ namespace Service.Implement
             var managerList = await _accountRepository.GetManagerAccounts();
 
             string type = NotificationTypeEnum.MachineCheckRequest.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             if (managerList.IsNullOrEmpty())
             {
@@ -405,7 +426,6 @@ namespace Service.Implement
                         NotificationTitle = title,
                         MessageNotification = body,
                         NotificationType = type,
-                        LinkForward = linkForward,
                         DetailIdName = detailIdName,
                         DetailId = detailId,
                     };
@@ -415,7 +435,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", account.AccountId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -441,7 +460,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(customerId);
 
@@ -453,7 +471,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -463,7 +480,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", customerId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -487,7 +503,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
 
@@ -499,7 +514,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -509,7 +523,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -533,7 +546,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById((int)ticket.EmployeeCreateId);
 
@@ -545,7 +557,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -555,7 +566,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -579,7 +589,6 @@ namespace Service.Implement
 
 
             string type = NotificationTypeEnum.MachineCheckRequest.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(accountSignId);
 
@@ -591,7 +600,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -601,7 +609,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", accountSignId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -625,7 +632,6 @@ namespace Service.Implement
 
             var managerList = await _accountRepository.GetManagerAccounts();
             string type = NotificationTypeEnum.RentingRequest.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
 
             if (managerList.IsNullOrEmpty())
@@ -643,7 +649,6 @@ namespace Service.Implement
                         NotificationTitle = title,
                         MessageNotification = body,
                         NotificationType = type,
-                        LinkForward = linkForward,
                         DetailIdName = detailIdName,
                         DetailId = detailId,
                     };
@@ -653,7 +658,6 @@ namespace Service.Implement
                     {
                         { "type", type },
                         { "accountId", account.AccountId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName },
                         { "detailId", noti.DetailId },
                         { "notificationId", notificationDto.NotificationId.ToString() }
@@ -678,7 +682,6 @@ namespace Service.Implement
 
             var managerList = await _accountRepository.GetManagerAccounts();
             string type = NotificationTypeEnum.Contract.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
 
             if (managerList.IsNullOrEmpty())
@@ -696,7 +699,6 @@ namespace Service.Implement
                         NotificationTitle = title,
                         MessageNotification = body,
                         NotificationType = type,
-                        LinkForward = linkForward,
                         DetailIdName = detailIdName,
                         DetailId = detailId,
                     };
@@ -706,7 +708,6 @@ namespace Service.Implement
                     {
                         { "type", type },
                         { "accountId", account.AccountId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName },
                         { "detailId", noti.DetailId },
                         { "notificationId", notificationDto.NotificationId.ToString() }
@@ -731,7 +732,6 @@ namespace Service.Implement
 
             var managerList = await _accountRepository.GetManagerAccounts();
             string type = NotificationTypeEnum.Contract.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
 
             if (managerList.IsNullOrEmpty())
@@ -749,7 +749,6 @@ namespace Service.Implement
                         NotificationTitle = title,
                         MessageNotification = body,
                         NotificationType = type,
-                        LinkForward = linkForward,
                         DetailIdName = detailIdName,
                         DetailId = detailId,
                     };
@@ -759,7 +758,6 @@ namespace Service.Implement
                     {
                         { "type", type },
                         { "accountId", account.AccountId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName },
                         { "detailId", noti.DetailId },
                         { "notificationId", notificationDto.NotificationId.ToString() }
@@ -783,7 +781,6 @@ namespace Service.Implement
             string body = $"Hoá đơn hoàn tiền cho hợp đồng {contractId} đã được tạo.";
 
             string type = NotificationTypeEnum.Invoice.ToString();
-            string linkForward = NotificationDto.GetForwardPath(type);
             string detailIdName = NotificationDto.GetDetailIdName(type);
             var account = await _accountRepository.GetAccounById(customerId);
 
@@ -795,7 +792,6 @@ namespace Service.Implement
                     NotificationTitle = title,
                     MessageNotification = body,
                     NotificationType = type,
-                    LinkForward = linkForward,
                     DetailIdName = detailIdName,
                     DetailId = detailId,
                 };
@@ -805,7 +801,6 @@ namespace Service.Implement
                     {
                         { "type", type.ToString() },
                         { "accountId", customerId.ToString() },
-                        { "forwardToPath", noti.LinkForward },
                         { "detailIdName", noti.DetailIdName},
                         { "detailId", noti.DetailId},
                         {"notificationId", notificationDto.NotificationId.ToString() }
@@ -821,5 +816,7 @@ namespace Service.Implement
 
             }
         }
+
+
     }
 }

@@ -256,6 +256,15 @@ namespace Repository.Mapper
                         opt => opt.MapFrom(src => src.Staff != null ? src.Staff.Name : null))
                     .ForMember(dest => dest.ManagerName,
                         opt => opt.MapFrom(src => src.Manager != null ? src.Manager.Name : null))
+                    .ForMember(dest => dest.CustomerId,
+                         opt => opt.MapFrom(src =>
+                            src.ContractDeliveries != null
+                            && src.ContractDeliveries.Any(d => d.Contract != null)
+                            && src.ContractDeliveries.FirstOrDefault(d => d.Contract != null).Contract.RentingRequest != null
+                            ? src.ContractDeliveries
+                                .FirstOrDefault(d => d.Contract != null)
+                                .Contract.RentingRequest.AccountOrderId
+                            : null))
                     .ForMember(dest => dest.ContractAddress,
                         opt => opt.MapFrom(src =>
                             src.ContractDeliveries != null

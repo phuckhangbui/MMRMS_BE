@@ -24,7 +24,7 @@ namespace Service.Implement
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly INotificationService _notificationService;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
-        private readonly IHubContext<DeliveryTaskHub> _DeliveryTaskHub;
+        private readonly IHubContext<DeliveryTaskHub> _deliveryTaskHub;
         private readonly IBackground _background;
 
         public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background)
@@ -32,7 +32,7 @@ namespace Service.Implement
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
             _accountRepository = accountRepository;
-            _DeliveryTaskHub = DeliveryTaskHub;
+            _deliveryTaskHub = DeliveryTaskHub;
             _notificationService = notificationService;
             _contractRepository = contractRepository;
             _rentingRequestRepository = rentingRequestRepository;
@@ -135,7 +135,7 @@ namespace Service.Implement
                                                                                 (DateTime)deliveryDto.DateShip,
                                                                                 deliveryDto?.DeliveryTaskId.ToString() ?? null);
 
-            await _DeliveryTaskHub.Clients.All.SendAsync("OnCreateDeliveryTaskToStaff", deliveryDto.DeliveryTaskId);
+            await _deliveryTaskHub.Clients.All.SendAsync("OnCreateDeliveryTaskToStaff", deliveryDto.DeliveryTaskId);
         }
 
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveries()
@@ -207,6 +207,8 @@ namespace Service.Implement
                         await this.CompletePartialDeliveryInTask(staffUpdateDeliveryTaskDto, deliveryDetail, accountId);
                     }
                     scope.Complete();
+
+                    await _deliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", deliveryDetail.DeliveryTask.DeliveryTaskId);
                 }
                 catch (Exception ex)
                 {
@@ -252,6 +254,13 @@ namespace Service.Implement
                 EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail),
                 deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
             );
+
+            await _notificationService.SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(
+              (int)deliveryDetail.DeliveryTask.CustomerId,
+              deliveryDetail.DeliveryTask.ContractAddress,
+              EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail),
+              deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
+          );
         }
 
 
@@ -293,7 +302,12 @@ namespace Service.Implement
                                                                                                deliveryDetail.DeliveryTask.ContractAddress,
                                                                                                EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed),
                                                                                                deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
-
+            await _notificationService.SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(
+             (int)deliveryDetail.DeliveryTask.CustomerId,
+             deliveryDetail.DeliveryTask.ContractAddress,
+             EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed),
+             deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
+         );
         }
 
         public async Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId)
@@ -328,6 +342,19 @@ namespace Service.Implement
                     }
 
                     scope.Complete();
+
+                    await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId,
+                                                                                              deliveryDetail.DeliveryTask.ContractAddress,
+                                                                                              EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail),
+                                                                                              deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
+                    await _notificationService.SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(
+                     (int)deliveryDetail.DeliveryTask.CustomerId,
+                     deliveryDetail.DeliveryTask.ContractAddress,
+                     EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Fail),
+                     deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
+                        );
+
+                    await _deliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", deliveryDetail.DeliveryTask.DeliveryTaskId);
                 }
                 catch (Exception ex) { }
             }
@@ -358,6 +385,11 @@ namespace Service.Implement
                                                                                                 deliveryDetail.DeliveryTask.ContractAddress,
                                                                                                 EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering),
                                                                                                 deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
+            await _notificationService.SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(
+                      (int)deliveryDetail.DeliveryTask.CustomerId,
+                      deliveryDetail.DeliveryTask.ContractAddress,
+                      EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering),
+                      deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
         }
 
         public async Task UpdateDeliveryStatusToProcessedAfterFailure(int deliveryTaskId, int accountId)
@@ -378,9 +410,6 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.DeliveryTask.StatusCannotSet);
             }
-
-
-
             await _deliveryTaskRepository.UpdateDeliveryTaskStatus(deliveryTaskId, DeliveryTaskStatusEnum.ProcessedAfterFailure.ToString(), accountId);
         }
 
@@ -434,7 +463,7 @@ namespace Service.Implement
         //        await _notificationService.SendNotificationToStaffWhenDeliveryTaskStatusUpdated((int)DeliveryTaskDto.StaffId, DeliveryTaskDto.ContractAddress, status);
         //    }
 
-        //    await _DeliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
+        //    await _deliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", DeliveryTaskId);
         //}
 
 

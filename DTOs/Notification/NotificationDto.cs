@@ -104,8 +104,6 @@ namespace DTOs.Notification
 
         public string MessageNotification { get; set; }
 
-        public string LinkForward { get; set; }
-
         public string DetailId { get; set; }
 
         public string DetailIdName { get; set; }

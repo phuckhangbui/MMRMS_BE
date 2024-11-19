@@ -27,5 +27,6 @@ namespace Repository.Interface
         Task SendNotificationToManagerWhenCustomerEndContract(string contractId, string detailId);
         Task SendNotificationToManagerWhenCustomerExtendContract(string contractId, string detailId);
         Task SendNotificationToCustomerWhenManagerCreateRefundInvoice(int customerId, string contractId, string detailId);
+        Task SendNotificationToCustomerWhenDeliveryTaskStatusUpdated(int customerId, ContractAddressDto contractAddress, string status, string detailId);
     }
 }
