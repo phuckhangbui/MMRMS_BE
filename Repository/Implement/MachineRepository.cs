@@ -41,7 +41,7 @@ namespace Repository.Implement
 
             var filteredMachines = machines
                 .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()) &&
-                            m.MachineSerialNumbers.Any(msn => msn.Status == "Available"))
+                            m.MachineSerialNumbers.Any(msn => msn.Status == MachineSerialNumberStatusEnum.Available.ToString()))
                 .ToList();
 
             return filteredMachines?.Select(machine =>
@@ -317,12 +317,15 @@ namespace Repository.Implement
         public async Task<IEnumerable<MachineDto>> GetTop8LatestMachineList()
         {
             var machines = await MachineDao.Instance.GetMachineListWithCategory();
-            machines = machines
-                .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()))
+            machines = machines.Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString())).ToList();
+
+            var filteredMachines = machines
+                .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()) &&
+                            m.MachineSerialNumbers.Any(msn => msn.Status == MachineSerialNumberStatusEnum.Available.ToString()))
                 .Take(8)
                 .ToList();
 
-            return machines?.Select(machine =>
+            return filteredMachines?.Select(machine =>
             {
                 var machineViewDto = _mapper.Map<MachineDto>(machine);
                 machineViewDto.Thumbnail = machine.MachineImages?
