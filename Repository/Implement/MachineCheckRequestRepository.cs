@@ -3,6 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
+using DTOs.ComponentReplacementTicket;
 using DTOs.MachineCheckRequest;
 using Repository.Interface;
 
@@ -117,10 +118,14 @@ namespace Repository.Implement
 
             var requestCriteriaList = _mapper.Map<IEnumerable<MachineCheckRequestCriteriaDto>>(requestDetail?.MachineCheckRequestCriterias);
 
+            var ticketList = _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(requestDetail?.MachineTask?.ComponentReplacementTicketsCreateFromTask);
+
+
             return new MachineCheckRequestDetailDto
             {
                 MachineCheckRequest = requestDto,
                 CheckCriteriaList = requestCriteriaList,
+                ComponentReplacementTickets = ticketList
             };
         }
 
