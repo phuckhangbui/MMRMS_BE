@@ -159,6 +159,13 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
         }
 
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksForCustomer(int customerId)
+        {
+            var list = await DeliveryTaskDao.Instance.GetDeliveriesForCustomer(customerId);
+
+            return _mapper.Map<IEnumerable<DeliveryTaskDto>>(list);
+        }
+
         public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip)
         {
             var list = await DeliveryTaskDao.Instance.GetDeliveriesForStaff(staffId);

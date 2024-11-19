@@ -58,8 +58,29 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("customer")]
+        [Authorize(Policy = "Customer")]
+        public async Task<ActionResult<IEnumerable<DeliveryTaskDto>>> GetDeliveriesForCustomer()
+        {
+            int customerId = GetLoginAccountId();
+
+            try
+            {
+                IEnumerable<DeliveryTaskDto> list = await _deliverService.GetDeliveriesForCustomer(customerId);
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{deliveryTaskId}/detail")]
-        [Authorize(Policy = "Employee")]
+        [Authorize]
         public async Task<ActionResult<DeliveryTaskDetailDto>> GetDeliveryDetail([FromRoute] int deliveryTaskId)
         {
             try

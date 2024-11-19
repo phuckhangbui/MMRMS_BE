@@ -12,6 +12,7 @@ namespace Repository.Interface
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesOfStaffInADay(int staffId, DateTime dateShip);
         Task<DeliveryTaskDto> GetDeliveryTask(int DeliveryTaskId);
         Task<DeliveryTaskDetailDto> GetDeliveryTaskDetail(int deliveryTaskId);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksForCustomer(int customerId);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksForStaff(int staffId, DateOnly dateStart, DateOnly dateEnd);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveryTasksInADate(DateOnly date);
         Task MarkDeliveryTaskAsFail(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto);

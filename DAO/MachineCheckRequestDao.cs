@@ -60,6 +60,8 @@ namespace DAO
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
+                    .Include(c => c.MachineTask)
+                    .ThenInclude(t => t.ComponentReplacementTicketsCreateFromTask)
                     .FirstOrDefaultAsync(m => m.MachineCheckRequestId == machineCheckRequestId);
             }
         }
