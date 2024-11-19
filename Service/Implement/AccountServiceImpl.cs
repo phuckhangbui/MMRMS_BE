@@ -20,11 +20,11 @@ namespace Service.Implement
         private readonly IAuthenticationService _authenticationService;
 
         public AccountServiceImpl(
-            IConfiguration configuration, 
-            IAccountRepository accountRepository, 
-            IMailService mailService, 
-            IDeliveryTaskRepository deliveryTaskRepository, 
-            IMachineTaskRepository machineTaskRepository, 
+            IConfiguration configuration,
+            IAccountRepository accountRepository,
+            IMailService mailService,
+            IDeliveryTaskRepository deliveryTaskRepository,
+            IMachineTaskRepository machineTaskRepository,
             IAuthenticationService authenticationService)
         {
             _accountRepository = accountRepository;

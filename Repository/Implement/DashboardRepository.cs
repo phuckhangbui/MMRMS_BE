@@ -10,34 +10,90 @@ namespace Repository.Implement
 {
     public class DashboardRepository : IDashboardRepository
     {
-        public async Task<DataContractManagerDto> GetDataContractManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataContractManagerDto>> GetDataContractManagerDashboard(string? startMonth, string? endMonth)
         {
-            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
-            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+            DateTime startDate = string.IsNullOrEmpty(startMonth)
+                ? new DateTime(DateTime.Now.Year, 1, 1)
+                : DateTime.ParseExact(startMonth, "yyyy-MM", null);
 
-            var totalContracts = await ContractDao.Instance.GetContractsInRangeAsync(startDate, endDate);
+            DateTime endDate = string.IsNullOrEmpty(endMonth)
+                ? new DateTime(DateTime.Now.Year, 12, 31)
+                : DateTime.ParseExact(endMonth, "yyyy-MM", null).AddMonths(1).AddDays(-1);
 
-            return new DataContractManagerDto { TotalContract = totalContracts };
+            var monthlyData = new List<DataContractManagerDto>();
+            for (var date = startDate; date <= endDate; date = date.AddMonths(1))
+            {
+                var monthStart = new DateTime(date.Year, date.Month, 1);
+                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+                var totalContracts = await ContractDao.Instance.GetContractsInRangeAsync(monthStart, monthEnd);
+
+                monthlyData.Add(new DataContractManagerDto
+                {
+                    Time = monthStart.ToString("MMMM"),
+                    Contract = totalContracts
+                });
+            }
+
+            return monthlyData;
         }
 
-        public async Task<DataMachineCheckRequestManagerDto> GetDataMachineCheckRequestManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataMachineCheckRequestManagerDto>> GetDataMachineCheckRequestManagerDashboard(string? startMonth, string? endMonth)
         {
-            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
-            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+            DateTime startDate = string.IsNullOrEmpty(startMonth)
+                ? new DateTime(DateTime.Now.Year, 1, 1)
+                : DateTime.ParseExact(startMonth, "yyyy-MM", null);
 
-            var totalMachineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequestsInRangeAsync(startDate, endDate);
+            DateTime endDate = string.IsNullOrEmpty(endMonth)
+                ? new DateTime(DateTime.Now.Year, 12, 31)
+                : DateTime.ParseExact(endMonth, "yyyy-MM", null).AddMonths(1).AddDays(-1);
 
-            return new DataMachineCheckRequestManagerDto { TotalMachineCheckRequest = totalMachineCheckRequest };
+            var monthlyData = new List<DataMachineCheckRequestManagerDto>();
+
+            for (var date = startDate; date <= endDate; date = date.AddMonths(1))
+            {
+                var monthStart = new DateTime(date.Year, date.Month, 1);
+                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+                var totalRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequestsInRangeAsync(monthStart, monthEnd);
+
+                monthlyData.Add(new DataMachineCheckRequestManagerDto
+                {
+                    Time = monthStart.ToString("MMMM"),
+                    MachineCheckRequest = totalRequest
+                });
+            }
+
+            return monthlyData;
         }
 
-        public async Task<DataMoneyManagerDto> GetDataMoneyManagerDashboard(DateTime? startDate, DateTime? endDate)
+        public async Task<List<DataMoneyManagerDto>> GetDataMoneyManagerDashboard(string? startMonth, string? endMonth)
         {
-            startDate ??= new DateTime(DateTime.Now.Year, 1, 1);
-            endDate ??= new DateTime(DateTime.Now.Year, 12, 31);
+            DateTime startDate = string.IsNullOrEmpty(startMonth)
+                ? new DateTime(DateTime.Now.Year, 1, 1)
+                : DateTime.ParseExact(startMonth, "yyyy-MM", null);
 
-            var totalMoney = await InvoiceDao.Instance.GetTotalMoneyInRangeAsync(startDate, endDate);
+            DateTime endDate = string.IsNullOrEmpty(endMonth)
+                ? new DateTime(DateTime.Now.Year, 12, 31)
+                : DateTime.ParseExact(endMonth, "yyyy-MM", null).AddMonths(1).AddDays(-1);
 
-            return new DataMoneyManagerDto { TotalMoney = totalMoney };
+            var monthlyData = new List<DataMoneyManagerDto>();
+
+            for (var date = startDate; date <= endDate; date = date.AddMonths(1))
+            {
+                var monthStart = new DateTime(date.Year, date.Month, 1);
+                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+                var totalMoney = await InvoiceDao.Instance.GetTotalMoneyInRangeAsync(monthStart, monthEnd);
+
+                monthlyData.Add(new DataMoneyManagerDto
+                {
+                    Time = monthStart.ToString("MMMM"),
+                    Money = totalMoney
+                });
+            }
+
+            return monthlyData;
         }
 
         public async Task<DataTotalAdminDto> GetDataTotalAdminDashboard(DateTime? startDate, DateTime? endDate)
