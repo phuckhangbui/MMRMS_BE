@@ -35,5 +35,12 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task<ContractPayment?> GetContractPaymentById(int contractPaymentId)
+        {
+            using var context = new MmrmsContext();
+            return await context.ContractPayments
+                .FirstOrDefaultAsync(cp => cp.ContractPaymentId == contractPaymentId);
+        }
     }
 }
