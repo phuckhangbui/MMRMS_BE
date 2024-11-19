@@ -14,6 +14,7 @@ COPY ["./API/API.csproj", "API/"]
 COPY ["./BusinessObject/BusinessObject.csproj", "BusinessObject/"]
 COPY ["./DAO/DAO.csproj", "DAO/"]
 COPY ["./DTOs/DTOs.csproj", "DTOs/"]
+COPY ["./Common/Common.csproj", "Common/"]
 COPY ["./Repository/Repository.csproj", "Repository/"]
 COPY ["./Service/Service.csproj", "Service/"]
 RUN dotnet restore "./API/API.csproj"
