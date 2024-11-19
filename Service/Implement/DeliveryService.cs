@@ -396,6 +396,8 @@ namespace Service.Implement
                       deliveryDetail.DeliveryTask.ContractAddress,
                       EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Delivering),
                       deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null);
+
+            await _deliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", deliveryDetail.DeliveryTask.DeliveryTaskId);
         }
 
         public async Task UpdateDeliveryStatusToProcessedAfterFailure(int deliveryTaskId, int accountId)
