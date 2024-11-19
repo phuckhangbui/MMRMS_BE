@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs;
+using DTOs.Contract;
 using DTOs.Invoice;
 using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.SignalR;
@@ -24,6 +25,7 @@ namespace Service.Implement
         private readonly IHubContext<ComponentReplacementTicketHub> _componentReplacementTicketHub;
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
+        private readonly IBackground _background;
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
@@ -33,7 +35,8 @@ namespace Service.Implement
             IRentingRequestRepository rentingRequestRepository,
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
-            IMembershipRankService membershipRankService)
+            IMembershipRankService membershipRankService,
+            IBackground background)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -44,6 +47,7 @@ namespace Service.Implement
             _componentReplacementTicketHub = componentReplacementTicketHub;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
+            _background = background;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -219,6 +223,13 @@ namespace Service.Implement
                     if (rentingRequest.IsOnetimePayment == false)
                     {
                         await _invoiceRepository.GenerateMonthlyInvoices(rentingRequestId);
+
+                        foreach (var contractPayment in contractInvoice.ContractPayments)
+                        {
+                            //Background
+                            TimeSpan timeUntilEnd = (TimeSpan)(contractPayment.DueDate - DateTime.Now);
+                            _background.ProcessOverdueContractPaymentJob(contractPayment.ContractPaymentId, timeUntilEnd);
+                        }
                     }
 
                     //Notification

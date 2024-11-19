@@ -583,5 +583,16 @@ namespace Repository.Implement
 
             return _mapper.Map<ContractDto>(extendContract);
         }
+
+        public async Task<ContractPaymentDto?> GetContractPayment(int contractPaymentId)
+        {
+            var contractPayment = await ContractPaymentDao.Instance.GetContractPaymentById(contractPaymentId);
+            if (contractPayment == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<ContractPaymentDto>(contractPayment);
+        }
     }
 }

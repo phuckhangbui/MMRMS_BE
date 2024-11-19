@@ -33,18 +33,17 @@ namespace Service
         {
             try
             {
-                _logger.LogInformation($"Starting ScheduleCancelRentingRequestJob");
+                _logger.LogInformation($"Starting ScheduleCancelRentingRequestJob for RentingRequestId: {rentingRequestId}.");
 
                 TimeSpan delayToStart = TimeSpan.FromDays(1);
 
                 BackgroundJob.Schedule(() => CancelRentingRequestAsync(rentingRequestId), delayToStart);
-                _logger.LogInformation($"Renting request: {rentingRequestId} scheduled for status change: {RentingRequestStatusEnum.Canceled.ToString()} at {delayToStart}");
-
-                //_logger.LogInformation($"ScheduleCancelRentingRequestJob execute successfully at {DateTime.Now}.");
+                _logger.LogInformation($"RentingRequestId: {rentingRequestId} scheduled for status change to '{RentingRequestStatusEnum.Canceled}' after a delay of {delayToStart.TotalHours} hours. " +
+                    $"The job will execute at {DateTime.Now.Add(delayToStart):yyyy-MM-dd HH:mm:ss}.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while ScheduleCancelRentingRequestJob");
+                _logger.LogError(ex, $"Error occurred while scheduling ScheduleCancelRentingRequestJob for RentingRequestId: {rentingRequestId}");
             }
         }
 
@@ -52,16 +51,15 @@ namespace Service
         {
             try
             {
-                _logger.LogInformation($"Starting ScheduleCompleteContractOnTimeJob");
+                _logger.LogInformation($"Starting ScheduleCompleteContractOnTimeJob for ContractId: {contractId}.");
 
                 BackgroundJob.Schedule(() => CompleteContractOnTimeAsync(contractId), delayToStart);
-                _logger.LogInformation($"Contract: {contractId} scheduled for status change: {ContractStatusEnum.Completed.ToString()} at {delayToStart}");
-
-                //_logger.LogInformation($"ScheduleCompleteContractOnTimeJob execute successfully at {DateTime.Now}.");
+                _logger.LogInformation($"ContractId: {contractId} scheduled for status change to '{ContractStatusEnum.Completed}' after a delay of {delayToStart.TotalHours} hours. " +
+                    $"The job will execute at {DateTime.Now.Add(delayToStart):yyyy-MM-dd HH:mm:ss}.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while ScheduleCompleteContractOnTimeJob");
+                _logger.LogError(ex, $"Error occurred while scheduling ScheduleCompleteContractOnTimeJob for ContractId: {contractId}");
             }
         }
 
@@ -69,14 +67,44 @@ namespace Service
         {
             try
             {
-                _logger.LogInformation($"Starting ProcessExtendContractJob");
+                _logger.LogInformation($"Starting ProcessExtendContractJob for ContractId: {contractId}.");
 
                 BackgroundJob.Schedule(() => ProcessExtendContracAsync(contractId), delayToStart);
-                _logger.LogInformation($"Contract: {contractId} scheduled for status change: {ContractStatusEnum.Completed.ToString()} at {delayToStart}");
+                _logger.LogInformation($"ContractId: {contractId} scheduled for extension processing. " +
+                    $"The job will execute after a delay of {delayToStart.TotalHours} hours, at {DateTime.Now.Add(delayToStart):yyyy-MM-dd HH:mm:ss}.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while ProcessExtendContractJob");
+                _logger.LogError(ex, $"Error occurred while scheduling ProcessExtendContractJob for ContractId: {contractId}");
+            }
+        }
+
+        public void ProcessOverdueContractPaymentJob(int contractPaymentId, TimeSpan delayToStart)
+        {
+            try
+            {
+                _logger.LogInformation($"Starting ProcessOverdueContractPaymentJob for ContractPaymentId: {contractPaymentId} with a delay of {delayToStart.TotalMinutes} minutes.");
+
+                BackgroundJob.Schedule(() => ProcessOverdueContractPaymentAsync(contractPaymentId), delayToStart);
+
+                _logger.LogInformation($"ContractPaymentId: {contractPaymentId} scheduled for overdue payment check. Job will process after {delayToStart.TotalMinutes} minutes at {DateTime.Now.Add(delayToStart):yyyy-MM-dd HH:mm:ss}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred while scheduling ProcessOverdueContractPaymentJob for ContractPaymentId: {contractPaymentId}");
+            }
+        }
+
+        public async Task ProcessOverdueContractPaymentAsync(int contractPaymentId)
+        {
+            await ProcessOverdueContractPayment(contractPaymentId);
+        }
+        public async Task ProcessOverdueContractPayment(int contractPaymentId)
+        {
+            var contractPayment = await _contractRepository.GetContractPayment(contractPaymentId);
+            if (contractPayment != null && contractPayment.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()))
+            {
+                await CompleteContractOnTime(contractPayment.ContractId);
             }
         }
 
@@ -84,7 +112,6 @@ namespace Service
         {
             await ProcessExtendContract(contractId);
         }
-
         public async Task ProcessExtendContract(string contractId)
         {
             var extendContract = await _contractRepository.GetContractDetailById(contractId);

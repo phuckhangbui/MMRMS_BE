@@ -24,5 +24,6 @@ namespace Repository.Interface
         Task<ContractDeliveryDto> GetContractDelivery(int contractDeliveryId);
         Task<ContractPaymentDto> UpdateContractPayment(ContractPaymentDto contractPaymentDto);
         Task<ContractDto?> GetExtendContract(string baseContractId);
+        Task<ContractPaymentDto?> GetContractPayment(int contractPaymentId);
     }
 }
