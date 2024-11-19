@@ -346,7 +346,6 @@ namespace Service.Implement
                         await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.ShipFail.ToString());
                     }
 
-                    scope.Complete();
 
                     await _notificationService.SendNotificationToManagerWhenDeliveryTaskStatusUpdated((int)deliveryDetail.DeliveryTask.ManagerId,
                                                                                               deliveryDetail.DeliveryTask.ContractAddress,
@@ -360,6 +359,8 @@ namespace Service.Implement
                         );
 
                     await _deliveryTaskHub.Clients.All.SendAsync("OnUpdateDeliveryTaskStatus", deliveryDetail.DeliveryTask.DeliveryTaskId);
+                    scope.Complete();
+
                 }
                 catch (Exception ex) { }
             }

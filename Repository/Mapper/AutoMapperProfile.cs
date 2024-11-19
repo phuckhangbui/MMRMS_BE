@@ -260,10 +260,10 @@ namespace Repository.Mapper
                          opt => opt.MapFrom(src =>
                             src.ContractDeliveries != null
                             && src.ContractDeliveries.Any(d => d.Contract != null)
-                            && src.ContractDeliveries.FirstOrDefault(d => d.Contract != null).Contract.RentingRequest != null
+                            && src.ContractDeliveries.FirstOrDefault(d => d.Contract != null).Contract != null
                             ? src.ContractDeliveries
                                 .FirstOrDefault(d => d.Contract != null)
-                                .Contract.RentingRequest.AccountOrderId
+                                .Contract.AccountSignId
                             : null))
                     .ForMember(dest => dest.ContractAddress,
                         opt => opt.MapFrom(src =>
