@@ -19,7 +19,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t phuckhangbui/smrms .
+          docker build --no-cache -t phuckhangbui/smrms .
           docker push phuckhangbui/smrms
 
   deploy-to-droplet:
