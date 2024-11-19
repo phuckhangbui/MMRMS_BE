@@ -18,46 +18,11 @@ namespace DTOs.Notification
 
         public DateTime? DateRead { get; set; }
 
-        public string? LinkForward { get; set; }
-
         public string? Status { get; set; }
 
         public string? DetailId { get; set; }
 
         public string? DetailIdName { get; set; }
-
-        public static string GetForwardPath(string notificationType)
-        {
-            switch (notificationType)
-            {
-                case var nt when nt == NotificationTypeEnum.Contract.ToString():
-                    return "/contract";
-
-                case var nt when nt == NotificationTypeEnum.Feedback.ToString():
-                    return "/feedback";
-
-                case var nt when nt == NotificationTypeEnum.Task.ToString():
-                    return "/tasks";
-
-                case var nt when nt == NotificationTypeEnum.Invoice.ToString():
-                    return "/invoice";
-
-                case var nt when nt == NotificationTypeEnum.DeliveryTask.ToString():
-                    return "/deliveryTask";
-
-                case var nt when nt == NotificationTypeEnum.ComponentReplacementTicket.ToString():
-                    return "/component-tickets";
-
-                case var nt when nt == NotificationTypeEnum.MachineCheckRequest.ToString():
-                    return "/check-requests";
-
-                case var nt when nt == NotificationTypeEnum.RentingRequest.ToString():
-                    return "/order";
-
-                default:
-                    return null;
-            }
-        }
 
         public static string GetDetailIdName(string notificationType)
         {

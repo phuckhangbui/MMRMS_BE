@@ -8,7 +8,7 @@ namespace Service.Interface
         Task CreateMachineTaskCheckMachineContractTermination(int managerId, CreateMachineTaskContractTerminationDto createMachineTaskDto);
         Task CreateMachineTaskCheckMachineDeliveryFail(int managerId, CreateMachineTaskDeliveryFailDto createMachineTaskDto);
         //Task CreateMachineTaskProcessComponentReplacementTicket(int managerId, CreateMachineTaskProcessComponentReplacementTicket createMachineTaskDto);
-        Task DeleteMachineTask(int taskId);
+        //Task DeleteMachineTask(int taskId);
         Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);
         Task<IEnumerable<MachineTaskDto>> GetMachineTasks();
         Task<IEnumerable<MachineTaskDto>> GetMachineTasks(int staffId);
