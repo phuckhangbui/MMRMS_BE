@@ -429,6 +429,7 @@
             public const string InvoiceNotFound = "Hóa đơn này không tồn tại";
             public const string IncorrectAccountIdForInvoice = "Hóa đơn này không thể được trả bởi bạn";
             public const string InvoiceHaveBeenPaid = "Hóa đơn này đã được thanh toán";
+            public const string InvoiceHaveBeenCanceled = "Hóa đơn này đã bị hủy";
             public const string CreateInvoiceFail = "Tạo hóa đơn thất bại";
 
             //DTO
