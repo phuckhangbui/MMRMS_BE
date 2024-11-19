@@ -7,6 +7,7 @@ namespace Service.Interface
         Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto);
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries();
         Task<IEnumerable<DeliveryTaskDto>> GetDeliveries(int staffId);
+        Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesForCustomer(int customerId);
         Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId);
         Task StaffCompleteDelivery(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, int accountId);
         Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId);

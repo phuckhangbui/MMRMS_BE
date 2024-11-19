@@ -148,6 +148,11 @@ namespace Service.Implement
             return await _deliveryTaskRepository.GetDeliveriesForStaff(staffId);
         }
 
+        public async Task<IEnumerable<DeliveryTaskDto>> GetDeliveriesForCustomer(int customerId)
+        {
+            return await _deliveryTaskRepository.GetDeliveryTasksForCustomer(customerId);
+        }
+
         public async Task<DeliveryTaskDetailDto> GetDeliveryDetail(int deliveryTaskId)
         {
             try
@@ -430,6 +435,8 @@ namespace Service.Implement
 
             await _contractRepository.UpdateContractDeliveryStatus(contractDeliveryId, ContractDeliveryStatusEnum.ProcessedAfterFailure.ToString());
         }
+
+
 
         //public async Task UpdateDeliveryTaskStatus(int DeliveryTaskId, string status, int accountId)
         //{

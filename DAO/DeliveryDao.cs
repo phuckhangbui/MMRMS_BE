@@ -58,6 +58,23 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<DeliveryTask>> GetDeliveriesForCustomer(int customerId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Deliveries
+                    .Include(d => d.Staff)
+                    .Include(d => d.Manager)
+                    .Include(d => d.ContractDeliveries)
+                        .ThenInclude(cd => cd.Contract)
+                        .ThenInclude(c => c.RentingRequest)
+                        .ThenInclude(rr => rr.RentingRequestAddress)
+                    .OrderByDescending(d => d.DateCreate)
+                    .Where(d => d.ContractDeliveries.Any(cd => cd.Contract.AccountSignId == customerId))
+                    .ToListAsync();
+            }
+        }
+
         public async Task<DeliveryTask> GetDeliveryTask(int DeliveryTaskId)
         {
             using (var context = new MmrmsContext())
@@ -176,5 +193,7 @@ namespace DAO
                          .ToListAsync();
             }
         }
+
+
     }
 }
