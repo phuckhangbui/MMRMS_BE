@@ -321,6 +321,7 @@ namespace Repository.Implement
                 RentingRequestId = rentingRequest.RentingRequestId,
                 AccountSignId = rentingRequest.AccountOrderId,
                 RentPeriod = numberOfDays,
+                IsExtended = false,
 
                 RentPrice = machineSerialNumber.ActualRentPrice,
                 DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
@@ -455,6 +456,7 @@ namespace Repository.Implement
                 DepositPrice = 0,
                 TotalRentPrice = baseContract.RentPrice * numberOfDays,
                 BaseContractId = contractId,
+                IsExtended = false,
             };
 
             var extendContractPayment = new ContractPayment
@@ -475,6 +477,9 @@ namespace Repository.Implement
             contract.ContractPayments.Add(extendContractPayment);
 
             contract = await ContractDao.Instance.CreateAsync(contract);
+
+            baseContract.IsExtended = true;
+            await ContractDao.Instance.UpdateAsync(baseContract);
 
             return _mapper.Map<ContractDto>(contract);
         }

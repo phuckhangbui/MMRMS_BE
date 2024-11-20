@@ -2,7 +2,6 @@
 using Common.Enum;
 using DTOs.Content;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;

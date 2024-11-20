@@ -133,8 +133,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToExtend);
             }
 
-            var extendContract = await _contractRepository.GetExtendContract(contractId);
-            if (extendContract != null)
+            if (baseContract.IsExtended == true)
             {
                 throw new ServiceException(MessageConstant.Contract.ContractAlreadyExtended);
             }

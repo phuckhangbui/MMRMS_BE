@@ -20,5 +20,6 @@
         public string? Thumbnail { get; set; }
         public int? AccountSignId { get; set; }
         public string? BaseContractId { get; set; }
+        public bool? IsExtended { get; set; }
     }
 }

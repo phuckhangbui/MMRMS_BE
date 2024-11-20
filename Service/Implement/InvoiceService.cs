@@ -1,7 +1,6 @@
 ﻿using Common;
 using Common.Enum;
 using DTOs;
-using DTOs.Contract;
 using DTOs.Invoice;
 using DTOs.MachineSerialNumber;
 using Microsoft.AspNetCore.SignalR;

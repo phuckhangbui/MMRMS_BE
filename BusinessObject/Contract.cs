@@ -34,6 +34,8 @@ public partial class Contract
 
     public string? BaseContractId { get; set; }
 
+    public bool? IsExtended { get; set; }
+
     public virtual MachineSerialNumber? ContractMachineSerialNumber { get; set; }
 
     public virtual Account? AccountSign { get; set; }
