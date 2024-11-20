@@ -7,6 +7,7 @@ namespace Repository.Interface
         Task<ComponentReplacementTicketDto> CreateTicket(int staffId, ComponentReplacementTicketDto componentReplacementTicketDto, int? accountSignId);
         Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicketDetail(string replacementTicketId);
         Task<ComponentReplacementTicketDto> GetTicket(string ComponentReplacementTicketId);
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketListBySerialNumber(string serialNumber);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketListFromContract(string contractId);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketsByCustomerId(int customerId);

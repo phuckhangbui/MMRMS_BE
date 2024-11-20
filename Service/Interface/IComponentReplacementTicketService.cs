@@ -10,6 +10,8 @@ namespace Service.Interface
         Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets();
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets(int customerId);
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTicketsByContractId(string contractId);
+        Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTicketsBySerialNumber(string serialNumber);
         Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTicketsForStaff(int staffId);
     }
 }

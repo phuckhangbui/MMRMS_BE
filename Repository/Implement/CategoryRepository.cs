@@ -36,7 +36,9 @@ namespace Repository.Implement
                 DateCreate = category.DateCreate,
                 //Status = category.Status,
                 //Quantity = category.Machines.Sum(p => p.Quantity) ?? 0
-            }).ToList();
+            })
+            .OrderByDescending(c => c.DateCreate)
+            .ToList();
 
             return categoryDtos;
         }

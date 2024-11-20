@@ -39,16 +39,7 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<ComponentReplacementTicket>> GetComponentReplacementTicketByContractId(string contractId)
-        {
-            using (var context = new MmrmsContext())
-            {
-                return await context.ComponentReplacementTickets
-                                    .Where(c => c.ContractId == contractId)
-                                    .OrderByDescending(c => c.DateCreate)
-                                    .ToListAsync();
-            }
-        }
+
 
         public async Task<ComponentReplacementTicket> GetComponentReplacementTicket(string ticketId)
         {
@@ -122,8 +113,32 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<ComponentReplacementTicket>> GetComponentReplacementTicketByContractId(string contractId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ComponentReplacementTickets
+                                    .Include(t => t.Contract)
+                                    .Include(c => c.EmployeeCreate)
+                                    .Include(c => c.Component)
+                                    .Where(c => c.ContractId == contractId)
+                                    .OrderByDescending(c => c.DateCreate)
+                                    .ToListAsync();
+            }
+        }
 
-
-
+        public async Task<IEnumerable<ComponentReplacementTicket>> GetComponentReplacementTicketBySerialNumber(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.ComponentReplacementTickets
+                                    .Include(t => t.Contract)
+                                    .Include(c => c.EmployeeCreate)
+                                    .Include(c => c.Component)
+                                    .Where(t => t.Contract.SerialNumber == serialNumber)
+                                    .OrderByDescending(c => c.DateCreate)
+                                    .ToListAsync();
+            }
+        }
     }
 }

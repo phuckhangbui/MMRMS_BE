@@ -17,12 +17,50 @@ namespace API.Controllers
         }
 
         [HttpGet("manager")]
-        [Authorize(Policy = "Manager")]
+        [Authorize(Policy = "Employee")]
         public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicket()
         {
             try
             {
                 IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTickets();
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("contract/{contractId}")]
+        [Authorize(Policy = "Employee")]
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicketByContractId([FromRoute] string contractId)
+        {
+            try
+            {
+                IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTicketsByContractId(contractId);
+                return Ok(list);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("serial-number/{serialNumber}")]
+        [Authorize(Policy = "Employee")]
+        public async Task<ActionResult<IEnumerable<ComponentReplacementTicketDto>>> GetComponentReplacementTicketBySerialNumber([FromRoute] string serialNumber)
+        {
+            try
+            {
+                IEnumerable<ComponentReplacementTicketDto> list = await _componentReplacementTicketService.GetComponentReplacementTicketsBySerialNumber(serialNumber);
                 return Ok(list);
             }
             catch (ServiceException ex)
