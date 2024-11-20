@@ -31,7 +31,9 @@ namespace Repository.Implement
                     .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
 
                 return machineViewDto;
-            }).ToList() ?? [];
+            })
+                .OrderByDescending(m => m.DateCreate)
+                .ToList() ?? [];
         }
 
         public async Task<IEnumerable<MachineDto>> GetActiveMachines()
@@ -51,7 +53,9 @@ namespace Repository.Implement
                     .FirstOrDefault(m => m.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
 
                 return machineViewDto;
-            }).ToList() ?? [];
+            })
+                .OrderByDescending(m => m.DateCreate)
+                .ToList() ?? [];
         }
 
         public async Task<MachineDto> GetMachine(int productId)

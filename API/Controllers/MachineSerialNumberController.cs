@@ -48,6 +48,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{serialNumber}/detail-log")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MachineSerialNumberLogDto>>> GetMachineSerialNumberDetailLog([FromRoute] string serialNumber)
         {
 

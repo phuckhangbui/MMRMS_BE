@@ -185,5 +185,12 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
         }
+
+        public async Task<IEnumerable<ComponentReplacementTicketDto>> GetTicketListBySerialNumber(string serialNumber)
+        {
+            var list = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketBySerialNumber(serialNumber);
+
+            return _mapper.Map<IEnumerable<ComponentReplacementTicketDto>>(list);
+        }
     }
 }

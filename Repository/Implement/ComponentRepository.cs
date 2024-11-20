@@ -37,28 +37,6 @@ namespace Repository.Implement
             await ComponentDao.Instance.CreateAsync(component);
         }
 
-        //public async Task<ComponentDto> Create(string name)
-        //{
-        //    var isExisted = await ComponentDao.Instance.IsComponentNameExisted(name.Trim());
-
-        //    if (isExisted)
-        //    {
-        //        throw new RepositoryException(MessageConstant.Component.ComponetNameDuplicated);
-        //    }
-
-        //    var component = new Component
-        //    {
-        //        ComponentName = name.Trim(),
-        //        Price = null,
-        //        Quantity = null,
-        //        DateCreate = DateTime.Now,
-        //        Status = ComponentStatusEnum.NoQuantity.ToString(),
-        //    };
-
-        //    component = await ComponentDao.Instance.CreateComponent(component);
-
-        //    return _mapper.Map<ComponentDto>(component);
-        //}
 
         public async Task Delete(int componentId)
         {
@@ -74,7 +52,7 @@ namespace Repository.Implement
         {
             var list = await ComponentDao.Instance.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<ComponentDto>>(list);
+            return _mapper.Map<IEnumerable<ComponentDto>>(list.OrderByDescending(c => c.DateCreate));
         }
 
 
