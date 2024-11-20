@@ -47,8 +47,6 @@ public partial class MmrmsContext : DbContext
 
     public virtual DbSet<ContractDelivery> ContractDeliveries { get; set; }
 
-    public virtual DbSet<Feedback> Feedbacks { get; set; }
-
     public virtual DbSet<RentingRequest> RentingRequests { get; set; }
 
     public virtual DbSet<Invoice> Invoices { get; set; }
@@ -473,26 +471,6 @@ public partial class MmrmsContext : DbContext
             entity.HasOne(d => d.DeliveryTask).WithMany(p => p.ContractDeliveries)
                .HasForeignKey(d => d.DeliveryTaskId)
                .HasConstraintName("FK_DeliveryTask_ContractDelivery");
-        });
-
-
-        modelBuilder.Entity<Feedback>(entity =>
-        {
-            entity.HasKey(e => e.FeedbackId);
-
-            entity.ToTable("Feedback");
-
-            entity.Property(e => e.FeedbackId)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            entity.HasOne(d => d.AccountFeedback).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.AccountFeedbackId)
-                .HasConstraintName("FK_Feedback_Account");
-
-            entity.HasOne(d => d.Contract).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.ContractId)
-                .HasConstraintName("FK_Feedback_Contract");
         });
 
         modelBuilder.Entity<LogDetail>(entity =>

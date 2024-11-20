@@ -48,8 +48,6 @@ public partial class Contract
 
     public virtual ICollection<ContractDelivery> ContractDeliveries { get; set; } = new List<ContractDelivery>();
 
-    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
-
     public virtual ICollection<MachineCheckRequest> MachineCheckRequests { get; set; } = new List<MachineCheckRequest>();
 
     public virtual ICollection<ComponentReplacementTicket> ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicket>();
