@@ -64,8 +64,6 @@ public partial class Account
 
     public virtual ICollection<DeliveryTask> DeliveryTaskGaveList { get; set; } = new List<DeliveryTask>();
 
-    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
-
     public virtual ICollection<RentingRequest> RentingRequests { get; set; } = new List<RentingRequest>();
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
