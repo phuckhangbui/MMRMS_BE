@@ -1,42 +1,42 @@
 [
   {
-    "Name": "companyAddress",
-    "Value": "heheheh",
-    "ValueType": "string"
+    "name": "companyAddress",
+    "value": "113/14 Đường số 11, P. Linh Xuân, TP. Thủ Đức",
+    "valueType": "string"
   },
   {
-    "Name": "companyCoordinate",
-    "Value": "",
-    "ValueType": "string"
+    "name": "companyTaxNumber",
+    "value": "0317111502",
+    "valueType": "string"
   },
   {
-    "Name": "companyName",
-    "Value": "",
-    "ValueType": "string"
+    "name": "companyName",
+    "value": "Công ty trách nhiệm hữu hạn máy móc thiết bị Thành Luân",
+    "valueType": "string"
   },
   {
-    "Name": "companyTaxNumber",
-    "Value": "",
-    "ValueType": "string"
+    "name": "companyPhone",
+    "value": "0233475658",
+    "valueType": "string"
   },
   {
-    "Name": "companyPhone",
-    "Value": "",
-    "ValueType": "string"
+    "name": "companyDirectorName",
+    "value": "Nguyễn Thành Luân",
+    "valueType": "string"
   },
   {
-    "Name": "companyDirectorName",
-    "Value": "",
-    "ValueType": "string"
+    "name": "companyCoordinate",
+    "value": "10.8865777,106.7663486",
+    "valueType": "string"
   },
   {
-    "Name": "maxTaskADay",
-    "Value": 3,
-    "ValueType": "int"
+    "name": "maxTaskADay",
+    "value": 3,
+    "valueType": "int"
   },
   {
-    "Name": "defaultTicketCharge",
-    "Value": 111000.0,
-    "ValueType": "double"
+    "name": "defaultTicketCharge",
+    "value": 111000.0,
+    "valueType": "double"
   }
 ]
