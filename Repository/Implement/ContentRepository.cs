@@ -3,6 +3,7 @@ using BusinessObject;
 using Common.Enum;
 using DAO;
 using DTOs.Content;
+using DTOs.Contract;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 
@@ -70,13 +71,20 @@ namespace Repository.Implement
             return null;
         }
 
-        public async Task<IEnumerable<ContentDto>> GetContents()
+        public async Task<IEnumerable<ContentDto>> GetContents(string? status)
         {
             var contents = await ContentDao.Instance.GetContents();
 
             if (!contents.IsNullOrEmpty())
             {
-                return _mapper.Map<IEnumerable<ContentDto>>(contents);
+                var contentDtos = _mapper.Map<IEnumerable<ContentDto>>(contents);
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    contentDtos = contentDtos.Where(c => c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return contentDtos;
             }
 
             return [];

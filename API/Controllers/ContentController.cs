@@ -18,11 +18,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ContentDto>>> GetContents()
+        public async Task<ActionResult<List<ContentDto>>> GetContents([FromQuery] string? status = null)
         {
             try
             {
-                var contents = await _contentService.GetContents();
+                var contents = await _contentService.GetContents(status);
                 return Ok(contents);
             }
             catch (ServiceException ex)

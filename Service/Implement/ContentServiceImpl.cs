@@ -50,16 +50,14 @@ namespace Service.Implement
             return content;
         }
 
-        public async Task<IEnumerable<ContentDto>> GetContents()
+        public async Task<IEnumerable<ContentDto>> GetContents(string? status)
         {
-            var contents = await _contentRepository.GetContents();
-
-            if (contents.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(status) && !Enum.IsDefined(typeof(ContentStatusEnum), status))
             {
-                throw new ServiceException(MessageConstant.Content.ContentListEmpty);
+                throw new ServiceException(MessageConstant.InvalidStatusValue);
             }
 
-            return contents;
+            return await _contentRepository.GetContents(status);
         }
 
         public async Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto)
