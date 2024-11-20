@@ -5,7 +5,7 @@ namespace Service.Interface
 {
     public interface IContentService
     {
-        Task<IEnumerable<ContentDto>> GetContents();
+        Task<IEnumerable<ContentDto>> GetContents(string? status);
         Task<ContentDto> GetContentDetailById(int contentId);
         Task CreateContent(int accountCreateId, ContentCreateRequestDto contentRequestDto);
         Task UpdateContent(int accountUpdateId, int contentId, ContentUpdateRequestDto contentUpdateRequestDto);
