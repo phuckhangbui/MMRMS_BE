@@ -3,7 +3,6 @@
     public enum MachineStatusEnum
     {
         Active,
-        OutOfStock,
         Locked,
     }
 }
