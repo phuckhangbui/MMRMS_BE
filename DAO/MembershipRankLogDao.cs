@@ -31,6 +31,7 @@ namespace DAO
 
             return await context.MembershipRankLogs
                 .Where(x => x.AccountId == accountId)
+                .OrderByDescending(m => m.DateCreate)
                 .ToListAsync();
         }
     }

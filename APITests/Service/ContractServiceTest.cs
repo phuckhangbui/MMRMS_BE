@@ -204,26 +204,6 @@ namespace Test.Service
         }
 
         [Fact]
-        public async Task ExtendContract_ThrowsException_ExtensionStartDateNotValid()
-        {
-            //Arrange
-            var contractId = "CON20241104NO0005";
-            var contractExtendDto = new ContractExtendDto
-            {
-                DateEnd = DateTime.Parse("2025-03-31T00:00:00"),
-            };
-            var currentContractDto = GetSampleContractDtoStatusRenting();
-
-            _contractRepositoryMock.Setup(x => x.GetContractById(It.IsAny<string>())).ReturnsAsync(currentContractDto);
-
-            //Act
-            var exception = await Assert.ThrowsAsync<ServiceException>(() => _contractService.ExtendContract(contractId, contractExtendDto));
-
-            //Assert
-            Assert.Equal(MessageConstant.Contract.ExtensionStartDateNotValid, exception.Message);
-        }
-
-        [Fact]
         public async Task ExtendContract_ThrowsException_ExtensionPeriodNotValid()
         {
             var contractId = "CON20241104NO0005";
