@@ -22,8 +22,6 @@ public partial class DeliveryTask
 
     public string? ReceiverName { get; set; }
 
-    public string? Type { get; set; }
-
     public virtual Account? Staff { get; set; }
 
     public virtual Account? Manager { get; set; }
