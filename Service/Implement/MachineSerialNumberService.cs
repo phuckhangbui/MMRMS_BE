@@ -113,8 +113,6 @@ namespace Service.Implement
                 }
             }
 
-            productDto.Status = MachineStatusEnum.OutOfStock.ToString();
-
             await _productRepository.UpdateMachine(productDto);
         }
 

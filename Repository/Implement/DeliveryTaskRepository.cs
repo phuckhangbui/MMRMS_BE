@@ -36,7 +36,6 @@ namespace Repository.Implement
                 DateShip = parsedDate,
                 DateCreate = now,
                 Status = DeliveryTaskStatusEnum.Created.ToString(),
-                Type = DeliveryTaskTypeEnum.Delivery.ToString(),
                 Note = createDeliveryTaskDto.Note ?? null,
             };
 

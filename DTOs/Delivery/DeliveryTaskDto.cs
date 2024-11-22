@@ -32,10 +32,6 @@ namespace DTOs.Delivery
 
         public string? ReceiverName { get; set; }
 
-        public string? Type { get; set; }
-
-
-
         public ContractAddressDto? ContractAddress { get; set; }
 
     }

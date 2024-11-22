@@ -19,9 +19,4 @@
     }
 
 
-    public enum DeliveryTaskTypeEnum
-    {
-        Delivery,
-        GetMachinery
-    }
 }

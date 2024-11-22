@@ -310,11 +310,6 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            //if (productDto.Status == MachineStatusEnum.NoSerialMachine.ToString())
-            //{
-            //    throw new ServiceException(MessageConstant.Machine.MachineStateNotSuitableForModifyStatus);
-            //}
-
             if (productDto.Status != MachineStatusEnum.Locked.ToString())
             {
                 productDto.Status = MachineStatusEnum.Locked.ToString();
@@ -324,7 +319,6 @@ namespace Service.Implement
                 return;
             }
 
-            // when status is currently "locked"
             var serialMachineList = await GetSerialMachineList(productId);
 
             if (serialMachineList.IsNullOrEmpty())
@@ -343,10 +337,6 @@ namespace Service.Implement
                     return;
                 }
             }
-
-            productDto.Status = MachineStatusEnum.OutOfStock.ToString();
-
-            await _machineRepository.UpdateMachine(productDto);
         }
     }
 }
