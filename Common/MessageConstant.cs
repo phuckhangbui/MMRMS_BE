@@ -8,7 +8,6 @@
         public static class Content
         {
             //Service
-            public const string ContentListEmpty = "Danh sách nội dung trống";
             public const string ContentNotFound = "Nội dung không tồn tại";
 
             //DTO
@@ -200,18 +199,13 @@
 
             //Service
             public const string ContractNotFound = "Hợp đồng không tồn tại.";
-            public const string RentingRequestInvalid = "Yêu cầu thuê không hợp lệ.";
-            public const string AccountRentInvalid = "Tài khoản thuê không hợp lệ.";
             public const string ContractOutOfRange = "Hợp đồng này chưa bắt đầu hoặc là đã kết thúc";
             public const string ContractIsNotReadyForRequest = "Hợp đồng này chưa thể tạo yêu cầu liên quan";
-            public const string ContractNotValidToSign = "Hợp đồng không thể ký do không hợp lệ";
             public const string ContractNotValidToDelivery = "Hợp đồng không thể giao do chưa ký hoặc đã giao thành công, mã hợp đồng: ";
             public const string ContractNotValidToDeliveryOldContractDeliveryStillActive = "Hợp đồng không thể giao do vẫn còn lịch cũ chưa hoàn thành/ đã thành công, mã hợp đồng: ";
-            public const string SignContractFail = "Ký hợp đồng thất bại";
             public const string ContractNotValidToEnd = "Hợp đồng không thể kết thúc do không hợp lệ";
             public const string ContractNotValidToCreateRefundInvoice = "Hợp đồng không hợp lệ để tạo hóa đơn hoàn trả.";
             public const string ExtensionPeriodNotValid = "Thời gian gia hạn phải tối thiểu 30 ngày tính từ ngày kết thúc của hợp đồng hiện tại.";
-            public const string ExtensionStartDateNotValid = "Ngày bắt đầu gia hạn phải sau ngày kết thúc của hợp đồng hiện tại.";
             public const string ContractNotValidToExtend = "Hợp đồng không thể gia hạn do không hợp lệ";
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
             public const string ContractAlreadyExtended = "Hợp đồng này đã được gia hạn, không thể gia hạn được nữa";

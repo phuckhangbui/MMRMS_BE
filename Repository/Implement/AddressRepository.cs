@@ -30,9 +30,7 @@ namespace Repository.Implement
         public async Task CreateAddressForCustomer(int customerId, AddressRequestDto addressRequestDto)
         {
             var address = _mapper.Map<Address>(addressRequestDto);
-
             address.AccountId = customerId;
-            //address.IsDelete = false;
 
             await AddressDao.Instance.CreateAsync(address);
         }

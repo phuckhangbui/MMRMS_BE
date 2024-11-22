@@ -34,7 +34,9 @@ namespace DAO
 
                 if (roleId.HasValue)
                 {
-                    query = query.Include(a => a.AccountBusiness).Where(a => a.RoleId == roleId.Value);
+                    query = query.Include(a => a.AccountBusiness)
+                        .OrderByDescending(a => a.DateCreate)
+                        .Where(a => a.RoleId == roleId.Value);
                 }
 
                 return await query.ToListAsync();
@@ -45,7 +47,10 @@ namespace DAO
         {
             using (var context = new MmrmsContext())
             {
-                return await context.Accounts.Where(a => a.RoleId != (int)AccountRoleEnum.Customer).ToListAsync();
+                return await context.Accounts
+                    .Where(a => a.RoleId != (int)AccountRoleEnum.Customer)
+                    .OrderByDescending(a => a.DateCreate)
+                    .ToListAsync();
             }
         }
 
