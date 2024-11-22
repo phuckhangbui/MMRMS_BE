@@ -138,7 +138,15 @@ namespace Repository.Mapper
             CreateMap<UpdateComponentDto, Component>();
             CreateMap<CreateComponentDto, Component>();
 
-            CreateMap<MachineSerialNumber, MachineSerialNumberDto>();
+            CreateMap<MachineSerialNumber, MachineSerialNumberDto>()
+                .ForMember(dest => dest.MachineName,
+                        opt => opt.MapFrom(src => src.Machine != null
+                            ? src.Machine.MachineName
+                            : null))
+                .ForMember(dest => dest.MachineModel,
+                        opt => opt.MapFrom(src => src.Machine != null
+                            ? src.Machine.Model
+                            : null));
             CreateMap<MachineSerialNumberLog, MachineSerialNumberLogDto>()
                 .ForMember(dest => dest.AccountTriggerName,
                         opt => opt.MapFrom(src => src.AccountTrigger != null

@@ -8,6 +8,10 @@
 
         public int? MachineId { get; set; }
 
+        public string? MachineName { get; set; }
+
+        public string? MachineModel { get; set; }
+
         public string? Status { get; set; }
 
         public DateTime? DateCreate { get; set; }
