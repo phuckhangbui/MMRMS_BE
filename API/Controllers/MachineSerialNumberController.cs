@@ -47,6 +47,33 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("{serialNumber}/detail")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetMachineSerialNumberDetail([FromRoute] string serialNumber)
+        {
+
+            try
+            {
+                IEnumerable<MachineSerialNumberLogDto> logs = await _machineSerialNumberService.GetDetailLog(serialNumber);
+                IEnumerable<MachineSerialNumberComponentDto> componentList = await _machineSerialNumberService.GetSerialNumberComponents(serialNumber);
+                MachineSerialNumberDto machineSerialNumberDto = await _machineSerialNumberService.GetMachineSerial(serialNumber);
+                return Ok(new
+                {
+                    MachineSerial = machineSerialNumberDto,
+                    ComponentList = componentList,
+                    Logs = logs
+                });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{serialNumber}/detail-log")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<MachineSerialNumberLogDto>>> GetMachineSerialNumberDetailLog([FromRoute] string serialNumber)

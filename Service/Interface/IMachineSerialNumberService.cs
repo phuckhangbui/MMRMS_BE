@@ -13,5 +13,6 @@ namespace Service.Interface
         Task UpdateMachineSerialNumberComponentStatusToNormalWhileInStore(int machineSerialNumberComponentId, int staffId, bool isDeductFromComponentStorage, int quantity, string note);
         Task MoveSerialMachineToMaintenanceStatus(string serialNumber, int staffId, string note);
         Task MoveSerialMachineToActiveStatus(string serialNumber, int staffId, string note);
+        Task<MachineSerialNumberDto> GetMachineSerial(string serialNumber);
     }
 }

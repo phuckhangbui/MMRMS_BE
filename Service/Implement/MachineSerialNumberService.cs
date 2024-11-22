@@ -315,26 +315,11 @@ namespace Service.Implement
             //}
         }
 
-        //public async Task UpdateStatus(string serialNumber, string status)
-        //{
-        //    if (string.IsNullOrEmpty(serialNumber))
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineSerialNumber.SerialNumberRequired);
-        //    }
+        public async Task<MachineSerialNumberDto> GetMachineSerial(string serialNumber)
+        {
+            return await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+        }
 
-        //    if (!await _machineSerialNumberRepository.IsSerialNumberExist(serialNumber))
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
-        //    }
 
-        //    if (!status.Equals(MachineSerialNumberStatusEnum.Maintenance.ToString()) ||
-        //       !status.Equals(MachineSerialNumberStatusEnum.Locked.ToString()) ||
-        //       !status.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineSerialNumber.StatusCannotSet);
-        //    }
-
-        //    await _machineSerialNumberRepository.UpdateStatus(serialNumber, status, staffId);
-        //}
     }
 }
