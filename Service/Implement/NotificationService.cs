@@ -351,6 +351,56 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToManagerWhenCancelCheckRequest(string machineCheckRequestId, string contractId, ContractAddressDto contractAddress)
+        {
+            string title = "Yêu cầu kiểm tra máy đã được khách hủy";
+            string body = $"Yêu cầu kiểm tra máy của hợp đồng {contractId} tại {contractAddress.AddressBody}, {contractAddress.District} đã được khách hủy";
+
+            var managerList = await _accountRepository.GetManagerAccounts();
+
+            string type = NotificationTypeEnum.MachineCheckRequest.ToString();
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        DetailIdName = detailIdName,
+                        DetailId = machineCheckRequestId,
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", account.AccountId.ToString() },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            });
+        }
+
         public async Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto, string detailId)
         {
             string title = "Yêu cầu kiểm tra máy";

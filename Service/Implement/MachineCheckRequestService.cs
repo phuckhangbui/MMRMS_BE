@@ -81,7 +81,7 @@ namespace Service.Implement
                 {
                     await this.UpdateRequestStatus(request.MachineCheckRequestId, MachineCheckRequestStatusEnum.Canceled.ToString(), null);
 
-
+                    await _notificationService.SendNotificationToManagerWhenCancelCheckRequest(request.MachineCheckRequestId, request.ContractId, request.ContractAddress);
                     if (machineTask != null)
                     {
                         await _machineTaskRepository.UpdateTaskStatus((int)request.MachineTaskId, MachineTaskEnum.Canceled.ToString(), customerId, null);
@@ -91,9 +91,6 @@ namespace Service.Implement
                                                                                                 machineTask?.MachineTaskId.ToString() ?? null);
                         await _machineTaskHub.Clients.All.SendAsync("OnUpdateMachineTask", (int)request.MachineTaskId);
                     }
-
-                    await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequest", request.MachineCheckRequestId);
-
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -214,7 +211,12 @@ namespace Service.Implement
             await _machineCheckRequestRepository.UpdateRequest(request);
 
             //send notification here
-            await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request, request.MachineCheckRequestId);
+            if (request.Status != MachineCheckRequestStatusEnum.Canceled.ToString())
+            {
+                await _notificationService.SendNotificationToCustomerWhenUpdateRequestStatus((int)contract.AccountSignId, request, request.MachineCheckRequestId);
+            }
+
+
 
             await _machineCheckRequestHub.Clients.All.SendAsync("OnUpdateMachineCheckRequest", machineCheckRequestId);
         }
