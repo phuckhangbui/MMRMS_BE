@@ -398,7 +398,7 @@ namespace Service.Implement
             catch (Exception ex)
             {
 
-            });
+            };
         }
 
         public async Task SendToManagerWhenCustomerCreateMachineCheckRequest(int customerId, CreateMachineCheckRequestDto createMachineCheckRequestDto, string detailId)
