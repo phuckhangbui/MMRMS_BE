@@ -26,7 +26,7 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub, IInvoiceRepository invoiceRepository)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _componentRepository = componentRepository;
@@ -38,6 +38,7 @@ namespace Service.Implement
             _machineCheckRequestService = machineCheckRequestService;
             _machineSerialNumberLogRepository = machineSerialNumberLogRepository;
             _invoiceHub = invoiceHub;
+            _invoiceRepository = invoiceRepository;
         }
 
 
