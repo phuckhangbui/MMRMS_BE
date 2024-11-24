@@ -72,25 +72,11 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else if (app.Environment.IsProduction())
-{
-    app.UseSwagger(c =>
-    {
-        c.RouteTemplate = "nguyenminhkhoatrikhang/swagger/{documentname}/swagger.json";
-    });
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/nguyenminhkhoatrikhang/swagger/v1/swagger.json", "Production");
-        c.RoutePrefix = "nguyenminhkhoatrikhang/swagger";
-    });
-}
 
 
 app.UseCors("CorsPolicy");
