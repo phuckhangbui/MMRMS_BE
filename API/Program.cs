@@ -20,6 +20,8 @@ ConfigurationHelper.Initialize(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
@@ -70,8 +72,26 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else if (app.Environment.IsProduction())
+{
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "nguyenminhkhoatrikhang/swagger/{documentname}/swagger.json";
+    });
+
+
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/nguyenminhkhoatrikhang/swagger/v1/swagger.json", "Production");
+        c.RoutePrefix = "nguyenminhkhoatrikhang/swagger";
+    });
+}
+
 
 app.UseCors("CorsPolicy");
 
