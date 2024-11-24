@@ -50,21 +50,23 @@ namespace Repository.Implement
             };
 
 
-            var invoice = new Invoice
-            {
-                InvoiceId = await GenerateInvoiceId(),
-                ComponentReplacementTicketId = componentTicket.ComponentReplacementTicketId,
-                AccountPaidId = accountSignId,
-                Amount = componentReplacementTicketDto.TotalAmount,
-                DateCreate = time,
-                Type = InvoiceTypeEnum.ComponentTicket.ToString(),
-            };
+
 
             componentTicket = await ComponentReplacementTicketDao.Instance.CreateTicket(componentTicket, ticketLog);
 
 
             if (componentTicket.Type == ComponentReplacementTicketTypeEnum.RentingTicket.ToString())
             {
+                var invoice = new Invoice
+                {
+                    InvoiceId = await GenerateInvoiceId(),
+                    ComponentReplacementTicketId = componentTicket.ComponentReplacementTicketId,
+                    AccountPaidId = accountSignId,
+                    Amount = componentReplacementTicketDto.TotalAmount,
+                    DateCreate = time,
+                    Type = InvoiceTypeEnum.ComponentTicket.ToString(),
+                };
+
                 invoice.Status = InvoiceStatusEnum.Pending.ToString();
                 await InvoiceDao.Instance.CreateAsync(invoice);
                 componentTicket.InvoiceId = invoice.InvoiceId;
@@ -72,6 +74,8 @@ namespace Repository.Implement
             }
 
             var result = _mapper.Map<ComponentReplacementTicketDto>(componentTicket);
+
+            result.InvoiceId = componentTicket?.InvoiceId ?? null;
 
             return result;
         }

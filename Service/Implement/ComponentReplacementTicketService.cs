@@ -2,6 +2,7 @@
 using Common.Enum;
 using DTOs.ComponentReplacementTicket;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -21,10 +22,11 @@ namespace Service.Implement
         private readonly IMachineCheckRequestService _machineCheckRequestService;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
+        private readonly IHubContext<InvoiceHub> _invoiceHub;
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _componentRepository = componentRepository;
@@ -35,6 +37,7 @@ namespace Service.Implement
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
             _machineCheckRequestService = machineCheckRequestService;
             _machineSerialNumberLogRepository = machineSerialNumberLogRepository;
+            _invoiceHub = invoiceHub;
         }
 
 
@@ -69,6 +72,8 @@ namespace Service.Implement
 
                     //update invoice status
                     await _invoiceRepository.UpdateInvoiceStatus(ticket.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
+
+                    await _invoiceHub.Clients.All.SendAsync("OnUpdateInvoiceStatus", ticket.InvoiceId);
 
                     //update task status and request status
                     //await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
@@ -255,6 +260,12 @@ namespace Service.Implement
 
                     var newComponentTicket = await _componentReplacementTicketRepository
                                                       .CreateTicket(staffId, replacementTicket, contract.AccountSignId);
+
+                    if (!newComponentTicket.InvoiceId.IsNullOrEmpty())
+                    {
+                        await _invoiceHub.Clients.All.SendAsync("OnCreateInvoice", newComponentTicket.InvoiceId);
+                    }
+
 
                     if (machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
                     {
