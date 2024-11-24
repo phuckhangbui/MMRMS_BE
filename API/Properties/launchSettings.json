@@ -30,7 +30,7 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/nguyenminhkhoatrikhang",
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "5000",
         "ASPNETCORE_HTTP_PORTS": "5001"
