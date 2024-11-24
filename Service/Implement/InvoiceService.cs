@@ -25,6 +25,8 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
         private readonly IMembershipRankService _membershipRankService;
         private readonly IBackground _background;
+        private readonly IHubContext<InvoiceHub> _invoiceHub;
+
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
@@ -35,7 +37,8 @@ namespace Service.Implement
             IHubContext<ComponentReplacementTicketHub> componentReplacementTicketHub,
             INotificationService notificationService,
             IMembershipRankService membershipRankService,
-            IBackground background)
+            IBackground background,
+            IHubContext<InvoiceHub> invoiceHub)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -47,6 +50,7 @@ namespace Service.Implement
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
             _background = background;
+            _invoiceHub = invoiceHub;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -171,6 +175,8 @@ namespace Service.Implement
                             await ProcessContractInvoice(invoice);
                             break;
                     }
+
+                    await _invoiceHub.Clients.All.SendAsync("OnUpdateInvoiceStatus", invoice.InvoiceId);
 
                     scope.Complete();
 
