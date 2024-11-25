@@ -17,6 +17,28 @@ namespace Service.Implement
     {
         private const string PAYMENT_REQUEST_URL = "https://api-merchant.payos.vn/v2/payment-requests/";
 
+        private int ScaleAmount(int amount)
+        {
+            int scaledAmount = amount / 10000;
+
+            if (scaledAmount < 1000)
+            {
+                while (scaledAmount < 1000)
+                {
+                    scaledAmount *= 10;
+                }
+            }
+            else if (scaledAmount > 100000)
+            {
+                while (scaledAmount > 100000)
+                {
+                    scaledAmount /= 10;
+                }
+            }
+
+            return scaledAmount;
+        }
+
         public async Task<string> CreatePaymentLink(string invoiceId, int invoiceTimeStamp, int amount, string urlCancel, string urlReturn)
         {
             var client = ConfigurationHelper.config.GetSection("PayOS:ClientID").Value;
@@ -28,7 +50,7 @@ namespace Service.Implement
             var item = new ItemData(invoiceId, 1, amount);
             List<ItemData> items = [item];
 
-            int testAmount = 10000;
+            int testAmount = this.ScaleAmount(amount);
 
             string formattedAmount = string.Format(new CultureInfo("vi-VN"), "{0:N0}", amount);
             PaymentData paymentData = new PaymentData(

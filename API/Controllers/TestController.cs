@@ -14,15 +14,17 @@ namespace API.Controllers
         private readonly INotificationService _notificationService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
         private readonly IMembershipRankService _membershipRankService;
+        private readonly IPayOSService _payOSService;
         private readonly ILogger<TestController> _logger;
 
-        public TestController(ILogger<TestController> logger, ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService)
+        public TestController(ILogger<TestController> logger, ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService, IPayOSService payOSService)
         {
             _cloudinaryService = cloudinaryService;
             _firebaseMessagingService = firebaseMessagingService;
             _notificationService = notificationService;
             _membershipRankService = membershipRankService;
             _logger = logger;
+            _payOSService = payOSService;
         }
 
         [HttpPost("update-customer-rank")]
@@ -32,6 +34,24 @@ namespace API.Controllers
             {
                 await _membershipRankService.UpdateMembershipRankForCustomer(customerId, amount);
                 return Ok(new { message = "Customer membership rank updated successfully." });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the customer rank.", details = ex.Message });
+            }
+        }
+
+        [HttpPost("create-payment-url")]
+        public async Task<IActionResult> CreatePaymentUrl()
+        {
+            try
+            {
+                var url = await _payOSService.CreatePaymentLink("TEST", 123456, 1000, "test", "test");
+                return Ok(url);
             }
             catch (ServiceException ex)
             {
