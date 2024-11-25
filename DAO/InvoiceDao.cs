@@ -110,5 +110,26 @@ namespace DAO
 
             return (double)await query.SumAsync(i => i.Amount);
         }
+
+        public async Task<IEnumerable<Invoice>> GetCustomerInvoices(int customerId)
+        {
+            using var context = new MmrmsContext();
+
+            var invoices = await context.Invoices
+                .Include(i => i.ContractPayments)
+                    .ThenInclude(cp => cp.Contract)
+                .Include(i => i.AccountPaid)
+                .ToListAsync();
+
+            var customerInvoices = invoices
+                .Where(i => i.AccountPaidId == customerId ||
+                    i.ContractPayments.Any(cp => cp.Contract.AccountSignId == customerId && 
+                        i.Type.Equals(InvoiceTypeEnum.Refund.ToString())))
+                .OrderByDescending(i => i.DateCreate)
+                .Distinct()
+                .ToList();
+
+            return customerInvoices;
+        }
     }
 }

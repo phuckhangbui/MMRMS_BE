@@ -50,7 +50,7 @@ namespace API.Controllers
 
             try
             {
-                var list = await _invoiceService.GetCustomerInvoice(customerId);
+                var list = await _invoiceService.GetCustomerInvoices(customerId);
                 return Ok(list);
             }
             catch (ServiceException ex)

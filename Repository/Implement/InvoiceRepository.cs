@@ -44,7 +44,7 @@ namespace Repository.Implement
             return _mapper.Map<InvoiceDto>(invoice);
         }
 
-        public async Task<IEnumerable<InvoiceDto>> GetAllInvoices()
+        public async Task<IEnumerable<InvoiceDto>> GetInvoices()
         {
             var invoices = await InvoiceDao.Instance.GetInvoices();
 
@@ -131,6 +131,7 @@ namespace Repository.Implement
             {
                 invoice.Status = InvoiceStatusEnum.Paid.ToString();
                 invoice.DatePaid = DateTime.Now;
+                invoice.PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString();
             }
 
             invoice = await InvoiceDao.Instance.CreateAsync(invoice);
@@ -229,6 +230,13 @@ namespace Repository.Implement
                     await ContractPaymentDao.Instance.UpdateAsync(payment);
                 }
             }
+        }
+
+        public async Task<IEnumerable<InvoiceDto>> GetCustomerInvoices(int customerId)
+        {
+            var invoices = await InvoiceDao.Instance.GetCustomerInvoices(customerId);
+
+            return _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
         }
     }
 }
