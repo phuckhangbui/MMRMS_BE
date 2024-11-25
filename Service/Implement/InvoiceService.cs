@@ -55,14 +55,12 @@ namespace Service.Implement
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
         {
-            return await _invoiceRepository.GetAllInvoices();
+            return await _invoiceRepository.GetInvoices();
         }
 
-        public async Task<IEnumerable<InvoiceDto>> GetCustomerInvoice(int customerId)
+        public async Task<IEnumerable<InvoiceDto>> GetCustomerInvoices(int customerId)
         {
-            var list = await _invoiceRepository.GetAllInvoices();
-
-            return list.Where(i => i.AccountPaidId == customerId).ToList();
+            return await _invoiceRepository.GetCustomerInvoices(customerId);
         }
 
         public async Task<object?> GetInvoiceDetail(string invoiceId)
