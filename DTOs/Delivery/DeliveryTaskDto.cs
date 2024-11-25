@@ -18,6 +18,10 @@ namespace DTOs.Delivery
 
         public int? CustomerId { get; set; }
 
+        public string? CustomerName { get; set; }
+
+        public string? CustomerPhone { get; set; }
+
         public DateTime? DateShip { get; set; }
 
         public DateTime? DateCreate { get; set; }

@@ -196,6 +196,14 @@ namespace Repository.Implement
 
             var contractDeliveryList = _mapper.Map<IEnumerable<ContractDeliveryDto>>(delivery.ContractDeliveries);
 
+            var customer = await AccountDao.Instance.GetAccountAsyncById((int)deliveryTaskDto.CustomerId);
+
+            if (customer != null)
+            {
+                deliveryTaskDto.CustomerName = customer.Name;
+                deliveryTaskDto.CustomerPhone = customer.Phone;
+            }
+
             return new DeliveryTaskDetailDto
             {
                 DeliveryTask = deliveryTaskDto,
