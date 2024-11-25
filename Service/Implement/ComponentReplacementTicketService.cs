@@ -270,11 +270,14 @@ namespace Service.Implement
 
                     if (machineTaskDetail.Type == MachineTaskTypeEnum.MachineryCheckRequest.ToString())
                     {
-                        await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId, MachineTaskEnum.Reparing.ToString(), staffId, null);
-                        await _machineCheckRequestService.UpdateRequestStatus(
-                           machineTaskDetail?.MachineCheckRequestId,
-                           MachineCheckRequestStatusEnum.Processing.ToString(),
-                           null);
+                        if (machineTaskDetail.Status != MachineTaskEnum.Reparing.ToString())
+                        {
+                            await _machineTaskRepository.UpdateTaskStatus(machineTaskDetail.MachineTaskId, MachineTaskEnum.Reparing.ToString(), staffId, null);
+                            await _machineCheckRequestService.UpdateRequestStatus(
+                               machineTaskDetail?.MachineCheckRequestId,
+                               MachineCheckRequestStatusEnum.Processing.ToString(),
+                               null);
+                        }
 
                         await _componentRepository.MoveComponentQuanityFromAvailableToOnHold(
                             component.ComponentId, createComponentReplacementTicketDto.Quantity);
