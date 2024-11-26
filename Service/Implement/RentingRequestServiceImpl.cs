@@ -216,7 +216,7 @@ namespace Service.Implement
             var currentStartDate = rentingRequestReviewDto.RentingRequestReviewSerialNumbers[0].DateStart;
             DateTime currentEndDate = new DateTime();
 
-            for (int i = 0; i <= rentingRequestReviewDto.NumOfMonth; i++)
+            for (int i = 0; i <= 12; i++)
             {
                
                 var rentingRequestReviewResponseDto = new RentingRequestReviewResponseDto
@@ -275,7 +275,10 @@ namespace Service.Implement
 
                 rentingRequestReviewResponseDto.RentingRequestReviewResponseSerialNumbers = serialList;
 
-                result.Add(rentingRequestReviewResponseDto);
+                if (!serialList.IsNullOrEmpty())
+                {
+                    result.Add(rentingRequestReviewResponseDto);
+                }
             }
 
             return result;
