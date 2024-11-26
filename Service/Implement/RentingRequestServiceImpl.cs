@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using BusinessObject;
+using Common;
 using Common.Enum;
 using DTOs.RentingRequest;
 using Microsoft.IdentityModel.Tokens;
@@ -207,6 +208,91 @@ namespace Service.Implement
             }
 
             return true;
+        }
+
+        public IEnumerable<RentingRequestReviewResponseDto> GetRentingRequestReview(RentingRequestReviewDto rentingRequestReviewDto)
+        {
+            var result = new List<RentingRequestReviewResponseDto>();
+            var currentStartDate = rentingRequestReviewDto.RentingRequestReviewSerialNumbers[0].DateStart;
+            DateTime currentEndDate = new DateTime();
+
+            for (int i = 0; i <= rentingRequestReviewDto.NumOfMonth; i++)
+            {
+               
+                var rentingRequestReviewResponseDto = new RentingRequestReviewResponseDto
+                {
+                    Time = i + 1,
+                };
+
+                var serialList = new List<RentingRequestReviewResponseSerialNumberDto>();
+                foreach (var rentingRequestReviewSerialNumber in rentingRequestReviewDto.RentingRequestReviewSerialNumbers)
+                {
+                    DateTime paymentEndDate = new DateTime();
+
+                    var rentingRequestReviewResponseSerialNumberDto = new RentingRequestReviewResponseSerialNumberDto();
+                    rentingRequestReviewResponseSerialNumberDto.SerialNumber = rentingRequestReviewSerialNumber.SerialNumber;
+                    rentingRequestReviewResponseSerialNumberDto.DateStart = currentStartDate;
+                    rentingRequestReviewResponseSerialNumberDto.RentPrice = rentingRequestReviewSerialNumber.RentPricePerDays;
+
+                    int numberOfDays = (rentingRequestReviewSerialNumber.DateEnd - currentStartDate).Days + 1;
+                    var remainingDays = numberOfDays;
+
+                    //while (remainingDays > 0)
+                    //{
+
+                    //}
+
+                    paymentEndDate = GetContractPaymentEndDate(currentStartDate, rentingRequestReviewResponseSerialNumberDto.DateEnd);
+
+                    int paymentPeriod;
+
+                    if (paymentEndDate > rentingRequestReviewSerialNumber.DateEnd)
+                    {
+                        paymentPeriod = (rentingRequestReviewSerialNumber.DateEnd - currentStartDate).Days + 1;
+                        rentingRequestReviewResponseSerialNumberDto.DateEnd = rentingRequestReviewSerialNumber.DateEnd;
+                    }
+                    else
+                    {
+                        paymentPeriod = (paymentEndDate - currentStartDate).Days + 1;
+                        rentingRequestReviewResponseSerialNumberDto.DateEnd = paymentEndDate;
+                    }
+
+                    var paymentAmount = rentingRequestReviewSerialNumber.RentPricePerDays * paymentPeriod;
+
+                    if (paymentPeriod > 0)
+                    {
+                        rentingRequestReviewResponseSerialNumberDto.RentPeriod = paymentPeriod;
+                        rentingRequestReviewResponseSerialNumberDto.TotalRentPrice = paymentAmount;
+
+                        serialList.Add(rentingRequestReviewResponseSerialNumberDto);
+
+                        currentEndDate = paymentEndDate;
+                    }
+                }
+
+                currentStartDate = currentEndDate.AddDays(1);
+                //remainingDays -= paymentPeriod;
+
+                rentingRequestReviewResponseDto.RentingRequestReviewResponseSerialNumbers = serialList;
+
+                result.Add(rentingRequestReviewResponseDto);
+            }
+
+            return result;
+        }
+
+        private DateTime GetContractPaymentEndDate(DateTime startDate, DateTime contractEndDate)
+        {
+            if (startDate.Year == contractEndDate.Year && startDate.Month == contractEndDate.Month)
+            {
+                //DateEnd
+                return contractEndDate;
+            }
+            else
+            {
+                //Full month
+                return new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+            }
         }
     }
 }

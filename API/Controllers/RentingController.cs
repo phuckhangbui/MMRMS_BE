@@ -200,5 +200,31 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("review-data")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult<RentingRequestInitDataDto>> ReviewRentingRequest([FromBody] RentingRequestReviewDto rentingRequestReviewDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
+                return BadRequest(errorMessages);
+            }
+
+            try
+            {
+                int customerId = GetLoginAccountId();
+                var rentingRequests = _rentingService.GetRentingRequestReview(rentingRequestReviewDto);
+                return Ok(rentingRequests);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
