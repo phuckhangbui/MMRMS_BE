@@ -19,11 +19,11 @@ namespace Service.Implement
 
         private int ScaleAmount(int amount)
         {
-            int scaledAmount = amount / 10000;
+            int scaledAmount = amount / 1000;
 
-            if (scaledAmount < 1000)
+            if (scaledAmount < 2000)
             {
-                while (scaledAmount < 1000)
+                while (scaledAmount < 2000)
                 {
                     scaledAmount *= 10;
                 }
