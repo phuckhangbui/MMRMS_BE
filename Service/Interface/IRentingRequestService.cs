@@ -11,5 +11,6 @@ namespace Service.Interface
         Task<IEnumerable<CustomerRentingRequestDto>> GetRentingRequestsForCustomer(int customerId);
         Task<bool> CancelRentingRequest(string rentingRequestId);
         Task<IEnumerable<RentingRequestDto>> GetRentingRequestsThatStillHaveContractNeedDelivery();
+        IEnumerable<RentingRequestReviewResponseDto> GetRentingRequestReview(RentingRequestReviewDto rentingRequestReviewDto);
     }
 }

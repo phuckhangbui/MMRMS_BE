@@ -123,7 +123,7 @@ namespace DAO
 
             var customerInvoices = invoices
                 .Where(i => i.AccountPaidId == customerId ||
-                    i.ContractPayments.Any(cp => cp.Contract.AccountSignId == customerId && 
+                    i.ContractPayments.Any(cp => cp.Contract.AccountSignId == customerId &&
                         i.Type.Equals(InvoiceTypeEnum.Refund.ToString())))
                 .OrderByDescending(i => i.DateCreate)
                 .Distinct()
