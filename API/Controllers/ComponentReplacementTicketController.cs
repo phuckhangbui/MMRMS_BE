@@ -198,14 +198,19 @@ namespace API.Controllers
         }
 
         [HttpPatch("{componentReplacementTicketId}/cancel")]
-        [Authorize(Policy = "Customer")]
-        [Authorize(Policy = "TechnicalStaff")]
-        public async Task<ActionResult> CancleComponentReplacementTicket([FromRoute] string componentReplacementTicketId, [FromQuery] string? note)
+        [Authorize(Policy = "CustomerAndTechnicalStaff")]
+        public async Task<ActionResult> CancelComponentReplacementTicket([FromRoute] string componentReplacementTicketId, [FromBody] CancelTicketDto? cancelTicketDto)
         {
             int accountId = GetLoginAccountId();
 
             try
             {
+                string note = null;
+                if (cancelTicketDto != null)
+                {
+                    note = cancelTicketDto.Note;
+                }
+
                 await _componentReplacementTicketService.CancelComponentReplacementTicket(accountId, componentReplacementTicketId, note);
                 return NoContent();
             }
