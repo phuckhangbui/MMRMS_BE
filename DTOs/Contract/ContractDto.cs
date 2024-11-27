@@ -21,6 +21,7 @@
         public int? AccountSignId { get; set; }
         public string? BaseContractId { get; set; }
         public bool? IsExtended { get; set; }
+        public double? RefundShippingPrice { get; set; }
         public ContractAddressDto? ContractAddress { get; set; }
     }
 }

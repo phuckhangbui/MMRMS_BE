@@ -77,22 +77,33 @@ namespace Repository.Implement
                         var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contractPayment.Contract.RentingRequestId);
                         contractInvoice.RentingRequestId = rentingRequest?.RentingRequestId;
 
-                        var firstRentalContractPayment = contractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
-                        if (firstRentalContractPayment != null)
+                        if (contractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment) != null)
                         {
-                            if (firstRentalContractPayment != null)
+                            var firstRentalPayment = new FirstRentalPaymentDto
                             {
-                                var firstRentalPayment = new FirstRentalPaymentDto()
-                                {
-                                    DiscountPrice = rentingRequest.DiscountPrice,
-                                    ShippingPrice = rentingRequest.ShippingPrice,
-                                    TotalServicePrice = rentingRequest.TotalServicePrice,
-                                };
-
-                                var firstRentalInvoice = contractInvoice.ContractPayments.Find(i => i.ContractPaymentId == firstRentalContractPayment.ContractPaymentId);
-                                firstRentalInvoice.FirstRentalPayment = firstRentalPayment;
-                            }
+                                TotalServicePrice = rentingRequest.TotalServicePrice,
+                                DiscountPrice = rentingRequest.DiscountPrice,
+                                ShippingPrice = rentingRequest.ShippingPrice,
+                            };
+                            contractInvoice.FirstRentalPayment = firstRentalPayment;
                         }
+
+                        //var firstRentalContractPayment = contractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
+                        //if (firstRentalContractPayment != null)
+                        //{
+                        //    if (firstRentalContractPayment != null)
+                        //    {
+                        //        var firstRentalPayment = new FirstRentalPaymentDto()
+                        //        {
+                        //            DiscountPrice = rentingRequest.DiscountPrice,
+                        //            ShippingPrice = rentingRequest.ShippingPrice,
+                        //            TotalServicePrice = rentingRequest.TotalServicePrice,
+                        //        };
+
+                        //        var firstRentalInvoice = contractInvoice.ContractPayments.Find(i => i.ContractPaymentId == firstRentalContractPayment.ContractPaymentId);
+                        //        firstRentalInvoice.FirstRentalPayment = firstRentalPayment;
+                        //    }
+                        //}
                     }
 
                     return contractInvoice;

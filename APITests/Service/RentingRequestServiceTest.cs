@@ -534,8 +534,7 @@ namespace Test.Service
                         Period = 93,
                         DateCreate = DateTime.Parse("2024-11-10T21:23:50.33443"),
                         DueDate = DateTime.Parse("2024-11-21T00:00:00"),
-                        IsFirstRentalPayment = false,
-                        FirstRentalPayment = null
+                        IsFirstRentalPayment = false
                     },
                     new ContractPaymentDto
                     {
@@ -552,8 +551,7 @@ namespace Test.Service
                         Period = 93,
                         DateCreate = DateTime.Parse("2024-11-10T21:23:50.3354166"),
                         DueDate = DateTime.Parse("2025-02-21T00:00:00"),
-                        IsFirstRentalPayment = false,
-                        FirstRentalPayment = null
+                        IsFirstRentalPayment = false
                     },
                     new ContractPaymentDto
                     {
@@ -570,13 +568,7 @@ namespace Test.Service
                         Period = 93,
                         DateCreate = DateTime.Parse("2024-11-10T21:23:50.3355082"),
                         DueDate = DateTime.Parse("2024-11-21T00:00:00"),
-                        IsFirstRentalPayment = true,
-                        FirstRentalPayment = new FirstRentalPaymentDto
-                        {
-                            TotalServicePrice = 400000,
-                            ShippingPrice = 200000,
-                            DiscountPrice = 100000
-                        }
+                        IsFirstRentalPayment = true
                     }
                 },
                 ContractTerms = new List<ContractTermDto>

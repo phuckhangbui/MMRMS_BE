@@ -17,5 +17,6 @@ namespace DTOs.Invoice
         public string? Note { get; set; }
         public string? RentingRequestId { get; set; }
         public List<ContractPaymentDto> ContractPayments { get; set; }
+        public FirstRentalPaymentDto? FirstRentalPayment { get; set; }
     }
 }
