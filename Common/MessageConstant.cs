@@ -385,7 +385,7 @@
             public const string ErrorWhenCancel = "Có lỗi xảy ra khi hủy ticket";
             public const string DuplicateComponentTicketForThisTask = "Công việc này đã có một ticket thay thế bộ phận này, vì thế không thể tạo thêm";
             public const string DuplicateComponentTicketForThisContractWhenTerminate = "Hợp đồng này đã có một ticket thay thế bộ phận này khi đáo hạn, vì thế không thể tạo thêm";
-
+            public const string MissingNoteWhenCancel = "Thiếu ghi chú khi nhân viên hủy công việc";
 
 
             //DTO

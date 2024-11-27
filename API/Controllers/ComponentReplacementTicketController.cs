@@ -199,13 +199,14 @@ namespace API.Controllers
 
         [HttpPatch("{componentReplacementTicketId}/cancel")]
         [Authorize(Policy = "Customer")]
-        public async Task<ActionResult> CancleComponentReplacementTicket([FromRoute] string componentReplacementTicketId)
+        [Authorize(Policy = "TechnicalStaff")]
+        public async Task<ActionResult> CancleComponentReplacementTicket([FromRoute] string componentReplacementTicketId, [FromQuery] string? note)
         {
-            int customerId = GetLoginAccountId();
+            int accountId = GetLoginAccountId();
 
             try
             {
-                await _componentReplacementTicketService.CancelComponentReplacementTicket(customerId, componentReplacementTicketId);
+                await _componentReplacementTicketService.CancelComponentReplacementTicket(accountId, componentReplacementTicketId, note);
                 return NoContent();
             }
             catch (ServiceException ex)

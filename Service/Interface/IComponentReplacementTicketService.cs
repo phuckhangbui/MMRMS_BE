@@ -4,7 +4,7 @@ namespace Service.Interface
 {
     public interface IComponentReplacementTicketService
     {
-        Task CancelComponentReplacementTicket(int customerId, string componentReplacementTicketId);
+        Task CancelComponentReplacementTicket(int accountId, string componentReplacementTicketId, string? note);
         Task CompleteComponentReplacementTicket(int staffId, string componentReplacementTicketId);
         Task CreateComponentReplacementTicket(int staffId, CreateComponentReplacementTicketDto createComponentReplacementTicketDto);
         Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId);
