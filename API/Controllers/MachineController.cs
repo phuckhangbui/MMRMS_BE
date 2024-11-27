@@ -71,36 +71,36 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("review/{productIds}")]
-        public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachinesReview([FromRoute] string productIds)
+        //[HttpGet("review/{machineIds}")]
+        //public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachinesReview([FromRoute] string machineIds)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(machineIds))
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        var machineIdList = machineIds.Split(',').Select(int.Parse).ToList();
+        //        var machines = await _machineService.GetMachineReviews(machineIdList);
+        //        return Ok(machines);
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+        [HttpGet("{machineId}")]
+        public async Task<ActionResult<MachineDetailDto>> GetMachineDetail([FromRoute] int machineId)
         {
             try
             {
-                if (string.IsNullOrEmpty(productIds))
-                {
-                    return BadRequest();
-                }
-
-                var productIdList = productIds.Split(',').Select(int.Parse).ToList();
-                var machines = await _machineService.GetMachineReviews(productIdList);
-                return Ok(machines);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpGet("{productId}")]
-        public async Task<ActionResult<MachineDetailDto>> GetMachineDetail([FromRoute] int productId)
-        {
-            try
-            {
-                var product = await _machineService.GetMachineDetail(productId);
+                var product = await _machineService.GetMachineDetail(machineId);
                 return Ok(product);
             }
             catch (ServiceException ex)
@@ -113,8 +113,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{productId}/serial-machines")]
-        public async Task<ActionResult<MachineSerialNumberDto>> GetSerialMachineList([FromRoute] int productId)
+        [HttpGet("{machineId}/serial-machines")]
+        public async Task<ActionResult<MachineSerialNumberDto>> GetSerialMachineList([FromRoute] int machineId)
         {
             if (!ModelState.IsValid)
             {
@@ -123,7 +123,7 @@ namespace API.Controllers
             }
             try
             {
-                var list = await _machineService.GetSerialMachineList(productId);
+                var list = await _machineService.GetSerialMachineList(machineId);
                 return Ok(list);
             }
             catch (ServiceException ex)
@@ -162,13 +162,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{productId}")]
+        [HttpDelete("{machineId}")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> DeleteMachine([FromRoute] int productId)
+        public async Task<ActionResult> DeleteMachine([FromRoute] int machineId)
         {
             try
             {
-                await _machineService.DeleteMachine(productId);
+                await _machineService.DeleteMachine(machineId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -181,14 +181,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpPatch("{productId}/toggle-lock")]
+        [HttpPatch("{machineId}/toggle-lock")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateMachineStatus([FromRoute] int productId)
+        public async Task<ActionResult> UpdateMachineStatus([FromRoute] int machineId)
         {
 
             try
             {
-                await _machineService.ToggleLockStatus(productId);
+                await _machineService.ToggleLockStatus(machineId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -201,9 +201,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/attribute/update")]
+        [HttpPut("{machineId}/attribute/update")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateMachineAttribute([FromRoute] int productId, [FromBody] IEnumerable<CreateMachineAttributeDto> productAttributeDtos)
+        public async Task<ActionResult> UpdateMachineAttribute([FromRoute] int machineId, [FromBody] IEnumerable<CreateMachineAttributeDto> productAttributeDtos)
         {
             if (!ModelState.IsValid)
             {
@@ -212,7 +212,7 @@ namespace API.Controllers
             }
             try
             {
-                await _machineService.UpdateMachineAttribute(productId, productAttributeDtos);
+                await _machineService.UpdateMachineAttribute(machineId, productAttributeDtos);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -225,9 +225,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/term/update")]
+        [HttpPut("{machineId}/term/update")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateMachineTerm([FromRoute] int productId, [FromBody] IEnumerable<CreateMachineTermDto> productTermDtos)
+        public async Task<ActionResult> UpdateMachineTerm([FromRoute] int machineId, [FromBody] IEnumerable<CreateMachineTermDto> productTermDtos)
         {
             if (!ModelState.IsValid)
             {
@@ -236,7 +236,7 @@ namespace API.Controllers
             }
             try
             {
-                await _machineService.UpdateMachineTerm(productId, productTermDtos);
+                await _machineService.UpdateMachineTerm(machineId, productTermDtos);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -249,9 +249,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/component/update")]
+        [HttpPut("{machineId}/component/update")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateMachineComponent([FromRoute] int productId, [FromBody] ComponentList componentList)
+        public async Task<ActionResult> UpdateMachineComponent([FromRoute] int machineId, [FromBody] ComponentList componentList)
         {
             if (!ModelState.IsValid)
             {
@@ -260,7 +260,7 @@ namespace API.Controllers
             }
             try
             {
-                await _machineService.UpdateMachineComponent(productId, componentList);
+                await _machineService.UpdateMachineComponent(machineId, componentList);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -273,10 +273,11 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/detail/update")]
+        [HttpPut("{machineId}/detail/update")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> UpdateMachine([FromRoute] int productId, [FromBody] UpdateMachineDto updateMachineDto)
+        public async Task<ActionResult> UpdateMachine([FromRoute] int machineId, [FromBody] UpdateMachineDto updateMachineDto)
         {
+            var accountId = GetLoginAccountId();
 
             if (!ModelState.IsValid)
             {
@@ -286,7 +287,7 @@ namespace API.Controllers
 
             try
             {
-                await _machineService.UpdateMachineDetail(productId, updateMachineDto);
+                await _machineService.UpdateMachineDetail(machineId, updateMachineDto, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -299,9 +300,9 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{productId}/images")]
+        [HttpPut("{machineId}/images")]
         [Authorize(policy: "WebsiteStaff")]
-        public async Task<ActionResult> ChangeMachineImages(int productId, [FromBody] List<ImageList> imageList)
+        public async Task<ActionResult> ChangeMachineImages(int machineId, [FromBody] List<ImageList> imageList)
         {
             if (!ModelState.IsValid)
             {
@@ -311,7 +312,7 @@ namespace API.Controllers
 
             try
             {
-                await _machineService.ChangeMachineImages(productId, imageList);
+                await _machineService.ChangeMachineImages(machineId, imageList);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -323,6 +324,45 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("{machineId}/quotation")]
+        public async Task<ActionResult<MachineQuotationDto>> GetMachineQuotation([FromRoute] int machineId)
+        {
+
+            try
+            {
+                var quotation = await _machineService.GetMachineQuotation(machineId);
+                return Ok(quotation);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("/quotations")]
+        public async Task<ActionResult<List<MachineQuotationDto>>> GetMachineQuotations()
+        {
+
+            try
+            {
+                var quotations = await _machineService.GetMachineQuotations();
+                return Ok(quotations);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
     }
 }

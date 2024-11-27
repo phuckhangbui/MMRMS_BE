@@ -8,17 +8,19 @@ namespace Service.Interface
         Task<IEnumerable<MachineViewDto>> GetMachineList();
         Task<IEnumerable<MachineDto>> GetActiveMachines();
         Task<IEnumerable<MachineDto>> GetTop8LatestMachineList();
-        Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds);
+        //Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds);
         Task<MachineDetailDto> GetMachineDetail(int machineId);
-        Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int productId);
+        Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int machineId);
         Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto);
-        Task DeleteMachine(int productId);
-        Task UpdateMachineStatus(int productId, string status);
-        Task UpdateMachineAttribute(int productId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos);
-        Task UpdateMachineDetail(int productId, UpdateMachineDto updateMachineDto);
-        Task UpdateMachineComponent(int productId, ComponentList productAttributeDtos);
-        Task ChangeMachineImages(int productId, List<ImageList> imageList);
-        Task UpdateMachineTerm(int productId, IEnumerable<CreateMachineTermDto> productTermDtos);
-        Task ToggleLockStatus(int productId);
+        Task DeleteMachine(int machineId);
+        Task UpdateMachineStatus(int machineId, string status);
+        Task UpdateMachineAttribute(int machineId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos);
+        Task UpdateMachineDetail(int machineId, UpdateMachineDto updateMachineDto, int accountId);
+        Task UpdateMachineComponent(int machineId, ComponentList productAttributeDtos);
+        Task ChangeMachineImages(int machineId, List<ImageList> imageList);
+        Task UpdateMachineTerm(int machineId, IEnumerable<CreateMachineTermDto> productTermDtos);
+        Task ToggleLockStatus(int machineId);
+        Task<MachineQuotationDto> GetMachineQuotation(int machineId);
+        Task<List<MachineQuotationDto>> GetMachineQuotations();
     }
 }

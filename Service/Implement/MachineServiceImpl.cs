@@ -3,6 +3,7 @@ using Common;
 using Common.Enum;
 using DTOs.Machine;
 using DTOs.MachineSerialNumber;
+using DTOs.Setting;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -13,16 +14,20 @@ namespace Service.Implement
     public class MachineServiceImpl : IMachineService
     {
         private readonly IMachineRepository _machineRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ISettingsService _settingsService;
         private readonly IMapper _mapper;
 
-        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService, IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _machineRepository = machineRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _settingsService = settingsService;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
         public async Task<IEnumerable<MachineViewDto>> GetMachineList()
@@ -52,13 +57,13 @@ namespace Service.Implement
             return machine;
         }
 
-        public async Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int productId)
+        public async Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int machineId)
         {
-            var isMachineExisted = await _machineRepository.IsMachineExisted(productId);
+            var isMachineExisted = await _machineRepository.IsMachineExisted(machineId);
 
             if (isMachineExisted)
             {
-                var list = await _machineRepository.GetMachineNumberList(productId);
+                var list = await _machineRepository.GetMachineNumberList(machineId);
                 return _mapper.Map<IEnumerable<MachineSerialNumberDto>>(list);
             }
 
@@ -135,11 +140,11 @@ namespace Service.Implement
             return productDto;
         }
 
-        public async Task DeleteMachine(int productId)
+        public async Task DeleteMachine(int machineId)
         {
-            var productDto = await _machineRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(machineId);
 
-            var productNumberList = await _machineRepository.GetMachineNumberList(productId);
+            var productNumberList = await _machineRepository.GetMachineNumberList(machineId);
 
             if (productDto == null)
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
@@ -150,20 +155,20 @@ namespace Service.Implement
 
             }
 
-            await _machineRepository.DeleteMachine(productId);
+            await _machineRepository.DeleteMachine(machineId);
             //else productDto.IsDelete = true;
 
             //await _productRepository.UpdateMachine(productDto);
         }
 
-        public async Task UpdateMachineStatus(int productId, string status)
+        public async Task UpdateMachineStatus(int machineId, string status)
         {
             if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MachineStatusEnum), status, true, out _))
             {
                 throw new ServiceException(MessageConstant.Machine.StatusNotAvailable);
             }
 
-            var productDto = await _machineRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(machineId);
 
             if (productDto == null)
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
@@ -173,22 +178,22 @@ namespace Service.Implement
             await _machineRepository.UpdateMachine(productDto);
         }
 
-        public async Task UpdateMachineDetail(int productId, UpdateMachineDto updateMachineDto)
+        public async Task UpdateMachineDetail(int machineId, UpdateMachineDto updateMachineDto, int accountId)
         {
-            var productDto = await _machineRepository.GetMachine(productId);
-            if (productDto == null)
+            var machineDto = await _machineRepository.GetMachine(machineId);
+            if (machineDto == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            if (!productDto.MachineName.ToLower().Equals(updateMachineDto.MachineName.ToLower()))
+            if (!machineDto.MachineName.ToLower().Equals(updateMachineDto.MachineName.ToLower()))
             {
                 if (await _machineRepository.IsMachineNameExisted(updateMachineDto.MachineName))
                 {
                     throw new ServiceException(MessageConstant.Machine.MachineNameDuplicated);
                 }
             }
-            if (!productDto.Model.ToLower().Equals(updateMachineDto.Model.ToLower()))
+            if (!machineDto.Model.ToLower().Equals(updateMachineDto.Model.ToLower()))
             {
                 if (await _machineRepository.IsMachineModelExisted(updateMachineDto.Model))
                 {
@@ -201,42 +206,76 @@ namespace Service.Implement
             if (category == null)
             {
                 throw new ServiceException(MessageConstant.Category.CategoryNotFound);
-
             }
 
-            productDto.MachineName = updateMachineDto.MachineName;
-            productDto.Description = updateMachineDto.Description;
-            productDto.RentPrice = updateMachineDto.RentPrice;
-            productDto.MachinePrice = updateMachineDto.MachinePrice;
-            productDto.Model = updateMachineDto.Model;
-            productDto.Origin = updateMachineDto.Origin;
-            productDto.CategoryId = updateMachineDto.CategoryId;
+            if (updateMachineDto.RentPrice != machineDto.RentPrice)
+            {
+                var machineSetting = await _settingsService.GetMachineSettingsAsync();
 
-            await _machineRepository.UpdateMachine(productDto);
+                var serialList = await _machineRepository.GetMachineNumberList(machineId);
+
+                var machineConditionRates = await _settingsService.GetMachineSettingsAsync();
+
+                foreach (var serial in serialList)
+                {
+                    var matchingRate = machineConditionRates.RateData
+                        .FirstOrDefault(rate => rate.MachineConditionPercent == serial.MachineConditionPercent);
+
+                    if (matchingRate == null)
+                    {
+                        break;
+                    }
+
+                    var newRentPrice = Math.Round(
+                        updateMachineDto.RentPrice
+                        * matchingRate.RentalPricePercent / 100
+                    );
+
+                    var serialUpdateDto = new MachineSerialNumberUpdateDto
+                    {
+                        ActualRentPrice = newRentPrice,
+                        Status = serial.Status
+                    };
+
+                    // Update the rent price for the serial machine in the repository
+                    await _machineSerialNumberRepository.UpdateMachineSerialNumber(serial.SerialNumber, serialUpdateDto, accountId);
+                }
+            }
+
+
+            machineDto.MachineName = updateMachineDto.MachineName;
+            machineDto.Description = updateMachineDto.Description;
+            machineDto.RentPrice = updateMachineDto.RentPrice;
+            machineDto.MachinePrice = updateMachineDto.MachinePrice;
+            machineDto.Model = updateMachineDto.Model;
+            machineDto.Origin = updateMachineDto.Origin;
+            machineDto.CategoryId = updateMachineDto.CategoryId;
+
+            await _machineRepository.UpdateMachine(machineDto);
         }
 
-        public async Task UpdateMachineAttribute(int productId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos)
+        public async Task UpdateMachineAttribute(int machineId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos)
         {
-            var product = await _machineRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(machineId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            await _machineRepository.UpdateMachineAttribute(productId, productAttributeDtos);
+            await _machineRepository.UpdateMachineAttribute(machineId, productAttributeDtos);
         }
 
-        public async Task UpdateMachineComponent(int productId, ComponentList componentList)
+        public async Task UpdateMachineComponent(int machineId, ComponentList componentList)
         {
-            var product = await _machineRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(machineId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            var serialMachines = await _machineRepository.GetMachineNumberList(productId);
+            var serialMachines = await _machineRepository.GetMachineNumberList(machineId);
 
             if (!serialMachines.IsNullOrEmpty())
             {
@@ -260,13 +299,13 @@ namespace Service.Implement
                     }
                 }
 
-            await _machineRepository.UpdateMachineComponent(productId, componentList);
+            await _machineRepository.UpdateMachineComponent(machineId, componentList);
         }
 
 
-        public async Task ChangeMachineImages(int productId, List<ImageList> imageList)
+        public async Task ChangeMachineImages(int machineId, List<ImageList> imageList)
         {
-            var product = await _machineRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(machineId);
 
             if (product == null)
             {
@@ -279,31 +318,31 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
 
-            await _machineRepository.UpdateMachineImage(productId, imageList);
+            await _machineRepository.UpdateMachineImage(machineId, imageList);
 
         }
 
-        public async Task UpdateMachineTerm(int productId, IEnumerable<CreateMachineTermDto> productTermDtos)
+        public async Task UpdateMachineTerm(int machineId, IEnumerable<CreateMachineTermDto> productTermDtos)
         {
-            var product = await _machineRepository.GetMachine(productId);
+            var product = await _machineRepository.GetMachine(machineId);
 
             if (product == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            await _machineRepository.UpdateMachineTerm(productId, productTermDtos);
+            await _machineRepository.UpdateMachineTerm(machineId, productTermDtos);
         }
 
-        public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds)
+        public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> machineIds)
         {
-            return await _machineRepository.GetMachineReviews(productIds);
+            return await _machineRepository.GetMachineReviews(machineIds);
         }
 
-        public async Task ToggleLockStatus(int productId)
+        public async Task ToggleLockStatus(int machineId)
         {
 
-            var productDto = await _machineRepository.GetMachine(productId);
+            var productDto = await _machineRepository.GetMachine(machineId);
 
             if (productDto == null)
             {
@@ -319,7 +358,7 @@ namespace Service.Implement
                 return;
             }
 
-            var serialMachineList = await GetSerialMachineList(productId);
+            var serialMachineList = await GetSerialMachineList(machineId);
 
             if (serialMachineList.IsNullOrEmpty())
             {
@@ -338,5 +377,73 @@ namespace Service.Implement
                 }
             }
         }
+
+        public async Task<MachineQuotationDto> GetMachineQuotation(int machineId)
+        {
+            var machine = await _machineRepository.GetMachine(machineId);
+
+            if (machine == null)
+            {
+                throw new ServiceException(MessageConstant.Machine.MachineNotFound);
+            }
+            var machineSetting = await _settingsService.GetMachineSettingsAsync();
+
+            return GenerateQuotation(machineSetting, machineId, machine.MachineName, machine.Model, (double)machine.RentPrice);
+        }
+
+        public async Task<List<MachineQuotationDto>> GetMachineQuotations()
+        {
+            var machines = await _machineRepository.GetActiveMachines();
+
+            var machineSetting = await _settingsService.GetMachineSettingsAsync();
+            var quotationList = new List<MachineQuotationDto>();
+
+            foreach (var machine in machines)
+            {
+                var quotationDto = GenerateQuotation(machineSetting, machine.MachineId, machine.MachineName, machine.Model, (double)machine.RentPrice);
+                quotationList.Add(quotationDto);
+            }
+
+            return quotationList;
+        }
+
+
+        private MachineQuotationDto GenerateQuotation(MachineSettingDto machineSetting, int machineId, string machineName, string machineModel, double rentPricePerDay)
+        {
+
+            var days = new[] { 1, 30, 60, 90, 180, 360 };
+
+            var quotation = new List<Dictionary<string, double>>();
+
+            foreach (var rate in machineSetting.RateData)
+            {
+                var row = new Dictionary<string, double>
+                {
+                    { "machineConditionPercent", rate.MachineConditionPercent }
+                };
+
+
+                foreach (var day in days)
+                {
+
+                    var columnName = day.ToString();
+
+                    var price = Math.Round(rentPricePerDay * rate.RentalPricePercent / 100 * day);
+
+                    row[columnName] = price;
+                }
+
+                quotation.Add(row);
+            }
+
+            return new MachineQuotationDto
+            {
+                MachineId = machineId,
+                MachineName = machineName,
+                Model = machineModel,
+                Quotation = quotation
+            };
+        }
+
     }
 }
