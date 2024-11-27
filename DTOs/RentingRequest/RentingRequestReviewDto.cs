@@ -1,5 +1,4 @@
 ﻿using Common;
-using DTOs.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.RentingRequest

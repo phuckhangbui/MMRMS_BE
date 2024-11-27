@@ -36,6 +36,25 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("rental-history/{serialNumber}")]
+        [Authorize(policy: "WebsiteStaff")]
+        public async Task<ActionResult<IEnumerable<ContractDto>>> GetRentalHistoryOfSerialNumber(string serialNumber)
+        {
+            try
+            {
+                var contracts = await _contractService.GetRentalHistoryOfSerialNumber(serialNumber);
+                return Ok(contracts);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{contractId}")]
         [Authorize(policy: "ManagerAndCustomerAndWebsiteStaff")]
         public async Task<ActionResult<ContractDetailDto>> GetContractDetail(string contractId)

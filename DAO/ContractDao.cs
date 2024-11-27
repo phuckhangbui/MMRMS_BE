@@ -98,6 +98,18 @@ namespace DAO
             }
         }
 
+        public async Task<IEnumerable<Contract>> GetRentalHistoryOfSerialNumber(string serialNumber)
+        {
+            using var context = new MmrmsContext();
+            return await context.Contracts
+                .Where(c => c.SerialNumber.Equals(serialNumber))
+                .Include(c => c.ContractMachineSerialNumber)
+                    .ThenInclude(s => s.Machine)
+                .ThenInclude(m => m.MachineImages)
+                .OrderByDescending(c => c.DateCreate)
+                .ToListAsync();
+        }
+
         public async Task<RentingRequestAddress?> GetRentingRequestAddressByContractId(string contractId)
         {
             using (var context = new MmrmsContext())
