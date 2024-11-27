@@ -32,6 +32,10 @@ public partial class RentingRequest
 
     public string? BeneficiaryName { get; set; }
 
+    public double? ShippingDistance { get; set; }
+
+    public double? ShippingPricePerKm { get; set; }
+
     public virtual Account? AccountOrder { get; set; }
 
     public virtual RentingRequestAddress? RentingRequestAddress { get; set; }

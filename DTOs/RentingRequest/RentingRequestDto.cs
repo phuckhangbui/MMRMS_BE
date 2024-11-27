@@ -13,6 +13,8 @@ namespace DTOs.RentingRequest
         public double? TotalDepositPrice { get; set; }
         public double? TotalServicePrice { get; set; }
         public double? ShippingPrice { get; set; }
+        public double? ShippingDistance { get; set; }
+        public double? ShippingPricePerKm { get; set; }
         public double? DiscountPrice { get; set; }
         public double? TotalAmount { get; set; }
         public bool? IsOnetimePayment { get; set; }
@@ -42,6 +44,12 @@ namespace DTOs.RentingRequest
 
         [Required(ErrorMessage = MessageConstant.RentingRequest.ShippingPriceRequired)]
         public double ShippingPrice { get; set; }
+
+        [Required]
+        public double ShippingDistance { get; set; }
+
+        [Required]
+        public double ShippingPricePerKm { get; set; }
 
         public double DiscountPrice { get; set; }
 

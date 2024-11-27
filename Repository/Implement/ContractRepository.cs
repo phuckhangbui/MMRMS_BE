@@ -267,6 +267,8 @@ namespace Repository.Implement
                 RentPrice = machineSerialNumber.ActualRentPrice,
                 DepositPrice = machineSerialNumber.Machine!.MachinePrice * GlobalConstant.DepositValue,
                 TotalRentPrice = machineSerialNumber.ActualRentPrice * numberOfDays,
+
+                RefundShippingPrice = 0,
             };
 
             //Contract Term
