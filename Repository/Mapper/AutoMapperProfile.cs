@@ -354,7 +354,39 @@ namespace Repository.Mapper
                 .ForMember(dest => dest.SerialNumber,
                 opt => opt.MapFrom(src => src.Contract != null
                             ? src.Contract.SerialNumber
-                            : null));
+                            : null))
+               .ForMember(dest => dest.MachineId,
+                opt => opt.MapFrom(src => src.Contract != null
+                                            && src.Contract.ContractMachineSerialNumber != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine != null
+                            ? (int?)src.Contract.ContractMachineSerialNumber.Machine.MachineId
+                            : null))
+                .ForMember(dest => dest.MachineName,
+                 opt => opt.MapFrom(src => src.Contract != null
+                                            && src.Contract.ContractMachineSerialNumber != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine != null
+                            ? src.Contract.ContractMachineSerialNumber.Machine.MachineName
+                            : null))
+                 .ForMember(dest => dest.Model,
+                 opt => opt.MapFrom(src => src.Contract != null
+                                            && src.Contract.ContractMachineSerialNumber != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine != null
+                            ? src.Contract.ContractMachineSerialNumber.Machine.Model
+                            : null))
+                 .ForMember(dest => dest.CategoryName,
+                 opt => opt.MapFrom(src => src.Contract != null
+                                            && src.Contract.ContractMachineSerialNumber != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine.Category != null
+                            ? src.Contract.ContractMachineSerialNumber.Machine.Category.CategoryName
+                            : null))
+                .ForMember(dest => dest.Thumbnail,
+                opt => opt.MapFrom(src => src.Contract != null
+                                            && src.Contract.ContractMachineSerialNumber != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine != null
+                                            && src.Contract.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true) != null
+                    ? src.Contract.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null))
+               ;
 
             //.ForMember(dest => dest.TaskLogs,
             //opt => opt.MapFrom(src => src.MachineTaskLogs != null
