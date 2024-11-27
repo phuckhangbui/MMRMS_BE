@@ -3,12 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTOs.ComponentReplacementTicket
 {
-    public abstract class CreateComponentReplacementTicketBaseDto
-    {
-
-    }
-
-    public class CreateComponentReplacementTicketDto : CreateComponentReplacementTicketBaseDto
+    public class CreateComponentReplacementTicketDto
     {
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.MachineTaskIdRequired)]
         public int MachineTaskCreateId { get; set; }
@@ -27,13 +22,12 @@ namespace DTOs.ComponentReplacementTicket
         [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.AdditionFeeRequired)]
         public double AdditionalFee { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.NoteRequired)]
         public string? Note { get; set; }
     }
 
-    public class CreateComponentReplacementTicketContractTerminationDto : CreateComponentReplacementTicketBaseDto
+    public class CancelTicketDto
     {
-        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.ContractIdRequired)]
-        public int ContractId { get; set; }
+        [Required(ErrorMessage = MessageConstant.ComponentReplacementTicket.NoteRequired)]
+        public string Note { get; set; }
     }
 }
