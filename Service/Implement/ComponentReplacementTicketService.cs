@@ -370,6 +370,7 @@ namespace Service.Implement
             }
 
             detail.ComponentReplacementTicket.MachineName = serialMachine.MachineName;
+            detail.ComponentReplacementTicket.MachineModel = serialMachine.MachineModel;
 
             return detail;
         }

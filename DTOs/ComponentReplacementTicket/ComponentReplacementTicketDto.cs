@@ -24,6 +24,8 @@
 
         public string? MachineName { get; set; }
 
+        public string? MachineModel { get; set; }
+
         public double? ComponentPrice { get; set; }
 
         public double? AdditionalFee { get; set; }
