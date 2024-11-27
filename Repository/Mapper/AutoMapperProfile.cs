@@ -194,7 +194,9 @@ namespace Repository.Mapper
                     src.ContractMachineSerialNumber.Machine != null &&
                     src.ContractMachineSerialNumber.Machine.MachineImages != null &&
                     src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true) != null
-                    ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null));
+                    ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null))
+                .ForMember(dest => dest.ContractAddress, opt => opt.MapFrom(src => src.RentingRequest != null &&
+                    src.RentingRequest.RentingRequestAddress != null ? src.RentingRequest.RentingRequestAddress : null));
             CreateMap<Contract, ContractDetailDto>()
                 .ForMember(dest => dest.AccountOrder, opt => opt.MapFrom(src => src.AccountSign))
                 .ForMember(dest => dest.AccountBusiness, opt => opt.MapFrom(src => src.AccountSign != null ? src.AccountSign.AccountBusiness : null))

@@ -77,6 +77,8 @@ namespace DAO
             {
                 return await context.Contracts
                     .Where(c => c.AccountSignId == customerId)
+                    .Include(c => c.RentingRequest)
+                        .ThenInclude(r => r.RentingRequestAddress)
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(a => a.Machine)
                         .ThenInclude(m => m.MachineImages)
