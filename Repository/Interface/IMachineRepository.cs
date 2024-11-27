@@ -22,6 +22,6 @@ namespace Repository.Interface
         Task ChangeMachineThumbnail(int productId, string imageUrlStr);
         Task UpdateMachineImage(int productId, List<ImageList> imageList);
         Task UpdateMachineTerm(int productId, IEnumerable<CreateMachineTermDto> productTermDtos);
-        Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds);
+        Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> machineIds);
     }
 }

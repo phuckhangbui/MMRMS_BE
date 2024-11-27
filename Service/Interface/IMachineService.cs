@@ -8,7 +8,7 @@ namespace Service.Interface
         Task<IEnumerable<MachineViewDto>> GetMachineList();
         Task<IEnumerable<MachineDto>> GetActiveMachines();
         Task<IEnumerable<MachineDto>> GetTop8LatestMachineList();
-        //Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds);
+        Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> machineIds);
         Task<MachineDetailDto> GetMachineDetail(int machineId);
         Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int machineId);
         Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto);
