@@ -15,24 +15,36 @@ namespace Service.Implement
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IBackground _background;
         private readonly INotificationService _notificationService;
+        private readonly IAccountRepository _accountRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
             IInvoiceRepository invoiceRepository,
             IBackground background,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IAccountRepository accountRepository)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
             _background = background;
             _notificationService = notificationService;
+            _accountRepository = accountRepository;
         }
 
-        public async Task<ContractDetailDto> GetContractDetailById(string contractId)
+        public async Task<ContractDetailDto> GetContractDetail(string contractId, int accountId)
         {
             var contract = await CheckContractExist(contractId);
+
+            var account = await _accountRepository.GetAccounById(accountId);
+            if (account != null && account.RoleId == (int)AccountRoleEnum.Customer)
+            {
+                if (account.AccountId != contract.AccountSignId)
+                {
+                    throw new ServiceException(MessageConstant.Contract.ContractNotBelongToThisAccount);
+                }
+            }
 
             return contract;
         }
