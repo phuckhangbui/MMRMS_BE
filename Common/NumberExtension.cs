@@ -8,5 +8,9 @@
             return (double)Math.Round(amount / 1000.0) * 1000;
         }
 
+        public static string FormatToVND(double amount)
+        {
+            return $"{(amount):N0} ₫";
+        }
     }
 }

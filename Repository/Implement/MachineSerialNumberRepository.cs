@@ -175,23 +175,35 @@ namespace Repository.Implement
             if (machineSerialNumber != null)
             {
                 var oldStatus = machineSerialNumber.Status;
+                var oldRentPrice = machineSerialNumber.ActualRentPrice;
 
                 machineSerialNumber.ActualRentPrice = machineSerialNumberUpdateDto.ActualRentPrice;
-                machineSerialNumber.Status = machineSerialNumberUpdateDto.Status;
-
                 var machineSerialNumberLog = new MachineSerialNumberLog
                 {
                     SerialNumber = serialNumber,
                     AccountTriggerId = accountId,
                     DateCreate = DateTime.Now,
-                    Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
-                    Action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumberUpdateDto.Status)}]",
+                    Type = MachineSerialNumberLogTypeEnum.Machine.ToString()
                 };
 
-                await MachineSerialNumberLogDao.Instance.CreateAsync(machineSerialNumberLog);
+                if (oldStatus != machineSerialNumberUpdateDto.Status)
+                {
+                    machineSerialNumber.Status = machineSerialNumberUpdateDto.Status;
+                    string action = $"Thay đổi trạng thái từ [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(oldStatus)}] thành [{EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumberUpdateDto.Status)}]";
+                    machineSerialNumberLog.Action = action;
+                }
+                else if (oldRentPrice != machineSerialNumberUpdateDto.ActualRentPrice)
+                {
+                    machineSerialNumber.ActualRentPrice = machineSerialNumberUpdateDto.ActualRentPrice;
+                    string action = $"Thay đổi tiền thuê theo ngày của máy từ [{NumberExtension.FormatToVND((double)oldRentPrice)}] thành [{NumberExtension.FormatToVND((double)machineSerialNumberUpdateDto.ActualRentPrice)}]";
+                    machineSerialNumberLog.Action = action;
+                }
 
-                await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
+                await MachineSerialNumberLogDao.Instance.CreateAsync(machineSerialNumberLog);
             }
+
+
+            await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
         }
 
         private async Task UpdateStatusInternal(string serialNumber, string status, int accountId, string? note)

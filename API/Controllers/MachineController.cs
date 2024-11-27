@@ -277,6 +277,7 @@ namespace API.Controllers
         [Authorize(policy: "WebsiteStaff")]
         public async Task<ActionResult> UpdateMachine([FromRoute] int machineId, [FromBody] UpdateMachineDto updateMachineDto)
         {
+            var accountId = GetLoginAccountId();
 
             if (!ModelState.IsValid)
             {
@@ -286,7 +287,7 @@ namespace API.Controllers
 
             try
             {
-                await _machineService.UpdateMachineDetail(machineId, updateMachineDto);
+                await _machineService.UpdateMachineDetail(machineId, updateMachineDto, accountId);
                 return NoContent();
             }
             catch (ServiceException ex)
@@ -325,7 +326,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{machineId}/quotation")]
-        public async Task<ActionResult<MachineQuotationDto>> GetMachineQuotaion([FromRoute] int machineId)
+        public async Task<ActionResult<MachineQuotationDto>> GetMachineQuotation([FromRoute] int machineId)
         {
 
             try
@@ -344,7 +345,7 @@ namespace API.Controllers
         }
 
         [HttpGet("/quotations")]
-        public async Task<ActionResult<List<MachineQuotationDto>>> GetMachineQuotaions()
+        public async Task<ActionResult<List<MachineQuotationDto>>> GetMachineQuotations()
         {
 
             try
