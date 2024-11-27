@@ -21,12 +21,13 @@ namespace Service.Implement
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         private readonly IMachineCheckRequestService _machineCheckRequestService;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly IHubContext<InvoiceHub> _invoiceHub;
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub, IInvoiceRepository invoiceRepository)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub, IInvoiceRepository invoiceRepository, IAccountRepository accountRepository)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _componentRepository = componentRepository;
@@ -39,10 +40,11 @@ namespace Service.Implement
             _machineSerialNumberLogRepository = machineSerialNumberLogRepository;
             _invoiceHub = invoiceHub;
             _invoiceRepository = invoiceRepository;
+            _accountRepository = accountRepository;
         }
 
 
-        public async Task CancelComponentReplacementTicket(int customerId, string componentReplacementTicketId)
+        public async Task CancelComponentReplacementTicket(int accountId, string componentReplacementTicketId, string? note)
         {
             var ticket = await _componentReplacementTicketRepository.GetTicket(componentReplacementTicketId);
 
@@ -58,16 +60,31 @@ namespace Service.Implement
 
             var contract = await _contractRepository.GetContractById(ticket.ContractId);
 
-            if (contract?.AccountSignId != customerId)
+            var account = await _accountRepository.GetAccounById(accountId);
+
+            if (account.RoleId == (int)AccountRoleEnum.Customer)
             {
-                throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotCorrectCustomerId);
+                if (contract?.AccountSignId != accountId)
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.NotCorrectCustomerId);
+                }
             }
+            else
+            {
+                if (note.IsNullOrEmpty())
+                {
+                    throw new ServiceException(MessageConstant.ComponentReplacementTicket.MissingNoteWhenCancel);
+                }
+            }
+
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    await _componentReplacementTicketRepository.UpdateTicketStatus(componentReplacementTicketId, ComponentReplacementTicketStatusEnum.Canceled.ToString(), customerId);
+                    await _componentReplacementTicketRepository.UpdateTicketStatus(componentReplacementTicketId,
+                                                                                   ComponentReplacementTicketStatusEnum.Canceled.ToString(),
+                                                                                   accountId);
 
                     await _componentRepository.MoveComponentQuanityFromOnHoldToAvailable((int)ticket.ComponentId, (int)ticket.Quantity);
 
@@ -79,13 +96,30 @@ namespace Service.Implement
                     //update task status and request status
                     //await this.UpdateMachineTaskAndMachineCheckRequestBaseOnNewTicketStatus((int)ticket.MachineTaskCreateId, customerId);
 
-                    string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã bị hủy";
+                    string action = $"Ticket thay thế bộ phận [{ticket.ComponentName}] đã bị hủy ";
 
-                    await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, customerId);
+                    if (account.RoleId == (int)AccountRoleEnum.Customer)
+                    {
+                        action += "bởi khách hàng";
+                    }
+                    else
+                    {
+                        action += $"bởi nhân viên kĩ thuật với lý do {note}";
+                    }
+
+                    await _machineSerialNumberLogRepository.WriteComponentLog(ticket.SerialNumber, (int)ticket.MachineSerialNumberComponentId, action, accountId);
 
                     //notify staff
-                    await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket, ticket.ComponentReplacementTicketId);
+                    if (account.RoleId == (int)AccountRoleEnum.Customer)
+                    {
+                        await _notificationService.SendNotificationToStaffWhenCustomerCancelTicket(ticket, ticket.ComponentReplacementTicketId);
+                    }
+                    else //notify customer
+                    {
+                        await _notificationService.SendNotificationToCustomerWhenStaffCancelTicket(ticket, ticket.ComponentReplacementTicketId, note, contract?.AccountSignId);
+                    }
 
+                    await _ComponentReplacementTicketHub.Clients.All.SendAsync("OnUpdateComponentReplacementTicketStatus", ticket.ComponentReplacementTicketId);
                     scope.Complete();
                 }
                 catch (Exception ex)

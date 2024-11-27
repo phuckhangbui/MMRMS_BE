@@ -632,6 +632,54 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendNotificationToCustomerWhenStaffCancelTicket(ComponentReplacementTicketDto ticket, string componentReplacementTicketId, string? note, int? customerId)
+        {
+            string title = "Ticket thay thế bộ phận máy đã được nhân viên sửa chữa hủy hủy";
+            string body = $"Ticket thay bộ phận {ticket.ComponentName} của máy {ticket.SerialNumber} đã được nhân viên kỹ thuật hủy với lý do {note}";
+
+
+            string type = NotificationTypeEnum.ComponentReplacementTicket.ToString();
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            var account = await _accountRepository.GetAccounById((int)customerId);
+
+            if (account == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = (int)ticket.EmployeeCreateId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    DetailIdName = detailIdName,
+                    DetailId = ticket.ComponentReplacementTicketId,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", ((int)ticket.EmployeeCreateId).ToString() },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request, string detailId)
         {
             string title = $"Yêu cầu kiểm tra máy của bạn đã được thay đổi trạng thái";

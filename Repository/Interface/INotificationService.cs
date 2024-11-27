@@ -21,6 +21,7 @@ namespace Repository.Interface
         Task SendNotificationToCustomerWhenCreateComponentReplacementTicket(int customerId, double totalAmount, string? componentName, string detailId);
         Task SendNotificationToStaffWhenCustomerPayTicket(ComponentReplacementTicketDto ticket, string detailId);
         Task SendNotificationToStaffWhenCustomerCancelTicket(ComponentReplacementTicketDto ticket, string detailId);
+        Task SendNotificationToCustomerWhenStaffCancelTicket(ComponentReplacementTicketDto ticket, string componentReplacementTicketId, string? note, int? customerId);
         Task SendNotificationToCustomerWhenUpdateRequestStatus(int accountSignId, MachineCheckRequestDto request, string detailId);
         Task SendNotificationToStaffWhenAssignTaskToCheckMachineInStorage(int staffId, MachineTaskDto task, DateTime parsedDate, string detailId);
         Task SendNotificationToManagerWhenCustomerSignedAllContract(string customerName, string rentingRequestId, string detailId);
