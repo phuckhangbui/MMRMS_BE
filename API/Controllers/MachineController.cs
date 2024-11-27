@@ -71,29 +71,29 @@ namespace API.Controllers
             }
         }
 
-        //[HttpGet("review/{machineIds}")]
-        //public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachinesReview([FromRoute] string machineIds)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(machineIds))
-        //        {
-        //            return BadRequest();
-        //        }
+        [HttpGet("review/{machineIds}")]
+        public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachinesReview([FromRoute] string machineIds)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(machineIds))
+                {
+                    return BadRequest();
+                }
 
-        //        var machineIdList = machineIds.Split(',').Select(int.Parse).ToList();
-        //        var machines = await _machineService.GetMachineReviews(machineIdList);
-        //        return Ok(machines);
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
+                var machineIdList = machineIds.Split(',').Select(int.Parse).ToList();
+                var machines = await _machineService.GetMachineReviews(machineIdList);
+                return Ok(machines);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpGet("{machineId}")]
         public async Task<ActionResult<MachineDetailDto>> GetMachineDetail([FromRoute] int machineId)
@@ -344,7 +344,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("/quotations")]
+        [HttpGet("quotations")]
         public async Task<ActionResult<List<MachineQuotationDto>>> GetMachineQuotations()
         {
 

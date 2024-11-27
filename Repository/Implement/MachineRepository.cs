@@ -339,11 +339,11 @@ namespace Repository.Implement
             }).ToList() ?? [];
         }
 
-        public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> productIds)
+        public async Task<IEnumerable<MachineReviewDto>> GetMachineReviews(List<int> machineIds)
         {
             var productReviewList = new List<MachineReviewDto>();
 
-            foreach (var productId in productIds)
+            foreach (var productId in machineIds)
             {
                 var product = await MachineDao.Instance.GetMachineWithSerialMachineNumberAndMachineImages(productId);
 
