@@ -22,12 +22,14 @@ namespace Service.Implement
         private readonly IMachineCheckRequestService _machineCheckRequestService;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IMachineRepository _machineRepository;
+        private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IHubContext<ComponentReplacementTicketHub> _ComponentReplacementTicketHub;
         private readonly IHubContext<InvoiceHub> _invoiceHub;
         private readonly INotificationService _notificationService;
 
 
-        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub, IInvoiceRepository invoiceRepository, IAccountRepository accountRepository)
+        public ComponentReplacementTicketService(IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IComponentRepository componentRepository, IContractRepository contractRepository, IHubContext<ComponentReplacementTicketHub> ComponentReplacementTicketHub, INotificationService notificationService, IMachineTaskRepository machineTaskRepository, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberLogRepository machineSerialNumberLogRepository, IHubContext<InvoiceHub> invoiceHub, IInvoiceRepository invoiceRepository, IAccountRepository accountRepository, IMachineRepository machineRepository, IMachineSerialNumberRepository machineSerialNumberRepository)
         {
             _componentReplacementTicketRepository = ComponentReplacementTicketRepository;
             _componentRepository = componentRepository;
@@ -41,6 +43,8 @@ namespace Service.Implement
             _invoiceHub = invoiceHub;
             _invoiceRepository = invoiceRepository;
             _accountRepository = accountRepository;
+            _machineRepository = machineRepository;
+            _machineSerialNumberRepository = machineSerialNumberRepository;
         }
 
 
@@ -353,7 +357,21 @@ namespace Service.Implement
 
         public async Task<ComponentReplacementTicketDetailDto> GetComponentReplacementTicket(string replacementTicketId)
         {
-            return await _componentReplacementTicketRepository.GetComponentReplacementTicketDetail(replacementTicketId);
+            var detail = await _componentReplacementTicketRepository.GetComponentReplacementTicketDetail(replacementTicketId);
+            if (detail == null)
+            {
+                return null;
+            }
+            var serialMachine = await _machineSerialNumberRepository.GetMachineSerialNumber(detail.ComponentReplacementTicket?.SerialNumber);
+
+            if (serialMachine == null)
+            {
+                return detail;
+            }
+
+            detail.ComponentReplacementTicket.MachineName = serialMachine.MachineName;
+
+            return detail;
         }
 
         public async Task<IEnumerable<ComponentReplacementTicketDto>> GetComponentReplacementTickets()

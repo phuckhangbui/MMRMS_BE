@@ -22,6 +22,8 @@
 
         public string? SerialNumber { get; set; }
 
+        public string? MachineName { get; set; }
+
         public double? ComponentPrice { get; set; }
 
         public double? AdditionalFee { get; set; }
