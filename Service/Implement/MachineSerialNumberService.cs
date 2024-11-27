@@ -12,26 +12,28 @@ namespace Service.Implement
 {
     public class MachineSerialNumberService : IMachineSerialNumberService
     {
+        private readonly ISettingsService _settingsService;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineRepository _productRepository;
         private readonly IMachineSerialNumberComponentRepository _machineSerialNumberComponentRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly IMapper _mapper;
 
-        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IComponentRepository componentRepository)
+        public MachineSerialNumberService(IMachineSerialNumberRepository machineSerialNumberRepository, IMachineRepository productRepository, IMapper mapper, IMachineSerialNumberComponentRepository machineSerialNumberComponentRepository, IComponentRepository componentRepository, ISettingsService settingsService)
         {
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _productRepository = productRepository;
             _mapper = mapper;
             _machineSerialNumberComponentRepository = machineSerialNumberComponentRepository;
             _componentRepository = componentRepository;
+            _settingsService = settingsService;
         }
 
         public async Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto dto, int accountId)
         {
-            var productDetail = await _productRepository.GetMachineDetail(dto.MachineId);
+            var machineDetail = await _productRepository.GetMachineDetail(dto.MachineId);
 
-            if (productDetail == null)
+            if (machineDetail == null)
             {
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
@@ -41,7 +43,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberDuplicated);
             }
 
-            if (productDetail.MachineComponentList.IsNullOrEmpty())
+            if (machineDetail.MachineComponentList.IsNullOrEmpty())
             {
                 if (!dto.ForceWhenNoComponentInMachine)
                 {
@@ -49,9 +51,60 @@ namespace Service.Implement
                 }
             }
 
-            await _machineSerialNumberRepository.CreateMachineSerialNumber(dto, productDetail.MachineComponentList, (double)productDetail.RentPrice, accountId);
+            int rentDaysCounter = 0;
+            var actualRentPrice = machineDetail.RentPrice;
+            var percent = dto.MachineConditionPercent;
 
-            var product = _mapper.Map<MachineDto>(productDetail);
+            if (percent != 100)
+            {
+                if (percent < 60)
+                {
+                    throw new ServiceException(MessageConstant.MachineSerialNumber.PercentHigherThanSixty);
+                }
+
+                if (percent % 5 != 0)
+                {
+                    throw new ServiceException(MessageConstant.MachineSerialNumber.PercentIsNotDivisibleByFive);
+                }
+
+                var machineSetting = await _settingsService.GetMachineSettingsAsync();
+
+                foreach (var condition in machineSetting.DaysData)
+                {
+                    if (dto.MachineConditionPercent == condition.MachineConditionPercent)
+                    {
+                        rentDaysCounter = condition.RentedDays;
+                        break;
+                    }
+                }
+
+
+                foreach (var condition in machineSetting.RateData)
+                {
+                    if (dto.MachineConditionPercent == condition.MachineConditionPercent)
+                    {
+                        actualRentPrice = actualRentPrice * (condition.RentalPricePercent / 100.0);
+
+                        actualRentPrice = NumberExtension.SquareMoneyToNearest1000((double)actualRentPrice);
+                        break;
+                    }
+                }
+            }
+
+            var serialMachineDto = new MachineSerialNumberDto
+            {
+                SerialNumber = dto.SerialNumber,
+                MachineId = dto.MachineId,
+                MachineConditionPercent = dto.MachineConditionPercent,
+                ActualRentPrice = actualRentPrice,
+                RentDaysCounter = rentDaysCounter,
+                Status = MachineSerialNumberStatusEnum.Available.ToString(),
+                DateCreate = DateTime.Now,
+            };
+
+            await _machineSerialNumberRepository.CreateMachineSerialNumber(serialMachineDto, machineDetail.MachineComponentList, accountId);
+
+            var product = _mapper.Map<MachineDto>(machineDetail);
 
             if (product.Status == MachineStatusEnum.Locked.ToString())
             {

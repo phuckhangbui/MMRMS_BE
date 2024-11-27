@@ -6,7 +6,7 @@ namespace Repository.Interface
 {
     public interface IMachineSerialNumberRepository
     {
-        Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto createSerialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, double price, int accountId);
+        Task CreateMachineSerialNumber(MachineSerialNumberDto serialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, int accountId);
         Task Delete(string serialNumber);
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsMachineSerialNumberHasContract(string serialNumber);
