@@ -12,6 +12,14 @@ namespace DTOs.MachineCheckRequest
 
         public string? SerialNumber { get; set; }
 
+        public int? MachineId { get; set; }
+
+        public string? MachineName { get; set; }
+
+        public string? Thumbnail { get; set; }
+
+        public int? CustomerId { get; set; }
+
         public string? Note { get; set; }
 
         public string? Status { get; set; }

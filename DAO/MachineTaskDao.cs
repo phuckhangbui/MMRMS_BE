@@ -55,11 +55,18 @@ namespace DAO
                 return await context.MachineTasks.Include(d => d.Staff)
                                                  .Include(d => d.Manager)
                                                  .Include(d => d.MachineTaskLogs.OrderByDescending(l => l.DateCreate))
-                                                 .ThenInclude(l => l.AccountTrigger)
+                                                    .ThenInclude(l => l.AccountTrigger)
                                                  .Include(d => d.ComponentReplacementTicketsCreateFromTask)
-                                                 .ThenInclude(c => c.Component)
+                                                    .ThenInclude(c => c.Component)
                                                  .Include(d => d.MachineCheckRequest)
                                                  .Include(d => d.Contract)
+                                                    .ThenInclude(c => c.ContractMachineSerialNumber)
+                                                    .ThenInclude(s => s.Machine)
+                                                    .ThenInclude(m => m.MachineImages)
+                                                 .Include(d => d.Contract)
+                                                    .ThenInclude(c => c.ContractMachineSerialNumber)
+                                                    .ThenInclude(s => s.Machine)
+                                                    .ThenInclude(m => m.Category)
                                                  .FirstOrDefaultAsync(d => d.MachineTaskId == taskId);
             }
         }

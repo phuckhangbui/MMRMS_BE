@@ -34,6 +34,10 @@ namespace DAO
                     .Include(c => c.Contract)
                     .ThenInclude(c => c.RentingRequest)
                     .ThenInclude(c => c.RentingRequestAddress)
+                    .Include(c => c.Contract)
+                    .ThenInclude(c => c.ContractMachineSerialNumber)
+                    .ThenInclude(s => s.Machine)
+                    .ThenInclude(m => m.MachineImages)
                     .OrderByDescending(c => c.DateCreate)
                     .ToListAsync();
             }
@@ -66,6 +70,10 @@ namespace DAO
                     .Include(c => c.MachineTask)
                     .ThenInclude(t => t.ComponentReplacementTicketsCreateFromTask)
                         .ThenInclude(t => t.EmployeeCreate)
+                    .Include(c => c.Contract)
+                    .ThenInclude(c => c.ContractMachineSerialNumber)
+                    .ThenInclude(s => s.Machine)
+                    .ThenInclude(m => m.MachineImages)
                     .FirstOrDefaultAsync(m => m.MachineCheckRequestId == machineCheckRequestId);
             }
         }

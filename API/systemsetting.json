@@ -38,5 +38,15 @@
     "name": "defaultTicketCharge",
     "value": 111000.0,
     "valueType": "double"
+  },
+  {
+    "name": "shipPricePerKm",
+    "value": 30000.0,
+    "valueType": "double"
+  },
+  {
+    "name": "maxWeightPerDelivery",
+    "value": 1500,
+    "valueType": "int"
   }
 ]

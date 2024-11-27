@@ -14,6 +14,16 @@ namespace DTOs.MachineTask
 
         public string? SerialNumber { get; set; }
 
+        public int? MachineId { get; set; }
+
+        public string? MachineName { get; set; }
+
+        public string? Model { get; set; }
+
+        public string? CategoryName { get; set; }
+
+        public string? Thumbnail { get; set; }
+
         public string? MachineCheckRequestId { get; set; }
 
         public string? Content { get; set; }
