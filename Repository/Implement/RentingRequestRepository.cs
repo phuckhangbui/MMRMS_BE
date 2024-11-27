@@ -219,6 +219,11 @@ namespace Repository.Implement
             rentingRequest.BeneficiaryBank = newRentingRequestDto.BeneficiaryBank;
             rentingRequest.BeneficiaryName = newRentingRequestDto.BeneficiaryName;
 
+            var totalRentSerialNumbers = newRentingRequestDto.RentingRequestSerialNumbers.Count;
+            rentingRequest.ShippingDistance = newRentingRequestDto.ShippingDistance;
+            rentingRequest.ShippingPricePerKm = newRentingRequestDto.ShippingPricePerKm;
+            rentingRequest.ShippingPrice = newRentingRequestDto.ShippingDistance * newRentingRequestDto.ShippingPricePerKm * totalRentSerialNumbers;
+
             var address = await AddressDao.Instance.GetAddressById(newRentingRequestDto.AddressId);
             if (address != null)
             {
@@ -233,8 +238,6 @@ namespace Repository.Implement
 
                 rentingRequest.RentingRequestAddress = rentingRequestAddress;
             }
-
-            var totalRentSerialNumbers = newRentingRequestDto.RentingRequestSerialNumbers.Count;
 
             var rentingServices = await RentingServiceDao.Instance.GetAllAsync();
             //Required renting services
@@ -273,7 +276,7 @@ namespace Repository.Implement
             }
 
             //rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
-            rentingRequest.TotalAmount += rentingRequest.TotalServicePrice - newRentingRequestDto.DiscountPrice;
+            rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - newRentingRequestDto.DiscountPrice;
 
             //rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
