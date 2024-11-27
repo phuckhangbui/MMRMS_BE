@@ -21,11 +21,13 @@ namespace Service.Implement
 
         private readonly IMachineTaskRepository _machineTaskRepository;
 
+        private readonly IAccountRepository _accountRepository;
+
         private readonly IHubContext<MachineCheckRequestHub> _machineCheckRequestHub;
 
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
 
-        public MachineCheckRequestService(IMachineCheckRequestRepository MachineCheckRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MachineCheckRequestHub> MachineCheckRequestHub, IMachineTaskRepository machineTaskRepository, IHubContext<MachineTaskHub> machineTaskHub)
+        public MachineCheckRequestService(IMachineCheckRequestRepository MachineCheckRequestRepository, IContractRepository contractRepository, INotificationService notificationService, IHubContext<MachineCheckRequestHub> MachineCheckRequestHub, IMachineTaskRepository machineTaskRepository, IHubContext<MachineTaskHub> machineTaskHub, IAccountRepository accountRepository)
         {
             _machineCheckRequestRepository = MachineCheckRequestRepository;
             _contractRepository = contractRepository;
@@ -33,6 +35,7 @@ namespace Service.Implement
             _machineCheckRequestHub = MachineCheckRequestHub;
             _machineTaskRepository = machineTaskRepository;
             _machineTaskHub = machineTaskHub;
+            _accountRepository = accountRepository;
         }
 
         public async Task CancelMachineCheckRequestDetail(string machineCheckRequestId, int customerId)
@@ -147,6 +150,15 @@ namespace Service.Implement
             if (requestDetailDto == null)
             {
                 throw new ServiceException(MessageConstant.MachineCheckRequest.RequestNotFound);
+            }
+
+            var customer = await _accountRepository.GetAccounById((int)requestDetailDto.MachineCheckRequest.CustomerId);
+
+            if (customer != null)
+            {
+                requestDetailDto.CustomerId = customer.AccountId;
+                requestDetailDto.CustomerName = customer.Name;
+                requestDetailDto.CustomerPhone = customer.Phone;
             }
 
             return requestDetailDto;
