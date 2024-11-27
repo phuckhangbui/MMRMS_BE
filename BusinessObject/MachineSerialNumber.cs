@@ -8,6 +8,8 @@ public partial class MachineSerialNumber
 
     public double? ActualRentPrice { get; set; }
 
+    public int? MachineConditionPercent { get; set; }
+
     public string? Status { get; set; }
 
     public DateTime? DateCreate { get; set; }

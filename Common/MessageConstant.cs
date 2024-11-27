@@ -187,6 +187,7 @@
             public const string ActualRentPriceRequired = "Giá thuê máy là bắt buộc";
             public const string RentTimeCounterequired = "Số lần máy đã cho thuê là bắt buộc";
             public const string StatusRequired = "Trạng thái của máy là bắt buộc";
+            public const string MachineConditionPercentRequired = "Độ mới của máy là bắt buộc";
         }
 
         public static class Contract

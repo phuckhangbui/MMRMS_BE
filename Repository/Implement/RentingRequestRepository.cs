@@ -76,7 +76,7 @@ namespace Repository.Implement
                         CategoryName = machine.Category!.CategoryName ?? string.Empty,
                         ThumbnailUrl = string.Empty,
                         RentPrices = [],
-                        ShipPricePerKm = machine.ShipPricePerKm ?? 0,
+                        //ShipPricePerKm = machine.ShipPricePerKm ?? 0,
                         MachineSerialNumbers = group.Value.Select(sn => new MachineSerialNumberDto
                         {
                             MachineId = sn.MachineId,
