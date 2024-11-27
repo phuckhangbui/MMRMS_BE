@@ -479,7 +479,6 @@ namespace Test.Service
             return new NewRentingRequestDto
             {
                 AddressId = 1,
-                ShippingPrice = 100.50,
                 DiscountPrice = 10.0,
                 IsOnetimePayment = true,
                 Note = "This is a sample note.",

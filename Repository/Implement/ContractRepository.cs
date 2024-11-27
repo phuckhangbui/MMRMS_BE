@@ -61,19 +61,6 @@ namespace Repository.Implement
                     contractPayment.FirstRentalPayment = firstRentalPayment;
                 }
 
-                var rentingRequest = contract.RentingRequest;
-                if (rentingRequest != null)
-                {
-                    var bankAccountRefund = new BankAccountRefundDto
-                    {
-                        AccountNumber = rentingRequest.AccountNumber,
-                        BeneficiaryBank = rentingRequest.BeneficiaryBank,
-                        BeneficiaryName = rentingRequest.BeneficiaryName,
-                    };
-
-                    contractDetail.BankAccountRefund = bankAccountRefund;
-                }
-
                 return contractDetail;
             }
 
@@ -486,7 +473,7 @@ namespace Repository.Implement
 
         private async Task<string> GenerateContractId()
         {
-            int currentTotalContracts = await ContractDao.Instance.GetTotalContractByDate(DateTime.Now);
+            int currentTotalContracts = await ContractDao.Instance.GetLastestContractByDate(DateTime.Now);
             string datePart = DateTime.Now.ToString(GlobalConstant.DateTimeFormatPattern);
             string sequencePart = (currentTotalContracts + 1).ToString("D4");
             return $"{GlobalConstant.ContractIdPrefixPattern}{datePart}{GlobalConstant.SequenceSeparator}{sequencePart}";

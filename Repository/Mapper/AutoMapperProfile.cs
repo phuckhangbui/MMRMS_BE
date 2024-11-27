@@ -206,7 +206,13 @@ namespace Repository.Mapper
                     src.ContractMachineSerialNumber.Machine.MachineImages != null ? src.ContractMachineSerialNumber.Machine.MachineImages.FirstOrDefault(p => p.IsThumbnail == true).MachineImageUrl : null))
                 .ForMember(dest => dest.IsOnetimePayment, opt => opt.MapFrom(src => src.RentingRequest != null ? src.RentingRequest.IsOnetimePayment : null))
                 .ForMember(dest => dest.ContractAddress, opt => opt.MapFrom(src => src.RentingRequest != null &&
-                    src.RentingRequest.RentingRequestAddress != null ? src.RentingRequest.RentingRequestAddress : null));
+                    src.RentingRequest.RentingRequestAddress != null ? src.RentingRequest.RentingRequestAddress : null))
+                .ForPath(dest => dest.BankAccountRefund.AccountNumber, opt => opt.MapFrom(src => src.RentingRequest != null &&
+                    src.RentingRequest.AccountNumber != null ? src.RentingRequest.AccountNumber : string.Empty))
+                .ForPath(dest => dest.BankAccountRefund.BeneficiaryBank, opt => opt.MapFrom(src => src.RentingRequest != null &&
+                    src.RentingRequest.AccountNumber != null ? src.RentingRequest.BeneficiaryBank : string.Empty))
+                .ForPath(dest => dest.BankAccountRefund.BeneficiaryName, opt => opt.MapFrom(src => src.RentingRequest != null &&
+                    src.RentingRequest.AccountNumber != null ? src.RentingRequest.BeneficiaryName : string.Empty));
             //CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
             CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
