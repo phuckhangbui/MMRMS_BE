@@ -72,7 +72,7 @@ namespace DAO
             }
         }
 
-        public async Task<(Invoice depositInvoice, Invoice rentalInvoice)> GetInvoicesByRentingRequest(string rentingRequestId)
+        public async Task<Invoice> GetInvoicesByRentingRequest(string rentingRequestId)
         {
             using var context = new MmrmsContext();
 
@@ -87,10 +87,11 @@ namespace DAO
                     .OrderBy(i => i.DateCreate)
                     .ToListAsync();
 
-            var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
+            //var depositInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
             var rentalInvoice = invoices.FirstOrDefault(i => i.Type.Equals(InvoiceTypeEnum.Rental.ToString()) && i.Status.Equals(InvoiceStatusEnum.Pending.ToString()));
 
-            return (depositInvoice, rentalInvoice);
+            //return (depositInvoice, rentalInvoice);
+            return rentalInvoice;
         }
 
         public async Task<double> GetTotalMoneyInRangeAsync(DateTime? startDate, DateTime? endDate)

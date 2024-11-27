@@ -59,6 +59,7 @@ namespace DAO
                 return await context.Contracts
                     .Where(c => c.RentingRequestId.Equals(rentingRequestId))
                      .Include(c => c.RentingRequest)
+                        .ThenInclude(r => r.RentingRequestAddress)
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)
@@ -150,6 +151,34 @@ namespace DAO
             using var context = new MmrmsContext();
             return await context.Contracts
                 .FirstOrDefaultAsync(c => c.BaseContractId.Equals(baseContractId));
+        }
+
+        public async Task<int> GetLastestContractByDate(DateTime date)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var ids = await context.Contracts
+                    .Where(t => t.DateCreate.HasValue && t.DateCreate.Value.Date == date.Date)
+                    .Where(t => t.ContractId != null)
+                    .Select(t => t.ContractId)
+                    .ToListAsync();
+
+                if (!ids.Any())
+                {
+                    return 0;
+                }
+
+                var latestId = ids
+                     .Select(id =>
+                     {
+                         int startIndex = id.IndexOf("NO") + 2;
+                         return int.Parse(id.Substring(startIndex));
+                     })
+                     .OrderByDescending(id => id)
+                     .FirstOrDefault();
+
+                return latestId;
+            }
         }
     }
 }

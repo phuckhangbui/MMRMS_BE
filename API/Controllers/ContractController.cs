@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{contractId}")]
-        [Authorize(policy: "ManagerAndCustomer")]
+        [Authorize(policy: "ManagerAndCustomerAndWebsiteStaff")]
         public async Task<ActionResult<ContractDetailDto>> GetContractDetail(string contractId)
         {
             try

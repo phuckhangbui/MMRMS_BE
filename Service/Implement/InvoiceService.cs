@@ -168,8 +168,7 @@ namespace Service.Implement
 
                             break;
 
-                        case var type when type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
-                                            type.Equals(InvoiceTypeEnum.Rental.ToString()):
+                        case var type when type.Equals(InvoiceTypeEnum.Rental.ToString()):
                             await ProcessContractInvoice(invoice);
                             break;
                     }
@@ -210,10 +209,11 @@ namespace Service.Implement
                 }
 
                 var rentingRequestId = contractInvoice.RentingRequestId;
-                var rentingRequest = await _rentingRequestRepository.GetCustomerRentingRequest(rentingRequestId, (int)contractInvoice.AccountPaidId);
+                //var rentingRequest = await _rentingRequestRepository.GetCustomerRentingRequest(rentingRequestId, (int)contractInvoice.AccountPaidId);
+                var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(rentingRequestId);
+
                 if (rentingRequest != null &&
-                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()) &&
-                    rentingRequest.PendingInvoices.IsNullOrEmpty())
+                    rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
                 {
                     //Both invoice paid
                     foreach (var contractPayment in contractInvoice.ContractPayments)

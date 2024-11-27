@@ -65,7 +65,6 @@ namespace Repository.Implement
             if (invoice != null)
             {
                 if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) ||
-                    invoice.Type.Equals(InvoiceTypeEnum.Deposit.ToString()) ||
                     invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
                 {
                     var contractInvoice = _mapper.Map<ContractInvoiceDto>(invoice);
@@ -168,22 +167,27 @@ namespace Repository.Implement
             if (currentRequest != null)
             {
                 var totalDepositAmount = currentRequest.Contracts.Select(c => c.DepositPrice).Sum() ?? 0;
-                var depositInvoice = await CreateInvoice(totalDepositAmount, InvoiceTypeEnum.Deposit.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
-                foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
-                                                                  .Where(cp => cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))
-                {
-                    payment.InvoiceId = depositInvoice.InvoiceId;
-                    await ContractPaymentDao.Instance.UpdateAsync(payment);
-                }
+                //var depositInvoice = await CreateInvoice(totalDepositAmount, InvoiceTypeEnum.Deposit.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
+                //foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
+                //                                                  .Where(cp => cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))
+                //{
+                //    payment.InvoiceId = depositInvoice.InvoiceId;
+                //    await ContractPaymentDao.Instance.UpdateAsync(payment);
+                //}
 
                 //
                 if (currentRequest.IsOnetimePayment == true)
                 {
                     var totalRentAmount = currentRequest.Contracts.Select(c => c.TotalRentPrice).Sum() ?? 0;
-                    totalRentAmount = totalRentAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
-                    var rentalInvoice = await CreateInvoice(totalRentAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
-                    foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
-                                                                          .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString()))
+                    //totalRentAmount = totalRentAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
+                    
+                    var totalAmount = totalDepositAmount + totalRentAmount + currentRequest.TotalServicePrice - currentRequest.DiscountPrice ?? 0;
+                    
+                    var rentalInvoice = await CreateInvoice(totalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
+                    
+                    foreach (var payment in currentRequest.Contracts
+                        .SelectMany(c => c.ContractPayments)
+                        .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() || cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))
                     {
                         payment.InvoiceId = rentalInvoice.InvoiceId;
                         await ContractPaymentDao.Instance.UpdateAsync(payment);
@@ -195,11 +199,14 @@ namespace Repository.Implement
                                 .SelectMany(c => c.ContractPayments)
                                 .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true)
                                 .Sum(cp => cp.Amount ?? 0);
-                    firstMonthTotalAmount = firstMonthTotalAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
+                    //firstMonthTotalAmount = firstMonthTotalAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
 
-                    var rentalInvoice = await CreateInvoice(firstMonthTotalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
-                    foreach (var payment in currentRequest.Contracts.SelectMany(c => c.ContractPayments)
-                                                                          .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true))
+                    var totalAmount = totalDepositAmount + firstMonthTotalAmount + currentRequest.TotalServicePrice - currentRequest.DiscountPrice ?? 0;
+
+                    var rentalInvoice = await CreateInvoice(totalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
+                    foreach (var payment in currentRequest.Contracts
+                        .SelectMany(c => c.ContractPayments)
+                        .Where(cp => (cp.Type == ContractPaymentTypeEnum.Rental.ToString() && cp.IsFirstRentalPayment == true) || cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))
                     {
                         payment.InvoiceId = rentalInvoice.InvoiceId;
                         await ContractPaymentDao.Instance.UpdateAsync(payment);

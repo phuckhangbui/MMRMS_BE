@@ -164,27 +164,27 @@ namespace Repository.Implement
             {
                 if (rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
                 {
-                    var (depositInvoice, rentalInvoice) = await InvoiceDao.Instance.GetInvoicesByRentingRequest(rentingRequest.RentingRequestId);
+                    var invoice = await InvoiceDao.Instance.GetInvoicesByRentingRequest(rentingRequest.RentingRequestId);
 
-                    if (depositInvoice != null)
-                    {
-                        var depositInvoiceDto = new PendingInvoiceDto
-                        {
-                            InvoiceId = depositInvoice.InvoiceId,
-                            Status = depositInvoice.Status,
-                            Type = depositInvoice.Type,
-                        };
+                    //if (depositInvoice != null)
+                    //{
+                    //    var depositInvoiceDto = new PendingInvoiceDto
+                    //    {
+                    //        InvoiceId = depositInvoice.InvoiceId,
+                    //        Status = depositInvoice.Status,
+                    //        Type = depositInvoice.Type,
+                    //    };
 
-                        rentingRequest.PendingInvoices.Add(depositInvoiceDto);
-                    }
+                    //    rentingRequest.PendingInvoices.Add(depositInvoiceDto);
+                    //}
 
-                    if (rentalInvoice != null)
+                    if (invoice != null)
                     {
                         var rentalInvoiceDto = new PendingInvoiceDto
                         {
-                            InvoiceId = rentalInvoice.InvoiceId,
-                            Status = rentalInvoice.Status,
-                            Type = rentalInvoice.Type,
+                            InvoiceId = invoice.InvoiceId,
+                            Status = invoice.Status,
+                            Type = invoice.Type,
                         };
 
                         rentingRequest.PendingInvoices.Add(rentalInvoiceDto);
@@ -272,7 +272,8 @@ namespace Repository.Implement
                 }
             }
 
-            rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
+            //rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
+            rentingRequest.TotalAmount += rentingRequest.TotalServicePrice - newRentingRequestDto.DiscountPrice;
 
             //rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
