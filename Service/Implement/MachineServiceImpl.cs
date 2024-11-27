@@ -3,6 +3,7 @@ using Common;
 using Common.Enum;
 using DTOs.Machine;
 using DTOs.MachineSerialNumber;
+using DTOs.Setting;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -15,14 +16,16 @@ namespace Service.Implement
         private readonly IMachineRepository _machineRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ISettingsService _settingsService;
         private readonly IMapper _mapper;
 
-        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService)
         {
             _machineRepository = machineRepository;
             _componentRepository = componentRepository;
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _settingsService = settingsService;
         }
 
         public async Task<IEnumerable<MachineViewDto>> GetMachineList()
@@ -338,5 +341,73 @@ namespace Service.Implement
                 }
             }
         }
+
+        public async Task<MachineQuotationDto> GetMachineQuotation(int machineId)
+        {
+            var machine = await _machineRepository.GetMachine(machineId);
+
+            if (machine == null)
+            {
+                throw new ServiceException(MessageConstant.Machine.MachineNotFound);
+            }
+            var machineSetting = await _settingsService.GetMachineSettingsAsync();
+
+            return GenerateQuotation(machineSetting, machineId, machine.MachineName, machine.Model, (double)machine.RentPrice);
+        }
+
+        public async Task<List<MachineQuotationDto>> GetMachineQuotations()
+        {
+            var machines = await _machineRepository.GetActiveMachines();
+
+            var machineSetting = await _settingsService.GetMachineSettingsAsync();
+            var quotationList = new List<MachineQuotationDto>();
+
+            foreach (var machine in machines)
+            {
+                var quotationDto = GenerateQuotation(machineSetting, machine.MachineId, machine.MachineName, machine.Model, (double)machine.RentPrice);
+                quotationList.Add(quotationDto);
+            }
+
+            return quotationList;
+        }
+
+
+        private MachineQuotationDto GenerateQuotation(MachineSettingDto machineSetting, int machineId, string machineName, string machineModel, double rentPricePerDay)
+        {
+
+            var days = new[] { 1, 30, 60, 90, 180, 360 };
+
+            var quotation = new List<Dictionary<string, double>>();
+
+            foreach (var rate in machineSetting.RateData)
+            {
+                var row = new Dictionary<string, double>
+                {
+                    { "machineConditionPercent", rate.MachineConditionPercent }
+                };
+
+
+                foreach (var day in days)
+                {
+
+                    var columnName = day.ToString();
+
+                    var price = Math.Round(rentPricePerDay * rate.RentalPricePercent / 100 * day);
+
+                    row[columnName] = price;
+                }
+
+                quotation.Add(row);
+            }
+
+            return new MachineQuotationDto
+            {
+                MachineId = machineId,
+                MachineName = machineName,
+                Model = machineModel,
+                Quotation = quotation
+            };
+        }
+
     }
 }

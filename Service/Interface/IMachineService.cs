@@ -20,5 +20,7 @@ namespace Service.Interface
         Task ChangeMachineImages(int productId, List<ImageList> imageList);
         Task UpdateMachineTerm(int productId, IEnumerable<CreateMachineTermDto> productTermDtos);
         Task ToggleLockStatus(int productId);
+        Task<MachineQuotationDto> GetMachineQuotation(int machineId);
+        Task<List<MachineQuotationDto>> GetMachineQuotations();
     }
 }

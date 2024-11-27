@@ -369,6 +369,8 @@ namespace Service.Implement
             return await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
         }
 
+        
+
 
     }
 }
