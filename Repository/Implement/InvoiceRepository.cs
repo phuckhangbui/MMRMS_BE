@@ -180,11 +180,11 @@ namespace Repository.Implement
                 {
                     var totalRentAmount = currentRequest.Contracts.Select(c => c.TotalRentPrice).Sum() ?? 0;
                     //totalRentAmount = totalRentAmount + currentRequest.TotalServicePrice + currentRequest.ShippingPrice - currentRequest.DiscountPrice ?? 0;
-                    
+
                     var totalAmount = totalDepositAmount + totalRentAmount + currentRequest.TotalServicePrice - currentRequest.DiscountPrice ?? 0;
-                    
+
                     var rentalInvoice = await CreateInvoice(totalAmount, InvoiceTypeEnum.Rental.ToString(), (int)currentRequest.AccountOrderId, string.Empty);
-                    
+
                     foreach (var payment in currentRequest.Contracts
                         .SelectMany(c => c.ContractPayments)
                         .Where(cp => cp.Type == ContractPaymentTypeEnum.Rental.ToString() || cp.Type == ContractPaymentTypeEnum.Deposit.ToString()))

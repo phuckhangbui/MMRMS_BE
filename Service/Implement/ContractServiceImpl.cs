@@ -188,5 +188,16 @@ namespace Service.Implement
                 throw new ServiceException(ex.Message);
             }
         }
+
+        public async Task<IEnumerable<ContractDto>> GetRentalHistoryOfSerialNumber(string serialNumber)
+        {
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+            if (machineSerialNumber == null)
+            {
+                throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+            }
+
+            return await _contractRepository.GetRentalHistoryOfSerialNumber(serialNumber);
+        }
     }
 }

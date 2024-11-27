@@ -3,7 +3,6 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
-using DTOs.Account;
 using DTOs.Contract;
 using DTOs.ContractPayment;
 using DTOs.Delivery;
@@ -97,51 +96,6 @@ namespace Repository.Implement
 
             return [];
         }
-
-        //public async Task<List<ContractInvoiceDto>> SignContract(string rentingRequestId)
-        //{
-        //    var (depositInvoice, rentalInvoice) = await ContractDao.Instance.SignContract(rentingRequestId);
-        //    var invoiceDtos = new List<ContractInvoiceDto>();
-
-        //    if (depositInvoice != null && rentalInvoice != null)
-        //    {
-        //        var depositInvoiceDto = _mapper.Map<ContractInvoiceDto>(depositInvoice);
-        //        var depositContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(depositInvoice.InvoiceId);
-        //        if (!depositContractPayments.IsNullOrEmpty())
-        //        {
-        //            depositInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(depositContractPayments);
-        //        }
-
-        //        invoiceDtos.Add(depositInvoiceDto);
-
-        //        //
-        //        var rentalInvoiceDto = _mapper.Map<ContractInvoiceDto>(rentalInvoice);
-        //        var rentalContractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(rentalInvoice.InvoiceId);
-        //        if (!rentalContractPayments.IsNullOrEmpty())
-        //        {
-        //            rentalInvoiceDto.ContractPayments = _mapper.Map<List<ContractPaymentDto>>(rentalContractPayments);
-
-        //            var firstRentalContractPayment = rentalContractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
-        //            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(firstRentalContractPayment.Contract.RentingRequestId);
-
-        //            var firstRentalPayment = new FirstRentalPaymentDto()
-        //            {
-        //                DiscountPrice = rentingRequest.DiscountPrice,
-        //                ShippingPrice = rentingRequest.ShippingPrice,
-        //                TotalServicePrice = rentingRequest.TotalServicePrice,
-        //            };
-        //            rentalInvoiceDto.ContractPayments[0].FirstRentalPayment = firstRentalPayment;
-        //        }
-
-        //        invoiceDtos.Add(rentalInvoiceDto);
-
-        //        return invoiceDtos;
-        //    }
-
-        //    return [];
-        //}
-
-
 
         public async Task<ContractAddressDto> GetContractAddressById(string contractId)
         {
@@ -585,6 +539,18 @@ namespace Repository.Implement
             }
 
             return _mapper.Map<ContractPaymentDto>(contractPayment);
+        }
+
+        public async Task<IEnumerable<ContractDto>> GetRentalHistoryOfSerialNumber(string serialNumber)
+        {
+            var contracts = await ContractDao.Instance.GetRentalHistoryOfSerialNumber(serialNumber);
+
+            if (!contracts.IsNullOrEmpty())
+            {
+                return _mapper.Map<IEnumerable<ContractDto>>(contracts);
+            }
+
+            return [];
         }
     }
 }
