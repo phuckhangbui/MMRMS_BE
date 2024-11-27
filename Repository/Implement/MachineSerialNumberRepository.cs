@@ -67,12 +67,19 @@ namespace Repository.Implement
         {
             var now = DateTime.Now;
 
+            var rentDaysCounter = 0;
+
+            if (createSerialMachineNumberDto.MachineConditionPercent < 100)
+            {
+
+            }
+
             var serialMachine = new MachineSerialNumber
             {
                 SerialNumber = createSerialMachineNumberDto.SerialNumber,
                 MachineId = createSerialMachineNumberDto.MachineId,
                 DateCreate = now,
-                RentDaysCounter = 0,
+                RentDaysCounter = rentDaysCounter,
                 ActualRentPrice = price,
                 Status = MachineSerialNumberStatusEnum.Available.ToString()
             };

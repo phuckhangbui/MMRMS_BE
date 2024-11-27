@@ -6,6 +6,8 @@
 
         public double? ActualRentPrice { get; set; }
 
+        public int? MachineConditionPercent { get; set; }
+
         public int? MachineId { get; set; }
 
         public string? MachineName { get; set; }

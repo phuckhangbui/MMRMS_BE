@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Service;
 using Service.Helper;
+using Service.Interface;
 using Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,7 +69,11 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var settingsService = scope.ServiceProvider.GetRequiredService<ISettingsService>();
+    settingsService.CheckSettingsFilesOnStartup();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

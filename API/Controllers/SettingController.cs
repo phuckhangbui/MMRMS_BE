@@ -30,6 +30,20 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("machine")]
+        public async Task<ActionResult<MachineSettingDto>> GetMachineSettings()
+        {
+            try
+            {
+                var settings = await _settingsService.GetMachineSettingsAsync();
+                return Ok(settings);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("update")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdateSetting(UpdateSettingDto updateSettingDto)

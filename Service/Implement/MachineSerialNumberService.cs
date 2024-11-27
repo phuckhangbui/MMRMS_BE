@@ -36,8 +36,6 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-            var serialMachineList = await _productRepository.GetMachineNumberList(dto.MachineId);
-
             if (await _machineSerialNumberRepository.IsSerialNumberExist(dto.SerialNumber))
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberDuplicated);

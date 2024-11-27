@@ -8,8 +8,6 @@ public partial class Machine
 
     public double? RentPrice { get; set; }
 
-    public double? ShipPricePerKm { get; set; }
-
     public double? Weight { get; set; }
 
     public double? MachinePrice { get; set; }

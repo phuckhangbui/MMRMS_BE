@@ -6,6 +6,8 @@ namespace Service.Interface
     {
         Task<IEnumerable<SettingDto>> GetSettingsAsync();
         Task UpdateSettingAsync(UpdateSettingDto updateSettingDto);
+        void CheckSettingsFilesOnStartup();
+        Task<MachineSettingDto> GetMachineSettingsAsync();
     }
 
 }
