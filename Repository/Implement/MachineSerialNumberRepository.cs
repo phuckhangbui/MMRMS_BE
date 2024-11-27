@@ -63,26 +63,10 @@ namespace Repository.Implement
             return true;
         }
 
-        public async Task CreateMachineSerialNumber(MachineSerialNumberCreateRequestDto createSerialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, double price, int accountId)
+        public async Task CreateMachineSerialNumber(MachineSerialNumberDto serialMachineNumberDto, IEnumerable<MachineComponentDto> componentMachineList, int accountId)
         {
             var now = DateTime.Now;
 
-            var rentDaysCounter = 0;
-
-            if (createSerialMachineNumberDto.MachineConditionPercent < 100)
-            {
-
-            }
-
-            var serialMachine = new MachineSerialNumber
-            {
-                SerialNumber = createSerialMachineNumberDto.SerialNumber,
-                MachineId = createSerialMachineNumberDto.MachineId,
-                DateCreate = now,
-                RentDaysCounter = rentDaysCounter,
-                ActualRentPrice = price,
-                Status = MachineSerialNumberStatusEnum.Available.ToString()
-            };
 
             IList<MachineSerialNumberComponent> machineSerialNumberComponents = new List<MachineSerialNumberComponent>();
 
@@ -90,7 +74,7 @@ namespace Repository.Implement
             {
                 var productComponentStatus = new MachineSerialNumberComponent
                 {
-                    SerialNumber = createSerialMachineNumberDto.SerialNumber,
+                    SerialNumber = serialMachineNumberDto.SerialNumber,
                     MachineComponentId = componentMachine.MachineComponentId,
                     Quantity = componentMachine.Quantity,
                     Status = MachineSerialNumberComponentStatusEnum.Normal.ToString()
@@ -99,27 +83,30 @@ namespace Repository.Implement
                 machineSerialNumberComponents.Add(productComponentStatus);
             }
 
+            MachineSerialNumber machineSerialNumber = _mapper.Map<MachineSerialNumber>(serialMachineNumberDto);
+
+
             if (machineSerialNumberComponents.Count == 0)
             {
-                serialMachine.MachineSerialNumberComponents = null;
+                machineSerialNumber.MachineSerialNumberComponents = null;
             }
             else
             {
-                serialMachine.MachineSerialNumberComponents = machineSerialNumberComponents;
+                machineSerialNumber.MachineSerialNumberComponents = machineSerialNumberComponents;
             }
 
             MachineSerialNumberLog log = new MachineSerialNumberLog
             {
-                SerialNumber = serialMachine.SerialNumber,
+                SerialNumber = serialMachineNumberDto.SerialNumber,
                 AccountTriggerId = accountId,
                 Action = "Tạo mới một máy serial",
                 Type = MachineSerialNumberLogTypeEnum.Machine.ToString(),
                 DateCreate = now
             };
 
-            serialMachine.MachineSerialNumberLogs = [log];
+            machineSerialNumber.MachineSerialNumberLogs = [log];
 
-            await MachineSerialNumberDao.Instance.CreateAsync(serialMachine);
+            await MachineSerialNumberDao.Instance.CreateAsync(machineSerialNumber);
 
         }
 
