@@ -47,17 +47,27 @@ namespace Repository.Implement
             {
                 var contractDetail = _mapper.Map<ContractDetailDto>(contract);
 
-                var contractPayment = contractDetail.ContractPayments.FirstOrDefault(c => c.IsFirstRentalPayment == true);
-                if (contractPayment != null)
-                {
-                    var firstRentalPayment = new FirstRentalPaymentDto()
-                    {
-                        DiscountPrice = contract.RentingRequest.DiscountPrice,
-                        ShippingPrice = contract.RentingRequest.ShippingPrice,
-                        TotalServicePrice = contract.RentingRequest.TotalServicePrice,
-                    };
+                //var contractPayment = contractDetail.ContractPayments.FirstOrDefault(c => c.IsFirstRentalPayment == true);
+                //if (contractPayment != null)
+                //{
+                //    var firstRentalPayment = new FirstRentalPaymentDto()
+                //    {
+                //        DiscountPrice = contract.RentingRequest.DiscountPrice,
+                //        ShippingPrice = contract.RentingRequest.ShippingPrice,
+                //        TotalServicePrice = contract.RentingRequest.TotalServicePrice,
+                //    };
 
-                    contractPayment.FirstRentalPayment = firstRentalPayment;
+                //    contractPayment.FirstRentalPayment = firstRentalPayment;
+                //}
+
+                var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contract.RentingRequestId);
+                if (rentingRequest != null)
+                {
+                    var numOfContracts = rentingRequest.Contracts.Count;
+
+                    contractDetail.ShippingDistance = rentingRequest.ShippingDistance ?? 0;
+                    contractDetail.ProvisionalShippingPrice = rentingRequest.ShippingPrice / numOfContracts ?? 0;
+                    contractDetail.ServicePrice = rentingRequest.TotalServicePrice / numOfContracts ?? 0;
                 }
 
                 return contractDetail;
