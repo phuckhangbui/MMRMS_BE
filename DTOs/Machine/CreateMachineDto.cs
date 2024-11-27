@@ -28,9 +28,6 @@ namespace DTOs.Machine
         [Required(ErrorMessage = MessageConstant.Machine.CategoryRequired)]
         public int CategoryId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Machine.ShipPriceRequired)]
-        public double ShipPricePerKm { get; set; }
-
         [Required(ErrorMessage = MessageConstant.Machine.WeightRequired)]
         public double Weight { get; set; }
 

@@ -1,0 +1,80 @@
+{
+  "rateData": [
+    {
+      "machineConditionPercent": 100,
+      "rentalPricePercent": 100
+    },
+    {
+      "machineConditionPercent": 95,
+      "rentalPricePercent": 98
+    },
+    {
+      "machineConditionPercent": 90,
+      "rentalPricePercent": 95
+    },
+    {
+      "machineConditionPercent": 85,
+      "rentalPricePercent": 90
+    },
+    {
+      "machineConditionPercent": 80,
+      "rentalPricePercent": 80
+    },
+    {
+      "machineConditionPercent": 75,
+      "rentalPricePercent": 70
+    },
+    {
+      "machineConditionPercent": 70,
+      "rentalPricePercent": 60
+    },
+    {
+      "machineConditionPercent": 65,
+      "rentalPricePercent": 50
+    },
+    {
+      "machineConditionPercent": 60,
+      "rentalPricePercent": 40
+    }
+  ],
+
+
+  "daysData": [
+    {
+      "machineConditionPercent": 100,
+      "rentedDays": 0
+    },
+    {
+      "machineConditionPercent": 95,
+      "rentedDays": 365
+    },
+    {
+      "machineConditionPercent": 90,
+      "rentedDays": 730
+    },
+    {
+      "machineConditionPercent": 85,
+      "rentedDays": 1095
+    },
+    {
+      "machineConditionPercent": 80,
+      "rentedDays": 1460
+    },
+    {
+      "machineConditionPercent": 75,
+      "rentedDays": 1825
+    },
+    {
+      "machineConditionPercent": 70,
+      "rentedDays": 2190
+    },
+    {
+      "machineConditionPercent": 65,
+      "rentedDays": 2555
+    },
+    {
+      "machineConditionPercent": 60,
+      "rentedDays": 2920
+    }
+  ]
+}

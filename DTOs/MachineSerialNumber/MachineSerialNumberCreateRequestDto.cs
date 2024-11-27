@@ -11,6 +11,9 @@ namespace DTOs.MachineSerialNumber
         [Required(ErrorMessage = MessageConstant.MachineSerialNumber.MachineIdRequired)]
         public int MachineId { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.MachineSerialNumber.MachineConditionPercentRequired)]
+        public int MachineConditionPercent { get; set; }
+
         [Required(ErrorMessage = MessageConstant.MachineSerialNumber.ForceWhenNoComponentInMachineRequired)]
         public bool ForceWhenNoComponentInMachine { get; set; }
     }
