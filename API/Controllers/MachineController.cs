@@ -344,7 +344,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("/quotations")]
+        [HttpGet("quotations")]
         public async Task<ActionResult<List<MachineQuotationDto>>> GetMachineQuotations()
         {
 
