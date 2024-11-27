@@ -61,7 +61,7 @@ namespace Repository.Implement
                     contractPayment.FirstRentalPayment = firstRentalPayment;
                 }
 
-                var rentingRequest = await RentingRequestDao.Instance.GetRentingRequest(contract.RentingRequestId);
+                var rentingRequest = contract.RentingRequest;
                 if (rentingRequest != null)
                 {
                     var bankAccountRefund = new BankAccountRefundDto

@@ -37,11 +37,13 @@ namespace API.Controllers
         }
 
         [HttpGet("{contractId}")]
-        public async Task<ActionResult<ContractDetailDto>> GetContractDetailById(string contractId)
+        [Authorize(policy: "ManagerAndCustomer")]
+        public async Task<ActionResult<ContractDetailDto>> GetContractDetail(string contractId)
         {
             try
             {
-                var contract = await _contractService.GetContractDetailById(contractId);
+                int accountId = GetLoginAccountId();
+                var contract = await _contractService.GetContractDetail(contractId, accountId);
                 return Ok(contract);
             }
             catch (ServiceException ex)

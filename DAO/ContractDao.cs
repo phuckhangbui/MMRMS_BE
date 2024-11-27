@@ -31,6 +31,7 @@ namespace DAO
             {
                 return await context.Contracts
                      .Include(c => c.RentingRequest)
+                        .ThenInclude(r => r.RentingRequestAddress)
                      .Include(c => c.AccountSign)
                         .ThenInclude(a => a.AccountBusiness)
                     .Include(c => c.ContractTerms)

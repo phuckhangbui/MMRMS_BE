@@ -15,5 +15,6 @@ namespace DTOs.Contract
         public List<ContractPaymentDto>? ContractPayments { get; set; }
         public List<ContractTermDto>? ContractTerms { get; set; }
         public BankAccountRefundDto? BankAccountRefund { get; set; }
+        public ContractAddressDto? ContractAddress { get; set; }
     }
 }

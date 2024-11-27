@@ -22,6 +22,7 @@ namespace Test.Service
         private readonly Mock<IInvoiceRepository> _invoiceRepositoryMock;
         private readonly Mock<IBackground> _backgroundMock;
         private readonly Mock<INotificationService> _notificationServiceMock;
+        private readonly Mock<IAccountRepository> _accountRepositoryMock;
         private readonly IContractService _contractService;
         private readonly IMapper _mapper;
 
@@ -31,13 +32,15 @@ namespace Test.Service
             _contractRepositoryMock = new Mock<IContractRepository>();
             _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
             _backgroundMock = new Mock<IBackground>();
+            _accountRepositoryMock = new Mock<IAccountRepository>();
 
             _contractService = new ContractServiceImpl(
                 _contractRepositoryMock.Object,
                 _machineSerialNumberRepositoryMock.Object,
                 _invoiceRepositoryMock.Object,
                 _backgroundMock.Object,
-                _notificationServiceMock.Object);
+                _notificationServiceMock.Object,
+                _accountRepositoryMock.Object);
 
             _mapper = new Mapper(new MapperConfiguration(options =>
             {
