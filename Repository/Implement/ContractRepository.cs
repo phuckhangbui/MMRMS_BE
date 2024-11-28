@@ -219,7 +219,7 @@ namespace Repository.Implement
                 {
                     contractPayment.InvoiceId = invoiceId;
 
-                    if (type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
+                    if (type.Equals(ContractPaymentTypeEnum.Refund.ToString()) || type.Equals(ContractPaymentTypeEnum.Fine.ToString()))
                     {
                         contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
                         contractPayment.CustomerPaidDate = DateTime.Now;
@@ -595,7 +595,7 @@ namespace Repository.Implement
                 ContractId = contractId,
                 DateCreate = DateTime.Now,
                 Status = ContractPaymentStatusEnum.Pending.ToString(),
-                Type = ContractPaymentTypeEnum.Rental.ToString(),
+                Type = ContractPaymentTypeEnum.Fine.ToString(),
                 Title = GlobalConstant.FineContractPaymentTitle + contractId,
                 Amount = GlobalConstant.FineValue,
                 DateFrom = DateTime.Now,
