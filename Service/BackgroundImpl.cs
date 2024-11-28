@@ -18,6 +18,7 @@ namespace Service
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IMachineRepository _machineRepository;
         private readonly ISettingsService _settingsService;
+        private readonly INotificationService _notificationService;
 
         public BackgroundImpl(ILogger<BackgroundImpl> logger,
             IRentingRequestRepository rentingRequestRepository,
@@ -25,7 +26,8 @@ namespace Service
             IMachineSerialNumberRepository machineSerialNumberRepository,
             IInvoiceRepository invoiceRepository,
             IMachineRepository machineRepository,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            INotificationService notificationService)
         {
             _logger = logger;
             _rentingRequestRepository = rentingRequestRepository;
@@ -34,6 +36,7 @@ namespace Service
             _invoiceRepository = invoiceRepository;
             _machineRepository = machineRepository;
             _settingsService = settingsService;
+            _notificationService = notificationService;
         }
 
         public void CancelRentingRequestJob(string rentingRequestId)
@@ -111,7 +114,12 @@ namespace Service
             var contractPayment = await _contractRepository.GetContractPayment(contractPaymentId);
             if (contractPayment != null && contractPayment.Status.Equals(ContractPaymentStatusEnum.Pending.ToString()))
             {
-                await CompleteContractOnTime(contractPayment.ContractId);
+                //await CompleteContractOnTime(contractPayment.ContractId);
+                var contract = await _contractRepository.GetContractById(contractPayment.ContractId);
+                if (contract != null)
+                {
+                    _notificationService.SendNotificationToCustomerWhenLatePayment((int)contract.AccountSignId, contract.ContractId, (DateTime)contractPayment.DateFrom, contract.ContractId);
+                }
             }
         }
 

@@ -205,6 +205,11 @@ namespace Service.Implement
                         {
                             await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Signed.ToString());
                         }
+
+                        if (invoice.DatePaid > contractPayment.DateFrom)
+                        {
+                            await _contractRepository.CreateFineContractPayment(contractPayment.ContractId);
+                        }
                     }
                 }
 
@@ -231,7 +236,11 @@ namespace Service.Implement
                         {
                             //Background
                             TimeSpan timeUntilEnd = (TimeSpan)(contractPayment.DueDate - DateTime.Now);
-                            _background.ProcessOverdueContractPaymentJob(contractPayment.ContractPaymentId, timeUntilEnd);
+                            //_background.ProcessOverdueContractPaymentJob(contractPayment.ContractPaymentId, timeUntilEnd);
+                            _background.CompleteContractOnTimeJob(contractPayment.ContractId, timeUntilEnd);
+
+                            TimeSpan timeUntilLatePaid = (TimeSpan)(contractPayment.DateFrom.Value.AddDays(-1) - DateTime.Now);
+                            _background.ProcessOverdueContractPaymentJob(contractPayment.ContractPaymentId, timeUntilLatePaid);
                         }
                     }
 

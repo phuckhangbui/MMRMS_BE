@@ -19,6 +19,7 @@
         public const string RentalContractPaymentTitle = "Thanh toán tiền thuê cho hợp đồng ";
         public const string RefundContractPaymentTitle = "Hoàn trả tiền đặt cọc cho hợp đồng ";
         public const string ExtendContractPaymentTitle = "Thanh toán tiền thuê gia hạn cho hợp đồng ";
+        public const string FineContractPaymentTitle = "Tiền phạt do đóng tiền thuê trễ hạn cho hợp đồng ";
         public const string RefundInvoiceNote = "Hóa đơn hoàn trả tiền đặt cọc cho hợp đồng ";
         public const string SequenceSeparator = "NO";
         public const string MembershipRankLogPaymentMadeAction = "Tổng số tiền đã thanh toán là ";
@@ -26,5 +27,7 @@
         public const int MinimumRentPeriodInDay = 90;
         public const int MaximumRentPeriodInDay = 365;
         public const int MaxStartDateOffsetInDays = 30;
+        public const int DueDateContractPayment = 15;
+        public const double FineValue = 500000;
     }
 }
