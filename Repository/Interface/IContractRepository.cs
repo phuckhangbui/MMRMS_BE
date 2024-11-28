@@ -27,5 +27,6 @@ namespace Repository.Interface
         Task<ContractDto?> GetExtendContract(string baseContractId);
         Task<ContractPaymentDto?> GetContractPayment(int contractPaymentId);
         Task<IEnumerable<ContractDto>> GetRentalHistoryOfSerialNumber(string serialNumber);
+        Task<ContractPaymentDto> CreateFineContractPayment(string contractId);
     }
 }

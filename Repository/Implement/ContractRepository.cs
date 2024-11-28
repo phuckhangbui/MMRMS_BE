@@ -388,6 +388,10 @@ namespace Repository.Implement
                     {
                         rentalContractPayment.IsFirstRentalPayment = true;
                     }
+                    else
+                    {
+                        rentalContractPayment.DueDate = rentalContractPayment.DueDate.Value.AddDays(GlobalConstant.DueDateContractPayment);
+                    }
 
                     contractPayments.Add(rentalContractPayment);
 
@@ -582,6 +586,28 @@ namespace Repository.Implement
             }
 
             return [];
+        }
+
+        public async Task<ContractPaymentDto> CreateFineContractPayment(string contractId)
+        {
+            var fineContractPayment = new ContractPayment
+            {
+                ContractId = contractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.Rental.ToString(),
+                Title = GlobalConstant.FineContractPaymentTitle + contractId,
+                Amount = GlobalConstant.FineValue,
+                DateFrom = DateTime.Now,
+                DateTo = DateTime.Now,
+                Period = 1,
+                DueDate = DateTime.Now,
+                IsFirstRentalPayment = false,
+            };
+
+            fineContractPayment =  await ContractPaymentDao.Instance.CreateAsync(fineContractPayment);
+
+            return _mapper.Map<ContractPaymentDto>(fineContractPayment);
         }
     }
 }
