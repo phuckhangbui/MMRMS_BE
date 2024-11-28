@@ -10,7 +10,7 @@ namespace Repository.Interface
         Task Delete(string serialNumber);
         Task<bool> IsSerialNumberExist(string serialNumber);
         Task<bool> IsMachineSerialNumberHasContract(string serialNumber);
-        Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentDays);
+        Task UpdateRentDaysCounterMachineSerialNumber(MachineSerialNumberDto machineSerialNumberDto, int accountId);
         Task UpdateMachineSerialNumber(string serialNumber, MachineSerialNumberUpdateDto machineSerialNumberUpdateDto, int accountId);
         Task<bool> CheckMachineSerialNumberValidToRent(List<RentingRequestSerialNumberDto> rentingRequestSerialNumbers);
         Task<MachineSerialNumberDto> GetMachineSerialNumber(string serialNumber);

@@ -16,6 +16,8 @@ namespace Service.Implement
         private readonly IBackground _background;
         private readonly INotificationService _notificationService;
         private readonly IAccountRepository _accountRepository;
+        private readonly ISettingsService _settingsService;
+        private readonly IMachineRepository _machineRepository;
 
         public ContractServiceImpl(
             IContractRepository contractRepository,
@@ -23,7 +25,9 @@ namespace Service.Implement
             IInvoiceRepository invoiceRepository,
             IBackground background,
             INotificationService notificationService,
-            IAccountRepository accountRepository)
+            IAccountRepository accountRepository,
+            ISettingsService settingsService,
+            IMachineRepository machineRepository)
         {
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
@@ -31,6 +35,8 @@ namespace Service.Implement
             _background = background;
             _notificationService = notificationService;
             _accountRepository = accountRepository;
+            _settingsService = settingsService;
+            _machineRepository = machineRepository;
         }
 
         public async Task<ContractDetailDto> GetContractDetail(string contractId, int accountId)
@@ -99,7 +105,9 @@ namespace Service.Implement
 
                 var updatedContract = await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
 
-                await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
+                //MachineSerialNumber
+                await UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod, (int)contract.AccountSignId);
+                //await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
 
                 //Extend contract
                 var extendContract = await _contractRepository.GetExtendContract(contractId);
@@ -198,6 +206,41 @@ namespace Service.Implement
             }
 
             return await _contractRepository.GetRentalHistoryOfSerialNumber(serialNumber);
+        }
+
+        private async Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentPeriod, int accountId)
+        {
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+            if (machineSerialNumber != null)
+            {
+                machineSerialNumber.RentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+
+                var machineSetting = await _settingsService.GetMachineSettingsAsync();
+                var condition = machineSetting.DaysData
+                    .OrderByDescending(d => d.RentedDays)
+                    .FirstOrDefault(d => machineSerialNumber.RentDaysCounter >= d.RentedDays);
+
+                if (condition != null)
+                {
+                    machineSerialNumber.MachineConditionPercent = condition.MachineConditionPercent;
+                }
+
+                if (machineSerialNumber.MachineConditionPercent.HasValue)
+                {
+                    var rate = machineSetting.RateData
+                        .OrderByDescending(r => r.MachineConditionPercent)
+                        .FirstOrDefault(r => machineSerialNumber.MachineConditionPercent >= r.MachineConditionPercent);
+
+                    var machine = await _machineRepository.GetMachine((int)machineSerialNumber.MachineId);
+
+                    if (machine != null && rate != null)
+                    {
+                        machineSerialNumber.ActualRentPrice = machine.RentPrice * (rate.RentalPricePercent / 100.0);
+                    }
+                }
+
+                await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(machineSerialNumber, accountId);
+            }
         }
     }
 }

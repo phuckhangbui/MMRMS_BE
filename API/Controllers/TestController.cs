@@ -16,8 +16,15 @@ namespace API.Controllers
         private readonly IMembershipRankService _membershipRankService;
         private readonly IPayOSService _payOSService;
         private readonly ILogger<TestController> _logger;
+        private readonly IMachineSerialNumberService _machineSerialNumberService;
 
-        public TestController(ILogger<TestController> logger, ICloudinaryService cloudinaryService, IFirebaseMessagingService firebaseMessagingService, INotificationService notificationService, IMembershipRankService membershipRankService, IPayOSService payOSService)
+        public TestController(ILogger<TestController> logger,
+            ICloudinaryService cloudinaryService,
+            IFirebaseMessagingService firebaseMessagingService,
+            INotificationService notificationService,
+            IMembershipRankService membershipRankService,
+            IPayOSService payOSService,
+            IMachineSerialNumberService machineSerialNumberService)
         {
             _cloudinaryService = cloudinaryService;
             _firebaseMessagingService = firebaseMessagingService;
@@ -25,6 +32,25 @@ namespace API.Controllers
             _membershipRankService = membershipRankService;
             _logger = logger;
             _payOSService = payOSService;
+            _machineSerialNumberService = machineSerialNumberService;
+        }
+
+        [HttpPost("serial-number")]
+        public async Task<IActionResult> UpdateSerialNumber()
+        {
+            try
+            {
+                await _machineSerialNumberService.UpdateRentDaysCounterMachineSerialNumber("TESTHUIA5", 400);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the customer rank.", details = ex.Message });
+            }
         }
 
         [HttpPost("update-customer-rank")]

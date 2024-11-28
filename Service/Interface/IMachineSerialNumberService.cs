@@ -14,5 +14,6 @@ namespace Service.Interface
         Task MoveSerialMachineToMaintenanceStatus(string serialNumber, int staffId, string note);
         Task MoveSerialMachineToActiveStatus(string serialNumber, int staffId, string note);
         Task<MachineSerialNumberDto> GetMachineSerial(string serialNumber);
+        Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentPeriod);
     }
 }

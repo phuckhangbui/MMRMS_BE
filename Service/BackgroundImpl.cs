@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
+using Service.Interface;
 using System.Transactions;
 
 namespace Service
@@ -15,18 +16,24 @@ namespace Service
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IMachineRepository _machineRepository;
+        private readonly ISettingsService _settingsService;
 
         public BackgroundImpl(ILogger<BackgroundImpl> logger,
             IRentingRequestRepository rentingRequestRepository,
             IContractRepository contractRepository,
             IMachineSerialNumberRepository machineSerialNumberRepository,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceRepository invoiceRepository,
+            IMachineRepository machineRepository,
+            ISettingsService settingsService)
         {
             _logger = logger;
             _rentingRequestRepository = rentingRequestRepository;
             _contractRepository = contractRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _invoiceRepository = invoiceRepository;
+            _machineRepository = machineRepository;
+            _settingsService = settingsService;
         }
 
         public void CancelRentingRequestJob(string rentingRequestId)
@@ -182,7 +189,8 @@ namespace Service
 
                     var updatedContract = await _contractRepository.EndContract(contractId, ContractStatusEnum.InspectionPending.ToString(), actualRentPeriod, currentDate);
 
-                    await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
+                    await UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod, (int)contract.AccountSignId);
+                    //await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
 
                     scope.Complete();
                 }
@@ -230,6 +238,42 @@ namespace Service
                 }
 
                 await _rentingRequestRepository.CancelRentingRequest(rentingRequestId);
+            }
+        }
+
+
+        private async Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentPeriod, int accountId)
+        {
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
+            if (machineSerialNumber != null)
+            {
+                machineSerialNumber.RentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+
+                var machineSetting = await _settingsService.GetMachineSettingsAsync();
+                var condition = machineSetting.DaysData
+                    .OrderByDescending(d => d.RentedDays)
+                    .FirstOrDefault(d => machineSerialNumber.RentDaysCounter >= d.RentedDays);
+
+                if (condition != null)
+                {
+                    machineSerialNumber.MachineConditionPercent = condition.MachineConditionPercent;
+                }
+
+                if (machineSerialNumber.MachineConditionPercent.HasValue)
+                {
+                    var rate = machineSetting.RateData
+                        .OrderByDescending(r => r.MachineConditionPercent)
+                        .FirstOrDefault(r => machineSerialNumber.MachineConditionPercent >= r.MachineConditionPercent);
+
+                    var machine = await _machineRepository.GetMachine((int)machineSerialNumber.MachineId);
+
+                    if (machine != null && rate != null)
+                    {
+                        machineSerialNumber.ActualRentPrice = machine.RentPrice * (rate.RentalPricePercent / 100.0);
+                    }
+                }
+
+                await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(machineSerialNumber, accountId);
             }
         }
     }
