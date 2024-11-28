@@ -149,7 +149,7 @@ namespace Repository.Implement
 
             var oldDeposit = contract.DepositPrice;
 
-            contract.Status = ContractStatusEnum.Signed.ToString();
+            contract.Status = ContractStatusEnum.Renting.ToString();
             if (deliveryRefund > 0)
             {
                 contract.RefundShippingPrice = deliveryRefund;

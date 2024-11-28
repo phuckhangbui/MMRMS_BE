@@ -373,5 +373,12 @@ namespace Repository.Implement
 
             return productReviewList;
         }
+
+        public async Task<MachineDto> GetMachineByMachineSerial(string serialNumber)
+        {
+            var machine = await MachineDao.Instance.GetMachineByMachineSerialNumber(serialNumber);
+
+            return _mapper.Map<MachineDto>(machine);
+        }
     }
 }

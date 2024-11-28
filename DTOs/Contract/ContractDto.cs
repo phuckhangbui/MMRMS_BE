@@ -15,6 +15,7 @@
         public double? TotalRentPrice { get; set; }
         public int? MachineId { get; set; }
         public string? MachineName { get; set; }
+        public double? Weight { get; set; }
         public string? SerialNumber { get; set; }
         public double? RentPrice { get; set; }
         public string? Thumbnail { get; set; }

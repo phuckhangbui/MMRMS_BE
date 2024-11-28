@@ -24,10 +24,11 @@ namespace Service.Implement
         private readonly IRentingRequestRepository _rentingRequestRepository;
         private readonly INotificationService _notificationService;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
+        private readonly IMachineRepository _machineRepository;
         private readonly IHubContext<DeliveryTaskHub> _deliveryTaskHub;
         private readonly IBackground _background;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background, IMachineRepository machineRepository)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -38,6 +39,7 @@ namespace Service.Implement
             _rentingRequestRepository = rentingRequestRepository;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _background = background;
+            _machineRepository = machineRepository;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -158,7 +160,31 @@ namespace Service.Implement
             try
             {
 
-                return await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+                var deliveryDetail = await _deliveryTaskRepository.GetDeliveryTaskDetail(deliveryTaskId);
+
+                var updatedContractDeliveryList = new List<ContractDeliveryDto>();
+
+                foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
+                {
+                    var machine = await _machineRepository.GetMachineByMachineSerial(contractDelivery.SerialNumber);
+
+                    if (machine != null)
+                    {
+                        contractDelivery.MachineId = machine.MachineId;
+                        contractDelivery.MachineName = machine.MachineName;
+                        contractDelivery.MachineModel = machine.Model;
+                        contractDelivery.Weight = machine.Weight;
+                    }
+
+                    updatedContractDeliveryList.Add(contractDelivery);
+                }
+
+                if (!updatedContractDeliveryList.IsNullOrEmpty())
+                {
+                    deliveryDetail.ContractDeliveries = updatedContractDeliveryList;
+                }
+
+                return deliveryDetail;
             }
             catch (Exception ex)
             {
