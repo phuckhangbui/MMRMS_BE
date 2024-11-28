@@ -43,6 +43,17 @@ namespace DAO
             }
         }
 
+        public async Task<RentingRequest> GetRentingRequestByContractId(string contractId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.RentingRequests
+                    .Include(rr => rr.Contracts)
+                    .FirstOrDefaultAsync(rr => rr.Contracts.Any(c => c.ContractId == contractId));
+            }
+        }
+
+
         public async Task<RentingRequest> GetRentingRequest(string rentingRequestId)
         {
             using var context = new MmrmsContext();

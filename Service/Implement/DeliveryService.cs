@@ -226,6 +226,32 @@ namespace Service.Implement
         {
             await _deliveryTaskRepository.MarkDeliveryTaskAsFail(staffUpdateDeliveryTaskDto);
 
+            string contractId = deliveryDetail.ContractDeliveries.FirstOrDefault().ContractId;
+
+            var rentingRequest = await _rentingRequestRepository.GetRentingRequestByContractId(contractId);
+
+            if (rentingRequest == null)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
+            }
+
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+
+            double refundDeliveryAmountPerContract = 0;
+
+            if (!staffUpdateDeliveryTaskDto.ContractDeliveries.IsNullOrEmpty()
+                && staffUpdateDeliveryTaskDto?.ContractDeliveries?.Where(c => c.IsSuccess).Count() > 0)
+            {
+                refundDeliveryAmountPerContract =
+                NumberExtension.SquareMoneyToNearest1000(finalDeliveryAmountInThisTrip
+                                            / staffUpdateDeliveryTaskDto.ContractDeliveries.Where(c => c.IsSuccess).Count());
+
+                if (refundDeliveryAmountPerContract < 0)
+                {
+                    refundDeliveryAmountPerContract = 0;
+                }
+            }
+
             foreach (var contractDeliveryDto in staffUpdateDeliveryTaskDto.ContractDeliveries)
             {
                 var contractDelivery = deliveryDetail.ContractDeliveries
@@ -233,11 +259,11 @@ namespace Service.Implement
 
                 if (contractDelivery != null)
                 {
-                    var contractId = contractDelivery.ContractId;
+                    contractId = contractDelivery.ContractId;
 
                     if (contractDeliveryDto.IsSuccess)
                     {
-                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                        await _contractRepository.UpdateContractStatusToRenting(contractId, refundDeliveryAmountPerContract);
                         await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
 
                         //Schedule Background Job
@@ -268,19 +294,41 @@ namespace Service.Implement
           );
         }
 
-
-
-
         private async Task CompleteAllDeliveryInTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, DeliveryTaskDetailDto deliveryDetail, int accountId)
         {
             await _deliveryTaskRepository.CompleteFullyAllDeliveryTask(staffUpdateDeliveryTaskDto);
 
-            string contractId = "";
+            string contractId = deliveryDetail.ContractDeliveries.FirstOrDefault().ContractId;
+
+            var rentingRequest = await _rentingRequestRepository.GetRentingRequestByContractId(contractId);
+
+            if (rentingRequest == null)
+            {
+                throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
+            }
+
+            double refundDeliveryAmountPerContract = 0;
+
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+            if (!deliveryDetail.ContractDeliveries.IsNullOrEmpty() && deliveryDetail?.ContractDeliveries?.Count() > 0)
+            {
+
+                refundDeliveryAmountPerContract =
+                        NumberExtension.SquareMoneyToNearest1000(finalDeliveryAmountInThisTrip / deliveryDetail.ContractDeliveries.Count());
+
+                if (refundDeliveryAmountPerContract < 0)
+                {
+                    refundDeliveryAmountPerContract = 0;
+                }
+            }
+
+            contractId = "";
+
             foreach (var contractDelivery in deliveryDetail.ContractDeliveries)
             {
                 contractId = contractDelivery.ContractId;
 
-                await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Renting.ToString());
+                await _contractRepository.UpdateContractStatusToRenting(contractId, refundDeliveryAmountPerContract);
 
                 await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
 
@@ -293,11 +341,11 @@ namespace Service.Implement
             var contract = await _contractRepository.GetContractById(contractId);
             if (contract != null)
             {
-                var rentingRequest = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
+                var rentingRequestDetail = await _rentingRequestRepository.GetRentingRequestDetailById(contract.RentingRequestId);
 
-                if (rentingRequest.Contracts != null && rentingRequest.Contracts.All(c => c.Status == ContractStatusEnum.Renting.ToString()))
+                if (rentingRequestDetail.Contracts != null && rentingRequestDetail.Contracts.All(c => c.Status == ContractStatusEnum.Renting.ToString()))
                 {
-                    await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequest.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
+                    await _rentingRequestRepository.UpdateRentingRequestStatus(rentingRequestDetail.RentingRequestId, RentingRequestStatusEnum.Shipped.ToString());
 
                     //need to send noti to customer ?
                 }
