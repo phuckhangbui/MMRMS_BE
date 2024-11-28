@@ -156,13 +156,34 @@ namespace Repository.Implement
             return await MachineSerialNumberDao.Instance.IsSerialNumberInAnyContract(serialNumber);
         }
 
-        public async Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentDays)
+        public async Task UpdateRentDaysCounterMachineSerialNumber(MachineSerialNumberDto machineSerialNumberDto, int accountId)
         {
-            var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
+            var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(machineSerialNumberDto.SerialNumber);
 
             if (machineSerialNumber != null)
             {
-                machineSerialNumber.RentDaysCounter = machineSerialNumber.RentDaysCounter + actualRentDays;
+                var oldRentPrice = machineSerialNumber.ActualRentPrice;
+
+                machineSerialNumber.ActualRentPrice = machineSerialNumberDto.ActualRentPrice;
+                machineSerialNumber.MachineConditionPercent = machineSerialNumberDto.MachineConditionPercent;
+                machineSerialNumber.RentDaysCounter = machineSerialNumberDto.RentDaysCounter;
+
+                if (oldRentPrice != machineSerialNumberDto.ActualRentPrice)
+                {
+                    var machineSerialNumberLog = new MachineSerialNumberLog
+                    {
+                        SerialNumber = machineSerialNumberDto.SerialNumber,
+                        AccountTriggerId = accountId,
+                        DateCreate = DateTime.Now,
+                        Type = MachineSerialNumberLogTypeEnum.Machine.ToString()
+                    };
+
+                    machineSerialNumber.ActualRentPrice = machineSerialNumberDto.ActualRentPrice;
+                    string action = $"Thay đổi tiền thuê theo ngày của máy từ [{NumberExtension.FormatToVND((double)oldRentPrice)}] thành [{NumberExtension.FormatToVND((double)machineSerialNumberDto.ActualRentPrice)}]";
+                    machineSerialNumberLog.Action = action;
+
+                    await MachineSerialNumberLogDao.Instance.CreateAsync(machineSerialNumberLog);
+                }
 
                 await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
             }

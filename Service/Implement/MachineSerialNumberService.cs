@@ -369,8 +369,43 @@ namespace Service.Implement
             return await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
         }
 
-        
+        public async Task UpdateRentDaysCounterMachineSerialNumber(string serialNumber, int actualRentPeriod)
+        {
 
+            var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(serialNumber);
 
+            // Update RentDaysCounter
+            machineSerialNumber.RentDaysCounter = (machineSerialNumber.RentDaysCounter ?? 0) + actualRentPeriod;
+
+            // Retrieve machine settings
+            var machineSetting = await _settingsService.GetMachineSettingsAsync();
+
+            // Determine MachineConditionPercent based on RentDaysCounter
+            var condition = machineSetting.DaysData
+                .OrderByDescending(d => d.RentedDays)
+                .FirstOrDefault(d => machineSerialNumber.RentDaysCounter >= d.RentedDays);
+
+            if (condition != null)
+            {
+                machineSerialNumber.MachineConditionPercent = condition.MachineConditionPercent;
+            }
+
+            // Determine ActualRentPrice based on MachineConditionPercent
+            if (machineSerialNumber.MachineConditionPercent.HasValue)
+            {
+                var rate = machineSetting.RateData
+                    .OrderByDescending(r => r.MachineConditionPercent)
+                    .FirstOrDefault(r => machineSerialNumber.MachineConditionPercent >= r.MachineConditionPercent);
+
+                var machine = await _productRepository.GetMachine((int)machineSerialNumber.MachineId);
+
+                if (rate != null)
+                {
+                    machineSerialNumber.ActualRentPrice = machine.RentPrice * (rate.RentalPricePercent / 100.0);
+                }
+            }
+
+            //await _machineSerialNumberRepository.UpdateMachineSerialNumber();
+        }
     }
 }
