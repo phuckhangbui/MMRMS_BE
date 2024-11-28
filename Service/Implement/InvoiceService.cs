@@ -281,6 +281,7 @@ namespace Service.Implement
                 var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note);
 
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
+                await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Fine.ToString());
 
                 await _contractRepository.UpdateContractStatus(contract.ContractId, ContractStatusEnum.Completed.ToString());
                 //MachineSerialNumber
