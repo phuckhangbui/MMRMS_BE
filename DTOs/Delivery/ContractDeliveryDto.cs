@@ -8,6 +8,14 @@
 
         public string? SerialNumber { get; set; }
 
+        public int? MachineId { get; set; }
+
+        public string? MachineName { get; set; }
+
+        public string? MachineModel { get; set; }
+
+        public double? Weight { get; set; }
+
         public int? DeliveryTaskId { get; set; }
 
         public string? PictureUrl { get; set; }

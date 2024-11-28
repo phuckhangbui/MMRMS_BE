@@ -412,5 +412,16 @@ namespace DAO
 
             return await query.CountAsync();
         }
+
+        public async Task<Machine> GetMachineByMachineSerialNumber(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                return await context.Machines
+                    .Include(p => p.MachineImages)
+                    .Include(p => p.MachineSerialNumbers)
+                    .FirstOrDefaultAsync(p => p.MachineSerialNumbers.Any(s => s.SerialNumber == serialNumber));
+            }
+        }
     }
 }
