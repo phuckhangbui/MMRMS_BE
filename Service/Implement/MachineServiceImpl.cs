@@ -393,7 +393,7 @@ namespace Service.Implement
 
         public async Task<List<MachineQuotationDto>> GetMachineQuotations()
         {
-            var machines = await _machineRepository.GetActiveMachines();
+            var machines = await _machineRepository.GetMachineList();
 
             var machineSetting = await _settingsService.GetMachineSettingsAsync();
             var quotationList = new List<MachineQuotationDto>();

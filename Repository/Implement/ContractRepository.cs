@@ -143,6 +143,25 @@ namespace Repository.Implement
             await ContractDao.Instance.UpdateAsync(contract);
         }
 
+        public async Task UpdateContractStatusToRenting(string contractId, double deliveryRefund)
+        {
+            var contract = await ContractDao.Instance.GetContractDetailById(contractId);
+
+            var oldDeposit = contract.DepositPrice;
+
+            contract.Status = ContractStatusEnum.Signed.ToString();
+            if (deliveryRefund > 0)
+            {
+                contract.RefundShippingPrice = deliveryRefund;
+                contract.DepositPrice = oldDeposit + deliveryRefund;
+                contract.Content = $"Hoàn trả tiền vận chuyển tạm tính là: {NumberExtension.FormatToVND(deliveryRefund)} " +
+                                    $"vào tiền đặt cọc ban đầu: {NumberExtension.FormatToVND(oldDeposit)}, " +
+                                    $"tiền đặt cọc mới là {NumberExtension.FormatToVND(contract.DepositPrice)} sẽ được hoàn trả khi tất toán hợp đồng";
+            }
+
+            await ContractDao.Instance.UpdateAsync(contract);
+        }
+
         public async Task<ContractDto> EndContract(string contractId, string status, int actualRentPeriod, DateTime actualDateEnd)
         {
             var contract = await ContractDao.Instance.GetContractById(contractId);

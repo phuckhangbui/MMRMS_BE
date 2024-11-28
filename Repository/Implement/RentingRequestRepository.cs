@@ -12,6 +12,7 @@ using DTOs.RentingService;
 using DTOs.Term;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
+using RentingRequest = BusinessObject.RentingRequest;
 
 namespace Repository.Implement
 {
@@ -41,6 +42,13 @@ namespace Repository.Implement
             }
 
             return null;
+        }
+
+        public async Task<RentingRequestDto> GetRentingRequestByContractId(string contractId)
+        {
+            var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestByContractId(contractId);
+
+            return _mapper.Map<RentingRequestDto>(rentingRequest);
         }
 
         public async Task<RentingRequestInitDataDto> InitializeRentingRequestData(int customerId, RentingRequestMachineInRangeDto rentingRequestMachineInRangeDto)
