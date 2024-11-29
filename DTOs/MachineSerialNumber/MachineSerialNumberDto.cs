@@ -20,6 +20,8 @@
 
         public int? RentDaysCounter { get; set; }
 
+        public DateTime? ExpectedAvailableDate { get; set; }
+
         public DateTime? RentingStartDate { get; set; }
 
         public DateTime? RentingEndDate { get; set; }
