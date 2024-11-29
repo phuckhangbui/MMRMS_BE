@@ -22,6 +22,8 @@ public partial class DeliveryTask
 
     public string? ReceiverName { get; set; }
 
+    public int? DeliveryVehicleCounter { get; set; }
+
     public virtual Account? Staff { get; set; }
 
     public virtual Account? Manager { get; set; }

@@ -25,10 +25,11 @@ namespace Service.Implement
         private readonly INotificationService _notificationService;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineRepository _machineRepository;
+        private readonly ISettingsService _settingsService;
         private readonly IHubContext<DeliveryTaskHub> _deliveryTaskHub;
         private readonly IBackground _background;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background, IMachineRepository machineRepository)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background, IMachineRepository machineRepository, ISettingsService settingsService)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -40,6 +41,7 @@ namespace Service.Implement
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _background = background;
             _machineRepository = machineRepository;
+            _settingsService = settingsService;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -75,10 +77,23 @@ namespace Service.Implement
 
             int taskCounter = taskList.Count() + deliveryTaskList.Count();
 
+            var settings = await _settingsService.GetSettingsAsync();
 
-            if (taskCounter >= GlobalConstant.MaxTaskLimitADay)
+            int maxTaskLimit = settings
+                     .FirstOrDefault(s => s.Name == "maxTaskADay")?.Value is int limit
+                         ? limit
+                         : int.TryParse(settings.FirstOrDefault(s => s.Name == "maxTaskADay")?.Value.ToString(), out int parsedValue)
+                             ? parsedValue
+                             : GlobalConstant.MaxTaskLimitADay;
+
+            if (taskCounter >= maxTaskLimit)
             {
                 throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
+            }
+
+            if (createDeliveryTaskDto.ContractIdList.Count() < createDeliveryTaskDto.DeliveryVehicleCounter)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.VehicleIsBiggerThanNumberOfMachine);
             }
 
             string rentingRequestId = null;
@@ -261,7 +276,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
             }
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
 
             double refundDeliveryAmountPerContract = 0;
 
@@ -335,7 +350,7 @@ namespace Service.Implement
 
             double refundDeliveryAmountPerContract = 0;
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
             if (!deliveryDetail.ContractDeliveries.IsNullOrEmpty() && deliveryDetail?.ContractDeliveries?.Count() > 0)
             {
 

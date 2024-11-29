@@ -32,6 +32,8 @@ namespace DTOs.Delivery
 
         public string? Note { get; set; }
 
+        public int? DeliveryVehicleCounter { get; set; }
+
         public string? ConfirmationPictureUrl { get; set; }
 
         public string? ReceiverName { get; set; }

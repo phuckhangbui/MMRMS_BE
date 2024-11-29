@@ -25,10 +25,11 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly INotificationService _notificationService;
+        private readonly ISettingsService _settingsService;
         private readonly IHubContext<MachineTaskHub> _machineTaskHub;
         private readonly IMapper _mapper;
 
-        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberRepository machineSerialNumberRepository)
+        public MachineTaskService(IMachineTaskRepository MachineTaskRepository, IHubContext<MachineTaskHub> MachineTaskHub, INotificationService notificationService, IAccountRepository accountRepository, IMachineCheckRequestRepository machineCheckRequestRepository, IDeliveryTaskRepository DeliveryTaskRepository, IMapper mapper, IContractRepository contractRepository, IComponentReplacementTicketRepository ComponentReplacementTicketRepository, IMachineCheckRequestService machineCheckRequestService, IMachineSerialNumberRepository machineSerialNumberRepository, ISettingsService settingsService)
         {
             _machineTaskRepository = MachineTaskRepository;
             _machineTaskHub = MachineTaskHub;
@@ -41,6 +42,7 @@ namespace Service.Implement
             _machineCheckRequestRepository = machineCheckRequestRepository;
             _machineCheckRequestService = machineCheckRequestService;
             _machineSerialNumberRepository = machineSerialNumberRepository;
+            _settingsService = settingsService;
         }
 
         private async Task CheckCreateTaskCondition(int staffId, DateTime dateStart)
@@ -69,10 +71,20 @@ namespace Service.Implement
 
             int taskCounter = staffDeliveryTaskList.Count() + staffTaskList.Count();
 
-            if (taskCounter >= GlobalConstant.MaxTaskLimitADay)
+            var settings = await _settingsService.GetSettingsAsync();
+
+            int maxTaskLimit = settings
+                     .FirstOrDefault(s => s.Name == "maxTaskADay")?.Value is int limit
+                         ? limit
+                         : int.TryParse(settings.FirstOrDefault(s => s.Name == "maxTaskADay")?.Value.ToString(), out int parsedValue)
+                             ? parsedValue
+                             : GlobalConstant.MaxTaskLimitADay;
+
+            if (taskCounter >= maxTaskLimit)
             {
                 throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
             }
+
         }
 
         public async Task CreateMachineTaskCheckMachine(int managerId, CreateMachineTaskCheckRequestDto createMachineTaskDto)
