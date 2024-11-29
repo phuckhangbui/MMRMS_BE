@@ -100,12 +100,12 @@ namespace DAO
             }
         }
 
-        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate)
+        public async Task<List<MachineSerialNumber>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate)
         {
             using var context = new MmrmsContext();
             var availableSerialNumbersToRent = await context.MachineSerialNumbers
                 .Where(s => machineIds.Contains((int)s.MachineId) &&
-                        s.Status == MachineSerialNumberStatusEnum.Available.ToString())
+                        s.Status == MachineSerialNumberStatusEnum.Available.ToString() || startDate >= s.ExpectedAvailableDate)
                 .Include(s => s.Machine)
                     .ThenInclude(p => p.MachineTerms)
                 .OrderByDescending(s => s.DateCreate)

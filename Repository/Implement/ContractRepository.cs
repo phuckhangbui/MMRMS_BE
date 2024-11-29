@@ -247,6 +247,7 @@ namespace Repository.Implement
 
             var oldStatus = machineSerialNumber.Status;
             machineSerialNumber.Status = MachineSerialNumberStatusEnum.Reserved.ToString();
+            machineSerialNumber.ExpectedAvailableDate = contract.DateEnd.Value.AddDays(1);
             await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
 
             var machineSerialNumberLog = new MachineSerialNumberLog

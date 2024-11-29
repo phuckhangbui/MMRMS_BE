@@ -203,7 +203,7 @@ namespace Repository.Implement
             await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
         }
 
-        private async Task UpdateStatusInternal(string serialNumber, string status, int accountId, string? note)
+        private async Task UpdateStatusInternal(string serialNumber, string status, int accountId, string? note, DateTime? expectedAvailableDate)
         {
             var serialMachine = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(serialNumber);
 
@@ -227,6 +227,11 @@ namespace Repository.Implement
                 action += $". Đi kèm ghi chú: {note}";
             }
 
+            if (expectedAvailableDate != null)
+            {
+                serialMachine.ExpectedAvailableDate = expectedAvailableDate;
+            }
+
             var log = new MachineSerialNumberLog
             {
                 SerialNumber = serialNumber,
@@ -243,12 +248,17 @@ namespace Repository.Implement
 
         public async Task UpdateStatus(string serialNumber, string status, int accountId)
         {
-            await this.UpdateStatusInternal(serialNumber, status, accountId, null);
+            await this.UpdateStatusInternal(serialNumber, status, accountId, null, null);
         }
 
         public async Task UpdateStatus(string serialNumber, string status, int staffId, string note)
         {
-            await this.UpdateStatusInternal(serialNumber, status, staffId, note);
+            await this.UpdateStatusInternal(serialNumber, status, staffId, note, null);
+        }
+
+        public async Task UpdateStatus(string serialNumber, string status, int accountId, DateTime expectedAvailableDate)
+        {
+            await UpdateStatusInternal(serialNumber, status, accountId, null, expectedAvailableDate);
         }
     }
 }

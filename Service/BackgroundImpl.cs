@@ -238,11 +238,7 @@ namespace Service
             {
                 foreach (var contract in contracts)
                 {
-                    await _machineSerialNumberRepository.UpdateStatus(
-                        contract.SerialNumber,
-                        MachineSerialNumberStatusEnum.Available.ToString(),
-                        (int)contract.AccountSignId
-                    );
+                    await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId, contract.DateCreate.Value);
                 }
 
                 await _rentingRequestRepository.CancelRentingRequest(rentingRequestId);

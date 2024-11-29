@@ -12,7 +12,6 @@ using DTOs.RentingService;
 using DTOs.Term;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
-using RentingRequest = BusinessObject.RentingRequest;
 
 namespace Repository.Implement
 {
@@ -59,7 +58,7 @@ namespace Repository.Implement
             var rentingRequestMachineDatas = new List<RentingRequestMachineDataDto>();
 
             var machineSerialNumbers = await MachineSerialNumberDao.Instance
-                    .GetMachineSerialNumberAvailablesToRent(rentingRequestMachineInRangeDto.MachineIds, rentingRequestMachineInRangeDto.DateStart, rentingRequestMachineInRangeDto.DateEnd);
+                    .GetMachineSerialNumberAvailablesToRent(rentingRequestMachineInRangeDto.MachineIds, rentingRequestMachineInRangeDto.DateStart);
             if (machineSerialNumbers.IsNullOrEmpty())
             {
                 rentingRequestInitDataDto.RentingRequestMachineDatas = [];
@@ -84,7 +83,6 @@ namespace Repository.Implement
                         CategoryName = machine.Category!.CategoryName ?? string.Empty,
                         ThumbnailUrl = string.Empty,
                         RentPrices = [],
-                        //ShipPricePerKm = machine.ShipPricePerKm ?? 0,
                         MachineSerialNumbers = group.Value.Select(sn => new MachineSerialNumberDto
                         {
                             MachineId = sn.MachineId,
@@ -111,14 +109,6 @@ namespace Repository.Implement
 
                 rentingRequestInitDataDto.RentingRequestMachineDatas = rentingRequestMachineDatas;
             }
-
-            //Promotion data
-            //var promotions = await AccountPromotionDao.Instance.GetPromotionsByCustomerId(customerId);
-            //if (!promotions.IsNullOrEmpty())
-            //{
-            //    var shippingTypePromotions = promotions.Where(p => p.Promotion!.DiscountTypeName!.Equals(DiscountTypeNameEnum.Shipping.ToString()));
-            //    rentingRequestInitDataDto.AccountPromotions = _mapper.Map<List<AccountPromotionDto>>(shippingTypePromotions);
-            //}
 
             //Membership data
             var membershipRank = await MembershipRankDao.Instance.GetMembershipRanksForCustomer(customerId);
@@ -173,19 +163,6 @@ namespace Repository.Implement
                 if (rentingRequest.Status.Equals(RentingRequestStatusEnum.UnPaid.ToString()))
                 {
                     var invoice = await InvoiceDao.Instance.GetInvoicesByRentingRequest(rentingRequest.RentingRequestId);
-
-                    //if (depositInvoice != null)
-                    //{
-                    //    var depositInvoiceDto = new PendingInvoiceDto
-                    //    {
-                    //        InvoiceId = depositInvoice.InvoiceId,
-                    //        Status = depositInvoice.Status,
-                    //        Type = depositInvoice.Type,
-                    //    };
-
-                    //    rentingRequest.PendingInvoices.Add(depositInvoiceDto);
-                    //}
-
                     if (invoice != null)
                     {
                         var rentalInvoiceDto = new PendingInvoiceDto
@@ -276,13 +253,9 @@ namespace Repository.Implement
                 }
             }
 
-            //rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + newRentingRequestDto.ShippingPrice - newRentingRequestDto.DiscountPrice;
             rentingRequest.TotalAmount += rentingRequest.TotalServicePrice + rentingRequest.ShippingPrice - newRentingRequestDto.DiscountPrice;
-
-            //rentingRequest = await RentingRequestDao.Instance.CreateRentingRequest(rentingRequest, newRentingRequestDto);
             rentingRequest = await RentingRequestDao.Instance.CreateAsync(rentingRequest);
 
-            //return rentingRequest.RentingRequestId;
             return _mapper.Map<RentingRequestDto>(rentingRequest);
         }
 
