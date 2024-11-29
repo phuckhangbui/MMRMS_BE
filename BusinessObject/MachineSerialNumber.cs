@@ -14,6 +14,8 @@ public partial class MachineSerialNumber
 
     public DateTime? DateCreate { get; set; }
 
+    public DateTime? ExpectedAvailableDate { get; set; }
+
     public int? RentDaysCounter { get; set; }
 
     public virtual Machine? Machine { get; set; }

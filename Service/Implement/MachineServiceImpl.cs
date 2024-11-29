@@ -289,6 +289,7 @@ namespace Service.Implement
             machineDto.Model = updateMachineDto.Model;
             machineDto.Origin = updateMachineDto.Origin;
             machineDto.CategoryId = updateMachineDto.CategoryId;
+            machineDto.Weight = updateMachineDto.Weight;
 
             await _machineRepository.UpdateMachine(machineDto);
         }
