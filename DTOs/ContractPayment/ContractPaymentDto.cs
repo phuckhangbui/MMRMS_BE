@@ -16,7 +16,6 @@
         public DateTime? DateCreate { get; set; }
         public DateTime? DueDate { get; set; }
         public bool? IsFirstRentalPayment { get; set; }
-        //public FirstRentalPaymentDto? FirstRentalPayment { get; set; }
     }
 
     public class FirstRentalPaymentDto

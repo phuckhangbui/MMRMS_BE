@@ -1,5 +1,6 @@
 ﻿using DTOs.Account;
 using DTOs.AccountBusiness;
+using DTOs.ComponentReplacementTicket;
 using DTOs.ContractPayment;
 using DTOs.ContractTerm;
 using DTOs.RentingRequest;
@@ -18,5 +19,6 @@ namespace DTOs.Contract
         public double? ProvisionalShippingPrice { get; set; }
         public double? ShippingDistance { get; set; }
         public double? ServicePrice { get; set; }
+        public List<ComponentReplacementTicketDto>? ComponentReplacementTickets { get; set; }
     }
 }

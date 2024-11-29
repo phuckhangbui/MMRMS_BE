@@ -11,7 +11,6 @@ namespace DTOs.RentingRequest
 {
     public class RentingRequestInitDataDto
     {
-        //public List<AccountPromotionDto> AccountPromotions { get; set; }
         public MembershipRankDto MembershipRank { get; set; }
         public List<RentingRequestMachineDataDto> RentingRequestMachineDatas { get; set; }
         public List<RentingServiceDto> RentingServices { get; set; }

@@ -19,13 +19,12 @@ namespace Repository.Interface
         Task<bool> IsAccountExistWithUsername(string username);
         Task<AccountDto> GetCustomerAccountWithEmail(string email);
         Task<AccountDto> GetStaffAndManagerAccountWithUsername(string username);
-        Task<AccountDto> GetAccountDtoById(int accountId); //TODO: Duplicate
+        Task<AccountDto> GetAccountDtoById(int accountId);
         Task UpdateAccount(AccountDto accountDto);
         Task ChangeAccountPassword(AccountDto accountDto, string password);
         Task<AccountDto> FirebaseTokenExisted(string firebaseToken);
         Task<IEnumerable<StaffAccountDto>> GetActiveStaffAccounts();
         Task<bool> IsAccountValidToUpdate(int accountId, string email, string phone);
-        //Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto);
         Task<int> UpdateAccount(int accountId, IAccountUpdateDto accountUpdateDto);
     }
 }

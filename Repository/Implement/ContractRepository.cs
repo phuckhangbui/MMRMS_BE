@@ -3,6 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
+using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
 using DTOs.ContractPayment;
 using DTOs.Delivery;
@@ -47,19 +48,6 @@ namespace Repository.Implement
             {
                 var contractDetail = _mapper.Map<ContractDetailDto>(contract);
 
-                //var contractPayment = contractDetail.ContractPayments.FirstOrDefault(c => c.IsFirstRentalPayment == true);
-                //if (contractPayment != null)
-                //{
-                //    var firstRentalPayment = new FirstRentalPaymentDto()
-                //    {
-                //        DiscountPrice = contract.RentingRequest.DiscountPrice,
-                //        ShippingPrice = contract.RentingRequest.ShippingPrice,
-                //        TotalServicePrice = contract.RentingRequest.TotalServicePrice,
-                //    };
-
-                //    contractPayment.FirstRentalPayment = firstRentalPayment;
-                //}
-
                 var rentingRequest = await RentingRequestDao.Instance.GetRentingRequestById(contract.RentingRequestId);
                 if (rentingRequest != null)
                 {
@@ -68,6 +56,12 @@ namespace Repository.Implement
                     contractDetail.ShippingDistance = rentingRequest.ShippingDistance ?? 0;
                     contractDetail.ProvisionalShippingPrice = rentingRequest.ShippingPrice / numOfContracts ?? 0;
                     contractDetail.ServicePrice = rentingRequest.TotalServicePrice / numOfContracts ?? 0;
+                }
+
+                var componentReplacementTickets = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketByContractId(contractId);
+                if (!componentReplacementTickets.IsNullOrEmpty())
+                {
+                    contractDetail.ComponentReplacementTickets = _mapper.Map<List<ComponentReplacementTicketDto>>(componentReplacementTickets);
                 }
 
                 return contractDetail;
@@ -605,7 +599,7 @@ namespace Repository.Implement
                 IsFirstRentalPayment = false,
             };
 
-            fineContractPayment =  await ContractPaymentDao.Instance.CreateAsync(fineContractPayment);
+            fineContractPayment = await ContractPaymentDao.Instance.CreateAsync(fineContractPayment);
 
             return _mapper.Map<ContractPaymentDto>(fineContractPayment);
         }

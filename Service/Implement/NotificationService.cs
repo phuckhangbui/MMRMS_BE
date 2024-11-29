@@ -1,5 +1,4 @@
-﻿using BusinessObject;
-using Common;
+﻿using Common;
 using Common.Enum;
 using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
