@@ -605,7 +605,7 @@ namespace Repository.Implement
                 IsFirstRentalPayment = false,
             };
 
-            fineContractPayment =  await ContractPaymentDao.Instance.CreateAsync(fineContractPayment);
+            fineContractPayment = await ContractPaymentDao.Instance.CreateAsync(fineContractPayment);
 
             return _mapper.Map<ContractPaymentDto>(fineContractPayment);
         }

@@ -14,6 +14,9 @@ namespace DTOs.Delivery
         [Required(ErrorMessage = MessageConstant.DeliveryTask.DateshipIsRequired)]
         public string DateShip { get; set; }
 
+        [Required(ErrorMessage = MessageConstant.DeliveryTask.DeliveryVehicleCounterRequired)]
+        public int DeliveryVehicleCounter { get; set; }
+
         [Required(ErrorMessage = MessageConstant.DeliveryTask.ContractIdListRequired)]
         public List<string> ContractIdList { get; set; }
 

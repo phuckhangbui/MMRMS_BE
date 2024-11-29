@@ -37,6 +37,7 @@ namespace Repository.Implement
                 DateCreate = now,
                 Status = DeliveryTaskStatusEnum.Created.ToString(),
                 Note = createDeliveryTaskDto.Note ?? null,
+                DeliveryVehicleCounter = createDeliveryTaskDto.DeliveryVehicleCounter,
             };
 
             var account = await AccountDao.Instance.GetAccountAsyncById(createDeliveryTaskDto.StaffId);

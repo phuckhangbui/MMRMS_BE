@@ -81,6 +81,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineTask.ReachMaxTaskLimit);
             }
 
+            if (createDeliveryTaskDto.ContractIdList.Count() < createDeliveryTaskDto.DeliveryVehicleCounter)
+            {
+                throw new ServiceException(MessageConstant.DeliveryTask.VehicleIsBiggerThanNumberOfMachine);
+            }
+
             string rentingRequestId = null;
             var contractList = new List<ContractDto>();
 
@@ -261,7 +266,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
             }
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
 
             double refundDeliveryAmountPerContract = 0;
 
@@ -335,7 +340,7 @@ namespace Service.Implement
 
             double refundDeliveryAmountPerContract = 0;
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
             if (!deliveryDetail.ContractDeliveries.IsNullOrEmpty() && deliveryDetail?.ContractDeliveries?.Count() > 0)
             {
 

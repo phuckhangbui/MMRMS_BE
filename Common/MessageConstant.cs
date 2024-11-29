@@ -309,6 +309,7 @@
             public const string InvalidContractDeliveryList = "Danh sách các hợp đồng của lần giao hàng này không hợp lệ";
             public const string AllContractDeliveryFailPleaseCallAllFailAPI = "Tất cả các hợp đồng giao đều thất bại, xin hãy gọi API khác";
             public const string ContractDeliveryNotFound = "Mã hợp đồng giao hàng này không tìm thấy";
+            public const string VehicleIsBiggerThanNumberOfMachine = "Số lượng xe đang lớn hơn số lượng máy";
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
@@ -319,6 +320,7 @@
             public const string ContractDeliveryListRequired = "Danh sách các hợp đồng của lần giao hàng này là bắt buộc";
             public const string NoteRequired = "Ghi chú là bắt buộc";
             public const string ContractDeliveryIsSuccessRequired = "Trạng thái của từng đơn giao trong hợp đồng là bắt buộc";
+            public const string DeliveryVehicleCounterRequired = "Số lượng xe của lần giao hàng là bắt buộc";
         }
 
         public static class MachineCheckRequest
