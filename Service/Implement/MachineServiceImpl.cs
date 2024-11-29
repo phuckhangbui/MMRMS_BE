@@ -17,10 +17,11 @@ namespace Service.Implement
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IComponentRepository _componentRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IContractRepository _contractRepository;
         private readonly ISettingsService _settingsService;
         private readonly IMapper _mapper;
 
-        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService, IMachineSerialNumberRepository machineSerialNumberRepository)
+        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService, IMachineSerialNumberRepository machineSerialNumberRepository, IContractRepository contractRepository)
         {
             _machineRepository = machineRepository;
             _componentRepository = componentRepository;
@@ -28,6 +29,7 @@ namespace Service.Implement
             _mapper = mapper;
             _settingsService = settingsService;
             _machineSerialNumberRepository = machineSerialNumberRepository;
+            _contractRepository = contractRepository;
         }
 
         public async Task<IEnumerable<MachineViewDto>> GetMachineList()
@@ -64,6 +66,43 @@ namespace Service.Implement
             if (isMachineExisted)
             {
                 var list = await _machineRepository.GetMachineNumberList(machineId);
+
+                foreach (var serial in list)
+                {
+                    if (serial.Status == MachineSerialNumberStatusEnum.Reserved.ToString()
+                        || serial.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+                    {
+                        var contractList = await _contractRepository.GetContractBySerialNumber(serial.SerialNumber);
+                        var latestContract = contractList
+                           .OrderByDescending(contract => contract.DateStart)
+                           .FirstOrDefault();
+
+                        if (latestContract != null)
+                        {
+                            serial.RentingStartDate = latestContract.DateStart;
+                            serial.RentingEndDate = latestContract.DateEnd;
+                        }
+
+                        if (serial.Status == MachineSerialNumberStatusEnum.Renting.ToString())
+                        {
+                            if (latestContract.DateStart.Value.AddDays(-7) > DateTime.Now)
+                            {
+                                var currentContract = contractList
+                                    .OrderByDescending(contract => contract.DateStart)
+                                    .Skip(1)
+                                    .FirstOrDefault();
+
+                                if (currentContract != null)
+                                {
+                                    serial.RentingStartDate = currentContract.DateStart;
+                                    serial.RentingEndDate = currentContract.DateEnd;
+                                }
+
+                            }
+                        }
+                    }
+                }
+
                 return _mapper.Map<IEnumerable<MachineSerialNumberDto>>(list);
             }
 

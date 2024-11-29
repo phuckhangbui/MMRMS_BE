@@ -194,5 +194,14 @@ namespace DAO
                 return latestId;
             }
         }
+
+        public async Task<IEnumerable<Contract>> GetContractBySerialNumber(string serialNumber)
+        {
+            using (var context = new MmrmsContext())
+            {
+                var list = await context.Contracts.Where(c => c.SerialNumber == serialNumber).ToListAsync();
+                return list;
+            }
+        }
     }
 }

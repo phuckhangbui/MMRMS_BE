@@ -19,5 +19,9 @@
         public DateTime? DateCreate { get; set; }
 
         public int? RentDaysCounter { get; set; }
+
+        public DateTime? RentingStartDate { get; set; }
+
+        public DateTime? RentingEndDate { get; set; }
     }
 }
