@@ -609,5 +609,12 @@ namespace Repository.Implement
 
             return _mapper.Map<ContractPaymentDto>(fineContractPayment);
         }
+
+        public async Task<IEnumerable<ContractDto>> GetContractBySerialNumber(string serialNumber)
+        {
+            var list = await ContractDao.Instance.GetContractBySerialNumber(serialNumber);
+
+            return _mapper.Map<IEnumerable<ContractDto>>(list);
+        }
     }
 }
