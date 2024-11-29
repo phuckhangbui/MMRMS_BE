@@ -20,20 +20,6 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(int machineId, DateTime startDate, DateTime endDate)
-        {
-            var result = await MachineSerialNumberDao.Instance.GetMachineSerialNumberAvailablesToRent(machineId, startDate, endDate);
-
-            return _mapper.Map<List<MachineSerialNumberDto>>(result);
-        }
-
-        public async Task<List<MachineSerialNumberDto>> GetMachineSerialNumberAvailablesToRent(List<int> machineIds, DateTime startDate, DateTime endDate)
-        {
-            var result = await MachineSerialNumberDao.Instance.GetMachineSerialNumberAvailablesToRent(machineIds, startDate, endDate);
-
-            return _mapper.Map<List<MachineSerialNumberDto>>(result);
-        }
-
         public async Task<bool> CheckMachineSerialNumberValidToRent(List<RentingRequestSerialNumberDto> rentingRequestSerialNumbers)
         {
             if (rentingRequestSerialNumbers.IsNullOrEmpty())
@@ -48,16 +34,6 @@ namespace Repository.Implement
                 {
                     return false;
                 }
-
-                //var isValid = await MachineSerialNumberDao.Instance.IsMachineSerialNumberValidToRent(
-                //    rentingRequestSerialNumber.SerialNumber,
-                //    rentingRequestSerialNumber.DateStart,
-                //    rentingRequestSerialNumber.DateEnd);
-
-                //if (!isValid)
-                //{
-                //    return false;
-                //}
             }
 
             return true;

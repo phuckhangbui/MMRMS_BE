@@ -8,8 +8,6 @@ namespace DTOs.Category
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public DateTime? DateCreate { get; set; }
-        //public string? Status { get; set; }
-        //public int Quantity { get; set; }
     }
 
     public class CategoryRequestDto

@@ -221,7 +221,6 @@ namespace Repository.Mapper
                     src.RentingRequest.AccountNumber != null ? src.RentingRequest.BeneficiaryName : string.Empty));
             //CreateMap<Contract, ContractRequestDto>().ReverseMap();
             CreateMap<ContractTerm, ContractTermDto>();
-            CreateMap<ContractTerm, ContractTermRequestDto>().ReverseMap();
 
             CreateMap<AccountBusiness, AccountBusinessDto>();
 
