@@ -51,10 +51,6 @@ namespace Service.Implement
 
             return null;
         }
-        public Task<LoginAccountDto> ForgetPassword(string email)
-        {
-            throw new NotImplementedException();
-        }
 
         private async Task<LoginAccountDto> Login(AccountDto accountDto, string password, string? firebaseMessagingToken)
         {

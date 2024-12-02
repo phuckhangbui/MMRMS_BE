@@ -11,22 +11,11 @@ namespace Repository.Implement
 {
     public class MachineTaskRepository : IMachineTaskRepository
     {
-        private readonly IAccountRepository _accountRepository;
-        private readonly IMachineCheckRequestRepository _machineCheckRequestRepository;
         private readonly IMapper _mapper;
 
-        public MachineTaskRepository(IMapper mapper, IAccountRepository accountRepository, IMachineCheckRequestRepository MachineCheckRequestRepository)
+        public MachineTaskRepository(IMapper mapper)
         {
             _mapper = mapper;
-            _accountRepository = accountRepository;
-            _machineCheckRequestRepository = MachineCheckRequestRepository;
-        }
-
-        public async Task Delete(int taskId)
-        {
-            var MachineTask = await MachineTaskDao.Instance.GetMachineTask(taskId);
-
-            await MachineTaskDao.Instance.RemoveAsync(MachineTask);
         }
 
         public async Task<MachineTaskDto> GetMachineTask(int taskId)

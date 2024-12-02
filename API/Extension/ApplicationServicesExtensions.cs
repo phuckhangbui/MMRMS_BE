@@ -63,7 +63,6 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IComponentReplacementTicketService, ComponentReplacementTicketService>();
         services.AddScoped<ILogSerevice, LogSereviceImpl>();
         services.AddScoped<ITermService, TermService>();
-        services.AddScoped<IRequestResponseService, RequestResponseService>();
         services.AddScoped<IRoleService, RoleServiceImpl>();
         services.AddScoped<ISettingsService, SettingsService>();
 

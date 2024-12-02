@@ -15,6 +15,5 @@ namespace Repository.Interface
         Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByContractId(string contractId);
         Task<IEnumerable<MachineCheckRequestDto>> GetMachineCheckRequestsByCustomerId(int customerId);
         Task UpdateRequest(MachineCheckRequestDto request);
-        Task UpdateRequestStatus(string machineCheckRequestId, string status);
     }
 }

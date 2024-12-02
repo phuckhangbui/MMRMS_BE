@@ -262,18 +262,6 @@ namespace Repository.Implement
             await MachineDao.Instance.UpdateMachineComponent(product, components, componentMachines);
         }
 
-        public async Task ChangeMachineThumbnail(int productId, string imageUrlStr)
-        {
-            var productImage = new MachineImage
-            {
-                MachineImageUrl = imageUrlStr,
-                MachineId = productId,
-                IsThumbnail = true
-            };
-
-            await MachineDao.Instance.ChangeMachineThumbnail(productImage);
-        }
-
         public async Task UpdateMachineImage(int productId, List<ImageList> imageList)
         {
             var product = await MachineDao.Instance.GetMachine(productId);

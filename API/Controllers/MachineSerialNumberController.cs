@@ -237,28 +237,5 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        //[HttpPut("{serialNumber}")]
-        //public async Task<IActionResult> UpdateMachineSerialNumber([FromRoute] string serialNumber, [FromBody] MachineSerialNumberUpdateDto machineSerialNumberUpdateDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        string errorMessages = ModelStateValidation.GetValidationErrors(ModelState);
-        //        return BadRequest(errorMessages);
-        //    }
-        //    try
-        //    {
-        //        await _machineSerialNumberService.Update(serialNumber, machineSerialNumberUpdateDto);
-        //        return NoContent();
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
     }
 }

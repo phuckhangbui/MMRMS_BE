@@ -5,7 +5,6 @@ namespace Repository.Interface
 {
     public interface IMachineTaskRepository
     {
-        Task Delete(int taskId);
         Task<MachineTaskDto> GetMachineTask(int taskId);
         Task<IEnumerable<MachineTaskDto>> GetMachineTaskByStaff(int staffId);
         Task<MachineTaskDisplayDetail> GetMachineTaskDetail(int taskId);

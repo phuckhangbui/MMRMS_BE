@@ -13,7 +13,6 @@ namespace Service.Interface
         Task<IEnumerable<MachineSerialNumberDto>> GetSerialMachineList(int machineId);
         Task<MachineDto> CreateMachine(CreateMachineDto createMachineDto);
         Task DeleteMachine(int machineId);
-        Task UpdateMachineStatus(int machineId, string status);
         Task UpdateMachineAttribute(int machineId, IEnumerable<CreateMachineAttributeDto> productAttributeDtos);
         Task UpdateMachineDetail(int machineId, UpdateMachineDto updateMachineDto, int accountId);
         Task UpdateMachineComponent(int machineId, ComponentList productAttributeDtos);

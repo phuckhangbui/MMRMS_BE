@@ -58,32 +58,6 @@ namespace Service.Implement
             await _componentRepository.UpdateComponent(component);
         }
 
-        public async Task UpdateComponentStatus(int componentId, string status)
-        {
-            if (string.IsNullOrEmpty(status))
-            {
-                throw new ServiceException(MessageConstant.Component.ComponentStatusRequired);
-            }
-
-            var component = await _componentRepository.GetComponent(componentId);
-
-            if (component == null)
-            {
-                throw new ServiceException(MessageConstant.Component.ComponentNotExisted);
-            }
-
-
-            if (!status.Equals(ComponentStatusEnum.Active.ToString()) &&
-                !status.Equals(ComponentStatusEnum.Locked.ToString()))
-            {
-                throw new ServiceException(MessageConstant.Component.ComponentStatusCannotSet);
-            }
-
-            component.Status = status;
-
-            await _componentRepository.UpdateComponent(component);
-        }
-
         public async Task DeleteComponent(int componentId)
         {
             var component = await _componentRepository.GetComponent(componentId);

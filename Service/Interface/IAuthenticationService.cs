@@ -7,7 +7,6 @@ namespace Service.Interface
     {
         Task<LoginAccountDto> LoginUsername(LoginUsernameDto loginUsernameDto);
         Task<LoginAccountDto> LoginEmail(LoginEmailDto loginEmail);
-        Task<LoginAccountDto> ForgetPassword(string email);
         Task<LoginAccountDto> RefreshToken(TokenApiDto tokenApiDto);
         Task Logout(int accountId);
         Task RegisterCustomer(NewCustomerAccountDto newCustomerAccountDto);

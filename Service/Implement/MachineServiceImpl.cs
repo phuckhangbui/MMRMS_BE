@@ -200,23 +200,6 @@ namespace Service.Implement
             //await _productRepository.UpdateMachine(productDto);
         }
 
-        public async Task UpdateMachineStatus(int machineId, string status)
-        {
-            if (string.IsNullOrEmpty(status) || !Enum.TryParse(typeof(MachineStatusEnum), status, true, out _))
-            {
-                throw new ServiceException(MessageConstant.Machine.StatusNotAvailable);
-            }
-
-            var productDto = await _machineRepository.GetMachine(machineId);
-
-            if (productDto == null)
-                throw new ServiceException(MessageConstant.Machine.MachineNotFound);
-
-            productDto.Status = status;
-
-            await _machineRepository.UpdateMachine(productDto);
-        }
-
         public async Task UpdateMachineDetail(int machineId, UpdateMachineDto updateMachineDto, int accountId)
         {
             var machineDto = await _machineRepository.GetMachine(machineId);

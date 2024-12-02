@@ -89,27 +89,6 @@ namespace Repository.Implement
             return _mapper.Map<MachineCheckRequestDto>(MachineCheckRequest);
         }
 
-
-        public async Task UpdateRequestStatus(string machineCheckRequestId, string status)
-        {
-            var machineCheckRequest = await MachineCheckRequestDao.Instance.GetMachineCheckRequest(machineCheckRequestId);
-
-            if (machineCheckRequest == null)
-            {
-                throw new Exception(MessageConstant.MachineCheckRequest.RequestNotFound);
-            }
-
-            machineCheckRequest.Status = status;
-
-            await MachineCheckRequestDao.Instance.UpdateAsync(machineCheckRequest);
-        }
-
-
-        public Task UpdateRequestStatus(int MachineCheckRequestId, string status)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<MachineCheckRequestDetailDto> GetMachineCheckRequestDetail(string machineCheckRequestId)
         {
             var requestDetail = await MachineCheckRequestDao.Instance.GetMachineCheckRequestDetail(machineCheckRequestId);

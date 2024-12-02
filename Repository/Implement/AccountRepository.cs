@@ -237,11 +237,6 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<StaffAccountDto>>(accounts);
         }
 
-        //public async Task<bool> IsEmployeeAccountValidToUpdate(int accountId, EmployeeAccountUpdateDto employeeAccountUpdateDto)
-        //{
-        //    return await AccountDao.Instance.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
-        //}
-
         public async Task<bool> IsAccountValidToUpdate(int accountId, string email, string phone)
         {
             return await AccountDao.Instance.IsAccountValidToUpdate(accountId, email, phone);

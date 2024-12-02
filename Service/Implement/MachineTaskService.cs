@@ -442,35 +442,5 @@ namespace Service.Implement
             }
 
         }
-
-
-
-
-
-        //public async Task StaffReplaceComponentSuccess(int taskId, int staffId, string? confirmationPictureUrl)
-        //{
-        //    var machineTask = await _machineTaskRepository.GetMachineTask(taskId);
-
-        //    if (machineTask == null)
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineTask.TaskNotFound);
-        //    }
-
-        //    if (machineTask.Type != MachineTaskTypeEnum.ComponentReplacement.ToString())
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineTask.NotCorrectTaskType);
-        //    }
-
-        //    if (machineTask.Status != MachineTaskStatusEnum.Created.ToString())
-        //    {
-        //        throw new ServiceException(MessageConstant.MachineTask.StatusCannotSet);
-        //    }
-
-        //    //Todo logic here
-
-        //    await _machineTaskRepository.UpdateTaskStatus(taskId, MachineTaskStatusEnum.Completed.ToString(), staffId, confirmationPictureUrl);
-
-        //    await _notificationService.SendNotificationToManagerWhenTaskStatusUpdated((int)machineTask.ManagerId, machineTask.TaskTitle, EnumExtensions.ToVietnamese(MachineTaskStatusEnum.Completed));
-        //}
     }
 }
