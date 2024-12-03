@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(MmrmsContext))]
-    [Migration("20241129020011_addVehicleCounterToDelivery")]
-    partial class addVehicleCounterToDelivery
+    [Migration("20241203071226_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -926,6 +926,9 @@ namespace DAO.Migrations
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpectedAvailableDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("MachineConditionPercent")
