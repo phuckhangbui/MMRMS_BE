@@ -32,10 +32,6 @@ public partial class Account
 
     public int? MembershipRankId { get; set; }
 
-    public int? AccountBusinessId { get; set; }
-
-    public int? LogId { get; set; }
-
     public double? MoneySpent { get; set; }
 
     public DateTime? DateCreate { get; set; }
