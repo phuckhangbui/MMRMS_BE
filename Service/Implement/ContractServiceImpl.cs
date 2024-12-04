@@ -107,7 +107,6 @@ namespace Service.Implement
 
                 //MachineSerialNumber
                 await UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod, (int)contract.AccountSignId);
-                //await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod);
 
                 //Extend contract
                 var extendContract = await _contractRepository.GetExtendContract(contractId);
@@ -157,11 +156,6 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.Contract.ContractAlreadyExtended);
             }
-
-            //if (contractExtendDto.DateStart < baseContract.DateEnd)
-            //{
-            //    throw new ServiceException(MessageConstant.Contract.ExtensionStartDateNotValid);
-            //}
 
             if (contractExtendDto.DateEnd < baseContract.DateEnd.Value.AddDays(30))
             {

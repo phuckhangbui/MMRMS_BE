@@ -148,12 +148,6 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.InvalidRoleValue);
             }
 
-            //var isValid = await _accountRepository.IsEmployeeAccountValidToUpdate(accountId, employeeAccountUpdateDto);
-            //if (!isValid)
-            //{
-            //    throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
-            //}
-
             var account = await _accountRepository.GetAccounById(accountId);
             account.RoleId = employeeAccountUpdateDto.RoleId;
 

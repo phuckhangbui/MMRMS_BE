@@ -90,7 +90,8 @@ namespace Repository.Implement
                             SerialNumber = sn.SerialNumber,
                             RentDaysCounter = sn.RentDaysCounter,
                             Status = sn.Status,
-                            DateCreate = sn.DateCreate
+                            DateCreate = sn.DateCreate,
+                            MachineConditionPercent = sn.MachineConditionPercent,
                         }).ToList(),
                     };
 
