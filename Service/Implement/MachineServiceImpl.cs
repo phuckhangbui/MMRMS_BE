@@ -434,7 +434,7 @@ namespace Service.Implement
         private MachineQuotationDto GenerateQuotation(MachineSettingDto machineSetting, int machineId, string machineName, string machineModel, double rentPricePerDay)
         {
 
-            var days = new[] { 1, 30, 60, 90, 180, 360 };
+            var days = new[] { 1, 90, 120, 180, 270, 360 };
 
             var quotation = new List<Dictionary<string, double>>();
 
