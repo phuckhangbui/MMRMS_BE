@@ -236,11 +236,6 @@ namespace Service.Implement
                     int numberOfDays = (rentingRequestReviewSerialNumber.DateEnd - currentStartDate).Days + 1;
                     var remainingDays = numberOfDays;
 
-                    //while (remainingDays > 0)
-                    //{
-
-                    //}
-
                     paymentEndDate = GetContractPaymentEndDate(currentStartDate, rentingRequestReviewResponseSerialNumberDto.DateEnd);
 
                     int paymentPeriod;
@@ -270,7 +265,6 @@ namespace Service.Implement
                 }
 
                 currentStartDate = currentEndDate.AddDays(1);
-                //remainingDays -= paymentPeriod;
 
                 rentingRequestReviewResponseDto.RentingRequestReviewResponseSerialNumbers = serialList;
 
