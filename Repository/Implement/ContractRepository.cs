@@ -56,6 +56,12 @@ namespace Repository.Implement
                     contractDetail.ShippingDistance = rentingRequest.ShippingDistance ?? 0;
                     contractDetail.ProvisionalShippingPrice = rentingRequest.ShippingPrice / numOfContracts ?? 0;
                     contractDetail.ServicePrice = rentingRequest.TotalServicePrice / numOfContracts ?? 0;
+
+                    var services = rentingRequest.ServiceRentingRequests;
+                    if (!services.IsNullOrEmpty())
+                    {
+                        contractDetail.ContractServices = _mapper.Map<List<ServiceRentingRequestDto>>(services);
+                    }
                 }
 
                 var componentReplacementTickets = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketByContractId(contractId);

@@ -20,5 +20,6 @@ namespace DTOs.Contract
         public double? ShippingDistance { get; set; }
         public double? ServicePrice { get; set; }
         public List<ComponentReplacementTicketDto>? ComponentReplacementTickets { get; set; }
+        public List<ServiceRentingRequestDto>? ContractServices { get; set; }
     }
 }
