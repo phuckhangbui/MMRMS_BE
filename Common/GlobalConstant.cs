@@ -29,5 +29,6 @@
         public const int MaxStartDateOffsetInDays = 30;
         public const int DueDateContractPayment = 15;
         public const double FineValue = 500000;
+        public const int ExpectedAvailabilityOffsetDays = 5;
     }
 }
