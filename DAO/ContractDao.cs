@@ -92,6 +92,8 @@ namespace DAO
             using (var context = new MmrmsContext())
             {
                 return await context.Contracts
+                    .Include(c => c.RentingRequest)
+                        .ThenInclude(r => r.RentingRequestAddress)
                     .Include(c => c.ContractMachineSerialNumber)
                         .ThenInclude(s => s.Machine)
                     .ThenInclude(m => m.MachineImages)
