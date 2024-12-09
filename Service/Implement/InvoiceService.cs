@@ -300,7 +300,7 @@ namespace Service.Implement
                 }
                 if (isMachineMaintenance)
                 {
-                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintenance.ToString();
+                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintained.ToString();
                 }
                 else
                 {

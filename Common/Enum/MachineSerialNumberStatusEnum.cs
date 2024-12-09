@@ -9,7 +9,7 @@
         Renting,
 
         [Translation("Đang sửa chữa")]
-        Maintenance,
+        Maintained,
 
         [Translation("Đã khóa")]
         Locked,

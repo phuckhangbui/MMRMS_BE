@@ -200,14 +200,14 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
             }
 
-            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintenance.ToString()
+            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintained.ToString()
                || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString()
                || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Reserved.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineNotSuitableForMaintenanceStatus);
             }
 
-            await _machineSerialNumberRepository.UpdateStatus(serialNumber, MachineSerialNumberStatusEnum.Maintenance.ToString(), staffId, note);
+            await _machineSerialNumberRepository.UpdateStatus(serialNumber, MachineSerialNumberStatusEnum.Maintained.ToString(), staffId, note);
         }
 
         public async Task MoveSerialMachineToActiveStatus(string serialNumber, int staffId, string note)
@@ -252,7 +252,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
             }
 
-            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintenance.ToString()
+            if (machineSerialNumber.Status == MachineSerialNumberStatusEnum.Maintained.ToString()
                || machineSerialNumber.Status == MachineSerialNumberStatusEnum.Renting.ToString())
             {
                 throw new ServiceException(MessageConstant.MachineSerialNumber.MachineStateNotSuitableForModifyStatus);
@@ -296,7 +296,7 @@ namespace Service.Implement
 
             if (serialMachine.Status == MachineSerialNumberStatusEnum.Available.ToString())
             {
-                await _machineSerialNumberRepository.UpdateStatus(serialMachine.SerialNumber, MachineSerialNumberStatusEnum.Maintenance.ToString(), accountId);
+                await _machineSerialNumberRepository.UpdateStatus(serialMachine.SerialNumber, MachineSerialNumberStatusEnum.Maintained.ToString(), accountId);
             }
         }
 
