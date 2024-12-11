@@ -347,7 +347,7 @@ namespace Repository.Implement
                         .FirstOrDefault(p => p.IsThumbnail == true)?.MachineImageUrl ?? string.Empty;
                     productReview.ThumbnailUrl = thumbnailUrl;
 
-                    var machineSerialNumbers = await MachineSerialNumberDao.Instance.GetMachineSerialNumbersByMachineIdAndStatus(productReview.MachineId, MachineSerialNumberStatusEnum.Available.ToString());
+                    var machineSerialNumbers = await MachineSerialNumberDao.Instance.GetMachineSerialNumbersByMachineId(productReview.MachineId);
                     if (!machineSerialNumbers.IsNullOrEmpty())
                     {
                         productReview.Quantity = machineSerialNumbers.Count();
