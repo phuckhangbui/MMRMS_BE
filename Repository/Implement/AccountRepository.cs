@@ -289,6 +289,9 @@ namespace Repository.Implement
             return account.AccountId;
         }
 
-
+        public async Task DeleteAccount(int accountId)
+        {
+            await AccountDao.Instance.RemoveAccount(accountId);
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using BusinessObject;
-using Common.Enum;
+﻿using Common.Enum;
 using Microsoft.EntityFrameworkCore;
+using Account = BusinessObject.Account;
 
 namespace DAO
 {
@@ -221,6 +221,39 @@ namespace DAO
                         await transaction.CommitAsync();
 
                         return account;
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+            }
+        }
+
+        public async Task RemoveAccount(int accountId)
+        {
+            using (var context = new MmrmsContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var account = await context.Accounts.FindAsync(accountId);
+                        if (account == null)
+                        {
+                            throw new Exception("Account not found.");
+                        }
+
+                        var membershipLogs = context.MembershipRankLogs.Where(ur => ur.AccountId == accountId);
+                        context.MembershipRankLogs.RemoveRange(membershipLogs);
+
+                        var accountBusiness = context.AccountBusinesses.Where(ur => ur.AccountId == accountId);
+                        context.AccountBusinesses.RemoveRange(accountBusiness);
+
+                        context.Accounts.Remove(account);
+                        await context.SaveChangesAsync();
+                        await transaction.CommitAsync();
                     }
                     catch (Exception e)
                     {

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs;
 using DTOs.Account;
 using DTOs.MachineTask;
 using Microsoft.AspNetCore.Authorization;
@@ -374,6 +375,44 @@ namespace API.Controllers
                 var result = await _accountService.UpdateEmployeeProfile(accountId, employeeProfileUpdateDto);
                 if (result > 0) return Ok(MessageConstant.Account.UpdateAccountSuccessfully);
                 return BadRequest(MessageConstant.Account.UpdateAccountFail);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("manager/approve-account/{accountId}")]
+        [Authorize(policy: "Manager")]
+        public async Task<ActionResult> ApproveCustomerAccount([FromRoute] int accountId)
+        {
+            try
+            {
+                await _accountService.ApproveCustomerAccount(accountId);
+                return NoContent();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("manager/disapprove-account/{accountId}")]
+        [Authorize(policy: "Manager")]
+        public async Task<ActionResult> DisapproveCustomerAccount([FromRoute] int accountId, [FromBody] NoteDto note)
+        {
+            try
+            {
+                await _accountService.DisapproveCustomerAccount(accountId, note);
+                return NoContent();
             }
             catch (ServiceException ex)
             {

@@ -14,7 +14,8 @@
         DeliveryTask,
         ComponentReplacementTicket,
         MachineCheckRequest,
-        RentingRequest
+        RentingRequest,
+        Account
     }
 
 }

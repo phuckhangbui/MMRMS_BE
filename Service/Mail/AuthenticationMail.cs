@@ -1,4 +1,5 @@
-﻿namespace Service.Mail
+﻿
+namespace Service.Mail
 {
     public class AuthenticationMail
     {
@@ -19,7 +20,7 @@
     <p>Vui lòng không chia sẻ mã OTP này với bất kỳ ai để bảo vệ tài khoản của Quý khách.</p>
     
     <p>Trân trọng,<br>
-    Đội ngũ hỗ trợ MMRMS - Hệ thống Quản lý Thuê Máy Móc</p>";
+    Đội ngũ hỗ trợ <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc</p>";
 
             return mailContext;
         }
@@ -42,7 +43,7 @@
     <p>Chúc Quý khách có trải nghiệm tuyệt vời khi sử dụng dịch vụ của chúng tôi.</p>
     
     <p>Trân trọng,<br>
-    Đội ngũ hỗ trợ MMRMS - Hệ thống Quản lý Thuê Máy Móc</p>";
+    Đội ngũ hỗ trợ <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc</p>";
 
             return mailContext;
         }
@@ -70,7 +71,56 @@
     <p>Nếu có bất kỳ thắc mắc nào, anh/chị vui lòng liên hệ bộ phận hỗ trợ qua email hoặc số điện thoại.</p>
 
     <p>Trân trọng,<br>
-    Đội ngũ MMRMS - Hệ thống Quản lý Thuê Máy Móc</p>";
+    Đội ngũ hỗ trợ <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc</p>";
+
+            return mailContext;
+        }
+
+        public static MailContent SendApprovalEmailToCustomer(string email, string name)
+        {
+            var mailContext = new MailContent();
+            mailContext.To = email;
+            mailContext.Subject = $"Tài khoản của bạn đã được phê duyệt - MMRMS";
+
+            mailContext.Body = $@"
+    <p>Kính gửi <b>{name}</b>,</p>
+
+    <p>Chúng tôi xin trân trọng thông báo rằng tài khoản của bạn trên <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc đã được phê duyệt thành công sau khi kiểm tra hồ sơ. Bạn có thể sử dụng tài khoản để truy cập vào hệ thống và khám phá các tính năng hữu ích của chúng tôi.</p>
+
+    <p>Với tài khoản đã được phê duyệt, bạn có thể:</p>
+    <ul>
+        <li>Gửi yêu cầu thuê máy móc nhanh chóng và thuận tiện.</li>
+        <li>Quản lý các hợp đồng thuê và tiến trình thanh toán một cách dễ dàng.</li>
+        <li>Tạo các yêu cầu kiểm tra máy trong quá trình thuê.</li>
+    </ul>
+
+    <p>Chúng tôi mong muốn mang đến cho bạn trải nghiệm dịch vụ chuyên nghiệp và tiện lợi nhất</p>
+
+    <p>Trân trọng,<br>
+    Đội ngũ hỗ trợ <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc</p>";
+
+            return mailContext;
+        }
+
+
+        public static MailContent SendDisapprovalEmailToCustomer(string email, string name, string note)
+        {
+            var mailContext = new MailContent();
+            mailContext.To = email;
+            mailContext.Subject = $"Yêu cầu phê duyệt tài khoản bị từ chối - MMRMS";
+
+            mailContext.Body = $@"
+    <p>Kính gửi <b>{name}</b>,</p>
+
+    <p>Chúng tôi xin thông báo rằng tài khoản của bạn trên <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc không được phê duyệt với lý do sau:</p>
+
+    <p><i>{note}</i></p>
+
+    <p>Chúng tôi hiểu rằng điều này có thể gây bất tiện, và chúng tôi khuyến khích bạn kiểm tra lại các thông tin bạn đã cung cấp. Bạn vẫn có thể tiếp tục sử dụng email này để đăng kí vào hệ thống chúng tôi sau này.</p>
+    <p>Chúng tôi rất mong được hỗ trợ bạn trong thời gian tới!</p>
+
+    <p>Trân trọng,<br>
+    Đội ngũ hỗ trợ <b>MMRMS</b> - Hệ thống Quản lý Thuê Máy Móc</p>";
 
             return mailContext;
         }

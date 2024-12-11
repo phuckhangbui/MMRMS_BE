@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs.Account;
 using DTOs.ComponentReplacementTicket;
 using DTOs.Contract;
 using DTOs.MachineCheckRequest;
@@ -955,6 +956,56 @@ namespace Service.Implement
             {
 
             }
+        }
+
+        public async Task SendNotificationToManagersWhenNewCustomerNeedConfirmation(AccountDto accountDto)
+        {
+            string title = "Có một tài khoản khách mới cần được duyệt";
+            string body = $"Một tài khoản khách của người dùng tên ${accountDto?.Name} vừa được tạo, hãy bắt đầu quá trình kiểm tra tài khoản";
+
+            var managerList = await _accountRepository.GetManagerAccounts();
+
+            string type = NotificationTypeEnum.Account.ToString();
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            if (managerList.IsNullOrEmpty())
+            {
+                return;
+            }
+            try
+            {
+                foreach (var account in managerList)
+                {
+                    var noti = new CreateNotificationDto
+                    {
+                        AccountReceiveId = account.AccountId,
+                        NotificationTitle = title,
+                        MessageNotification = body,
+                        NotificationType = type,
+                        DetailIdName = detailIdName,
+                        DetailId = accountDto.AccountId.ToString(),
+                    };
+
+                    var notificationDto = await _notificationRepository.CreateNotification(noti);
+                    Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", account.AccountId.ToString() },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                    if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                    {
+                        _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            };
         }
     }
 }
