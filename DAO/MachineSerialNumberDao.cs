@@ -35,12 +35,12 @@ namespace DAO
             }
         }
 
-        public async Task<IEnumerable<MachineSerialNumber>> GetMachineSerialNumbersByMachineIdAndStatus(int productId, string status)
+        public async Task<IEnumerable<MachineSerialNumber>> GetMachineSerialNumbersByMachineId(int productId)
         {
             using (var context = new MmrmsContext())
             {
                 return await context.MachineSerialNumbers
-                    .Where(s => s.MachineId == productId && s.Status.Equals(status))
+                    .Where(s => s.MachineId == productId)
                     .OrderByDescending(s => s.DateCreate)
                     .ToListAsync();
             }
