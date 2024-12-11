@@ -44,6 +44,7 @@
             public const string WrongPassword = "Sai mật khẩu";
             public const string AccountInactive = "Tài khoản chưa kích hoạt";
             public const string AccountLocked = "Tài khoản đã bị khóa";
+            public const string AccountPendingConfirm = "Tài khoản chưa được hệ thống thông qua, vui lòng chờ chúng tôi xác nhận lại một số thông tin";
             public const string AccountChosenLocked = "Tài khoản bạn chọn đã bị khóa";
             public const string WrongOtp = "Mã OTP không hợp lệ";
             public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";

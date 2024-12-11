@@ -86,6 +86,11 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountLocked);
             }
 
+            if (accountDto.Status?.Equals(AccountStatusEnum.PendingManagerConfirm.ToString()) ?? false)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountPendingConfirm);
+            }
+
             LoginAccountDto loginAccountDto = _mapper.Map<LoginAccountDto>(accountDto);
 
             loginAccountDto.Token = _tokenService.CreateToken(loginAccountDto);
