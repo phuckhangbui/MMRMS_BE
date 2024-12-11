@@ -278,7 +278,7 @@ namespace Service.Implement
             try
             {
                 var note = GlobalConstant.RefundInvoiceNote + refundInvoiceRequestDto.ContractId;
-                var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note);
+                var invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
 
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Fine.ToString());

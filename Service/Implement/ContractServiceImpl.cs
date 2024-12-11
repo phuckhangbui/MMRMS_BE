@@ -169,7 +169,7 @@ namespace Service.Implement
 
                 if (contractDto != null)
                 {
-                    var invoice = await _invoiceRepository.CreateInvoice((double)contractDto.TotalRentPrice, InvoiceTypeEnum.Rental.ToString(), (int)contractDto.AccountSignId, string.Empty);
+                    var invoice = await _invoiceRepository.CreateInvoice((double)contractDto.TotalRentPrice, InvoiceTypeEnum.Rental.ToString(), (int)contractDto.AccountSignId, string.Empty, null);
 
                     await _contractRepository.SetInvoiceForContractPayment(contractDto.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Extend.ToString());
 
