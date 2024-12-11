@@ -124,7 +124,7 @@ namespace Service.Implement
                 }
 
                 if (machineSerialNumber.Status != MachineSerialNumberStatusEnum.Available.ToString()
-                    || machineSerialNumber.Status != MachineSerialNumberStatusEnum.Reserved.ToString())
+                    && machineSerialNumber.Status != MachineSerialNumberStatusEnum.Reserved.ToString())
                 {
                     throw new ServiceException(MessageConstant.DeliveryTask.MachineSerialNumberNotInAvailableStatus
                                                     + EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumber.Status));
