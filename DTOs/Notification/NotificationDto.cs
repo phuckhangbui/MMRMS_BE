@@ -52,6 +52,9 @@ namespace DTOs.Notification
                 case var nt when nt == NotificationTypeEnum.RentingRequest.ToString():
                     return "RentingRequestId";
 
+                case var nt when nt == NotificationTypeEnum.Account.ToString():
+                    return "AccountId";
+
                 default:
                     return null;
             }

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Enum;
+using DTOs;
 using DTOs.Account;
 using DTOs.MachineTask;
 using Microsoft.Extensions.Configuration;
@@ -293,6 +294,47 @@ namespace Service.Implement
             }
 
             return await _accountRepository.UpdateAccount(accountId, employeeProfileUpdateDto);
+        }
+
+        public async Task ApproveCustomerAccount(int accountId)
+        {
+            var accountDto = await _accountRepository.GetAccounById(accountId);
+
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            if (accountDto.Status != AccountStatusEnum.PendingManagerConfirm.ToString())
+            {
+                throw new ServiceException(MessageConstant.Account.AccountStatusNotSuitableForApproval);
+            }
+
+            accountDto.Status = AccountStatusEnum.Active.ToString();
+
+            await _accountRepository.UpdateAccount(accountDto);
+
+            _mailService.SendMail(AuthenticationMail.SendApprovalEmailToCustomer(accountDto.Email, accountDto.Name));
+
+        }
+
+        public async Task DisapproveCustomerAccount(int accountId, NoteDto note)
+        {
+            var accountDto = await _accountRepository.GetAccounById(accountId);
+
+            if (accountDto == null)
+            {
+                throw new ServiceException(MessageConstant.Account.AccountNotFound);
+            }
+
+            if (accountDto.Status != AccountStatusEnum.PendingManagerConfirm.ToString())
+            {
+                throw new ServiceException(MessageConstant.Account.AccountStatusNotSuitableForApproval);
+            }
+
+            await _accountRepository.DeleteAccount(accountId);
+
+            _mailService.SendMail(AuthenticationMail.SendDisapprovalEmailToCustomer(accountDto.Email, accountDto.Name, note.Note));
         }
     }
 }

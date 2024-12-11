@@ -17,17 +17,19 @@ namespace Service.Implement
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IAccountLogRepository _accountLogRepository;
+        private readonly INotificationService _notificationService;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
 
-        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService, IAccountLogRepository accountLogRepository)
+        public AuthenticationService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService, IAccountLogRepository accountLogRepository, INotificationService notificationService)
         {
             _accountRepository = accountRepository;
             _tokenService = tokenService;
             _mapper = mapper;
             _mailService = mailService;
             _accountLogRepository = accountLogRepository;
+            _notificationService = notificationService;
         }
 
         private LoginAccountDto AdminLogin(LoginUsernameDto loginUsernameDto)
@@ -202,7 +204,10 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.WrongOtp);
             }
 
-            accountDto.Status = AccountStatusEnum.Active.ToString();
+            accountDto.Status = AccountStatusEnum.PendingManagerConfirm.ToString();
+
+            //send notification here
+            await _notificationService.SendNotificationToManagersWhenNewCustomerNeedConfirmation(accountDto);
 
             await _accountRepository.UpdateAccount(accountDto);
         }

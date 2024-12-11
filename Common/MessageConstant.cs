@@ -48,6 +48,8 @@
             public const string WrongOtp = "Mã OTP không hợp lệ";
             public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";
             public const string AccountRoleIsNotSuitableToAssignForThisTask = "Tài khoản nhân viên mà bạn chọn không thể thực hiện chức năng này";
+            public const string AccountStatusNotSuitableForApproval = "Tài khoản của khách hàng này hiện đang không thể thực hiện được thao tác này";
+
 
 
             //DTO
@@ -214,7 +216,7 @@
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
             public const string ContractAlreadyExtended = "Hợp đồng này đã được gia hạn, không thể gia hạn được nữa";
             public const string ContractNotBelongToThisAccount = "Hợp đồng này không thuộc tài khoản đăng nhập hiện tại";
-            
+
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
