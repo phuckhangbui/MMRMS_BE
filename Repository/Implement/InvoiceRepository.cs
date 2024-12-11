@@ -142,7 +142,7 @@ namespace Repository.Implement
                 invoice.Status = InvoiceStatusEnum.Paid.ToString();
                 invoice.DatePaid = DateTime.Now;
                 invoice.PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString();
-                invoice.PaymentConfirmationUrl = !string.IsNullOrEmpty(paymentConfirmationUrl) ? null : string.Empty;
+                invoice.PaymentConfirmationUrl = !string.IsNullOrEmpty(paymentConfirmationUrl) ? paymentConfirmationUrl : string.Empty;
             }
 
             invoice = await InvoiceDao.Instance.CreateAsync(invoice);
