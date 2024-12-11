@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject;
+using Common;
 using Common.Enum;
 using DAO;
 using DTOs.Machine;
@@ -43,7 +44,10 @@ namespace Repository.Implement
 
             var filteredMachines = machines
                 .Where(m => m.Status.Equals(MachineStatusEnum.Active.ToString()) &&
-                            m.MachineSerialNumbers.Any(msn => msn.Status == MachineSerialNumberStatusEnum.Available.ToString()))
+                            m.MachineSerialNumbers.Any(msn => msn.Status == MachineSerialNumberStatusEnum.Available.ToString() ||
+                            (msn.Status == MachineSerialNumberStatusEnum.Maintained.ToString()) &&
+                                msn.ExpectedAvailableDate != null && msn.ExpectedAvailableDate >= DateTime.Now.AddDays(GlobalConstant.ExpectedAvailabilityOffsetDays) &&
+                                                                 msn.ExpectedAvailableDate <= DateTime.Now.AddMonths(1).AddDays(GlobalConstant.ExpectedAvailabilityOffsetDays)))
                 .ToList();
 
             return filteredMachines?.Select(machine =>
