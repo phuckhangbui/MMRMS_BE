@@ -105,7 +105,7 @@ namespace DAO
             using var context = new MmrmsContext();
             var availableSerialNumbersToRent = await context.MachineSerialNumbers
                 .Where(s => machineIds.Contains((int)s.MachineId) &&
-                        (s.Status == MachineSerialNumberStatusEnum.Available.ToString() || startDate >= s.ExpectedAvailableDate))
+                        (s.Status == MachineSerialNumberStatusEnum.Available.ToString()))
                 .Include(s => s.Machine)
                     .ThenInclude(p => p.MachineTerms)
                 .OrderByDescending(s => s.DateCreate)

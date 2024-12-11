@@ -26,6 +26,8 @@ public partial class Invoice
 
     public string? PayOsOrderId { get; set; }
 
+    public string? PaymentConfirmationUrl { get; set; }
+
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
 
     public virtual Account? AccountPaid { get; set; }
