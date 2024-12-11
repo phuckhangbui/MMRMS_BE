@@ -256,7 +256,7 @@ namespace Repository.Implement
             {
                 machineSerialNumber.Status = MachineSerialNumberStatusEnum.Reserved.ToString();
             }
-            
+
             machineSerialNumber.ExpectedAvailableDate = contract.DateEnd.Value.AddDays(GlobalConstant.ExpectedAvailabilityOffsetDays);
             await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
 

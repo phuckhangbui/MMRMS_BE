@@ -214,7 +214,7 @@
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
             public const string ContractAlreadyExtended = "Hợp đồng này đã được gia hạn, không thể gia hạn được nữa";
             public const string ContractNotBelongToThisAccount = "Hợp đồng này không thuộc tài khoản đăng nhập hiện tại";
-            
+
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
