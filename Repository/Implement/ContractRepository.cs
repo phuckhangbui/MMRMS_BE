@@ -252,7 +252,11 @@ namespace Repository.Implement
             await ContractDao.Instance.CreateAsync(contract);
 
             var oldStatus = machineSerialNumber.Status;
-            machineSerialNumber.Status = MachineSerialNumberStatusEnum.Reserved.ToString();
+            if (oldStatus.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
+            {
+                machineSerialNumber.Status = MachineSerialNumberStatusEnum.Reserved.ToString();
+            }
+            
             machineSerialNumber.ExpectedAvailableDate = contract.DateEnd.Value.AddDays(GlobalConstant.ExpectedAvailabilityOffsetDays);
             await MachineSerialNumberDao.Instance.UpdateAsync(machineSerialNumber);
 

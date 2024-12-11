@@ -286,11 +286,6 @@ namespace Service.Implement
                 await _contractRepository.UpdateContractStatus(contract.ContractId, ContractStatusEnum.Completed.ToString());
                 //MachineSerialNumber
                 var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
-                var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
-                {
-                    ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
-                    Status = machineSerialNumber.Status,
-                };
 
                 var componentList = await _machineSerialNumberRepository.GetMachineComponent(machineSerialNumber.SerialNumber);
                 var isMachineMaintenance = false;
@@ -300,14 +295,21 @@ namespace Service.Implement
                 }
                 if (isMachineMaintenance)
                 {
-                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Maintained.ToString();
+                    machineSerialNumber.Status = MachineSerialNumberStatusEnum.Maintained.ToString();
+                    await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, machineSerialNumber.Status, (int)contract.AccountSignId, null, DateTime.Now.AddDays(GlobalConstant.ExpectedAvailabilityOffsetDays));
                 }
                 else
                 {
-                    machineSerialNumberUpdateDto.Status = MachineSerialNumberStatusEnum.Available.ToString();
-                }
+                    machineSerialNumber.Status = MachineSerialNumberStatusEnum.Available.ToString();
 
-                await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, accountId);
+                    var machineSerialNumberUpdateDto = new MachineSerialNumberUpdateDto
+                    {
+                        ActualRentPrice = machineSerialNumber.ActualRentPrice ?? 0,
+                        Status = machineSerialNumber.Status,
+                    };
+
+                    await _machineSerialNumberRepository.UpdateMachineSerialNumber(machineSerialNumber.SerialNumber, machineSerialNumberUpdateDto, accountId);
+                }
 
                 await _notificationService.SendNotificationToCustomerWhenManagerCreateRefundInvoice((int)contract.AccountSignId, contract.ContractId, invoice.InvoiceId);
 

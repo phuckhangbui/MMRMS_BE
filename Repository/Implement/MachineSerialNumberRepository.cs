@@ -30,7 +30,11 @@ namespace Repository.Implement
             foreach (var rentingRequestSerialNumber in rentingRequestSerialNumbers)
             {
                 var machineSerialNumber = await MachineSerialNumberDao.Instance.GetMachineSerialNumber(rentingRequestSerialNumber.SerialNumber);
-                if (machineSerialNumber == null || !machineSerialNumber.Status.Equals(MachineSerialNumberStatusEnum.Available.ToString()))
+                if (machineSerialNumber == null ||
+                            !(machineSerialNumber.Status.Equals(MachineSerialNumberStatusEnum.Available.ToString()) ||
+                              (machineSerialNumber.Status.Equals(MachineSerialNumberStatusEnum.Maintained.ToString()) &&
+                               machineSerialNumber.ExpectedAvailableDate != null &&
+                               rentingRequestSerialNumber.DateStart >= machineSerialNumber.ExpectedAvailableDate)))
                 {
                     return false;
                 }
@@ -227,7 +231,7 @@ namespace Repository.Implement
                 action += $". Đi kèm ghi chú: {note}";
             }
 
-            if (expectedAvailableDate != null)
+            if (expectedAvailableDate == null)
             {
                 serialMachine.ExpectedAvailableDate = expectedAvailableDate;
             }
@@ -256,7 +260,7 @@ namespace Repository.Implement
             await this.UpdateStatusInternal(serialNumber, status, staffId, note, null);
         }
 
-        public async Task UpdateStatus(string serialNumber, string status, int accountId, DateTime expectedAvailableDate)
+        public async Task UpdateStatus(string serialNumber, string status, int accountId, string? note, DateTime? expectedAvailableDate)
         {
             await UpdateStatusInternal(serialNumber, status, accountId, null, expectedAvailableDate);
         }

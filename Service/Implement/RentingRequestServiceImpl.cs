@@ -152,7 +152,7 @@ namespace Service.Implement
                             throw new ServiceException(MessageConstant.RentingRequest.RentingRequestCanNotCancel);
                         }
 
-                        await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId, contract.DateCreate.Value);
+                        await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId, null, null);
                     }
                 }
 
