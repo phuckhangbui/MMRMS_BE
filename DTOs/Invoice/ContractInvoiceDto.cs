@@ -18,5 +18,6 @@ namespace DTOs.Invoice
         public string? RentingRequestId { get; set; }
         public List<ContractPaymentDto> ContractPayments { get; set; }
         public FirstRentalPaymentDto? FirstRentalPayment { get; set; }
+        public string? PaymentConfirmationUrl { get; set; }
     }
 }

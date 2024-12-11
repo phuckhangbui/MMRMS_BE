@@ -10,7 +10,7 @@ namespace Repository.Interface
         Task<InvoiceDto> GetInvoice(string invoiceId);
         Task UpdateInvoice(InvoiceDto invoice);
         Task<object?> GetInvoiceDetail(string invoiceId);
-        Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId, string note);
+        Task<InvoiceDto> CreateInvoice(double amount, string type, int accountPaidId, string note, string? paymentConfirmationUrl);
         Task CreateInvoice(string rentingRequestId);
         Task GenerateMonthlyInvoices(string rentingRequestId);
         Task UpdateInvoiceStatus(string invoiceId, string status);
