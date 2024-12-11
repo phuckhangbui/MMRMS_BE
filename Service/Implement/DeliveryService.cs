@@ -116,6 +116,20 @@ namespace Service.Implement
                     throw new ServiceException(MessageConstant.Contract.ContractNotValidToDelivery + contractId);
                 }
 
+                var machineSerialNumber = await _machineSerialNumberRepository.GetMachineSerialNumber(contract.SerialNumber);
+
+                if (machineSerialNumber == null)
+                {
+                    throw new ServiceException(MessageConstant.MachineSerialNumber.MachineSerialNumberNotFound);
+                }
+
+                if (machineSerialNumber.Status != MachineSerialNumberStatusEnum.Available.ToString()
+                    || machineSerialNumber.Status != MachineSerialNumberStatusEnum.Reserved.ToString())
+                {
+                    throw new ServiceException(MessageConstant.DeliveryTask.MachineSerialNumberNotInAvailableStatus
+                                                    + EnumExtensions.TranslateStatus<MachineSerialNumberStatusEnum>(machineSerialNumber.Status));
+                }
+
                 var contractDeliveryList = await _contractRepository.GetContractDeliveryBaseOnContractId(contractId);
 
                 if (contractDeliveryList.Any(c => c.Status == ContractDeliveryStatusEnum.Pending.ToString()

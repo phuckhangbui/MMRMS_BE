@@ -214,6 +214,7 @@
             public const string ContractDeliveryNotFound = "Mã số đơn giao hợp đồng không tìm thấy";
             public const string ContractAlreadyExtended = "Hợp đồng này đã được gia hạn, không thể gia hạn được nữa";
             public const string ContractNotBelongToThisAccount = "Hợp đồng này không thuộc tài khoản đăng nhập hiện tại";
+            
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
@@ -310,6 +311,7 @@
             public const string AllContractDeliveryFailPleaseCallAllFailAPI = "Tất cả các hợp đồng giao đều thất bại, xin hãy gọi API khác";
             public const string ContractDeliveryNotFound = "Mã hợp đồng giao hàng này không tìm thấy";
             public const string VehicleIsBiggerThanNumberOfMachine = "Số lượng xe đang lớn hơn số lượng máy";
+            public const string MachineSerialNumberNotInAvailableStatus = "Máy này chưa thể giao do đang ở trạng thái: ";
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
