@@ -2,7 +2,6 @@
 {
     public enum InvoiceTypeEnum
     {
-        Deposit,
         Rental,
         ComponentTicket,
         Refund

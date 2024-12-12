@@ -20,10 +20,6 @@ public partial class Contract
 
     public string? Content { get; set; }
 
-    //public double? ShippingDistance { get; set; }
-
-    //public double? ShippingPrice { get; set; }
-
     public double? RefundShippingPrice { get; set; }
 
     public DateTime? DateCreate { get; set; }

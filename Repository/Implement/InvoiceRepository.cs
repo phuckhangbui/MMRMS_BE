@@ -3,6 +3,7 @@ using BusinessObject;
 using Common;
 using Common.Enum;
 using DAO;
+using DTOs.ComponentReplacementTicket;
 using DTOs.ContractPayment;
 using DTOs.Invoice;
 using Microsoft.IdentityModel.Tokens;
@@ -88,22 +89,21 @@ namespace Repository.Implement
                             contractInvoice.FirstRentalPayment = firstRentalPayment;
                         }
 
-                        //var firstRentalContractPayment = contractPayments.FirstOrDefault(cp => (bool)cp.IsFirstRentalPayment);
-                        //if (firstRentalContractPayment != null)
-                        //{
-                        //    if (firstRentalContractPayment != null)
-                        //    {
-                        //        var firstRentalPayment = new FirstRentalPaymentDto()
-                        //        {
-                        //            DiscountPrice = rentingRequest.DiscountPrice,
-                        //            ShippingPrice = rentingRequest.ShippingPrice,
-                        //            TotalServicePrice = rentingRequest.TotalServicePrice,
-                        //        };
 
-                        //        var firstRentalInvoice = contractInvoice.ContractPayments.Find(i => i.ContractPaymentId == firstRentalContractPayment.ContractPaymentId);
-                        //        firstRentalInvoice.FirstRentalPayment = firstRentalPayment;
-                        //    }
-                        //}
+                        if (invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
+                        {
+                            var contract = await ContractDao.Instance.GetContractById(contractPayment.Contract.ContractId);
+                            if (contract != null)
+                            {
+                                contractInvoice.RefundShippingPrice = contract.RefundShippingPrice;
+                            }
+
+                            var componentReplacementTickets = await ComponentReplacementTicketDao.Instance.GetComponentReplacementTicketByContractIdTypeContractTerminationTicket(contractPayment.Contract.ContractId);
+                            if (!componentReplacementTickets.IsNullOrEmpty())
+                            {
+                                contractInvoice.ComponentReplacementTickets = _mapper.Map<List<ComponentReplacementTicketDto>>(componentReplacementTickets);
+                            }
+                        }
                     }
 
                     return contractInvoice;

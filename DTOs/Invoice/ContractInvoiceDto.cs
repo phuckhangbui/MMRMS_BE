@@ -1,4 +1,5 @@
-﻿using DTOs.ContractPayment;
+﻿using DTOs.ComponentReplacementTicket;
+using DTOs.ContractPayment;
 
 namespace DTOs.Invoice
 {
@@ -16,8 +17,10 @@ namespace DTOs.Invoice
         public string? Type { get; set; }
         public string? Note { get; set; }
         public string? RentingRequestId { get; set; }
-        public List<ContractPaymentDto> ContractPayments { get; set; }
+        public List<ContractPaymentDto>? ContractPayments { get; set; }
         public FirstRentalPaymentDto? FirstRentalPayment { get; set; }
         public string? PaymentConfirmationUrl { get; set; }
+        public List<ComponentReplacementTicketDto>? ComponentReplacementTickets { get; set; } = new List<ComponentReplacementTicketDto>();
+        public double? RefundShippingPrice { get; set; }
     }
 }
