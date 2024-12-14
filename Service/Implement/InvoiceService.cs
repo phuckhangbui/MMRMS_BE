@@ -283,7 +283,7 @@ namespace Service.Implement
                 if (refundInvoiceRequestDto.Amount <= 0)
                 {
                     var positiveAmount = Math.Abs(refundInvoiceRequestDto.Amount ?? 0);
-                    invoice = await _invoiceRepository.CreateInvoice(positiveAmount, InvoiceTypeEnum.Refund.ToString(), (int)contract.AccountSignId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
+                    invoice = await _invoiceRepository.CreateInvoice(positiveAmount, InvoiceTypeEnum.DamagePenalty.ToString(), (int)contract.AccountSignId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
                 }
                 else
                 {
