@@ -66,7 +66,8 @@ namespace Repository.Implement
             if (invoice != null)
             {
                 if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) ||
-                    invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
+                    invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()) || 
+                    invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))
                 {
                     var contractInvoice = _mapper.Map<ContractInvoiceDto>(invoice);
                     var contractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(invoiceId);
@@ -89,8 +90,7 @@ namespace Repository.Implement
                             contractInvoice.FirstRentalPayment = firstRentalPayment;
                         }
 
-
-                        if (invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()))
+                        if (invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()) || invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))
                         {
                             var contract = await ContractDao.Instance.GetContractById(contractPayment.Contract.ContractId);
                             if (contract != null)
