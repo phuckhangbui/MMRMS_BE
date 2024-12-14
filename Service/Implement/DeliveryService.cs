@@ -292,14 +292,24 @@ namespace Service.Implement
 
             var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
 
+            var originalDeliveryAmountPerContract = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
+
+            double actualDeliveryAmountPerContract = 0;
             double refundDeliveryAmountPerContract = 0;
 
             if (!staffUpdateDeliveryTaskDto.ContractDeliveries.IsNullOrEmpty()
                 && staffUpdateDeliveryTaskDto?.ContractDeliveries?.Where(c => c.IsSuccess).Count() > 0)
             {
-                refundDeliveryAmountPerContract =
+                actualDeliveryAmountPerContract =
                 NumberExtension.SquareMoneyToNearest1000(finalDeliveryAmountInThisTrip
                                             / staffUpdateDeliveryTaskDto.ContractDeliveries.Where(c => c.IsSuccess).Count());
+
+                if (actualDeliveryAmountPerContract < 0)
+                {
+                    actualDeliveryAmountPerContract = 0;
+                }
+
+                refundDeliveryAmountPerContract = (double)originalDeliveryAmountPerContract - actualDeliveryAmountPerContract;
 
                 if (refundDeliveryAmountPerContract < 0)
                 {
