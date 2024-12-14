@@ -3,6 +3,7 @@ using Common.Enum;
 using DTOs.Contract;
 using DTOs.Delivery;
 using DTOs.MachineTask;
+using DTOs.RentingRequest;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
@@ -290,32 +291,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
             }
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
-
-            var originalDeliveryAmountPerContract = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance;
-
-            double actualDeliveryAmountPerContract = 0;
-            double refundDeliveryAmountPerContract = 0;
-
-            if (!staffUpdateDeliveryTaskDto.ContractDeliveries.IsNullOrEmpty()
-                && staffUpdateDeliveryTaskDto?.ContractDeliveries?.Where(c => c.IsSuccess).Count() > 0)
-            {
-                actualDeliveryAmountPerContract =
-                NumberExtension.SquareMoneyToNearest1000(finalDeliveryAmountInThisTrip
-                                            / staffUpdateDeliveryTaskDto.ContractDeliveries.Where(c => c.IsSuccess).Count());
-
-                if (actualDeliveryAmountPerContract < 0)
-                {
-                    actualDeliveryAmountPerContract = 0;
-                }
-
-                refundDeliveryAmountPerContract = (double)originalDeliveryAmountPerContract - actualDeliveryAmountPerContract;
-
-                if (refundDeliveryAmountPerContract < 0)
-                {
-                    refundDeliveryAmountPerContract = 0;
-                }
-            }
+            double refundDeliveryAmountPerContract = this.GetRefundAmountPerContract(rentingRequest, staffUpdateDeliveryTaskDto, deliveryDetail);
 
             foreach (var contractDeliveryDto in staffUpdateDeliveryTaskDto.ContractDeliveries)
             {
@@ -372,20 +348,8 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.RentingRequest.RentingRequestNotFound);
             }
 
-            double refundDeliveryAmountPerContract = 0;
 
-            var finalDeliveryAmountInThisTrip = rentingRequest.ShippingPricePerKm * rentingRequest.ShippingDistance * deliveryDetail.DeliveryTask.DeliveryVehicleCounter;
-            if (!deliveryDetail.ContractDeliveries.IsNullOrEmpty() && deliveryDetail?.ContractDeliveries?.Count() > 0)
-            {
-
-                refundDeliveryAmountPerContract =
-                        NumberExtension.SquareMoneyToNearest1000(finalDeliveryAmountInThisTrip / deliveryDetail.ContractDeliveries.Count());
-
-                if (refundDeliveryAmountPerContract < 0)
-                {
-                    refundDeliveryAmountPerContract = 0;
-                }
-            }
+            double refundDeliveryAmountPerContract = this.GetRefundAmountPerContract(rentingRequest, staffUpdateDeliveryTaskDto, deliveryDetail);
 
             contractId = "";
 
@@ -426,6 +390,41 @@ namespace Service.Implement
              EnumExtensions.ToVietnamese(DeliveryTaskStatusEnum.Completed),
              deliveryDetail?.DeliveryTask?.DeliveryTaskId.ToString() ?? null
          );
+        }
+
+        private double GetRefundAmountPerContract(RentingRequestDto rentingRequest, StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, DeliveryTaskDetailDto deliveryDetail)
+        {
+            double actualDeliveryAmountPerContract = 0;
+            double refundDeliveryAmountPerContract = 0;
+
+            double? finalDeliveryAmountInThisTrip = rentingRequest?.ShippingPricePerKm * rentingRequest?.ShippingDistance * deliveryDetail?.DeliveryTask.DeliveryVehicleCounter;
+
+            double? originalDeliveryAmountPerContract = rentingRequest?.ShippingPricePerKm * rentingRequest?.ShippingDistance;
+
+
+            if (finalDeliveryAmountInThisTrip != null && originalDeliveryAmountPerContract != null)
+            {
+                if (!staffUpdateDeliveryTaskDto.ContractDeliveries.IsNullOrEmpty()
+                    && staffUpdateDeliveryTaskDto?.ContractDeliveries?.Where(c => c.IsSuccess).Count() > 0)
+                {
+                    actualDeliveryAmountPerContract = (double)finalDeliveryAmountInThisTrip
+                                                / staffUpdateDeliveryTaskDto.ContractDeliveries.Where(c => c.IsSuccess).Count();
+
+                    if (actualDeliveryAmountPerContract < 0)
+                    {
+                        actualDeliveryAmountPerContract = 0;
+                    }
+
+                    refundDeliveryAmountPerContract = (double)originalDeliveryAmountPerContract - actualDeliveryAmountPerContract;
+
+                    if (refundDeliveryAmountPerContract < 0)
+                    {
+                        refundDeliveryAmountPerContract = 0;
+                    }
+                }
+            }
+
+            return refundDeliveryAmountPerContract;
         }
 
         public async Task StaffFailDelivery(StaffFailDeliveryTaskDto staffFailDeliveryTask, int accountId)
