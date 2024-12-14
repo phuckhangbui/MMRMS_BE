@@ -615,6 +615,29 @@ namespace Repository.Implement
             return _mapper.Map<ContractPaymentDto>(fineContractPayment);
         }
 
+        public async Task<ContractPaymentDto> CreateDamagePenaltyContractPayment(string invoiceId, string contractId, double amount)
+        {
+            var contractPayment = new ContractPayment
+            {
+                ContractId = contractId,
+                DateCreate = DateTime.Now,
+                Status = ContractPaymentStatusEnum.Pending.ToString(),
+                Type = ContractPaymentTypeEnum.DamagePenalty.ToString(),
+                Title = GlobalConstant.DamagePenaltyContractPaymentTitle + contractId,
+                Amount = amount,
+                DateFrom = DateTime.Now,
+                DateTo = DateTime.Now.AddDays(7),
+                Period = 7,
+                DueDate = DateTime.Now.AddDays(7),
+                IsFirstRentalPayment = false,
+                InvoiceId = invoiceId
+            };
+
+            contractPayment = await ContractPaymentDao.Instance.CreateAsync(contractPayment);
+
+            return _mapper.Map<ContractPaymentDto>(contractPayment);
+        }
+
         public async Task<IEnumerable<ContractDto>> GetContractBySerialNumber(string serialNumber)
         {
             var list = await ContractDao.Instance.GetContractBySerialNumber(serialNumber);

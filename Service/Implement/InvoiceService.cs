@@ -196,17 +196,20 @@ namespace Service.Implement
                 {
                     foreach (var contractPayment in contractInvoice.ContractPayments)
                     {
-                        contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
-                        contractPayment.CustomerPaidDate = invoice.DatePaid;
+                        if (contractPayment.Status == ContractPaymentStatusEnum.Pending.ToString())
+                        {
+                            contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+                            contractPayment.CustomerPaidDate = invoice.DatePaid;
 
-                        await _contractRepository.UpdateContractPayment(contractPayment);
+                            await _contractRepository.UpdateContractPayment(contractPayment);
+                        }
 
                         if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Extend.ToString()))
                         {
                             await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Signed.ToString());
                         }
 
-                        if (invoice.DatePaid > contractPayment.DateFrom)
+                        if (invoice.DatePaid > contractPayment.DateFrom && !invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))
                         {
                             await _contractRepository.CreateFineContractPayment(contractPayment.ContractId);
                         }
@@ -277,16 +280,17 @@ namespace Service.Implement
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                var note = GlobalConstant.RefundInvoiceNote + refundInvoiceRequestDto.ContractId;
-
                 var invoice = new InvoiceDto();
                 if (refundInvoiceRequestDto.Amount <= 0)
                 {
+                    var note = GlobalConstant.DamagePenaltyInvoiceNote + refundInvoiceRequestDto.ContractId;
                     var positiveAmount = Math.Abs(refundInvoiceRequestDto.Amount ?? 0);
                     invoice = await _invoiceRepository.CreateInvoice(positiveAmount, InvoiceTypeEnum.DamagePenalty.ToString(), (int)contract.AccountSignId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
+                    var DamagePenaltyContractPayment = await _contractRepository.CreateDamagePenaltyContractPayment(invoice.InvoiceId, contract.ContractId, positiveAmount);
                 }
                 else
                 {
+                    var note = GlobalConstant.RefundInvoiceNote + refundInvoiceRequestDto.ContractId;
                     invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
                 }
 

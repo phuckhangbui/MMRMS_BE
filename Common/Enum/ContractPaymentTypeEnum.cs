@@ -6,6 +6,7 @@
         Rental,
         Refund,
         Extend,
-        Fine
+        Fine,
+        DamagePenalty
     }
 }
