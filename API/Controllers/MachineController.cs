@@ -72,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpGet("review/{machineIds}")]
-        public async Task<ActionResult<IEnumerable<MachineDto>>> GetMachinesReview([FromRoute] string machineIds)
+        public async Task<ActionResult<IEnumerable<MachineReviewDto>>> GetMachinesReview([FromRoute] string machineIds)
         {
             try
             {
