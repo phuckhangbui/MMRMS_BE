@@ -4,6 +4,7 @@
     {
         Rental,
         ComponentTicket,
-        Refund
+        Refund,
+        DamagePenalty
     }
 }

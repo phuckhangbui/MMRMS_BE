@@ -134,7 +134,9 @@ namespace Repository.Implement
                 Status = InvoiceStatusEnum.Pending.ToString(),
                 DateCreate = DateTime.Now,
                 AccountPaidId = accountPaidId,
-                Note = note
+                Note = note,
+                PaymentConfirmationUrl = string.Empty,
+                PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString()
             };
 
             if (type.Equals(InvoiceTypeEnum.Refund.ToString()))
