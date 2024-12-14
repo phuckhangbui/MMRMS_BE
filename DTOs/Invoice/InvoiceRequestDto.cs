@@ -17,7 +17,6 @@ namespace DTOs.Invoice
         [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Invoice.InvoiceAmountPositive)]
         public double? Amount { get; set; }
 
-        [Required]
         public string? PaymentConfirmationUrl { get; set; }
     }
 }
