@@ -874,10 +874,20 @@ namespace Service.Implement
             }
         }
 
-        public async Task SendNotificationToCustomerWhenManagerCreateRefundInvoice(int customerId, string contractId, string detailId)
+        public async Task SendNotificationToCustomerWhenManagerCreateRefundInvoice(string invoiceType, int customerId, string contractId, string detailId)
         {
-            string title = "Hoá đơn hoàn tiền đã được tạo";
-            string body = $"Hoá đơn hoàn tiền cho hợp đồng {contractId} đã được tạo.";
+            string title = "";
+            string body = "";
+            if (invoiceType != null && invoiceType.Equals(InvoiceTypeEnum.Refund.ToString()))
+            {
+                title = "Hoá đơn hoàn tiền đã được tạo";
+                body = $"Hoá đơn hoàn tiền cho hợp đồng {contractId} đã được tạo.";
+            }
+            else if (invoiceType != null && invoiceType.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))
+            {
+                title = "Hoá đơn tiền bồi thường đã được tạo";
+                body = $"Hoá đơn tiền bồi thường cho hợp đồng {contractId} đã được tạo.";
+            }
 
             string type = NotificationTypeEnum.Invoice.ToString();
             string detailIdName = NotificationDto.GetDetailIdName(type);

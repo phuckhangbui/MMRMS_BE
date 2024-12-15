@@ -136,7 +136,6 @@ namespace Repository.Implement
                 AccountPaidId = accountPaidId,
                 Note = note,
                 PaymentConfirmationUrl = string.Empty,
-                PaymentMethod = InvoicePaymentTypeEnum.Digital.ToString()
             };
 
             if (type.Equals(InvoiceTypeEnum.Refund.ToString()))
