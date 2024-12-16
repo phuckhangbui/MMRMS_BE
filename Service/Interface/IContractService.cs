@@ -11,5 +11,6 @@ namespace Service.Interface
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
         Task<bool> EndContract(string contractId);
         Task<bool> ExtendContract(string contractId, ContractExtendDto contractExtendDto);
+        Task CancelExtendContract(string extendContractId);
     }
 }

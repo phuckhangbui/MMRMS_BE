@@ -207,6 +207,8 @@ namespace Service.Implement
                         if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Extend.ToString()))
                         {
                             await _contractRepository.UpdateContractStatus(contractPayment.ContractId, ContractStatusEnum.Signed.ToString());
+
+                            await _contractRepository.UpdateContractDepositPriceWhenExtendContract(contractPayment.ContractId);
                         }
 
                         if (invoice.DatePaid > contractPayment.DateFrom && !invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))

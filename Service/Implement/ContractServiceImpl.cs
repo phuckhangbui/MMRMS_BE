@@ -236,5 +236,29 @@ namespace Service.Implement
                 await _machineSerialNumberRepository.UpdateRentDaysCounterMachineSerialNumber(machineSerialNumber, accountId);
             }
         }
+
+        public async Task CancelExtendContract(string extendContractId)
+        {
+            var extendContract = await _contractRepository.GetContractById(extendContractId);
+            if (extendContract == null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (!extendContract.Status!.Equals(ContractStatusEnum.NotSigned.ToString())) 
+            {
+                throw new ServiceException(MessageConstant.Contract.ExtendContractNotValidToCancel);
+            }
+
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                await _contractRepository.CancelExtendContractWhenNotSigned(extendContractId);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(ex.Message);
+            }
+        }
     }
 }

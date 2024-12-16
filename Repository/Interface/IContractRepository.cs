@@ -30,5 +30,7 @@ namespace Repository.Interface
         Task<ContractPaymentDto> CreateFineContractPayment(string contractId);
         Task<IEnumerable<ContractDto>> GetContractBySerialNumber(string serialNumber);
         Task<ContractPaymentDto> CreateDamagePenaltyContractPayment(string invoiceId, string contractId, double amount);
+        Task UpdateContractDepositPriceWhenExtendContract(string extendContractId);
+        Task CancelExtendContractWhenNotSigned(string extendContractId);
     }
 }
