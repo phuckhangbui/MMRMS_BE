@@ -250,10 +250,16 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ExtendContractNotValidToCancel);
             }
 
+            if (extendContract.BaseContractId != null)
+            {
+                throw new ServiceException(MessageConstant.Contract.ExtendContractNotValidToCancel);
+            }
+
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 await _contractRepository.CancelExtendContractWhenNotSigned(extendContractId);
+                scope.Complete();
             }
             catch (Exception ex)
             {

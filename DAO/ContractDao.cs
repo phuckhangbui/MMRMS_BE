@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -203,6 +204,50 @@ namespace DAO
             {
                 var list = await context.Contracts.Where(c => c.SerialNumber == serialNumber).ToListAsync();
                 return list;
+            }
+        }
+
+        public async Task CancelExtendContract(string extendContractId)
+        {
+            using var context = new MmrmsContext();
+            try
+            {
+                var extendContract = await context.Contracts
+                    .Include(c => c.ContractPayments)
+                    .ThenInclude(cp => cp.Invoice)
+                    .FirstOrDefaultAsync(c => c.ContractId == extendContractId);
+
+                if (extendContract != null)
+                {
+                    extendContract.Status = ContractStatusEnum.Canceled.ToString();
+
+                    foreach (var contractPayment in extendContract.ContractPayments)
+                    {
+                        contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
+
+                        if (contractPayment.Invoice != null)
+                        {
+                            contractPayment.Invoice.Status = InvoiceStatusEnum.Canceled.ToString();
+                        }
+                    }
+
+                    context.Contracts.Update(extendContract);
+
+                    var baseContract = await context.Contracts
+                        .FirstOrDefaultAsync(c => c.ContractId.Equals(extendContract.BaseContractId));
+
+                    if (baseContract != null)
+                    {
+                        baseContract.IsExtended = false;
+                        context.Contracts.Update(extendContract);
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }
