@@ -134,5 +134,24 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("{extendContractId}/cancel-extend-contract")]
+        [Authorize(policy: "Customer")]
+        public async Task<ActionResult> CancelExtendContract(string extendContractId)
+        {
+            try
+            {
+                await _contractService.CancelExtendContract(extendContractId);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
