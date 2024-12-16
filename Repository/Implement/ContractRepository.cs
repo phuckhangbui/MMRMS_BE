@@ -667,24 +667,7 @@ namespace Repository.Implement
 
         public async Task CancelExtendContractWhenNotSigned(string extendContractId)
         {
-            var extendContract = await ContractDao.Instance.GetContractById(extendContractId);
-            if (extendContract != null && 
-                extendContract.Status!.Equals(ContractStatusEnum.NotSigned.ToString()) 
-                && extendContract.BaseContractId != null)
-            {
-                var baseContract = await ContractDao.Instance.GetContractById(extendContract.BaseContractId);
-
-                if (baseContract != null)
-                {
-                    //Extend contract
-                    extendContract.Status = ContractStatusEnum.Canceled.ToString();
-                    await ContractDao.Instance.UpdateAsync(extendContract);
-
-                    //Base contract
-                    baseContract.IsExtended = false;
-                    await ContractDao.Instance.UpdateAsync(baseContract);
-                }
-            }
+            await ContractDao.Instance.CancelExtendContract(extendContractId);
         }
     }
 }
