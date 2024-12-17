@@ -26,7 +26,7 @@ namespace Service.Implement
         private readonly IMembershipRankService _membershipRankService;
         private readonly IBackground _background;
         private readonly IHubContext<InvoiceHub> _invoiceHub;
-
+        private readonly ICloudinaryService _cloudinaryService;
 
         public InvoiceService(IInvoiceRepository invoiceRepository,
             IPayOSService payOSService,
@@ -38,7 +38,8 @@ namespace Service.Implement
             INotificationService notificationService,
             IMembershipRankService membershipRankService,
             IBackground background,
-            IHubContext<InvoiceHub> invoiceHub)
+            IHubContext<InvoiceHub> invoiceHub,
+            ICloudinaryService cloudinaryService)
         {
             _invoiceRepository = invoiceRepository;
             _payOSService = payOSService;
@@ -51,6 +52,7 @@ namespace Service.Implement
             _membershipRankService = membershipRankService;
             _background = background;
             _invoiceHub = invoiceHub;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -287,13 +289,16 @@ namespace Service.Implement
                 {
                     var note = GlobalConstant.DamagePenaltyInvoiceNote + refundInvoiceRequestDto.ContractId;
                     var positiveAmount = Math.Abs(refundInvoiceRequestDto.Amount ?? 0);
-                    invoice = await _invoiceRepository.CreateInvoice(positiveAmount, InvoiceTypeEnum.DamagePenalty.ToString(), (int)contract.AccountSignId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
+                    invoice = await _invoiceRepository.CreateInvoice(positiveAmount, InvoiceTypeEnum.DamagePenalty.ToString(), (int)contract.AccountSignId, note, string.Empty);
                     var DamagePenaltyContractPayment = await _contractRepository.CreateDamagePenaltyContractPayment(invoice.InvoiceId, contract.ContractId, positiveAmount);
                 }
                 else
                 {
                     var note = GlobalConstant.RefundInvoiceNote + refundInvoiceRequestDto.ContractId;
-                    invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note, refundInvoiceRequestDto.PaymentConfirmationUrl);
+
+                    var paymentConfirmationUrl = await _cloudinaryService.UploadImageToCloudinary(refundInvoiceRequestDto.PaymentConfirmationUrl!);
+
+                    invoice = await _invoiceRepository.CreateInvoice(refundInvoiceRequestDto.Amount ?? 0, InvoiceTypeEnum.Refund.ToString(), accountId, note, paymentConfirmationUrl);
                 }
 
                 await _contractRepository.SetInvoiceForContractPayment(contract.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Refund.ToString());
