@@ -52,11 +52,7 @@ namespace DTOs.Machine
         [Required(ErrorMessage = MessageConstant.MachineAttribute.SpecsRequired)]
         public string Specifications { get; set; }
 
-
-
         public string? Unit { get; set; }
-
-
     }
 
     public class CreateMachineTermDto

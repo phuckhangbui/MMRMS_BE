@@ -27,10 +27,11 @@ namespace Service.Implement
         private readonly IMachineSerialNumberRepository _machineSerialNumberRepository;
         private readonly IMachineRepository _machineRepository;
         private readonly ISettingsService _settingsService;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly IHubContext<DeliveryTaskHub> _deliveryTaskHub;
         private readonly IBackground _background;
 
-        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background, IMachineRepository machineRepository, ISettingsService settingsService)
+        public DeliveryService(IDeliveryTaskRepository DeliveryTaskRepository, IMachineTaskRepository MachineTaskRepository, IAccountRepository accountRepository, IHubContext<DeliveryTaskHub> DeliveryTaskHub, INotificationService notificationService, IContractRepository contractRepository, IRentingRequestRepository rentingRequestRepository, IMachineSerialNumberRepository machineSerialNumberRepository, IBackground background, IMachineRepository machineRepository, ISettingsService settingsService, ICloudinaryService cloudinaryService)
         {
             _deliveryTaskRepository = DeliveryTaskRepository;
             _machineTaskRepository = MachineTaskRepository;
@@ -43,6 +44,7 @@ namespace Service.Implement
             _background = background;
             _machineRepository = machineRepository;
             _settingsService = settingsService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task CreateDeliveryTask(int managerId, CreateDeliveryTaskDto createDeliveryTaskDto)
@@ -259,6 +261,27 @@ namespace Service.Implement
             {
                 try
                 {
+                    var base64Images = staffUpdateDeliveryTaskDto.ContractDeliveries
+                        .Where(contractDelivery => !string.IsNullOrEmpty(contractDelivery.PictureUrl))
+                        .Select(contractDelivery => contractDelivery.PictureUrl)
+                        .ToArray();
+
+                    if (base64Images.Length == 0)
+                    {
+                        throw new ServiceException(MessageConstant.DeliveryTask.ImageIsRequired);
+                    }
+
+                    var uploadedImageUrls = await _cloudinaryService.UploadImageToCloudinary(base64Images);
+
+                    var contractDeliveriesList = staffUpdateDeliveryTaskDto.ContractDeliveries.ToList();
+
+                    for (int i = 0; i < uploadedImageUrls.Length; i++)
+                    {
+                        contractDeliveriesList[i].PictureUrl = uploadedImageUrls[i];
+                    }
+
+                    staffUpdateDeliveryTaskDto.ContractDeliveries = contractDeliveriesList;
+
                     if (staffUpdateDeliveryTaskDto.ContractDeliveries.All(c => c.IsSuccess))
                     {
                         await this.CompleteAllDeliveryInTask(staffUpdateDeliveryTaskDto, deliveryDetail, accountId);
@@ -280,6 +303,8 @@ namespace Service.Implement
 
         private async Task CompletePartialDeliveryInTask(StaffUpdateDeliveryTaskDto staffUpdateDeliveryTaskDto, DeliveryTaskDetailDto deliveryDetail, int accountId)
         {
+
+
             await _deliveryTaskRepository.MarkDeliveryTaskAsFail(staffUpdateDeliveryTaskDto);
 
             string contractId = deliveryDetail.ContractDeliveries.FirstOrDefault().ContractId;
@@ -304,6 +329,8 @@ namespace Service.Implement
 
                     if (contractDeliveryDto.IsSuccess)
                     {
+
+
                         await _contractRepository.UpdateContractStatusToRenting(contractId, refundDeliveryAmountPerContract);
                         await _machineSerialNumberRepository.UpdateStatus(contractDelivery.SerialNumber, MachineSerialNumberStatusEnum.Renting.ToString(), accountId);
 
