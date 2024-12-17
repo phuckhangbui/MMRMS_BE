@@ -250,7 +250,7 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ExtendContractNotValidToCancel);
             }
 
-            if (extendContract.BaseContractId != null)
+            if (extendContract.BaseContractId == null)
             {
                 throw new ServiceException(MessageConstant.Contract.ExtendContractNotValidToCancel);
             }

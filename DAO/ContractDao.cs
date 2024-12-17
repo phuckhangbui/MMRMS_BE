@@ -219,6 +219,8 @@ namespace DAO
 
                 if (extendContract != null)
                 {
+                    var baseContractId = extendContract.BaseContractId;
+                    extendContract.BaseContractId = null;
                     extendContract.Status = ContractStatusEnum.Canceled.ToString();
 
                     foreach (var contractPayment in extendContract.ContractPayments)
@@ -234,7 +236,7 @@ namespace DAO
                     context.Contracts.Update(extendContract);
 
                     var baseContract = await context.Contracts
-                        .FirstOrDefaultAsync(c => c.ContractId.Equals(extendContract.BaseContractId));
+                        .FirstOrDefaultAsync(c => c.ContractId.Equals(baseContractId));
 
                     if (baseContract != null)
                     {
