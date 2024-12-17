@@ -120,6 +120,7 @@ namespace DAO
                     try
                     {
                         var product = await context.Machines.Include(p => p.Category)
+                                            .Include(p => p.MachineTerms)
                                             .Include(p => p.MachineImages)
                                             .Include(p => p.MachineAttributes)
                                             .Include(p => p.MachineComponents)
@@ -147,9 +148,17 @@ namespace DAO
 
                         }
 
+                        foreach (var term in product.MachineTerms)
+                        {
+                            DbSet<MachineTerm> _dbSet = context.Set<MachineTerm>();
+                            _dbSet.Remove(term);
+
+                        }
+
                         product.MachineComponents = null;
                         product.MachineImages = null;
                         product.MachineAttributes = null;
+                        product.MachineTerms = null;
 
                         DbSet<Machine> dbSet = context.Set<Machine>();
                         dbSet.Remove(product);

@@ -353,13 +353,31 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-
             if (imageList.IsNullOrEmpty())
             {
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
 
-            await _machineRepository.UpdateMachineImage(machineId, imageList);
+            var base64Images = imageList
+                       .Where(i => !string.IsNullOrEmpty(i.Url))
+                       .Select(i => i.Url)
+                       .ToArray();
+
+            if (base64Images.Length == 0)
+            {
+                throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
+            }
+
+            var uploadedImageUrls = await _cloudinaryService.UploadImageToCloudinary(base64Images);
+
+            var newImageList = imageList.ToList();
+
+            for (int i = 0; i < uploadedImageUrls.Length; i++)
+            {
+                newImageList[i].Url = uploadedImageUrls[i];
+            }
+
+            await _machineRepository.UpdateMachineImage(machineId, newImageList);
 
         }
 
