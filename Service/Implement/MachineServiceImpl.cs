@@ -19,9 +19,10 @@ namespace Service.Implement
         private readonly ICategoryRepository _categoryRepository;
         private readonly IContractRepository _contractRepository;
         private readonly ISettingsService _settingsService;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
 
-        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService, IMachineSerialNumberRepository machineSerialNumberRepository, IContractRepository contractRepository)
+        public MachineServiceImpl(IMachineRepository machineRepository, IComponentRepository componentRepository, ICategoryRepository categoryRepository, IMapper mapper, ISettingsService settingsService, IMachineSerialNumberRepository machineSerialNumberRepository, IContractRepository contractRepository, ICloudinaryService cloudinaryService)
         {
             _machineRepository = machineRepository;
             _componentRepository = componentRepository;
@@ -30,6 +31,7 @@ namespace Service.Implement
             _settingsService = settingsService;
             _machineSerialNumberRepository = machineSerialNumberRepository;
             _contractRepository = contractRepository;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IEnumerable<MachineViewDto>> GetMachineList()
@@ -173,6 +175,22 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
+
+            var base64Images = createMachineDto.ImageUrls
+                                         .Where(img => !string.IsNullOrEmpty(img.Url))
+                                         .Select(img => img.Url)
+                                         .ToArray();
+
+            if (base64Images.Length == 0)
+            {
+                throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
+            }
+
+            var uploadedImageUrls = await _cloudinaryService.UploadImageToCloudinary(base64Images);
+
+            createMachineDto.ImageUrls = uploadedImageUrls
+                                        .Select(url => new ImageList { Url = url })
+                                        .ToList();
 
             var productDto = await _machineRepository.CreateMachine(createMachineDto);
 
@@ -335,13 +353,31 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Machine.MachineNotFound);
             }
 
-
             if (imageList.IsNullOrEmpty())
             {
                 throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
             }
 
-            await _machineRepository.UpdateMachineImage(machineId, imageList);
+            var base64Images = imageList
+                       .Where(i => !string.IsNullOrEmpty(i.Url))
+                       .Select(i => i.Url)
+                       .ToArray();
+
+            if (base64Images.Length == 0)
+            {
+                throw new ServiceException(MessageConstant.Machine.ImageIsRequired);
+            }
+
+            var uploadedImageUrls = await _cloudinaryService.UploadImageToCloudinary(base64Images);
+
+            var newImageList = imageList.ToList();
+
+            for (int i = 0; i < uploadedImageUrls.Length; i++)
+            {
+                newImageList[i].Url = uploadedImageUrls[i];
+            }
+
+            await _machineRepository.UpdateMachineImage(machineId, newImageList);
 
         }
 

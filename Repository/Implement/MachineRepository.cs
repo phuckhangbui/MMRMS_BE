@@ -268,7 +268,6 @@ namespace Repository.Implement
 
         public async Task UpdateMachineImage(int productId, List<ImageList> imageList)
         {
-            var product = await MachineDao.Instance.GetMachine(productId);
             bool isFirstImage = true;
 
             var productImages = new List<MachineImage>();
