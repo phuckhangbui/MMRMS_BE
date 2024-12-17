@@ -173,8 +173,8 @@ namespace Service.Implement
 
                     await _contractRepository.SetInvoiceForContractPayment(contractDto.ContractId, invoice.InvoiceId, ContractPaymentTypeEnum.Extend.ToString());
 
-                    TimeSpan timeUntilEnd = (TimeSpan)(contractDto.DateEnd - DateTime.Now);
-                    _background.ProcessExtendContractJob(contractDto.ContractId, timeUntilEnd);
+                    TimeSpan timeUntilStart = (TimeSpan)(contractDto.DateStart - DateTime.Now);
+                    _background.ProcessExtendContractJob(contractDto.ContractId, timeUntilStart);
 
                     await _notificationService.SendNotificationToManagerWhenCustomerExtendContract(contractId, contractId);
 
