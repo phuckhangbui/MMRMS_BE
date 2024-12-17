@@ -143,18 +143,7 @@ namespace Service
                         await CompleteContractOnTime(extendContract.BaseContractId);
 
                         //Extend contract
-                        await _contractRepository.UpdateContractStatus(contractId, ContractStatusEnum.Canceled.ToString());
-                        foreach (var contractPayment in extendContract.ContractPayments)
-                        {
-                            contractPayment.Status = ContractPaymentStatusEnum.Canceled.ToString();
-                            await _contractRepository.UpdateContractPayment(contractPayment);
-
-                            var invoice = await _invoiceRepository.GetInvoice(contractPayment.InvoiceId);
-                            if (invoice != null)
-                            {
-                                await _invoiceRepository.UpdateInvoiceStatus(invoice.InvoiceId, InvoiceStatusEnum.Canceled.ToString());
-                            }
-                        }
+                        await _contractRepository.CancelExtendContractWhenNotSigned(extendContract.ContractId);
                     }
 
                     if (extendContract.Status.Equals(ContractStatusEnum.Signed.ToString()))
