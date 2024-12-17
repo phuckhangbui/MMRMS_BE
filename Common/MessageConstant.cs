@@ -315,6 +315,7 @@
             public const string ContractDeliveryNotFound = "Mã hợp đồng giao hàng này không tìm thấy";
             public const string VehicleIsBiggerThanNumberOfMachine = "Số lượng xe đang lớn hơn số lượng máy";
             public const string MachineSerialNumberNotInAvailableStatus = "Máy này chưa thể giao do đang ở trạng thái: ";
+            public const string ImageIsRequired = "Ảnh là bắt buộc";
 
             //DTO
             public const string DeliveryTaskIdRequired = "Mã giao hàng là bắt buộc";
