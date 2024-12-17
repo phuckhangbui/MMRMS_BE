@@ -178,6 +178,45 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost("images/1-image-string")]
+        public async Task<ActionResult> UploadImage([FromBody] Image image)
+        {
+            try
+            {
+                string imageUrl = await _cloudinaryService.UploadImageToCloudinary(image.Base64Image[0]);
+
+                return Ok(new { Url = imageUrl });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("images/multi-image-string")]
+        public async Task<ActionResult> UploadImages([FromBody] Image image)
+        {
+            try
+            {
+                string[] imageUrls = await _cloudinaryService.UploadImageToCloudinary(image.Base64Image);
+
+                return Ok(new { Url = imageUrls });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         public class FileViewModel
         {
             public string? Name { get; set; }
@@ -190,6 +229,11 @@ namespace API.Controllers
             public string Title { get; set; }
             public string Body { get; set; }
             public Dictionary<string, string> Data { get; set; }
+        }
+
+        public class Image
+        {
+            public string[] Base64Image { get; set; }
         }
     }
 }

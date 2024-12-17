@@ -8,6 +8,8 @@ namespace Service.Interface
         Task<ImageUploadResult> AddPhotoAsync(IFormFile file);
         Task<DeletionResult> DeletePhotoAsync(string publicId);
         Task<string> UploadImageToCloudinary(IFormFile imageUrl);
+        Task<string> UploadImageToCloudinary(string base64String);
 
+        Task<string[]> UploadImageToCloudinary(string[] base64String);
     }
 }
