@@ -170,7 +170,7 @@ namespace Service.Implement
 
                             break;
 
-                        case var type when type.Equals(InvoiceTypeEnum.Rental.ToString()):
+                        case var type when type.Equals(InvoiceTypeEnum.Rental.ToString()) || type.Equals(InvoiceTypeEnum.Extend.ToString()):
                             await ProcessContractInvoice(invoice);
                             break;
                     }
