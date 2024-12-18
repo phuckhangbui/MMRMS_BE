@@ -219,6 +219,7 @@
             public const string ContractNotBelongToThisAccount = "Hợp đồng này không thuộc tài khoản đăng nhập hiện tại";
             public const string ExtendContractNotValidToCancel = "Hợp đồng gia hạn này không thể hủy do đã ký";
             public const string ContractNotBelongToCurrentAccount = "Hợp đồng không thuộc tài khoản hiện tại.";
+            public const string ContractCanNotEnd = "Hợp đồng không thể hủy do hợp đồng gia hạn đã ký";
 
             //DTO
             public const string ContractNameRequired = "Tên hợp đồng là bắt buộc.";
