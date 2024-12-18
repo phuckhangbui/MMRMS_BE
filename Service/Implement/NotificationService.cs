@@ -1017,5 +1017,47 @@ namespace Service.Implement
 
             };
         }
+
+        public async Task SendNotificationToCustomerWhenSystemCancelRentingRequest(int customerId, string rentingRequestId, string detailId)
+        {
+            string title = "Yêu cầu thuê máy của bạn đã bị hủy";
+            string body = "Yêu cầu thuê máy với mã đơn '" + rentingRequestId + "' đã quá hạn xử lý và bị hủy tự động.";
+
+            string type = NotificationTypeEnum.RentingRequest.ToString();
+            string detailIdName = NotificationDto.GetDetailIdName(type);
+            var account = await _accountRepository.GetAccounById(customerId);
+
+            try
+            {
+                var noti = new CreateNotificationDto
+                {
+                    AccountReceiveId = customerId,
+                    NotificationTitle = title,
+                    MessageNotification = body,
+                    NotificationType = type,
+                    DetailIdName = detailIdName,
+                    DetailId = detailId,
+                };
+
+                var notificationDto = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                    {
+                        { "type", type.ToString() },
+                        { "accountId", customerId.ToString() },
+                        { "detailIdName", noti.DetailIdName},
+                        { "detailId", noti.DetailId},
+                        {"notificationId", notificationDto.NotificationId.ToString() }
+                    };
+
+                if (!account.FirebaseMessageToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(account.FirebaseMessageToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
     }
 }
