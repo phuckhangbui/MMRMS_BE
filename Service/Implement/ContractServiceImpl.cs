@@ -80,12 +80,17 @@ namespace Service.Implement
             return await _contractRepository.GetContractsForCustomer(customerId, status);
         }
 
-        public async Task<bool> EndContract(string contractId)
+        public async Task<bool> EndContract(int accountId, string contractId)
         {
             var contract = await _contractRepository.GetContractById(contractId);
             if (contract == null)
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (contract.AccountSignId != accountId)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotBelongToCurrentAccount);
             }
 
             if (contract.Status != ContractStatusEnum.Renting.ToString())
@@ -139,12 +144,17 @@ namespace Service.Implement
             return contract;
         }
 
-        public async Task<bool> ExtendContract(string contractId, ContractExtendDto contractExtendDto)
+        public async Task<bool> ExtendContract(int accountId, string contractId, ContractExtendDto contractExtendDto)
         {
             var baseContract = await _contractRepository.GetContractById(contractId);
             if (baseContract == null)
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotFound);
+            }
+
+            if (baseContract.AccountSignId != accountId)
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractNotBelongToCurrentAccount);
             }
 
             if (!baseContract.Status.Equals(ContractStatusEnum.Renting.ToString()))
