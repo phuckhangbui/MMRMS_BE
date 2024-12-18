@@ -33,5 +33,6 @@ namespace Repository.Interface
         Task SendNotificationToManagerWhenCancelCheckRequest(string machineCheckRequestId, string contractId, ContractAddressDto contractAddress);
         Task SendNotificationToCustomerWhenLatePayment(int customerId, string contractId, DateTime dateFrom, string detailId);
         Task SendNotificationToManagersWhenNewCustomerNeedConfirmation(AccountDto accountDto);
+        Task SendNotificationToCustomerWhenSystemCancelRentingRequest(int customerId, string rentingRequestId, string detailId);
     }
 }

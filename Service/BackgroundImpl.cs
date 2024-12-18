@@ -225,12 +225,19 @@ namespace Service
 
             if (canCancel)
             {
+                int customerId = 0;
                 foreach (var contract in contracts)
                 {
+                    customerId = contract.AccountSignId ?? 0;
                     await _machineSerialNumberRepository.UpdateStatus(contract.SerialNumber, MachineSerialNumberStatusEnum.Available.ToString(), (int)contract.AccountSignId, null, null);
                 }
 
                 await _rentingRequestRepository.CancelRentingRequest(rentingRequestId);
+
+                if (customerId != 0)
+                {
+                    await _notificationService.SendNotificationToCustomerWhenSystemCancelRentingRequest(customerId, rentingRequestId, rentingRequestId);
+                }
             }
         }
 
