@@ -9,8 +9,8 @@ namespace Service.Interface
         Task<ContractDetailDto> GetContractDetail(string contractId, int accountId);
         Task<IEnumerable<ContractDto>> GetContractsForCustomer(int customerId, string? status);
         Task<IEnumerable<ContractDetailDto>> GetContractDetailListByRentingRequestId(string rentingRequestId);
-        Task<bool> EndContract(string contractId);
-        Task<bool> ExtendContract(string contractId, ContractExtendDto contractExtendDto);
+        Task<bool> EndContract(int accountId, string contractId);
+        Task<bool> ExtendContract(int accountId, string contractId, ContractExtendDto contractExtendDto);
         Task CancelExtendContract(string extendContractId);
     }
 }

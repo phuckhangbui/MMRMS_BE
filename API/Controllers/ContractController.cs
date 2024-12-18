@@ -101,7 +101,8 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _contractService.EndContract(contractId);
+                int accountId = GetLoginAccountId();
+                var result = await _contractService.EndContract(accountId, contractId);
                 if (result) return Ok(MessageConstant.Contract.EndContractSuccessfully);
                 return BadRequest(MessageConstant.Contract.EndContractFail);
             }
@@ -121,7 +122,8 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _contractService.ExtendContract(contractId, contractExtendDto);
+                int accountId = GetLoginAccountId();
+                var result = await _contractService.ExtendContract(accountId, contractId, contractExtendDto);
                 if (result) return Ok(MessageConstant.Contract.ExtendContractSuccessfully);
                 return BadRequest(MessageConstant.Contract.ExtendContractFail);
             }
