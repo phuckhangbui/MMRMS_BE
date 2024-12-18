@@ -93,6 +93,12 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Contract.ContractNotBelongToCurrentAccount);
             }
 
+            var extendContract = await _contractRepository.GetExtendContract(contractId);
+            if (extendContract != null && extendContract.Status!.Equals(ContractStatusEnum.Signed.ToString())) 
+            {
+                throw new ServiceException(MessageConstant.Contract.ContractCanNotEnd);
+            }
+
             if (contract.Status != ContractStatusEnum.Renting.ToString())
             {
                 throw new ServiceException(MessageConstant.Contract.ContractNotValidToEnd);
@@ -114,8 +120,7 @@ namespace Service.Implement
                 await UpdateRentDaysCounterMachineSerialNumber(contract.SerialNumber, actualRentPeriod, (int)contract.AccountSignId);
 
                 //Extend contract
-                var extendContract = await _contractRepository.GetExtendContract(contractId);
-                if (extendContract != null)
+                if (extendContract != null && extendContract.Status.Equals(ContractStatusEnum.NotSigned.ToString()))
                 {
                     await _contractRepository.EndContract(extendContract.ContractId, ContractStatusEnum.Canceled.ToString(), 0, currentDate);
                 }
