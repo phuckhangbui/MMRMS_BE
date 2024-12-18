@@ -67,7 +67,8 @@ namespace Repository.Implement
             {
                 if (invoice.Type!.Equals(InvoiceTypeEnum.Rental.ToString()) ||
                     invoice.Type.Equals(InvoiceTypeEnum.Refund.ToString()) || 
-                    invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()))
+                    invoice.Type.Equals(InvoiceTypeEnum.DamagePenalty.ToString()) ||
+                    invoice.Type.Equals(InvoiceTypeEnum.Extend.ToString()))
                 {
                     var contractInvoice = _mapper.Map<ContractInvoiceDto>(invoice);
                     var contractPayments = await ContractPaymentDao.Instance.GetContractPaymentsByInvoiceId(invoiceId);
