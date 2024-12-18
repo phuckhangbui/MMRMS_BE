@@ -1,4 +1,5 @@
 ﻿using BusinessObject;
+using Common;
 using Common.Enum;
 using Microsoft.EntityFrameworkCore;
 
@@ -204,6 +205,84 @@ namespace DAO
             {
                 var list = await context.Contracts.Where(c => c.SerialNumber == serialNumber).ToListAsync();
                 return list;
+            }
+        }
+
+        public async Task UpdateContractWhenSignedExtendContract(string extendContractId)
+        {
+            using var context = new MmrmsContext();
+            try
+            {
+                var extendContract = await context.Contracts
+                    .Include(c => c.ContractPayments)
+                    .ThenInclude(cp => cp.Invoice)
+                    .FirstOrDefaultAsync(c => c.ContractId == extendContractId);
+
+                if (extendContract != null)
+                {
+                    var baseContractId = extendContract.BaseContractId;
+                    var baseContract = await context.Contracts
+                        .Include(c => c.ContractPayments)
+                        .FirstOrDefaultAsync(c => c.ContractId.Equals(baseContractId));
+
+                    if (baseContract != null)
+                    {
+                        extendContract.DepositPrice = baseContract.DepositPrice;
+                        extendContract.RefundShippingPrice = baseContract.RefundShippingPrice;
+
+                        foreach (var contractPayment in baseContract.ContractPayments)
+                        {
+                            if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Deposit.ToString()))
+                            {
+                                contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+
+                                var depositContractPayment = new ContractPayment
+                                {
+                                    ContractId = extendContractId,
+                                    DateCreate = DateTime.Now,
+                                    Status = ContractPaymentStatusEnum.Paid.ToString(),
+                                    Type = ContractPaymentTypeEnum.Deposit.ToString(),
+                                    Title = GlobalConstant.DepositContractPaymentTitle + extendContractId,
+                                    Amount = contractPayment.Amount,
+                                    DateFrom = extendContract.DateStart,
+                                    DateTo = extendContract.DateEnd,
+                                    Period = extendContract.RentPeriod,
+                                    DueDate = extendContract.DateStart,
+                                    IsFirstRentalPayment = false,
+                                };
+                                extendContract.ContractPayments.Add(depositContractPayment);
+                            }
+
+                            if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Refund.ToString()))
+                            {
+                                contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+
+                                var refundContractPayment = new ContractPayment
+                                {
+                                    ContractId = extendContractId,
+                                    DateCreate = DateTime.Now,
+                                    Status = ContractPaymentStatusEnum.Pending.ToString(),
+                                    Type = ContractPaymentTypeEnum.Refund.ToString(),
+                                    Title = GlobalConstant.RefundContractPaymentTitle + extendContractId,
+                                    Amount = contractPayment.Amount,
+                                    DateFrom = extendContract.DateEnd,
+                                    DateTo = extendContract.DateEnd,
+                                    Period = extendContract.RentPeriod,
+                                    DueDate = extendContract.DateEnd,
+                                    IsFirstRentalPayment = false,
+                                };
+                                extendContract.ContractPayments.Add(refundContractPayment);
+                            }
+                        }
+
+                        context.Contracts.Update(extendContract);
+                        await context.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 

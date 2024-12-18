@@ -19,7 +19,7 @@
         public const string RentalContractPaymentTitle = "Thanh toán tiền thuê cho hợp đồng ";
         public const string RefundContractPaymentTitle = "Hoàn trả tiền đặt cọc cho hợp đồng ";
         public const string DamagePenaltyContractPaymentTitle = "Bồi thường tiền cho hợp đồng ";
-        public const string ExtendContractPaymentTitle = "Thanh toán tiền thuê gia hạn cho hợp đồng ";
+        public const string ExtendContractPaymentTitle = "Thanh toán tiền gia hạn thuê cho hợp đồng ";
         public const string FineContractPaymentTitle = "Tiền phạt do đóng tiền thuê trễ hạn cho hợp đồng ";
         public const string RefundInvoiceNote = "Hóa đơn hoàn trả tiền đặt cọc cho hợp đồng ";
         public const string DamagePenaltyInvoiceNote = "Hóa đơn tiền bồi thường cho hợp đồng ";

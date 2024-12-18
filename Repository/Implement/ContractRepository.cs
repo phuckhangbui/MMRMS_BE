@@ -647,22 +647,7 @@ namespace Repository.Implement
 
         public async Task UpdateContractDepositPriceWhenExtendContract(string extendContractId)
         {
-            var extendContract = await ContractDao.Instance.GetContractById(extendContractId);
-            if (extendContract != null && extendContract.BaseContractId != null)
-            {
-                var baseContract = await ContractDao.Instance.GetContractById(extendContract.BaseContractId);
-
-                if (baseContract != null)
-                {
-                    //Extend contract
-                    extendContract.DepositPrice = baseContract.DepositPrice;
-                    await ContractDao.Instance.UpdateAsync(extendContract);
-
-                    //Base contract
-                    baseContract.DepositPrice = 0;
-                    await ContractDao.Instance.UpdateAsync(baseContract);
-                }
-            }
+            await ContractDao.Instance.UpdateContractWhenSignedExtendContract(extendContractId);
         }
 
         public async Task CancelExtendContractWhenNotSigned(string extendContractId)
