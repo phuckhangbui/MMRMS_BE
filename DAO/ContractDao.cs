@@ -273,6 +273,27 @@ namespace DAO
                                 };
                                 extendContract.ContractPayments.Add(refundContractPayment);
                             }
+
+                            if (contractPayment.Type.Equals(ContractPaymentTypeEnum.Fine.ToString()))
+                            {
+                                contractPayment.Status = ContractPaymentStatusEnum.Paid.ToString();
+
+                                var fineContractPayment = new ContractPayment
+                                {
+                                    ContractId = extendContractId,
+                                    DateCreate = DateTime.Now,
+                                    Status = ContractPaymentStatusEnum.Pending.ToString(),
+                                    Type = ContractPaymentTypeEnum.Fine.ToString(),
+                                    Title = GlobalConstant.FineContractPaymentTitle + extendContractId,
+                                    Amount = contractPayment.Amount,
+                                    DateFrom = contractPayment.DateFrom,
+                                    DateTo = contractPayment.DateTo,
+                                    Period = contractPayment.Period,
+                                    DueDate = contractPayment.DueDate,
+                                    IsFirstRentalPayment = false,
+                                };
+                                extendContract.ContractPayments.Add(fineContractPayment);
+                            }
                         }
 
                         context.Contracts.Update(extendContract);
