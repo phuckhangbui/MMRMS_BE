@@ -5,6 +5,7 @@
         Rental,
         ComponentTicket,
         Refund,
-        DamagePenalty
+        DamagePenalty,
+        Extend
     }
 }
