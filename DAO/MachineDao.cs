@@ -407,7 +407,7 @@ namespace DAO
         public async Task<int> GetMachinesInRangeAsync(DateTime? startDate, DateTime? endDate)
         {
             using var context = new MmrmsContext();
-            IQueryable<Machine> query = context.Machines;
+            IQueryable<MachineSerialNumber> query = context.MachineSerialNumbers;
 
             if (startDate.HasValue)
             {
