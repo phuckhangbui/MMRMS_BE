@@ -189,6 +189,13 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.EmailAlreadyExists);
             }
 
+
+            if (newCustomerAccountDto.DateBirth < DateTime.Today.AddYears(-18)
+                || newCustomerAccountDto.DateBirth > DateTime.Today.AddYears(120))
+            {
+                throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
+            }
+
             var accountDto = await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
 
             //send email opt here

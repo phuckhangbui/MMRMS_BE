@@ -50,7 +50,7 @@
             public const string AccountNotValidToUpdate = "Tài khoản không thể cập nhật do thông tin không hợp lệ";
             public const string AccountRoleIsNotSuitableToAssignForThisTask = "Tài khoản nhân viên mà bạn chọn không thể thực hiện chức năng này";
             public const string AccountStatusNotSuitableForApproval = "Tài khoản của khách hàng này hiện đang không thể thực hiện được thao tác này";
-
+            public const string DateBirthInvalid = "Ngày sinh không hợp lệ. Phải lớn hơn 18 và nhỏ hơn 120 tuổi";
 
 
             //DTO
