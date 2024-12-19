@@ -92,6 +92,14 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }
+            var dateBirthFromFrontend = newEmployeeAccountDto.DateBirth;
+
+            var reAlignDateBirth = new DateTime(
+                dateBirthFromFrontend.Year,
+                dateBirthFromFrontend.Month,
+                dateBirthFromFrontend.Day
+            );
+            newEmployeeAccountDto.DateBirth = reAlignDateBirth;
 
 
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newEmployeeAccountDto.Email);
@@ -177,6 +185,14 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }
+            var dateBirthFromFrontend = customerAccountUpdateDto.DateBirth;
+
+            var reAlignDateBirth = new DateTime(
+                dateBirthFromFrontend.Year,
+                dateBirthFromFrontend.Month,
+                dateBirthFromFrontend.Day
+            );
+            customerAccountUpdateDto.DateBirth = reAlignDateBirth;
 
             return await _accountRepository.UpdateAccount(accountId, customerAccountUpdateDto);
         }

@@ -195,6 +195,14 @@ namespace Service.Implement
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }
+            var dateBirthFromFrontend = newCustomerAccountDto.DateBirth;
+
+            var reAlignDateBirth = new DateTime(
+                dateBirthFromFrontend.Year,
+                dateBirthFromFrontend.Month,
+                dateBirthFromFrontend.Day
+            );
+            newCustomerAccountDto.DateBirth = reAlignDateBirth;
 
             var accountDto = await _accountRepository.CreateCustomerAccount(newCustomerAccountDto);
 
