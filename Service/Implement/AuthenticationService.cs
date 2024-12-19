@@ -190,8 +190,8 @@ namespace Service.Implement
             }
 
 
-            if (newCustomerAccountDto.DateBirth < DateTime.Today.AddYears(-18)
-                || newCustomerAccountDto.DateBirth > DateTime.Today.AddYears(120))
+            if (newCustomerAccountDto.DateBirth > DateTime.Today.AddYears(-18) ||
+                newCustomerAccountDto.DateBirth < DateTime.Today.AddYears(-120))
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }

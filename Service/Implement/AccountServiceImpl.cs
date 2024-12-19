@@ -87,11 +87,12 @@ namespace Service.Implement
         {
             var adminUsername = _configuration.GetSection("AdminAccount:Username").Value;
 
-            if (newEmployeeAccountDto.DateBirth < DateTime.Today.AddYears(-18)
-                 || newEmployeeAccountDto.DateBirth > DateTime.Today.AddYears(120))
+            if (newEmployeeAccountDto.DateBirth > DateTime.Today.AddYears(-18) ||
+                newEmployeeAccountDto.DateBirth < DateTime.Today.AddYears(-120))
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }
+
 
             bool isExist = await _accountRepository.IsAccountExistWithEmail(newEmployeeAccountDto.Email);
 
@@ -171,8 +172,8 @@ namespace Service.Implement
                 throw new ServiceException(MessageConstant.Account.AccountNotValidToUpdate);
             }
 
-            if (customerAccountUpdateDto.DateBirth < DateTime.Today.AddYears(-18)
-               || customerAccountUpdateDto.DateBirth > DateTime.Today.AddYears(120))
+            if (customerAccountUpdateDto.DateBirth > DateTime.Today.AddYears(-18) ||
+                customerAccountUpdateDto.DateBirth < DateTime.Today.AddYears(-120))
             {
                 throw new ServiceException(MessageConstant.Account.DateBirthInvalid);
             }
